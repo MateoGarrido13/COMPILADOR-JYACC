@@ -1,0 +1,5 @@
+# Clases compiladas de Java
+*.class
+
+# Metadatos de vista de Dolphin/KDE
+.directory
