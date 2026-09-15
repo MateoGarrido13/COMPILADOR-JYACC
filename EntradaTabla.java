@@ -12,7 +12,7 @@ public class EntradaTabla {
     public EntradaTabla(String lexema, int tokenID, int numeroLinea) {
         this.lexema = lexema;
         this.tokenID = tokenID;
-        this.tipoDato = "indefinido";
+        this.tipoDato = Tipos.INDEFINIDO;
         this.numeroLinea = numeroLinea;
     }
 }

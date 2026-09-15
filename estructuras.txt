@@ -1,0 +1,29 @@
+Estructuras sintacticas detectadas:
+Linea 5: Declaracion de variables
+Linea 6: Declaracion de variables
+Linea 8: Definicion de tipo enumerado
+Linea 12: Declaracion de atributo
+Linea 13: Declaracion de atributo
+Linea 14: Declaracion de clase
+Linea 16: Declaracion de objetos
+Linea 20: Sentencia RET
+Linea 21: Declaracion de funcion
+Linea 24: Asignacion
+Linea 25: Asignacion
+Linea 26: Asignacion
+Linea 27: Conversion explicita todf
+Linea 27: Asignacion
+Linea 28: Acceso a atributo
+Linea 28: Asignacion
+Linea 29: Invocacion a funcion
+Linea 29: Asignacion
+Linea 30: Asignacion en expresion
+Linea 30: Asignacion
+Linea 31: Sentencia POUT
+Linea 33: Sentencia POUT
+Linea 35: Sentencia POUT
+Linea 36: Sentencia IF con ELSE
+Linea 38: Asignacion
+Linea 39: Sentencia REPEAT - WHILE
+Linea 40: Bloque BEGIN - END
+Linea 40: Programa

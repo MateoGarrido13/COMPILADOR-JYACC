@@ -1,0 +1,4 @@
+Errores: 2 - Warnings: 0
+
+Linea 28: Error: La variable lados no fue declarada
+Linea 29: Error: La variable duplicar no fue declarada

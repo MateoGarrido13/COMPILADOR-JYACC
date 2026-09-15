@@ -1,354 +1,277 @@
-import java.io.*;
+import java.io.FileNotFoundException;
 
+/**
+ * Reconoce tokens y los entrega de a uno (yylex).
+ *
+ * No valida rangos, tipos ni declaraciones: eso pertenece a las acciones
+ * semanticas. El lexico solo clasifica la forma del lexema, trunca
+ * identificadores segun el TP1 e informa errores estrictamente lexicos
+ * (caracter invalido, comentario o cadena mal cerrados).
+ */
 public class AnalizadorLexico {
-    private PushbackReader reader;
-    private TablaSimbolos tablaSimbolos;
 
-    //CAMBIO
-    // El constructor recibe la ruta del archivo fuente a compilar
-    public AnalizadorLexico(TablaSimbolos ts, String rutaArchivo) throws FileNotFoundException {
-        this.tablaSimbolos = ts;
-        this.reader = new PushbackReader(new FileReader(rutaArchivo));
-        Globals.numeroLinea = 1;
+    private final LectorFuente fuente = new LectorFuente();
+    private final TablaSimbolos tablaSimbolos;
+    private final Reporte reporte;
+
+    public AnalizadorLexico(TablaSimbolos tablaSimbolos, Reporte reporte, String rutaArchivo)
+            throws FileNotFoundException {
+        this.tablaSimbolos = tablaSimbolos;
+        this.reporte = reporte;
+        fuente.abrir(rutaArchivo);
     }
 
-    private char leerSiguienteCaracter() {
-        try {
-            int c = reader.read();
-            if (c == -1) return (char) 0; // EOF
-            if (c == '\n') {
-                Globals.numeroLinea++;
-            }
-            return (char) c;
-        } catch (IOException e) {
-            return (char) 0;
+    /**
+     * Punto de entrada para YACC/BYACC: un token por invocacion.
+     * 0 = fin de archivo, valor positivo = token reconocido.
+     */
+    public int yylex() {
+        int tokenID = siguienteToken();
+        if (tokenID > 0) {
+            RegistroTokens.registrar(tokenID, Globals.yylval, fuente.linea());
         }
+        return tokenID;
     }
 
-    private void retrocederUnCaracter(char c) {
-        try {
-            if (c != 0) {
-                if (c == '\n') {
-                    Globals.numeroLinea--;
-                }
-                reader.unread(c);
-            }
-        } catch (IOException e) {
-            System.err.println("Error al retroceder caracter");
-        }
+    public void cerrar() {
+        fuente.cerrar();
     }
-    
-    public int siguienteToken() {
-        while (true) { // Bucle para permitir descartar comentarios sin retornar token
-            char c = leerSiguienteCaracter();
 
+    private int siguienteToken() {
+        while (true) {
+            char c = fuente.leer();
             while (Character.isWhitespace(c)) {
-                c = leerSiguienteCaracter();
+                c = fuente.leer();
             }
 
-            if (c == 0 || c == '$') return 0;
-
-            // TEMA 16 y TEMA 9
-            if (c == '{') { 
-                char sig = leerSiguienteCaracter(); 
-                if (sig == '{') {
-                    // TEMA 16: Comentario multilínea {{ ... }} Consumir y descartar 
-                    boolean cerrado = false;
-                    while (!cerrado) { 
-                        c = leerSiguienteCaracter(); 
-                        if (c == 0) { 
-                            System.err.println("Línea " + Globals.numeroLinea + ": Error léxico: Comentario multilínea {{ ... }} no cerrado antes del fin de archivo"); 
-                            return -1; 
-                        } 
-                        if (c == '}') { 
-                            char sig2 = leerSiguienteCaracter(); 
-                            if (sig2 == '}') { 
-                                cerrado = true; 
-                            } else { 
-                                retrocederUnCaracter(sig2); 
-                            } 
-                        } 
-                    } 
-                    continue; // Comentario descartado: vuelve al inicio del bucle 
-                } else { 
-                    // TEMA 9: Cadena de 1 línea { ... } 
-                    retrocederUnCaracter(sig); 
-                    String cadena = ""; 
-                    c = leerSiguienteCaracter(); 
-                    boolean cerrada = false; 
-                    while (c != 0) { 
-                        if (c == '\\n') { 
-                            System.err.println("Línea " + (Globals.numeroLinea - 1) + ": Error léxico: Cadena de 1 línea { ... } no puede contener saltos de línea"); 
-                            return -1; 
-                        } 
-                        if (c == '}') { 
-                            cerrada = true; 
-                            break; 
-                        } 
-                        cadena += c; 
-                        c = leerSiguienteCaracter(); 
-                    } 
-                    if (!cerrada) { 
-                        System.err.println("Línea " + Globals.numeroLinea + ": Error léxico: Cadena de 1 línea no cerrada antes del fin de archivo"); 
-                        return -1; 
-                    } 
-                    Globals.yylval = tablaSimbolos.buscarOInsertarCadena(cadena); 
-                    return Globals.CADENA; 
-                } 
+            if (c == 0 || c == '$') {
+                return 0;
             }
 
-            // CASO 1: secuencia alfabética → primero palabras reservadas, luego identificadores
+            if (c == '{') {
+                Integer token = procesarLlave();
+                if (token == null) {
+                    continue;
+                }
+                return token;
+            }
+
             if (Character.isLetter(c)) {
-                String lexema = "" + c;
-                c = leerSiguienteCaracter();
-
-                while (Character.isLetterOrDigit(c) || c == '_') {
-                    lexema += c;
-                    c = leerSiguienteCaracter();
-                }
-                retrocederUnCaracter(c);
-
-                EntradaTabla reservada = tablaSimbolos.buscarPalabraReservada(lexema);
-                if (reservada != null) {
-                    Globals.yylval = reservada;
-                    return reservada.tokenID;
-                }
-
-                //CAMBIO
-                if (lexema.length() > 22) {
-                    System.out.println("Línea " + Globals.numeroLinea + ": Warning: El identificador '" + lexema + "' fue truncado a: " + lexema.substring(0, 22));
-                    lexema = lexema.substring(0, 22);
-                }
-
-                Globals.yylval = tablaSimbolos.buscarOInsertarIdentificador(lexema);
-                return Globals.yylval.tokenID;
+                return procesarIdentificador(c);
             }
 
-            
-            // CASO 2: Constantes numéricas (TEMA 6: $ul y TEMA 8: DOUBLEF con . y d)
             if (Character.isDigit(c) || c == '.') {
-                String lexemaNum = "";
-                boolean tienePunto = false;
-                boolean esDoublef = false;
-
-                if (c == '.') {
-                    char sig = leerSiguienteCaracter();
-                    if (Character.isDigit(sig)) {
-                        lexemaNum += '.';
-                        lexemaNum += sig;
-                        tienePunto = true;
-                        c = leerSiguienteCaracter();
-                    } else {
-                        retrocederUnCaracter(sig);
-                        Globals.yylval = null;
-                        return (int) '.'; // Castea a entero y devuelve el codigo ASCII de '.' (46)
-                    }
-                } else {
-                    lexemaNum += c;
-                    c = leerSiguienteCaracter();
-                }
-
-                // Lectura de parte entera y decimal
-                while (Character.isDigit(c) || (c == '.' && !tienePunto)) {
-                    if (c == '.') {
-                        tienePunto = true;
-                    }
-                    lexemaNum += c;
-                    c = leerSiguienteCaracter();
-                }
-
-                /*
-                * En el Léxico no se genera un error léxico directo; 
-                la entrada mal formada `10.423.2` se descompone en dos tokens válidos consecutivos: 10.423 y .2
-                En el Sintáctico al recibir dos números seguidos sin un operador que los vincule (ejemplo: `10.423 .2`), 
-                la gramática de YACC falla y reporta un **Error Sintáctico**.
-                */
-
-                // TEMA 8: Exponente con 'd' para DOUBLEF
-                if (tienePunto && (c == 'd' || c == 'D')) {
-                    esDoublef = true;
-                    lexemaNum += c;
-                    c = leerSiguienteCaracter();
-                    if (c == '+' || c == '-') {
-                        lexemaNum += c;
-                        c = leerSiguienteCaracter();
-                    }
-                    while (Character.isDigit(c)) {
-                        lexemaNum += c;
-                        c = leerSiguienteCaracter();
-                    }
-                }
-
-                retrocederUnCaracter(c);
-
-                // TEMA 6: Verificación del sufijo $ul / $UL para enteros 32-bit sin signo
-                if (!tienePunto && !esDoublef) {
-                    c = leerSiguienteCaracter();
-                    if (c == '$') {
-                        char u = leerSiguienteCaracter();
-                        char l = leerSiguienteCaracter();
-                        if ((u == 'u' || u == 'U') && (l == 'l' || l == 'L')) {
-                            String lexemaWithSuffix = lexemaNum + "$ul";
-                            try {
-                                long val = Long.parseLong(lexemaNum);
-                                if (val < 0 || val > 4294967295L) { // 2^32 - 1
-                                    System.err.println("Línea " + Globals.numeroLinea + 
-                                        ": Error léxico: Constante entera $ul fuera de rango (0 a 4294967295): " + lexemaWithSuffix);
-                                    return -1;
-                                }
-                            } catch (NumberFormatException e) {
-                                System.err.println("Línea " + Globals.numeroLinea + 
-                                    ": Error léxico: Formato numérico inválido en constante $ul: " + lexemaWithSuffix);
-                                return -1;
-                            }
-                            Globals.yylval = tablaSimbolos.buscarOInsertarConstante(lexemaWithSuffix, Globals.CONSTANTE_NUMERICA);
-                            return Globals.CONSTANTE_NUMERICA;
-                        } else {
-                            retrocederUnCaracter(l);
-                            retrocederUnCaracter(u);
-                            retrocederUnCaracter('$');
-                        }
-                    } else {
-                        retrocederUnCaracter(c);
-                    }
-                }
-
-                // TEMA 8: Validación de rango para DOUBLEF
-                if (tienePunto) {
-                    try {
-                        String numStrForParsing = lexemaNum.replace('d', 'e').replace('D', 'E');
-                        double val = Double.parseDouble(numStrForParsing);
-                        double absVal = Math.abs(val);
-                        if (val != 0.0 && (absVal < 2.2250738585072014e-308 || absVal > 1.7976931348623157e308)) {
-                            System.err.println("Línea " + Globals.numeroLinea + 
-                                ": Error léxico: Constante DOUBLEF fuera del rango permitido: " + lexemaNum);
-                            return -1;
-                        }
-                    } catch (NumberFormatException e) {
-                        System.err.println("Línea " + Globals.numeroLinea + 
-                            ": Error léxico: Formato de constante DOUBLEF inválido: " + lexemaNum);
-                        return -1;
-                    }
-                }
-
-                Globals.yylval = tablaSimbolos.buscarOInsertarConstante(lexemaNum, Globals.CONSTANTE_NUMERICA);
-                return Globals.CONSTANTE_NUMERICA;
+                return procesarNumero(c);
             }
 
-            // CASO 3: Asignación ':='
             if (c == ':') {
-                char siguiente = leerSiguienteCaracter();
-                if (siguiente == '=') {
-                    Globals.yylval = null;
-                    return Globals.ASIGNACION;
-                } else {
-                    retrocederUnCaracter(siguiente);
-                    return c;
-                }
+                return procesarAsignacion();
             }
 
-            // CASO 4: Caracteres únicos (mapeo ASCII)
-            if (c == '+' || c == '-' || c == '*' || c == '/' || c == '<' || c == '>'
-                    || c == '=' || c == '(' || c == ')' || c == ',' || c == ';'
-                    || c == '[' || c == ']') {
+            Integer comparador = procesarComparador(c);
+            if (comparador != null) {
+                if (comparador == 0) {
+                    continue;
+                }
+                Globals.yylval = null;
+                return comparador;
+            }
+
+            if (esSimboloSimple(c)) {
                 Globals.yylval = null;
                 return (int) c;
             }
 
-            System.err.println("Error léxico: Carácter no reconocido '" + c + "' en línea " + Globals.numeroLinea);
-            return -1;
+            reporte.error(fuente.linea(), "Caracter no reconocido '" + c + "'");
         }
     }
 
-    public int yylex() {
-        int tokenID = siguienteToken(); // Lógica de lectura de caracteres
-
-        // Si no es Fin de Archivo ni error, registramos el token para el informe de salidas
-        if (tokenID > 0) {
-            registrarTokenDetectado(tokenID); // FUNCION A IMPLEMENTAR, imprime en consola o escribe en archivo de log
+    /** Tema 16: comentario {{ ... }}. Tema 9: cadena de una linea { ... }. */
+    private Integer procesarLlave() {
+        char siguiente = fuente.leer();
+        if (siguiente == '{') {
+            return consumirComentario() ? null : 0;
         }
-
-        return tokenID; // Le entrega el token a yyparse() de BYACC/J
+        fuente.retroceder(siguiente);
+        return procesarCadena();
     }
 
-    /*
-    public void procesarArchivo(String rutaEntrada, String rutaSalida) {
-        try {
-            this.reader = new PushbackReader(new FileReader(rutaEntrada));
-            Globals.numeroLinea = 1;
-            BufferedWriter writer = new BufferedWriter(new FileWriter(rutaSalida));
-
-            int tokenID;
-            while ((tokenID = siguienteToken()) != 0) {
-                if (tokenID == -1) {
-                    writer.write("ERROR(?) ");
-                    continue;
-                }
-
-                if (tokenID < 256) {
-                    writer.write((char) tokenID);
-                    continue;
-                }
-
-                switch (tokenID) {
-                    case Globals.IDENTIFICADOR:
-                        writer.write("ID(" + Globals.yylval.lexema + ") ");
-                        break;
-                    case Globals.ASIGNACION:
-                        writer.write("ASIG(:=)");
-                        break;
-                    case Globals.CONSTANTE_NUMERICA:
-                        writer.write("CTE(" + Globals.yylval.lexema + ")");
-                        break;
-                    case Globals.PR_IF:
-                        writer.write("if");
-                        break;
-                    case Globals.PR_ELSE:
-                        writer.write("else");
-                        break;
-                    case Globals.PR_END_IF:
-                        writer.write("end_if");
-                        break;
-                    case Globals.PR_BEGIN:
-                        writer.write("begin");
-                        break;
-                    case Globals.PR_END:
-                        writer.write("end");
-                        break;
-                    case Globals.PR_POUT:
-                        writer.write("pout");
-                        break;
-                    case Globals.PR_RET:
-                        writer.write("ret");
-                        break;
-                    case Globals.PR_CLASS:
-                        writer.write("class ");
-                        break;
-                    case Globals.PR_FUNCTION:
-                        writer.write("function ");
-                        break;
-                    case Globals.PR_REPEAT:
-                        writer.write("PR(repeat) ");
-                        break;
-                    case Globals.PR_WHILE:
-                        writer.write("while");
-                        break;
-                    case Globals.TODF:
-                        writer.write("todf");
-                        break;
-                    default:
-                        writer.write("ERROR(?) ");
-                        break;
-                }
+    private boolean consumirComentario() {
+        while (true) {
+            char c = fuente.leer();
+            if (c == 0) {
+                reporte.error(fuente.linea(),
+                        "Comentario multilinea {{ ... }} no cerrado antes del fin de archivo");
+                return false;
             }
-
-            writer.close();
-            reader.close();
-            System.out.println("Análisis léxico finalizado. Resultados en: " + rutaSalida);
-
-        } catch (IOException e) {
-            System.err.println("Error manejando los archivos: " + e.getMessage());
+            if (c == '}') {
+                char siguiente = fuente.leer();
+                if (siguiente == '}') {
+                    return true;
+                }
+                fuente.retroceder(siguiente);
+            }
         }
     }
-    */
+
+    private Integer procesarCadena() {
+        StringBuilder cadena = new StringBuilder();
+        int lineaInicio = fuente.linea();
+        while (true) {
+            char c = fuente.leer();
+            if (c == 0) {
+                reporte.error(lineaInicio, "Cadena de 1 linea no cerrada antes del fin de archivo");
+                return 0;
+            }
+            if (c == '\n') {
+                reporte.error(lineaInicio, "Cadena de 1 linea { ... } no puede contener saltos de linea");
+                return null;
+            }
+            if (c == '}') {
+                Globals.yylval = tablaSimbolos.buscarOInsertarCadena(cadena.toString());
+                return Globals.CADENA;
+            }
+            cadena.append(c);
+        }
+    }
+
+    private int procesarIdentificador(char inicial) {
+        StringBuilder lexema = new StringBuilder();
+        lexema.append(inicial);
+
+        char c = fuente.leer();
+        while (Character.isLetterOrDigit(c) || c == '_') {
+            lexema.append(c);
+            c = fuente.leer();
+        }
+        fuente.retroceder(c);
+
+        String texto = lexema.toString();
+        EntradaTabla reservada = tablaSimbolos.buscarPalabraReservada(texto);
+        if (reservada != null) {
+            Globals.yylval = reservada;
+            return reservada.tokenID;
+        }
+
+        if (texto.length() > Tipos.LONGITUD_MAXIMA_IDENTIFICADOR) {
+            String truncado = texto.substring(0, Tipos.LONGITUD_MAXIMA_IDENTIFICADOR);
+            reporte.warning(fuente.linea(),
+                    "El identificador " + texto + " fue truncado a: " + truncado);
+            texto = truncado;
+        }
+
+        Globals.yylval = tablaSimbolos.buscarOInsertarIdentificador(texto);
+        return Globals.yylval.tokenID;
+    }
+
+    /**
+     * Reconoce la forma de enteros ($ul) y doublef (punto y exponente d).
+     * Una entrada mal formada como 10.423.2 se parte en dos tokens validos;
+     * el desajuste lo reporta el sintactico. El rango lo controla la semantica.
+     */
+    private int procesarNumero(char inicial) {
+        StringBuilder lexema = new StringBuilder();
+        boolean tienePunto = false;
+        char c = inicial;
+
+        if (c == '.') {
+            char siguiente = fuente.leer();
+            if (Character.isDigit(siguiente)) {
+                lexema.append('.').append(siguiente);
+                tienePunto = true;
+                c = fuente.leer();
+            } else {
+                fuente.retroceder(siguiente);
+                Globals.yylval = null;
+                return (int) '.';
+            }
+        } else {
+            lexema.append(c);
+            c = fuente.leer();
+        }
+
+        while (Character.isDigit(c) || (c == '.' && !tienePunto)) {
+            if (c == '.') {
+                tienePunto = true;
+            }
+            lexema.append(c);
+            c = fuente.leer();
+        }
+
+        if (tienePunto && Character.toLowerCase(c) == Tipos.LETRA_EXPONENTE_DOUBLEF) {
+            lexema.append(c);
+            c = fuente.leer();
+            if (c == '+' || c == '-') {
+                lexema.append(c);
+                c = fuente.leer();
+            }
+            while (Character.isDigit(c)) {
+                lexema.append(c);
+                c = fuente.leer();
+            }
+        }
+        fuente.retroceder(c);
+
+        if (!tienePunto) {
+            c = fuente.leer();
+            if (c == '$') {
+                char u = fuente.leer();
+                char l = fuente.leer();
+                if (Character.toLowerCase(u) == 'u' && Character.toLowerCase(l) == 'l') {
+                    lexema.append(Tipos.SUFIJO_ULONGINT);
+                } else {
+                    fuente.retroceder(l);
+                    fuente.retroceder(u);
+                    fuente.retroceder('$');
+                }
+            } else {
+                fuente.retroceder(c);
+            }
+        }
+
+        Globals.yylval = tablaSimbolos.buscarOInsertarConstante(lexema.toString(), Globals.CONSTANTE_NUMERICA);
+        return Globals.CONSTANTE_NUMERICA;
+    }
+
+    private int procesarAsignacion() {
+        char siguiente = fuente.leer();
+        if (siguiente == '=') {
+            Globals.yylval = null;
+            return Globals.ASIGNACION;
+        }
+        fuente.retroceder(siguiente);
+        return ':';
+    }
+
+    /** null = no era comparador; 0 = '!' suelto, ya informado, seguir. */
+    private Integer procesarComparador(char c) {
+        if (c != '<' && c != '>' && c != '=' && c != '!') {
+            return null;
+        }
+        char siguiente = fuente.leer();
+        if (c == '<' && siguiente == '=') {
+            return Globals.MENOR_IGUAL;
+        }
+        if (c == '>' && siguiente == '=') {
+            return Globals.MAYOR_IGUAL;
+        }
+        if (c == '=' && siguiente == '=') {
+            return Globals.IGUAL_IGUAL;
+        }
+        if (c == '!' && siguiente == '=') {
+            return Globals.DISTINTO;
+        }
+        fuente.retroceder(siguiente);
+        if (c == '!') {
+            reporte.error(fuente.linea(), "Caracter no reconocido '!'");
+            return 0;
+        }
+        return (int) c;
+    }
+
+    private static boolean esSimboloSimple(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/'
+                || c == '(' || c == ')' || c == ',' || c == ';'
+                || c == '[' || c == ']';
+    }
 }

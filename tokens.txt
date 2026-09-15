@@ -1,0 +1,139 @@
+Tokens detectados (138):
+Identificador programaprueba
+Palabra reservada ulongint
+Identificador contador
+,
+Identificador total
+;
+Palabra reservada doublef
+Identificador promedio
+;
+Palabra reservada typedef
+Identificador color
+=
+[
+Constante ulongint 1
+,
+Constante ulongint 2
+,
+Constante ulongint 3
+]
+;
+Palabra reservada class
+Identificador figura
+Palabra reservada begin
+Palabra reservada ulongint
+Identificador lados
+;
+Palabra reservada doublef
+Identificador area
+;
+Palabra reservada end
+;
+Identificador figura
+Identificador fig
+;
+Palabra reservada ulongint
+Palabra reservada function
+Identificador duplicar
+(
+Palabra reservada ulongint
+Identificador valor
+)
+Palabra reservada begin
+Palabra reservada ret
+(
+Identificador valor
+*
+Constante ulongint 2$ul
+)
+;
+Palabra reservada end
+;
+Palabra reservada begin
+Identificador contador
+Operador de asignacion :=
+Constante ulongint 10$ul
+;
+Identificador total
+Operador de asignacion :=
+Identificador contador
++
+Constante ulongint 5$ul
+-
+Constante ulongint 3$ul
+;
+Identificador promedio
+Operador de asignacion :=
+Constante doublef 3.14
+;
+Identificador promedio
+Operador de asignacion :=
+Palabra reservada todf
+(
+Identificador total
+)
+;
+Identificador fig
+.
+Identificador lados
+Operador de asignacion :=
+Constante ulongint 4$ul
+;
+Identificador total
+Operador de asignacion :=
+Identificador duplicar
+(
+Identificador contador
+)
+[
+Constante ulongint 1
+]
+;
+Identificador total
+Operador de asignacion :=
+Identificador contador
+=
+(
+Constante ulongint 7$ul
+)
+;
+Palabra reservada pout
+(
+Cadena {hola mundo}
+)
+;
+Palabra reservada if
+(
+Identificador contador
+>
+Constante ulongint 5$ul
+)
+Palabra reservada pout
+(
+Cadena {es mayor}
+)
+;
+Palabra reservada else
+Palabra reservada pout
+(
+Cadena {es menor}
+)
+;
+Palabra reservada end_if
+;
+Palabra reservada repeat
+Identificador contador
+Operador de asignacion :=
+Identificador contador
+-
+Constante ulongint 1$ul
+;
+Palabra reservada while
+(
+Identificador contador
+>
+Constante ulongint 0$ul
+)
+;
+Palabra reservada end

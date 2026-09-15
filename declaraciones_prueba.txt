@@ -1,0 +1,17 @@
+Variables declaradas (4):
+  contador : ulongint
+  total : ulongint
+  promedio : doublef
+  fig : figura
+
+Funciones declaradas (1):
+  ulongint duplicar(ulongint valor) - linea 18
+
+Clases declaradas (1):
+  figura - linea 10
+    atributos: [lados, area]
+    metodos: []
+    hereda de: []
+
+Tipos enumerados (1):
+  color [ulongint] = [1, 2, 3]

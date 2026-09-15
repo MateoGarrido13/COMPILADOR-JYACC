@@ -1,5 +1,6 @@
-# Clases compiladas de Java
+# clases compiladas de Java
 *.class
 
-# Metadatos de vista de Dolphin/KDE
-.directory
+# generador BYACC/J compilado localmente y su reporte de estados
+byaccj
+y.output

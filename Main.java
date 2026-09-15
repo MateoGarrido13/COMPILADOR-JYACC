@@ -1,13 +1,13 @@
 public class Main {
+
+    private static final String FUENTE_POR_DEFECTO = "input.txt";
+
     public static void main(String[] args) {
-        TablaSimbolos ts = new TablaSimbolos();
-        AnalizadorLexico lexico = new AnalizadorLexico(ts);
+        // El TP pide que la ruta del codigo a compilar se pase como parametro.
+        String rutaFuente = args.length > 0 ? args[0] : FUENTE_POR_DEFECTO;
 
-        // Si tu input.txt contiene: if ( variable1 := 5 + variable2 )
-        // Tu output.txt mostrará la traducción en tokens
-        lexico.procesarArchivo("input.txt", "output.txt");
-
-        System.out.println("Contenido de la tabla de simbolos:");
-        ts.imprimirTabla();
+        Compilador compilador = new Compilador();
+        compilador.compilar(rutaFuente);
+        compilador.getTablaSimbolos().imprimirTabla();
     }
 }
