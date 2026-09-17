@@ -48,7 +48,7 @@ public class AnalizadorLexico {
                 return 0;
             }
             int estado = 0;
-            int ultimaAccion = MatrizTransiciones.SIN_SEM;
+            int ultimaAccion = MatrizTransiciones.SIN_SEM; // No hay codigo ejecutable asociado
             ContextoLexico contexto = new ContextoLexico(fuente.linea());
 
             while (true) {

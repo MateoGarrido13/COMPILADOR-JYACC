@@ -1,4 +1,4 @@
-public final class AccionCaracterLiteral {
+public final class AccionCaracterLiteral  extends AccionSemantica {
 
     private AccionCaracterLiteral() {
     }

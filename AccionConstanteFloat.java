@@ -1,4 +1,4 @@
-public final class AccionConstanteFloat {
+public final class AccionConstanteFloat extends AccionSemantica {
 
     private AccionConstanteFloat() {
     }

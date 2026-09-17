@@ -1,4 +1,4 @@
-public final class AccionCadena {
+public final class AccionCadena extends AccionSemantica {
 
     private AccionCadena() {
     }

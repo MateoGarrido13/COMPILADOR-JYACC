@@ -1,4 +1,4 @@
-public final class AccionEstructuraAsignacion {
+public final class AccionEstructuraAsignacion extends AccionSemantica {
 
     private AccionEstructuraAsignacion() {
     }

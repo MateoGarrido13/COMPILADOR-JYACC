@@ -1,4 +1,4 @@
-public final class AccionPalabraReservada {
+public final class AccionPalabraReservada extends AccionSemantica {
 
     private AccionPalabraReservada() {
     }

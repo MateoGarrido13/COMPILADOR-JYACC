@@ -1,4 +1,5 @@
 public final class EjecutorAccionesSemanticas {
+    //Llama a el metodo agregar y finalizar de cada accion semantica
 
     private EjecutorAccionesSemanticas() {
     }
