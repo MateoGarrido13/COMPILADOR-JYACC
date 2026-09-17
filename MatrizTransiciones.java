@@ -39,8 +39,18 @@ public class MatrizTransiciones {
         {   -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, -1,  -1,  -1,  -1, -1, 99, -1}  // Estado 18
     };
 
-    // Matriz de Acciones Semánticas (SEM x)
-    public static final int[][] MATRIZ_SEMANTICAS = {
+    // Acciones semánticas agrupadas por funcionalidad.
+    public static final int SEM_ESTRUCTURA_ASIGNACION = 1;
+    public static final int SEM_CARACTER_LITERAL = 2;
+    public static final int SEM_PALABRA_RESERVADA = 3;
+    public static final int SEM_IDENTIFICADOR = 4;
+    public static final int SEM_CADENA = 5;
+    public static final int SEM_SIMBOLO_LITERAL = 6;
+    public static final int SEM_CONSTANTE_ENTERA = 7;
+    public static final int SEM_CONSTANTE_FLOAT = 8;
+
+    // Matriz original, usada solo para construir la matriz agrupada.
+    public static final int[][] MATRIZ_SEMANTICAS_ORIGINAL = {
         //   d,   l,   M, <,>,   =,   :,   !,   *,   +,   -,   /,   {,   },   .,   $, (,), _,   u,   l,   d,otro, BT,  \n
         {    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  21,   0,   0,  0,   0,   0,   0,  0,  0,  0}, // Estado 0
         {    0,   0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,   0,   0,   0,  0,  0,  0}, // Estado 1
@@ -62,6 +72,69 @@ public class MatrizTransiciones {
         {    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,   0,   0,   0,  0,  0,  0}, // Estado 17
         {    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  0,   0,   0,   0,  0, 25,  0}  // Estado 18
     };
+
+    // Matriz de acciones semánticas agrupadas (0 = sin acción).
+    public static final int[][] MATRIZ_SEMANTICAS = agruparAcciones(MATRIZ_SEMANTICAS_ORIGINAL);
+
+    private static int[][] agruparAcciones(int[][] matrizOriginal) {
+        int[][] matrizAgrupada = new int[matrizOriginal.length][];
+        for (int estado = 0; estado < matrizOriginal.length; estado++) {
+            matrizAgrupada[estado] = new int[matrizOriginal[estado].length];
+            for (int columna = 0; columna < matrizOriginal[estado].length; columna++) {
+                matrizAgrupada[estado][columna] = agruparAccion(
+                    matrizOriginal[estado][columna]);
+            }
+        }
+        return matrizAgrupada;
+    }
+
+    private static int agruparAccion(int accionOriginal) {
+        if (accionOriginal == SIN_SEM) {
+            return SIN_SEM;
+        }
+        if (accionOriginal == 1 || accionOriginal == 2) {
+            return SEM_ESTRUCTURA_ASIGNACION;
+        }
+        if (accionOriginal >= 3 && accionOriginal <= 6) {
+            return SEM_CARACTER_LITERAL;
+        }
+        if (accionOriginal == 7 || accionOriginal == 36) {
+            return SEM_PALABRA_RESERVADA;
+        }
+        if (accionOriginal == 8 || accionOriginal == 9) {
+            return SEM_IDENTIFICADOR;
+        }
+        if (accionOriginal >= 12 && accionOriginal <= 18) {
+            return SEM_CADENA;
+        }
+        if (accionOriginal == 20) {
+            return SEM_SIMBOLO_LITERAL;
+        }
+        if (accionOriginal >= 21 && accionOriginal <= 26) {
+            return SEM_CONSTANTE_ENTERA;
+        }
+        if (accionOriginal >= 27 && accionOriginal <= 35) {
+            return SEM_CONSTANTE_FLOAT;
+        }
+        return accionOriginal;
+    }
+
+/*
+ Agrupación | Acciones originales |
+| --- | --- |
+| SEM 1 | Estructura sintáctica, asignación y definición de una variable |
+| SEM 2 | Estructura sintáctica, asignación y definición de una variable |
+| SEM 3 a 6 | Lectura de un carácter literal |
+| SEM 36 y 7 | Lectura de palabra reservada |
+| SEM 8 y 9 | Lectura de identificador |
+| SEM 12 a 18 | Procesamiento de cadena |
+| SEM 20 | Lectura de símbolo literal |
+| SEM 21 a 26 | Lectura de constante entera |
+| SEM 26 a 35 | Lectura de constante float |
+
+La tabla siguiente se conserva únicamente como referencia histórica para la
+conversión a los ocho códigos agrupados.
+*/
 
 /*
  Título | Descripción |
@@ -150,7 +223,7 @@ public class MatrizTransiciones {
 | SEM 31 | Entrego una constante float sin exponente
 
  |
-| SEM 35 | Proceso una constante float con exponente
+| SEM 32 | Proceso una constante float con exponente
 
  |
  */

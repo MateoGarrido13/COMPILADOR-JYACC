@@ -47,231 +47,127 @@ public class AnalizadorLexico {
             if (c == 0 || c == '$') {
                 return 0;
             }
+            int estado = 0;
+            int ultimaAccion = MatrizTransiciones.SIN_SEM;
+            ContextoLexico contexto = new ContextoLexico(fuente.linea());
 
-            if (c == '{') {
-                Integer token = procesarLlave();
-                if (token == null) {
-                    continue;
+            while (true) {
+                int columna = columnaPara(estado, c);
+                if (columna < 0) {
+                    reporte.error(fuente.linea(), "Caracter no reconocido '" + c + "'");
+                    break;
                 }
-                return token;
-            }
 
-            if (Character.isLetter(c)) {
-                return procesarIdentificador(c);
-            }
+                int siguienteEstado = MatrizTransiciones.MATRIZ_ESTADOS[estado][columna];
+                int accion = MatrizTransiciones.MATRIZ_SEMANTICAS_ORIGINAL[estado][columna];
 
-            if (Character.isDigit(c) || c == '.') {
-                return procesarNumero(c);
-            }
-
-            if (c == ':') {
-                return procesarAsignacion();
-            }
-
-            Integer comparador = procesarComparador(c);
-            if (comparador != null) {
-                if (comparador == 0) {
-                    continue;
+                if (siguienteEstado == MatrizTransiciones.ERROR) {
+                    fuente.retroceder(c);
+                    if (estado != 0) {
+                        return EjecutorAccionesSemanticas.finalizar(
+                                accionDeCierre(estado, ultimaAccion),
+                                contexto, tablaSimbolos, reporte);
+                    }
+                    break;
                 }
-                Globals.yylval = null;
-                return comparador;
-            }
 
-            if (esSimboloSimple(c)) {
-                Globals.yylval = null;
-                return (int) c;
-            }
-
-            reporte.error(fuente.linea(), "Caracter no reconocido '" + c + "'");
-        }
-    }
-
-    /** Tema 16: comentario {{ ... }}. Tema 9: cadena de una linea { ... }. */
-    private Integer procesarLlave() {
-        char siguiente = fuente.leer();
-        if (siguiente == '{') {
-            return consumirComentario() ? null : 0;
-        }
-        fuente.retroceder(siguiente);
-        return procesarCadena();
-    }
-
-    private boolean consumirComentario() {
-        while (true) {
-            char c = fuente.leer();
-            if (c == 0) {
-                reporte.error(fuente.linea(),
-                        "Comentario multilinea {{ ... }} no cerrado antes del fin de archivo");
-                return false;
-            }
-            if (c == '}') {
-                char siguiente = fuente.leer();
-                if (siguiente == '}') {
-                    return true;
+                boolean delimitador = siguienteEstado == MatrizTransiciones.ESTADO_F
+                        && estado != 0 && esDelimitador(c);
+                if (delimitador) {
+                    fuente.retroceder(c);
+                    return EjecutorAccionesSemanticas.finalizar(
+                            accionDeCierre(estado, ultimaAccion),
+                            contexto, tablaSimbolos, reporte);
                 }
-                fuente.retroceder(siguiente);
-            }
-        }
-    }
 
-    private Integer procesarCadena() {
-        StringBuilder cadena = new StringBuilder();
-        int lineaInicio = fuente.linea();
-        while (true) {
-            char c = fuente.leer();
-            if (c == 0) {
-                reporte.error(lineaInicio, "Cadena de 1 linea no cerrada antes del fin de archivo");
-                return 0;
-            }
-            if (c == '\n') {
-                reporte.error(lineaInicio, "Cadena de 1 linea { ... } no puede contener saltos de linea");
-                return null;
-            }
-            if (c == '}') {
-                Globals.yylval = tablaSimbolos.buscarOInsertarCadena(cadena.toString());
-                return Globals.CADENA;
-            }
-            cadena.append(c);
-        }
-    }
+                EjecutorAccionesSemanticas.ejecutar(accion, contexto, c);
+                if (accion != MatrizTransiciones.SIN_SEM) {
+                    ultimaAccion = accion;
+                }
+                estado = siguienteEstado;
 
-    private int procesarIdentificador(char inicial) {
-        StringBuilder lexema = new StringBuilder();
-        lexema.append(inicial);
-
-        char c = fuente.leer();
-        while (Character.isLetterOrDigit(c) || c == '_') {
-            lexema.append(c);
-            c = fuente.leer();
-        }
-        fuente.retroceder(c);
-
-        String texto = lexema.toString();
-        EntradaTabla reservada = tablaSimbolos.buscarPalabraReservada(texto);
-        if (reservada != null) {
-            Globals.yylval = reservada;
-            return reservada.tokenID;
-        }
-
-        if (texto.length() > Tipos.LONGITUD_MAXIMA_IDENTIFICADOR) {
-            String truncado = texto.substring(0, Tipos.LONGITUD_MAXIMA_IDENTIFICADOR);
-            reporte.warning(fuente.linea(),
-                    "El identificador " + texto + " fue truncado a: " + truncado);
-            texto = truncado;
-        }
-
-        Globals.yylval = tablaSimbolos.buscarOInsertarIdentificador(texto);
-        return Globals.yylval.tokenID;
-    }
-
-    /**
-     * Reconoce la forma de enteros ($ul) y doublef (punto y exponente d).
-     * Una entrada mal formada como 10.423.2 se parte en dos tokens validos;
-     * el desajuste lo reporta el sintactico. El rango lo controla la semantica.
-     */
-    private int procesarNumero(char inicial) {
-        StringBuilder lexema = new StringBuilder();
-        boolean tienePunto = false;
-        char c = inicial;
-
-        if (c == '.') {
-            char siguiente = fuente.leer();
-            if (Character.isDigit(siguiente)) {
-                lexema.append('.').append(siguiente);
-                tienePunto = true;
+                if (estado == MatrizTransiciones.ESTADO_F) {
+                    return EjecutorAccionesSemanticas.finalizar(
+                            accion, contexto, tablaSimbolos, reporte);
+                }
+                if (estado == 0) {
+                    if (accion == 15) {
+                        reporte.error(contexto.lineaInicio(),
+                                "Cadena de 1 linea { ... } no puede contener saltos de linea");
+                    }
+                    if (accion >= 16 && accion <= 18) {
+                        break;
+                    }
+                    break;
+                }
                 c = fuente.leer();
-            } else {
-                fuente.retroceder(siguiente);
-                Globals.yylval = null;
-                return (int) '.';
-            }
-        } else {
-            lexema.append(c);
-            c = fuente.leer();
-        }
-
-        while (Character.isDigit(c) || (c == '.' && !tienePunto)) {
-            if (c == '.') {
-                tienePunto = true;
-            }
-            lexema.append(c);
-            c = fuente.leer();
-        }
-
-        if (tienePunto && Character.toLowerCase(c) == Tipos.LETRA_EXPONENTE_DOUBLEF) {
-            lexema.append(c);
-            c = fuente.leer();
-            if (c == '+' || c == '-') {
-                lexema.append(c);
-                c = fuente.leer();
-            }
-            while (Character.isDigit(c)) {
-                lexema.append(c);
-                c = fuente.leer();
-            }
-        }
-        fuente.retroceder(c);
-
-        if (!tienePunto) {
-            c = fuente.leer();
-            if (c == '$') {
-                char u = fuente.leer();
-                char l = fuente.leer();
-                if (Character.toLowerCase(u) == 'u' && Character.toLowerCase(l) == 'l') {
-                    lexema.append(Tipos.SUFIJO_ULONGINT);
-                } else {
-                    fuente.retroceder(l);
-                    fuente.retroceder(u);
-                    fuente.retroceder('$');
+                if (c == 0) {
+                    if (estado == 5 || estado == 6 || estado == 7 || estado == 8) {
+                        reporte.error(contexto.lineaInicio(),
+                                "Cadena o comentario no cerrado antes del fin de archivo");
+                        return 0;
+                    }
+                    return EjecutorAccionesSemanticas.finalizar(
+                            accionDeCierre(estado, ultimaAccion),
+                            contexto, tablaSimbolos, reporte);
                 }
-            } else {
-                fuente.retroceder(c);
             }
         }
-
-        Globals.yylval = tablaSimbolos.buscarOInsertarConstante(lexema.toString(), Globals.CONSTANTE_NUMERICA);
-        return Globals.CONSTANTE_NUMERICA;
     }
 
-    private int procesarAsignacion() {
-        char siguiente = fuente.leer();
-        if (siguiente == '=') {
-            Globals.yylval = null;
-            return Globals.ASIGNACION;
-        }
-        fuente.retroceder(siguiente);
-        return ':';
+    private int columnaPara(int estado, char c) {
+        if (c == '<' || c == '>') return 3;
+        if (c == '=') return 4;
+        if (c == ':') return 5;
+        if (c == '!') return 6;
+        if (c == '*') return 7;
+        if (c == '+') return 8;
+        if (c == '-') return 9;
+        if (c == '/') return 10;
+        if (c == '{') return 11;
+        if (c == '}') return 12;
+        if (c == '.') return 13;
+        if (c == '$') return 14;
+        if (c == '(' || c == ')' || c == ',' || c == ';'
+                || c == '[' || c == ']') return 15;
+        if (c == '_') return 16;
+        if (estado == 11 && (c == 'u' || c == 'U')) return 17;
+        if (estado == 17 && (c == 'l' || c == 'L')) return 18;
+        if (estado == 12 && (c == 'd' || c == 'D')) return 19;
+        if (Character.isDigit(c)) return 0;
+        if (Character.isWhitespace(c)) return c == '\n' ? 22 : 21;
+        if ((estado == 0 || estado == 15) && c == 'M') return 2;
+        if (Character.isLetter(c)) return 1;
+        return 20;
     }
 
-    /** null = no era comparador; 0 = '!' suelto, ya informado, seguir. */
-    private Integer procesarComparador(char c) {
-        if (c != '<' && c != '>' && c != '=' && c != '!') {
-            return null;
-        }
-        char siguiente = fuente.leer();
-        if (c == '<' && siguiente == '=') {
-            return Globals.MENOR_IGUAL;
-        }
-        if (c == '>' && siguiente == '=') {
-            return Globals.MAYOR_IGUAL;
-        }
-        if (c == '=' && siguiente == '=') {
-            return Globals.IGUAL_IGUAL;
-        }
-        if (c == '!' && siguiente == '=') {
-            return Globals.DISTINTO;
-        }
-        fuente.retroceder(siguiente);
-        if (c == '!') {
-            reporte.error(fuente.linea(), "Caracter no reconocido '!'");
-            return 0;
-        }
-        return (int) c;
+    private static boolean esDelimitador(char c) {
+        return Character.isWhitespace(c) || c == '$';
     }
 
-    private static boolean esSimboloSimple(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/'
-                || c == '(' || c == ')' || c == ',' || c == ';'
-                || c == '[' || c == ']';
+    private static int accionDeCierre(int estado, int ultimaAccion) {
+        if (ultimaAccion != MatrizTransiciones.SIN_SEM) {
+            return ultimaAccion;
+        }
+        switch (estado) {
+            case 1: return 1;
+            case 2: return 3;
+            case 3: return 4;
+            case 4: return 5;
+            case 5:
+            case 6: return 12;
+            case 7:
+            case 8: return 17;
+            case 9: return 20;
+            case 10:
+            case 11: return 26;
+            case 12:
+            case 13:
+            case 14: return 27;
+            case 15: return 36;
+            case 16: return 8;
+            default: return ultimaAccion;
+        }
     }
+
 }
