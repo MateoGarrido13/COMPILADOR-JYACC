@@ -1,4 +1,4 @@
-public final class AccionConstanteEntera extends AccionSemantica {
+public final class AccionConstanteEntera implements AccionSemantica {
 
     private AccionConstanteEntera() {
     }

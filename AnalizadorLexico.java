@@ -90,7 +90,7 @@ public class AnalizadorLexico {
                     return EjecutorAccionesSemanticas.finalizar(
                             accion, contexto, tablaSimbolos, reporte);
                 }
-                if (estado == 0) {
+                if (estado == 0) { //Rollback a estado inicial
                     if (accion == 15) {
                         reporte.error(contexto.lineaInicio(),
                                 "Cadena de 1 linea { ... } no puede contener saltos de linea");

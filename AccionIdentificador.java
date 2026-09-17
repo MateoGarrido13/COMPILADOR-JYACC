@@ -1,4 +1,4 @@
-public final class AccionIdentificador extends AccionSemantica {
+public final class AccionIdentificador implements AccionSemantica {
 
     private AccionIdentificador() {
     }
