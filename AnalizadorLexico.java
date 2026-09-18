@@ -1,0 +1,96 @@
+import java.io.FileNotFoundException;
+
+/** Reconoce tokens utilizando el automata de MatrizTransiciones. */
+public class AnalizadorLexico {
+
+    private final LectorFuente fuente = new LectorFuente();
+    private final TablaSimbolos tablaSimbolos;
+    private final Reporte reporte;
+
+    public AnalizadorLexico(TablaSimbolos tablaSimbolos, Reporte reporte, String rutaArchivo)
+            throws FileNotFoundException {
+        this.tablaSimbolos = tablaSimbolos;
+        this.reporte = reporte;
+        fuente.abrir(rutaArchivo);
+    }
+
+    public int yylex() {
+        int tokenID = siguienteToken();
+        if (tokenID > 0) {
+            RegistroTokens.registrar(tokenID, Globals.yylval, fuente.linea());
+        }
+        return tokenID;
+    }
+
+    public void cerrar() {
+        fuente.cerrar();
+    }
+
+    private int siguienteToken() {
+        while (true) {
+            ContextoLexico contexto = new ContextoLexico(fuente, tablaSimbolos, reporte);
+            int token = recorrerMatriz(contexto);
+            if (token == 0) return 0;
+            if (token > 0) return token;
+        }
+    }
+
+    private int recorrerMatriz(ContextoLexico contexto) {
+        while (true) {
+            contexto.caracter = fuente.leer();
+            if (contexto.caracter == 0 || (contexto.caracter == '$' && contexto.estado == 0)) { // fin de archivo
+                if (contexto.lexema.length() == 0) return 0;
+                return errorLexico(contexto);
+            }
+
+            int columna = ContextoLexico.columna(contexto.caracter, contexto.estado);
+            contexto.estadoAnterior = contexto.estado;                  //Guardo estado antes de avanzar
+            int siguiente = MatrizTransiciones.MATRIZ_ESTADOS[contexto.estado][columna];
+            if (siguiente == MatrizTransiciones.ERROR) {
+                return errorLexico(contexto);
+            }
+            if (!(contexto.estado == 0 && Character.isWhitespace(contexto.caracter))) {
+                contexto.lexema.append(contexto.caracter);              // Caracter blanco, lexema formado, no se agrega al lexema 
+            }
+            contexto.estado = siguiente; 
+            if (siguiente == MatrizTransiciones.ESTADO_F || siguiente == MatrizTransiciones.ERROR) { // Agregar Estado final o Error(-1)
+                quitarBlancosFinales(contexto.lexema);
+                if (siguiente == MatrizTransiciones.ERROR) {
+                    contexto.accion = -1; // Accion de error, accede a la semantica que le corresponde a partir del 
+                }
+                contexto.accion = MatrizTransiciones.MATRIZ_SEMANTICAS[contexto.estadoAnterior][columna]; 
+                return ejecutarAccion(contexto); 
+            }
+        }
+    }
+
+    private int ejecutarAccion(ContextoLexico contexto) {
+        switch (contexto.accion) {
+            case 1: case 2: return new AccionEstructura(contexto).ejecutar(); //Asignación
+            case 3: case 4: case 5: case 6: return new AccionComparador(contexto).ejecutar(); // Comparadores
+            // Revisar estas acciones, si se puede hacer una sola acción para palabras reservadas e identificadores
+            case 7: case 36: return new AccionReservada(contexto).ejecutar(); // Palabras reservadas, verifica si hacer o no entrada nueva
+            case 8: case 9: return new AccionIdentificador(contexto).ejecutar(); //Identificadores, warning
+            case 12: case 13: case 14: case 15: case 16: case 17: case 18: // Comentarios multilinea y cadenas
+                return new AccionCadena(contexto).ejecutar();
+            case 20: return new AccionSimbolo(contexto).ejecutar();
+            case 22: case 23: case 24: case 25: case 26:
+                return new AccionConstanteEntera(contexto).ejecutar();
+            case 21: case 27: case 28: case 29: case 30: case 31: case 32: case 33: case 34: case 35:
+                return new AccionConstanteFloat(contexto).ejecutar();
+            default:
+                return new AccionSimbolo(contexto).ejecutar();
+        }
+    }
+
+    private int errorLexico(ContextoLexico contexto) { // Genera un reporte generico para todos los errores del tipeo, no evalua las funciones de error de las acciones
+        reporte.error(fuente.linea(), "Lexema no reconocido '" + contexto.lexema + "'");
+        return -1;
+    }
+
+    private static void quitarBlancosFinales(StringBuilder lexema) {
+        while (lexema.length() > 0 && Character.isWhitespace(lexema.charAt(lexema.length() - 1))) {
+            lexema.setLength(lexema.length() - 1);
+        }
+    }
+}
