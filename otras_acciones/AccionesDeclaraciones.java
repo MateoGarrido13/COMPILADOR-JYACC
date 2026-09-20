@@ -40,13 +40,11 @@ public class AccionesDeclaraciones {
         tabla.registrar(Reglas.LISTA_PARAMETROS_FORMALES, AccionesSemanticas::concatenarLista);
 
         tabla.registrar(Reglas.DECL_FUNCION, ctx -> {
-            v.verificarRetorno(entorno.getFuncionActual(), ctx.getLinea());
             entorno.cerrarFuncion();
             return ctx.valor(0);
         });
 
         tabla.registrar(Reglas.DECL_METODO, ctx -> {
-            v.verificarRetorno(entorno.getFuncionActual(), ctx.getLinea());
             entorno.cerrarFuncion();
             return ctx.valor(0);
         });
@@ -90,9 +88,6 @@ public class AccionesDeclaraciones {
         tabla.registrar(Reglas.CONDICION, ctx -> ctx.valor(0));
         tabla.registrar(Reglas.SENTENCIA_POUT, ctx -> ctx.valor(0));
 
-        tabla.registrar(Reglas.SENTENCIA_RET, ctx -> {
-            entorno.registrarRetorno();
-            return ctx.valor(0);
-        });
+        tabla.registrar(Reglas.SENTENCIA_RET, ctx -> ctx.valor(0));
     }
 }

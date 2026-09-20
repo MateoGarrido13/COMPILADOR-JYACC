@@ -1,0 +1,15 @@
+{{ TP1: formatos de doublef }}
+{{ parte entera con/sin decimal, decimal con/sin entera, con/sin exponente, exp + y - }}
+prog
+doublef a, b, c, d, e, f, g, h;
+begin
+    a := 12.34;
+    b := 12.;
+    c := .34;
+    d := 12.34d10;
+    e := 12.34d+10;
+    f := 12.34d-10;
+    g := 12.d+2;
+    h := .5d-1;
+    pout({formatos});
+end

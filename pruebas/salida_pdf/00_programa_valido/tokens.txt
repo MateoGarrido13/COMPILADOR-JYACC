@@ -1,0 +1,198 @@
+Tokens detectados (197):
+Identificador prog
+Palabra reservada ulongint
+Identificador x
+,
+Identificador y
+,
+Identificador w
+;
+Palabra reservada doublef
+Identificador z
+;
+Palabra reservada typedef
+Identificador pares
+=
+[
+Constante ulongint 2$ul
+,
+Constante ulongint 4$ul
+,
+Constante ulongint 6$ul
+]
+;
+Identificador pares
+Identificador p1
+,
+Identificador p2
+;
+Palabra reservada class
+Identificador base
+Palabra reservada begin
+Palabra reservada ulongint
+Identificador a
+;
+Palabra reservada ulongint
+Identificador m
+(
+Palabra reservada ulongint
+Identificador pa
+)
+Palabra reservada begin
+Palabra reservada ret
+(
+Identificador pa
+)
+;
+Palabra reservada end
+;
+Palabra reservada end
+;
+Palabra reservada class
+Identificador hija
+Palabra reservada begin
+Palabra reservada ulongint
+Identificador b
+;
+Palabra reservada extends
+Identificador base
+;
+Palabra reservada end
+;
+Palabra reservada ulongint
+Palabra reservada function
+Identificador foo
+(
+Palabra reservada ulongint
+Identificador n
+,
+Palabra reservada doublef
+Identificador d
+)
+Palabra reservada begin
+Palabra reservada ret
+(
+Identificador n
+)
+;
+Palabra reservada end
+;
+Palabra reservada begin
+Identificador x
+Operador de asignacion :=
+Constante ulongint 0$ul
+;
+Identificador y
+Operador de asignacion :=
+Constante ulongint 4294967295$ul
+;
+Identificador z
+Operador de asignacion :=
+Constante doublef 1.0
+;
+Identificador z
+Operador de asignacion :=
+Constante doublef .6d-1
+;
+Identificador x
+Operador de asignacion :=
+Identificador y
+=
+(
+Constante ulongint 2$ul
+)
+;
+Identificador x
+Operador de asignacion :=
+Identificador y
+=
+(
+Identificador x
++
+Identificador y
+)
+*
+Identificador w
+=
+(
+Constante ulongint 1$ul
+)
+;
+Palabra reservada if
+(
+Identificador x
+=
+(
+Constante ulongint 1$ul
+)
+Comparador ==
+Constante ulongint 1$ul
+)
+Palabra reservada pout
+(
+Cadena {ok}
+)
+;
+Palabra reservada end_if
+;
+Identificador z
+Operador de asignacion :=
+Palabra reservada todf
+(
+Identificador x
+)
+;
+Identificador x
+Operador de asignacion :=
+Identificador foo
+(
+Identificador n
+=
+Constante ulongint 1$ul
+,
+Constante doublef 2.5
+)
+[
+Constante ulongint 1$ul
+,
+Constante ulongint 2$ul
+]
+;
+Identificador p1
+Operador de asignacion :=
+Constante ulongint 2$ul
+;
+Palabra reservada repeat
+Identificador x
+Operador de asignacion :=
+Identificador x
++
+Constante ulongint 1$ul
+;
+Palabra reservada while
+(
+Identificador x
+<
+Constante ulongint 3$ul
+)
+;
+Palabra reservada if
+(
+Identificador x
+>
+Constante ulongint 0$ul
+)
+Palabra reservada pout
+(
+Cadena {hola}
+)
+;
+Palabra reservada else
+Palabra reservada pout
+(
+Identificador x
+)
+;
+Palabra reservada end_if
+;
+Palabra reservada end

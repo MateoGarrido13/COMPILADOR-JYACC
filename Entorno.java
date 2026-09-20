@@ -27,7 +27,6 @@ public class Entorno {
         public final String tipoRetorno;
         public final List<Parametro> parametros = new ArrayList<>();
         public final int linea;
-        public boolean tuvoRetorno = false;
 
         public FuncionDeclarada(String nombre, String tipoRetorno, int linea) {
             this.nombre = nombre;
@@ -137,12 +136,6 @@ public class Entorno {
         funcionActual.parametros.add(new Parametro(nombre, tipo));
         if (id != null) {
             id.tipoDato = tipo;
-        }
-    }
-
-    public void registrarRetorno() {
-        if (funcionActual != null) {
-            funcionActual.tuvoRetorno = true;
         }
     }
 

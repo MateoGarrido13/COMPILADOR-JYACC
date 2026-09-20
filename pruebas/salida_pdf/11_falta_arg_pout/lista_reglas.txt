@@ -1,0 +1,6 @@
+Lista de reglas reducidas (5):
+1. NOMBRE_PROGRAMA - Nombre de programa
+2. ERR_FALTA_ARGUMENTO_POUT - Falta argumento en sentencia pout
+3. LISTA_SENTENCIAS - Lista de sentencias
+4. BLOQUE_EJECUTABLE - Bloque BEGIN - END
+5. PROGRAMA - Programa

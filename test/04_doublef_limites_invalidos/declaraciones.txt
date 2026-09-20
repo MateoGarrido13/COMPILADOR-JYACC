@@ -1,0 +1,11 @@
+Variables declaradas (4):
+  a : doublef
+  b : doublef
+  c : doublef
+  d : doublef
+
+Funciones declaradas (0):
+
+Clases declaradas (0):
+
+Tipos enumerados (0):

@@ -1,0 +1,27 @@
+Tokens detectados (26):
+Identificador prog
+Palabra reservada class
+Identificador base
+Palabra reservada begin
+Palabra reservada ulongint
+Identificador a
+;
+Palabra reservada end
+;
+Palabra reservada class
+Identificador hija
+Palabra reservada begin
+Palabra reservada extends
+;
+Palabra reservada ulongint
+Identificador b
+;
+Palabra reservada end
+;
+Palabra reservada begin
+Palabra reservada pout
+(
+Cadena {ok}
+)
+;
+Palabra reservada end

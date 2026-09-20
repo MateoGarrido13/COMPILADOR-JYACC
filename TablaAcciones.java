@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class TablaAcciones {
 
-    private final EnumMap<Reglas, AccionSemantica> acciones = new EnumMap<>(Reglas.class);
+    private final EnumMap<Reglas, AccionRegla> acciones = new EnumMap<>(Reglas.class);
     private final List<Reglas> listaReglas = new ArrayList<>();
     private final Reporte reporte;
 
@@ -20,7 +20,7 @@ public class TablaAcciones {
         this.reporte = reporte;
     }
 
-    public void registrar(Reglas regla, AccionSemantica accion) {
+    public void registrar(Reglas regla, AccionRegla accion) {
         acciones.put(regla, accion);
     }
 
@@ -39,7 +39,7 @@ public class TablaAcciones {
             reporte.estructura(linea, regla.getDescripcion());
         }
 
-        AccionSemantica accion = acciones.get(regla);
+        AccionRegla accion = acciones.get(regla);
         if (accion == null) {
             if (regla.esError()) {
                 reporte.error(linea, regla.getDescripcion());

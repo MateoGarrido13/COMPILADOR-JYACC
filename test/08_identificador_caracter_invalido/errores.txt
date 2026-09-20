@@ -1,0 +1,10 @@
+Errores: 8 - Warnings: 0
+
+Linea 3: Error: Lexema no reconocido ''
+Linea 3: Error: Lexema no reconocido ''
+Linea 3: Error: Falta de ',' en declaracion de variables
+Linea 3: Error: Falta de ',' en declaracion de variables
+Linea 5: Error: Lexema no reconocido ''
+Linea 5: Error: Sentencia mal formada
+Linea 6: Error: Lexema no reconocido ''
+Linea 6: Error: Sentencia mal formada

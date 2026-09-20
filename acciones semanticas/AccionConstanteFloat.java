@@ -8,9 +8,13 @@ public class AccionConstanteFloat implements AccionSemantica {
     @Override
     public int ejecutar() {
         String lexema = contexto.lexema.toString();
+        if (".".equals(lexema)) {
+            Globals.yylval = null;
+            return '.';
+        }
         String normalizado = lexema.toLowerCase();
 
-        if (!normalizado.matches("[+-]?(([0-9]+\\.[0-9]*|\\.[0-9]+)([dD][+-]?[0-9]+)?)")) {
+        if (!normalizado.matches("[+-]?(([0-9]+)?\\.[0-9]+([dD][+-]?[0-9]+)?)")) {
             contexto.reporte.error(contexto.fuente.linea(),
                 "Constante doublef invalida '" + lexema + "'");
             return -1;

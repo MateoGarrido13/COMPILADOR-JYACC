@@ -1,0 +1,15 @@
+Tokens detectados (14):
+Identificador prog
+Palabra reservada typedef
+Identificador color
+=
+[
+]
+;
+Palabra reservada begin
+Palabra reservada pout
+(
+Cadena {ok}
+)
+;
+Palabra reservada end

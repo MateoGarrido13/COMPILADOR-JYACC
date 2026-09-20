@@ -1,0 +1,7 @@
+Errores: 1 - Warnings: 0
+
+Linea 8: Error: Lexema no reconocido '{{ este comentario nunca se cierra
+    x := 0$ul;
+    pout({mal});
+end
+'

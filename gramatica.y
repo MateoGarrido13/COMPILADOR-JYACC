@@ -19,7 +19,7 @@
     Gramatica recursiva a derecha. Las reducciones invocan a acciones.ejecutar(Reglas.X).
     TablaAcciones resuelve el codigo, registra la reduccion e informa la estructura.
     Las producciones ERR_* cubren el PDF de errores a detectar del grupo; Verificaciones
-    aplica lo que requiere contexto (RET ausente, enum vacio, orden ausente).
+    aplica lo que requiere contexto (enum vacio, orden ausente).
 
    ========================================================================== */
 
@@ -121,8 +121,6 @@ declaracion_variables
     | tipo lista_variables
         { acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA);
           $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_VARIABLES, $1.obj, $2.obj)); }
-    | lista_variables ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_TIPO_VARIABLES, $1.obj)); }
     | tipo error ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_LISTA_VARIABLES)); }
     ;
@@ -479,11 +477,19 @@ invocacion_funcion
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, $1.obj, $3.obj)); }
     ;
 
+/* ID '=' expresion solo aca (regla 19). Fuera de la invocacion sigue valiendo
+   el tema 17: ID '=' '(' expresion ')'. */
 lista_parametros_reales
-    : expresion ',' lista_parametros_reales
+    : parametro_real ',' lista_parametros_reales
         { $$ = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_REALES, $1.obj, $3.obj)); }
-    | expresion
+    | parametro_real
         { $$ = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_REALES, $1.obj)); }
+    ;
+
+parametro_real
+    : ID '=' expresion
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.PARAMETRO_REAL_NOMBRADO, $1.obj, $3.obj)); }
+    | expresion
     ;
 
 lista_orden_evaluacion

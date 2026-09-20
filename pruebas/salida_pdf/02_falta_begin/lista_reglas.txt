@@ -1,0 +1,11 @@
+Lista de reglas reducidas (10):
+1. NOMBRE_PROGRAMA - Nombre de programa
+2. TIPO - Tipo de dato
+3. LISTA_VARIABLES - Lista de variables
+4. DECL_VARIABLES - Declaracion de variables
+5. FACTOR_CONSTANTE - Factor constante
+6. ASIGNACION - Asignacion
+7. LISTA_SENTENCIAS - Lista de sentencias
+8. LISTA_SENTENCIAS - Lista de sentencias
+9. ERR_FALTA_BEGIN - Falta de delimitador BEGIN de sentencias ejecutables
+10. PROGRAMA - Programa

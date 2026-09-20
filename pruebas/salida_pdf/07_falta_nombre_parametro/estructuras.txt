@@ -1,0 +1,6 @@
+Estructuras sintacticas detectadas:
+Linea 4: Sentencia RET
+Linea 5: Declaracion de funcion
+Linea 7: Sentencia POUT
+Linea 8: Bloque BEGIN - END
+Linea 8: Programa

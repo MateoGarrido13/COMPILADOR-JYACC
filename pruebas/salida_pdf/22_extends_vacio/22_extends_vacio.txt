@@ -1,0 +1,13 @@
+prog
+class base
+begin
+    ulongint a;
+end;
+class hija
+begin
+    extends;
+    ulongint b;
+end;
+begin
+    pout({ok});
+end

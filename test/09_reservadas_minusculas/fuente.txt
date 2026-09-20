@@ -1,0 +1,16 @@
+{{ TP1: palabras reservadas en minusculas }}
+prog
+ulongint x;
+doublef z;
+begin
+    x := 1$ul;
+    z := todf(x);
+    if (x == 1$ul)
+        pout({ok});
+    else
+        pout({no});
+    end_if;
+    repeat
+        x := x + 1$ul;
+    while (x < 3$ul);
+end

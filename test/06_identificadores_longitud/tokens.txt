@@ -1,0 +1,28 @@
+Tokens detectados (27):
+Identificador prog
+Palabra reservada ulongint
+Identificador corto
+,
+Identificador abcdefghij1234567890ab
+,
+Identificador abcdefghij1234567890ab
+;
+Palabra reservada begin
+Identificador corto
+Operador de asignacion :=
+Constante ulongint 1$ul
+;
+Identificador abcdefghij1234567890ab
+Operador de asignacion :=
+Constante ulongint 2$ul
+;
+Identificador abcdefghij1234567890ab
+Operador de asignacion :=
+Constante ulongint 3$ul
+;
+Palabra reservada pout
+(
+Cadena {ids}
+)
+;
+Palabra reservada end

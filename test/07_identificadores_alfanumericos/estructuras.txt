@@ -1,0 +1,9 @@
+Estructuras sintacticas detectadas:
+Linea 3: Declaracion de variables
+Linea 5: Asignacion
+Linea 6: Asignacion
+Linea 7: Asignacion
+Linea 8: Asignacion
+Linea 9: Sentencia POUT
+Linea 10: Bloque BEGIN - END
+Linea 10: Programa

@@ -1,0 +1,3 @@
+Estructuras sintacticas detectadas:
+Linea 3: Declaracion de variables
+Linea 5: Asignacion

@@ -1,0 +1,4 @@
+Estructuras sintacticas detectadas:
+Linea 2: Declaracion de variables
+Linea 3: Asignacion
+Linea 4: Programa

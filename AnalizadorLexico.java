@@ -38,27 +38,65 @@ public class AnalizadorLexico {
     private int recorrerMatriz(ContextoLexico contexto) {
         while (true) {
             contexto.caracter = fuente.leer();
-            if (contexto.caracter == 0 || (contexto.caracter == '$' && contexto.estado == 0)) { // fin de archivo
+            if (contexto.caracter == 0 || (contexto.caracter == '$' && contexto.estado == 0)) {
                 if (contexto.lexema.length() == 0) return 0;
+                int sem = MatrizTransiciones.semCierre(contexto.estado);
+                if (sem >= 0) {
+                    quitarBlancosFinales(contexto.lexema);
+                    contexto.accion = sem;
+                    return ejecutarAccion(contexto);
+                }
                 return errorLexico(contexto);
             }
 
-            int columna = ContextoLexico.columna(contexto.caracter, contexto.estado);
-            contexto.estadoAnterior = contexto.estado;                  //Guardo estado antes de avanzar
+            int columna = contexto.columnaActual();
+            contexto.estadoAnterior = contexto.estado;
             int siguiente = MatrizTransiciones.MATRIZ_ESTADOS[contexto.estado][columna];
             if (siguiente == MatrizTransiciones.ERROR) {
                 return errorLexico(contexto);
             }
-            if (!(contexto.estado == 0 && Character.isWhitespace(contexto.caracter))) {
-                contexto.lexema.append(contexto.caracter);              // Caracter blanco, lexema formado, no se agrega al lexema 
+
+            boolean lookahead = esLookahead(contexto.estado, contexto.caracter, siguiente);
+            if (!lookahead && !(contexto.estado == 0 && Character.isWhitespace(contexto.caracter))) {
+                contexto.lexema.append(contexto.caracter);
             }
-            contexto.estado = siguiente; 
-            if (siguiente == MatrizTransiciones.ESTADO_F || siguiente == MatrizTransiciones.ERROR) { // Agregar Estado final o Error(-1)
+            if (lookahead) {
+                fuente.retroceder(contexto.caracter);
+            }
+
+            contexto.estado = siguiente;
+            if (siguiente == MatrizTransiciones.ESTADO_F) {
                 quitarBlancosFinales(contexto.lexema);
-                contexto.accion = MatrizTransiciones.MATRIZ_SEMANTICAS[contexto.estadoAnterior][columna]; 
-                return ejecutarAccion(contexto); 
+                contexto.accion = MatrizTransiciones.MATRIZ_SEMANTICAS[contexto.estadoAnterior][columna];
+                return ejecutarAccion(contexto);
             }
         }
+    }
+
+    /**
+     * El caracter cerro el token pero no forma parte de el: hay que devolverlo
+     * a la fuente para el proximo yylex.
+     */
+    private static boolean esLookahead(int estado, char caracter, int siguiente) {
+        if (siguiente != MatrizTransiciones.ESTADO_F) {
+            return false;
+        }
+        if (Character.isWhitespace(caracter)) {
+            return false;
+        }
+        if (caracter == '=' && (estado == 1 || estado == 2 || estado == 3 || estado == 4)) {
+            return false;
+        }
+        if (estado == 0) {
+            return false;
+        }
+        if ((estado == 6 || estado == 8) && caracter == '}') {
+            return false;
+        }
+        if ((estado == 5 || estado == 6) && caracter == '\n') {
+            return false;
+        }
+        return true;
     }
 
     private int ejecutarAccion(ContextoLexico contexto) {

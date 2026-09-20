@@ -12,9 +12,9 @@ public class AccionEstructura implements AccionSemantica {
             Globals.yylval = null;
             return Globals.ASIGNACION;
         }
-        if (":".equals(lexema)) {
+        if (":".equals(lexema) || "=".equals(lexema)) {
             Globals.yylval = null;
-            return ':';
+            return lexema.charAt(0);
         }
         contexto.reporte.error(contexto.fuente.linea(),
                 "Estructura invalida '" + contexto.lexema + "'");

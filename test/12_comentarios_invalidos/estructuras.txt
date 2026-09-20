@@ -1,0 +1,2 @@
+Estructuras sintacticas detectadas:
+Linea 3: Declaracion de variables

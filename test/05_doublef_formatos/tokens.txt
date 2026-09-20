@@ -1,0 +1,59 @@
+Tokens detectados (58):
+Identificador prog
+Palabra reservada doublef
+Identificador a
+,
+Identificador b
+,
+Identificador c
+,
+Identificador d
+,
+Identificador e
+,
+Identificador f
+,
+Identificador g
+,
+Identificador h
+;
+Palabra reservada begin
+Identificador a
+Operador de asignacion :=
+Constante doublef 12.34
+;
+Identificador b
+Operador de asignacion :=
+Constante doublef 12.
+;
+Identificador c
+Operador de asignacion :=
+Constante doublef .34
+;
+Identificador d
+Operador de asignacion :=
+Constante doublef 12.34d10
+;
+Identificador e
+Operador de asignacion :=
+Constante doublef 12.34d+10
+;
+Identificador f
+Operador de asignacion :=
+Constante doublef 12.34d-10
+;
+Identificador g
+Operador de asignacion :=
+Constante doublef 12.
+Identificador d
+;
+Identificador h
+Operador de asignacion :=
+Constante doublef .5d-1
+;
+Palabra reservada pout
+(
+Cadena {formatos}
+)
+;
+Palabra reservada end

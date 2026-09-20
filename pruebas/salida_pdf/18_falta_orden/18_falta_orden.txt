@@ -1,8 +1,9 @@
 prog
+ulongint x;
 ulongint function foo(ulongint n)
 begin
-    pout({sin ret});
+    ret(n);
 end;
 begin
-    pout({ok});
+    x := foo(1$ul);
 end

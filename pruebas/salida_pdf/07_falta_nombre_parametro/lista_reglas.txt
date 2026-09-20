@@ -1,0 +1,16 @@
+Lista de reglas reducidas (15):
+1. NOMBRE_PROGRAMA - Nombre de programa
+2. TIPO - Tipo de dato
+3. INICIO_FUNCION - Encabezado de funcion
+4. TIPO - Tipo de dato
+5. ERR_FALTA_NOMBRE_PARAMETRO - Falta de nombre de parametro formal en declaracion de funcion
+6. LISTA_PARAMETROS_FORMALES - Lista de parametros formales
+7. FACTOR_CONSTANTE - Factor constante
+8. SENTENCIA_RET - Sentencia RET
+9. LISTA_SENTENCIAS - Lista de sentencias
+10. DECL_FUNCION - Declaracion de funcion
+11. LISTA_SENTENCIAS - Lista de sentencias
+12. SENTENCIA_POUT - Sentencia POUT
+13. LISTA_SENTENCIAS - Lista de sentencias
+14. BLOQUE_EJECUTABLE - Bloque BEGIN - END
+15. PROGRAMA - Programa

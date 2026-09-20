@@ -1,0 +1,10 @@
+Errores: 8 - Warnings: 0
+
+Linea 6: Error: Constante doublef fuera de rango '2.2d-308'
+Linea 6: Error: Asignacion mal formada
+Linea 7: Error: Constante doublef fuera de rango '1.8d+308'
+Linea 7: Error: Asignacion mal formada
+Linea 8: Error: Constante doublef fuera de rango '-2.2d-308'
+Linea 8: Error: Asignacion mal formada
+Linea 9: Error: Constante doublef fuera de rango '-1.8d+308'
+Linea 9: Error: Asignacion mal formada

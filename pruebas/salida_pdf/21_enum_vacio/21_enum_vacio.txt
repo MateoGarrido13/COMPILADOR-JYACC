@@ -1,6 +1,5 @@
 prog
-ulongint a;
-x, y;
+typedef color = [];
 begin
     pout({ok});
 end

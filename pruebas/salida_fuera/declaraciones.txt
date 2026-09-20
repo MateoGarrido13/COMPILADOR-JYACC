@@ -1,0 +1,9 @@
+Variables declaradas (2):
+  x : ulongint
+  n : ulongint
+
+Funciones declaradas (0):
+
+Clases declaradas (0):
+
+Tipos enumerados (0):

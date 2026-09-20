@@ -1,0 +1,23 @@
+Tokens detectados (22):
+Identificador prog
+Palabra reservada ulongint
+Palabra reservada function
+Identificador foo
+(
+Palabra reservada ulongint
+)
+Palabra reservada begin
+Palabra reservada ret
+(
+Constante ulongint 1$ul
+)
+;
+Palabra reservada end
+;
+Palabra reservada begin
+Palabra reservada pout
+(
+Cadena {ok}
+)
+;
+Palabra reservada end

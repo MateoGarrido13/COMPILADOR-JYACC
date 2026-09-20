@@ -1,0 +1,8 @@
+Tokens detectados (7):
+Identificador prog
+Palabra reservada begin
+Palabra reservada pout
+(
+)
+;
+Palabra reservada end

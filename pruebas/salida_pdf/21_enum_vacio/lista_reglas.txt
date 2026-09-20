@@ -1,0 +1,8 @@
+Lista de reglas reducidas (7):
+1. NOMBRE_PROGRAMA - Nombre de programa
+2. ERR_FALTA_VALORES_ENUMERADO - Ausencia de valores para la enumeracion
+3. LISTA_SENTENCIAS - Lista de sentencias
+4. SENTENCIA_POUT - Sentencia POUT
+5. LISTA_SENTENCIAS - Lista de sentencias
+6. BLOQUE_EJECUTABLE - Bloque BEGIN - END
+7. PROGRAMA - Programa

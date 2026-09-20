@@ -1,0 +1,26 @@
+Tokens detectados (25):
+Identificador prog
+Palabra reservada ulongint
+Identificador x
+;
+Palabra reservada begin
+Identificador x
+Operador de asignacion :=
+Constante ulongint 0$ul
+;
+Palabra reservada pout
+(
+Cadena {hola}
+)
+;
+Palabra reservada pout
+(
+Cadena {texto con espacios 123}
+)
+;
+Palabra reservada pout
+(
+Cadena {simbolos = + - * /}
+)
+;
+Palabra reservada end

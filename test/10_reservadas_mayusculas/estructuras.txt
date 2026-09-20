@@ -1,0 +1,13 @@
+Estructuras sintacticas detectadas:
+Linea 3: Declaracion de variables
+Linea 4: Declaracion de variables
+Linea 6: Asignacion
+Linea 7: Conversion explicita todf
+Linea 7: Asignacion
+Linea 9: Sentencia POUT
+Linea 11: Sentencia POUT
+Linea 12: Sentencia IF con ELSE
+Linea 14: Asignacion
+Linea 15: Sentencia REPEAT - WHILE
+Linea 16: Bloque BEGIN - END
+Linea 16: Programa

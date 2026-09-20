@@ -1,0 +1,13 @@
+{{ TP1: comentario multilinea bien escrito, una linea }}
+prog
+ulongint x;
+{{
+    comentario
+    de varias
+    lineas
+}}
+begin
+    {{ otro comentario embebido }}
+    x := 0$ul;
+    pout({ok});
+end

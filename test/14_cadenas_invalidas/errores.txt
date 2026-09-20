@@ -1,0 +1,6 @@
+Errores: 4 - Warnings: 0
+
+Linea 6: Error: Cadena no cerrada '{cadena'
+Linea 7: Error: Lexema no reconocido ''
+Linea 7: Error: Sentencia mal formada
+Linea 8: Error: Cadena no cerrada '{sin cierre'

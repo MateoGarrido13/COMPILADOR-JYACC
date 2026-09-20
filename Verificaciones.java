@@ -5,7 +5,7 @@ import java.util.List;
  * consulta y, si hace falta, lee el Entorno.
  *
  * - reportar: canal unico de las producciones ERR_*
- * - tema 21: funcion sin RET
+ * - tema 17: asignacion en expresion anidada
  * - tema 19: lista de orden de evaluacion ausente o vacia
  * - tema 23: enumeracion sin valores
  */
@@ -30,19 +30,30 @@ public class Verificaciones {
         reporte.error(linea, regla.getDescripcion());
     }
 
-    /** Tema 21: se invoca al reducir DECL_FUNCION / DECL_METODO, antes de cerrar el entorno. */
-    public void verificarRetorno(Entorno.FuncionDeclarada funcion, int linea) {
-        if (funcion == null || funcion.tuvoRetorno) {
-            return;
+    /** Tema 17: la RHS de ID = (expr) no puede contener otra asignacion. */
+    public void verificarAsignacionAnidada(ExpresionDiferida expresion, int linea) {
+        if (expresion != null && expresion.contieneAsignacion()) {
+            reportar(Reglas.ERR_ASIGNACION_ANIDADA, linea);
         }
-        int lineaError = funcion.linea != 0 ? funcion.linea : linea;
-        reportar(Reglas.ERR_FALTA_RETORNO, lineaError);
     }
 
     /** Tema 19: falta [orden] o la lista vino vacia. */
     public void verificarOrdenEvaluacion(List<Object> constantes, int linea) {
         if (constantes == null || constantes.isEmpty()) {
             reportar(Reglas.ERR_FALTA_ORDEN_EVALUACION, linea);
+        }
+    }
+
+    /** TP2 consideracion c): el signo unario puede sacar la constante de rango. */
+    public void verificarRangoConstante(EntradaTabla constante, int linea) {
+        if (constante == null || constante.lexema == null) {
+            return;
+        }
+        String tipo = constante.tipoDato != null
+                ? constante.tipoDato
+                : Tipos.tipoDeConstante(constante.lexema);
+        if (tipo != null && !Tipos.rangoValido(constante.lexema, tipo)) {
+            reporte.error(linea, "Constante fuera de rango '" + constante.lexema + "'");
         }
     }
 

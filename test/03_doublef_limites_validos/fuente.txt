@@ -1,0 +1,13 @@
+{{ TP1: doublef primer y ultimo valor DENTRO del rango IEEE-754 64 bits }}
+{{ minimo normal: 2.2250738585072014d-308 ; maximo: 1.7976931348623157d+308 }}
+{{ tambien se cubre el cero y los mismos extremos con signo negativo }}
+prog
+doublef a, b, c, d, z;
+begin
+    z := 0.0;
+    a := 2.2250738585072014d-308;
+    b := 1.7976931348623157d+308;
+    c := -2.2250738585072014d-308;
+    d := -1.7976931348623157d+308;
+    pout({ok});
+end

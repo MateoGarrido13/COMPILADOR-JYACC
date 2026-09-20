@@ -1,0 +1,9 @@
+{{ TP1: cadenas mal escritas: salto de linea interno y cadena sin cerrar }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    pout({cadena
+con salto});
+    pout({sin cierre
+end

@@ -1,0 +1,23 @@
+Variables declaradas (6):
+  x : ulongint
+  y : ulongint
+  w : ulongint
+  z : doublef
+  p1 : pares
+  p2 : pares
+
+Funciones declaradas (1):
+  ulongint foo(ulongint n, doublef d) - linea 23
+
+Clases declaradas (2):
+  base - linea 8
+    atributos: [a]
+    metodos: [m]
+    hereda de: []
+  hija - linea 17
+    atributos: [b]
+    metodos: []
+    hereda de: [base]
+
+Tipos enumerados (1):
+  pares [ulongint] = [2$ul, 4$ul, 6$ul]

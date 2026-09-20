@@ -1,7 +1,7 @@
 import java.util.List;
 
 /**
- * Acciones que arman ExpresionDiferida y aplican el chequeo del tema 19.
+ * Acciones que arman ExpresionDiferida y aplican los chequeos de los temas 17 y 19.
  */
 public class AccionesExpresiones {
 
@@ -17,8 +17,11 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.FACTOR_CONSTANTE, ctx ->
                 ExpresionDiferida.deOperando(entorno.tiparConstante(ctx.entrada(0))));
 
-        tabla.registrar(Reglas.FACTOR_CONSTANTE_NEGATIVA, ctx ->
-                ExpresionDiferida.deOperando(entorno.aplicarSignoNegativo(ctx.entrada(0), ctx.getLinea())));
+        tabla.registrar(Reglas.FACTOR_CONSTANTE_NEGATIVA, ctx -> {
+            EntradaTabla constante = entorno.aplicarSignoNegativo(ctx.entrada(0), ctx.getLinea());
+            v.verificarRangoConstante(constante, ctx.getLinea());
+            return ExpresionDiferida.deOperando(constante);
+        });
 
         tabla.registrar(Reglas.FACTOR_CADENA, ctx ->
                 ExpresionDiferida.deOperando(ctx.entrada(0)));
@@ -28,6 +31,7 @@ public class AccionesExpresiones {
             if (expresion == null) {
                 expresion = new ExpresionDiferida();
             }
+            v.verificarAsignacionAnidada(expresion, ctx.getLinea());
             expresion.marcarAsignacion();
             return expresion;
         });
@@ -39,6 +43,8 @@ public class AccionesExpresiones {
             v.verificarOrdenEvaluacion(ordenEvaluacion, ctx.getLinea());
             return ExpresionDiferida.deOperando(ctx.entrada(0));
         });
+
+        tabla.registrar(Reglas.PARAMETRO_REAL_NOMBRADO, ctx -> ctx.expresion(1));
 
         tabla.registrar(Reglas.LISTA_PARAMETROS_REALES, AccionesSemanticas::concatenarLista);
         tabla.registrar(Reglas.LISTA_ORDEN_EVALUACION, AccionesSemanticas::concatenarLista);

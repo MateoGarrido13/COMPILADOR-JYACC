@@ -58,6 +58,7 @@ public enum Reglas {
     CONVERSION_TODF("Conversion explicita todf", true),
 
     INVOCACION_FUNCION("Invocacion a funcion", true),
+    PARAMETRO_REAL_NOMBRADO("Parametro real con asignacion a formal", false),
     LISTA_PARAMETROS_REALES("Lista de parametros reales", false),
     LISTA_ORDEN_EVALUACION("Lista de orden de evaluacion", false),
     ACCESO_ATRIBUTO("Acceso a atributo", true),
@@ -88,9 +89,8 @@ public enum Reglas {
     ERR_FALTA_END_IF("Falta de end_if", false),
     ERR_FALTA_WHILE("Falta while", false),
     ERR_ASIG_DONDE_IGUAL("Uso de ':=' donde debe usarse '='", false),
+    ERR_ASIGNACION_ANIDADA("Anidamiento de asignacion en expresion", false),
     ERR_FALTA_ORDEN_EVALUACION("Falta del orden de evaluacion y asignacion de parametros", false),
-    ERR_FALTA_RETORNO("Ausencia de retorno en una funcion", false),
-    ERR_FALTA_TIPO_VARIABLES("Falta de tipo en la declaracion de variables", false),
     ERR_FALTA_VALORES_ENUMERADO("Ausencia de valores para la enumeracion", false),
     ERR_FALTA_LISTA_EXTENDS("Ausencia de nombre o lista de clases despues de extends", false);
 

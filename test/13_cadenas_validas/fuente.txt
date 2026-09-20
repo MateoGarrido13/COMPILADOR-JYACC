@@ -1,0 +1,9 @@
+{{ TP1: cadenas de una linea bien escritas, delimitadas por llaves }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    pout({hola});
+    pout({texto con espacios 123});
+    pout({simbolos = + - * /});
+end

@@ -1,0 +1,4 @@
+prog
+ulongint x;
+    x := 1$ul;
+end

@@ -1,0 +1,20 @@
+Lista de reglas reducidas (19):
+1. NOMBRE_PROGRAMA - Nombre de programa
+2. TIPO - Tipo de dato
+3. LISTA_VARIABLES - Lista de variables
+4. DECL_VARIABLES - Declaracion de variables
+5. LISTA_SENTENCIAS - Lista de sentencias
+6. FACTOR_CONSTANTE - Factor constante
+7. ASIGNACION - Asignacion
+8. FACTOR_ID - Factor identificador
+9. FACTOR_CONSTANTE - Factor constante
+10. RESTA - Resta
+11. ASIGNACION - Asignacion
+12. FACTOR_ID - Factor identificador
+13. FACTOR_CONSTANTE - Factor constante
+14. CONDICION - Condicion
+15. ERR_FALTA_WHILE - Falta while
+16. LISTA_SENTENCIAS - Lista de sentencias
+17. LISTA_SENTENCIAS - Lista de sentencias
+18. BLOQUE_EJECUTABLE - Bloque BEGIN - END
+19. PROGRAMA - Programa

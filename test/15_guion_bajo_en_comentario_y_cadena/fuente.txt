@@ -1,0 +1,7 @@
+{{ comentario con guion_bajo interno }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    pout({cadena_con_guion});
+end
