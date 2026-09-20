@@ -64,16 +64,35 @@ public enum Reglas {
     ACCESO_ATRIBUTO_PREFIJADO("Acceso a atributo con prefijo de clase", true),
     INVOCACION_METODO("Invocacion a metodo", true),
 
-    // ===== Producciones de error =====
+    // ===== Producciones de error (PDF de errores a detectar) =====
     ERR_SENTENCIA("Sentencia mal formada", false),
-    ERR_FALTA_PUNTO_Y_COMA("Falta ';' al final de la sentencia", false),
-    ERR_CONDICION_SIN_CIERRE("Falta parentesis de cierre para la condicion", false),
-    ERR_CONDICION_INVALIDA("Condicion mal formada", false),
+    ERR_DECLARACION_INVALIDA("Declaracion mal formada", false),
     ERR_LISTA_VARIABLES("Lista de variables mal formada", false),
     ERR_ASIGNACION_INVALIDA("Asignacion mal formada", false),
-    ERR_FALTA_ORDEN_EVALUACION("Falta la lista de orden de evaluacion en la invocacion", false),
-    ERR_BLOQUE_SIN_END("Falta END de cierre del bloque", false),
-    ERR_DECLARACION_INVALIDA("Declaracion mal formada", false);
+    ERR_CONDICION_INVALIDA("Condicion mal formada", false),
+
+    ERR_FALTA_NOMBRE_PROGRAMA("Falta de nombre de programa", false),
+    ERR_FALTA_BEGIN("Falta de delimitador BEGIN de sentencias ejecutables", false),
+    ERR_BLOQUE_SIN_END("Falta de delimitador END de sentencias ejecutables", false),
+    ERR_FALTA_PUNTO_Y_COMA("Falta ';' al final de la sentencia", false),
+    ERR_FALTA_NOMBRE_FUNCION("Falta de nombre en funcion", false),
+    ERR_FALTA_COMA_VARIABLES("Falta de ',' en declaracion de variables", false),
+    ERR_FALTA_NOMBRE_PARAMETRO("Falta de nombre de parametro formal en declaracion de funcion", false),
+    ERR_FALTA_TIPO_PARAMETRO("Falta de tipo de parametro formal en declaracion de funcion", false),
+    ERR_FALTA_OPERANDO("Falta de operando en expresion", false),
+    ERR_FALTA_OPERADOR("Falta de operador en expresion", false),
+    ERR_FALTA_ARGUMENTO_POUT("Falta argumento en sentencia pout", false),
+    ERR_FALTA_PARENTESIS_APERTURA("Falta parentesis de apertura para la condicion", false),
+    ERR_CONDICION_SIN_CIERRE("Falta parentesis de cierre para la condicion", false),
+    ERR_FALTA_CUERPO_ITERACION("Falta de cuerpo en iteracion", false),
+    ERR_FALTA_END_IF("Falta de end_if", false),
+    ERR_FALTA_WHILE("Falta while", false),
+    ERR_ASIG_DONDE_IGUAL("Uso de ':=' donde debe usarse '='", false),
+    ERR_FALTA_ORDEN_EVALUACION("Falta del orden de evaluacion y asignacion de parametros", false),
+    ERR_FALTA_RETORNO("Ausencia de retorno en una funcion", false),
+    ERR_FALTA_TIPO_VARIABLES("Falta de tipo en la declaracion de variables", false),
+    ERR_FALTA_VALORES_ENUMERADO("Ausencia de valores para la enumeracion", false),
+    ERR_FALTA_LISTA_EXTENDS("Ausencia de nombre o lista de clases despues de extends", false);
 
 //  descripcion con la que se informa la estructura sintactica detectada. 
     private final String descripcion;
