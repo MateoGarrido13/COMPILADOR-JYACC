@@ -72,7 +72,7 @@ public class RegistroTokens {
     }
 
     public static String contenido() {
-        StringBuilder texto = new StringBuilder("Tokens detectados (" + tokens.size() + "):\n");
+        StringBuilder texto = new StringBuilder("Tokens detectados por el Analizador Léxico:\n");
         for (String token : tokens) {
             texto.append(token).append("\n");
         }

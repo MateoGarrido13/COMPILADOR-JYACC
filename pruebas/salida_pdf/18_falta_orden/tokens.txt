@@ -1,4 +1,4 @@
-Tokens detectados (28):
+Tokens detectados por el Analizador Léxico:
 Identificador prog
 Palabra reservada ulongint
 Identificador x

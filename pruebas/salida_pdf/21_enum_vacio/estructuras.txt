@@ -1,4 +1,3 @@
-Estructuras sintacticas detectadas:
-Linea 4: Sentencia POUT
-Linea 5: Bloque BEGIN - END
-Linea 5: Programa
+Línea 4: Sentencia POUT
+Línea 5: Bloque BEGIN - END
+Línea 5: Programa

@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
@@ -25,7 +24,7 @@ public class Compilador {
     }
 
     public void compilar(String rutaFuente) {
-        System.out.println("Compilando: " + rutaFuente);
+        reporte.setEcoEnConsola(false);
         RegistroTokens.reiniciar();
 
         try {
@@ -42,21 +41,23 @@ public class Compilador {
         parser.yyparse();
         lexico.cerrar();
 
-        // Etapa 3: salidas del compilador.
-        Reporte.escribirArchivo(rutaFuente, "tokens.txt", RegistroTokens.contenido());
-        Reporte.escribirArchivo(rutaFuente, "estructuras.txt", reporte.contenidoEstructuras());
-        Reporte.escribirArchivo(rutaFuente, "errores.txt", reporte.contenidoErrores());
-        Reporte.escribirArchivo(rutaFuente, "tabla_simbolos.txt", tablaSimbolos.contenido());
-        Reporte.escribirArchivo(rutaFuente, "declaraciones.txt", entorno.contenidoDeclaraciones());
-        Reporte.escribirArchivo(rutaFuente, "lista_reglas.txt", tablaAcciones.contenidoListaReglas());
+        String tokens = RegistroTokens.contenido();
+        String estructuras = reporte.contenidoEstructuras();
+        String errores = reporte.contenidoErrores();
+        String tabla = tablaSimbolos.contenido();
 
-        System.out.println("Tokens detectados: " + RegistroTokens.getTokens().size());
-        System.out.println("Estructuras detectadas: " + reporte.getEstructuras().size());
-        System.out.println("Reglas reducidas: " + tablaAcciones.getListaReglas().size());
-        System.out.println("Errores: " + reporte.cantidadErrores()
-                + " - Warnings: " + reporte.cantidadWarnings());
-        System.out.println("Salidas escritas en: "
-                + new File(rutaFuente).getAbsoluteFile().getParent());
+        System.out.print(tokens);
+        System.out.println();
+        System.out.print(estructuras);
+        System.out.println();
+        System.out.print(errores);
+        System.out.println();
+        System.out.print(tabla);
+
+        Reporte.escribirArchivo(rutaFuente, "tokens.txt", tokens);
+        Reporte.escribirArchivo(rutaFuente, "estructuras.txt", estructuras);
+        Reporte.escribirArchivo(rutaFuente, "errores.txt", errores);
+        Reporte.escribirArchivo(rutaFuente, "tabla_simbolos.txt", tabla);
     }
 
     public TablaSimbolos getTablaSimbolos() {

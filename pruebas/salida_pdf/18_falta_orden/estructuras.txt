@@ -1,7 +1,6 @@
-Estructuras sintacticas detectadas:
-Linea 2: Declaracion de variables
-Linea 5: Sentencia RET
-Linea 6: Declaracion de funcion
-Linea 8: Asignacion
-Linea 9: Bloque BEGIN - END
-Linea 9: Programa
+Línea 2: Declaracion de variables
+Línea 5: Sentencia RET
+Línea 6: Declaracion de funcion
+Línea 8: Asignación
+Línea 9: Bloque BEGIN - END
+Línea 9: Programa

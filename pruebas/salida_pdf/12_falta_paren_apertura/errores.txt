@@ -1,3 +1,1 @@
-Errores: 1 - Warnings: 0
-
-Linea 7: Error: Falta parentesis de apertura para la condicion
+Línea 7: Error: Falta parentesis de apertura para la condicion

@@ -1,11 +1,12 @@
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class TablaSimbolos {
-    private HashMap<String, EntradaTabla> tabla;
+    private Map<String, EntradaTabla> tabla;
 
     // inicializo tabla y ya cargo palabras reservadas, por convencion de nombres, las keys son en minusculas
     public TablaSimbolos() {
-        tabla = new HashMap<>();
+        tabla = new LinkedHashMap<>();
         tabla.put("if",new EntradaTabla("if", Globals.PR_IF));
         tabla.put("else",new EntradaTabla("else", Globals.PR_ELSE));
         tabla.put("end_if",new EntradaTabla("end_if", Globals.PR_END_IF));

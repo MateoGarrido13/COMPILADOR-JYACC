@@ -1,3 +1,1 @@
-Errores: 1 - Warnings: 0
-
-Linea 4: Error: Uso de ':=' donde debe usarse '='
+Línea 4: Error: Uso de ':=' donde debe usarse '='

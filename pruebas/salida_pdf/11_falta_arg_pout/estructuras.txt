@@ -1,3 +1,2 @@
-Estructuras sintacticas detectadas:
-Linea 4: Bloque BEGIN - END
-Linea 4: Programa
+Línea 4: Bloque BEGIN - END
+Línea 4: Programa

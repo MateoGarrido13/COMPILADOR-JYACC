@@ -7,3 +7,7 @@
 * (tema 19) se incpora:
     -lista_orden_evaluacion a la gramatica permitiendo 1,2,3
     -lista_parametros_reales para poder pasar expresiones a=1.1$i
+
+* A RESOLVER:
+- float y permitir la 'd' del exponente
+- poder indicar las posiciones de los parametros formales si sufijos ; de momento necesariamente debe indicar el progamador 4$ul 

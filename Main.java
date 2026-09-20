@@ -8,6 +8,5 @@ public class Main {
 
         Compilador compilador = new Compilador();
         compilador.compilar(rutaFuente);
-        compilador.getTablaSimbolos().imprimirTabla();
     }
 }

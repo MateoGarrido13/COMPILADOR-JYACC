@@ -37,7 +37,7 @@ public enum Reglas {
     LISTA_VALORES_ENUMERADO("Lista de valores del enumerado", false),
 
     // ===== Sentencias ejecutables =====
-    ASIGNACION("Asignacion", true),
+    ASIGNACION("Asignación", true),
     SENTENCIA_IF("Sentencia IF", true),
     SENTENCIA_IF_ELSE("Sentencia IF con ELSE", true),
     CONDICION("Condicion", false),

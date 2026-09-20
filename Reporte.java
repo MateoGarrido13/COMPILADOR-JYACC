@@ -21,14 +21,14 @@ public class Reporte {
         }
 
         public String formateado(String clase) {
-            return "Linea " + linea + ": " + clase + ": " + texto;
+            return "Línea " + linea + ": " + clase + ": " + texto;
         }
     }
 
     private final List<Mensaje> errores = new ArrayList<>();
     private final List<Mensaje> warnings = new ArrayList<>();
     private final List<Mensaje> estructuras = new ArrayList<>();
-    private boolean ecoEnConsola = true;
+    private boolean ecoEnConsola = false;
 
     public void setEcoEnConsola(boolean ecoEnConsola) {
         this.ecoEnConsola = ecoEnConsola;
@@ -79,17 +79,15 @@ public class Reporte {
     }
 
     public String contenidoEstructuras() {
-        StringBuilder texto = new StringBuilder("Estructuras sintacticas detectadas:\n");
+        StringBuilder texto = new StringBuilder();
         for (Mensaje mensaje : estructuras) {
-            texto.append("Linea ").append(mensaje.linea).append(": ").append(mensaje.texto).append("\n");
+            texto.append("Línea ").append(mensaje.linea).append(": ").append(mensaje.texto).append("\n");
         }
         return texto.toString();
     }
 
     public String contenidoErrores() {
         StringBuilder texto = new StringBuilder();
-        texto.append("Errores: ").append(errores.size())
-             .append(" - Warnings: ").append(warnings.size()).append("\n\n");
         for (Mensaje mensaje : errores) {
             texto.append(mensaje.formateado("Error")).append("\n");
         }

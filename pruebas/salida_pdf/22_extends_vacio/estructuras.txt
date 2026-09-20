@@ -1,8 +1,7 @@
-Estructuras sintacticas detectadas:
-Linea 4: Declaracion de atributo
-Linea 5: Declaracion de clase
-Linea 9: Declaracion de atributo
-Linea 10: Declaracion de clase
-Linea 12: Sentencia POUT
-Linea 13: Bloque BEGIN - END
-Linea 13: Programa
+Línea 4: Declaracion de atributo
+Línea 5: Declaracion de clase
+Línea 9: Declaracion de atributo
+Línea 10: Declaracion de clase
+Línea 12: Sentencia POUT
+Línea 13: Bloque BEGIN - END
+Línea 13: Programa
