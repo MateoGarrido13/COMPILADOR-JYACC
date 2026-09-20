@@ -1,4 +1,0 @@
-Estructuras sintacticas detectadas:
-Linea 1: Declaracion de variables
-Linea 4: Bloque BEGIN - END
-Linea 4: Programa
