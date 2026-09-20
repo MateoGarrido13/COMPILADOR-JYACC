@@ -1,0 +1,6 @@
+prog
+ulongint a;
+x, y;
+begin
+    pout({ok});
+end

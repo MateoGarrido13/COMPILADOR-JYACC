@@ -1,0 +1,8 @@
+prog
+ulongint function foo(ulongint)
+begin
+    ret(1$ul);
+end;
+begin
+    pout({ok});
+end

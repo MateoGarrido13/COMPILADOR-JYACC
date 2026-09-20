@@ -1,0 +1,8 @@
+Tokens detectados (7):
+Palabra reservada ulongint
+Identificador x
+;
+Palabra reservada begin
+Identificador x
+Operador de asignacion :=
+Palabra reservada end

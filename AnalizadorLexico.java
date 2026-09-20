@@ -55,9 +55,6 @@ public class AnalizadorLexico {
             contexto.estado = siguiente; 
             if (siguiente == MatrizTransiciones.ESTADO_F || siguiente == MatrizTransiciones.ERROR) { // Agregar Estado final o Error(-1)
                 quitarBlancosFinales(contexto.lexema);
-                if (siguiente == MatrizTransiciones.ERROR) {
-                    contexto.accion = -1; // Accion de error, accede a la semantica que le corresponde a partir del 
-                }
                 contexto.accion = MatrizTransiciones.MATRIZ_SEMANTICAS[contexto.estadoAnterior][columna]; 
                 return ejecutarAccion(contexto); 
             }

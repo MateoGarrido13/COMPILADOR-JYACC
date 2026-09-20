@@ -1,0 +1,11 @@
+Lista de reglas reducidas (10):
+1. TIPO - Tipo de dato
+2. LISTA_VARIABLES - Lista de variables
+3. DECL_VARIABLES - Declaracion de variables
+4. LISTA_SENTENCIAS - Lista de sentencias
+5. ERR_ASIGNACION_INVALIDA - Asignacion mal formada
+6. ERR_FALTA_PUNTO_Y_COMA - Falta ';' al final de la sentencia
+7. LISTA_SENTENCIAS - Lista de sentencias
+8. BLOQUE_EJECUTABLE - Bloque BEGIN - END
+9. ERR_FALTA_NOMBRE_PROGRAMA - Falta de nombre de programa
+10. PROGRAMA - Programa

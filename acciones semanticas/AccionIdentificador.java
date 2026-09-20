@@ -8,7 +8,7 @@ public class AccionIdentificador implements AccionSemantica {
     @Override
     public int ejecutar() {
         String texto = contexto.lexema.toString();
-        if (!texto.matches("^[a-z][a-zA-Z0-9_]*")) {
+        if (!texto.matches("^[a-z][a-zA-Z0-9_]*$")) {
             contexto.reporte.error(contexto.fuente.linea(),
                     "Identificador invalido '" + texto + "'");
             return -1;

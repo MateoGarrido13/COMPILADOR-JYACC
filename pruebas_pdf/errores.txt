@@ -1,0 +1,6 @@
+Errores: 4 - Warnings: 0
+
+Linea 3: Error: Lexema no reconocido '1$ul'
+Linea 4: Error: Asignacion mal formada
+Linea 4: Error: Falta ';' al final de la sentencia
+Linea 4: Error: Falta de nombre de programa

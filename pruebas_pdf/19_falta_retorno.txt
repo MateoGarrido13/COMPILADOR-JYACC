@@ -1,0 +1,8 @@
+prog
+ulongint function foo(ulongint n)
+begin
+    pout({sin ret});
+end;
+begin
+    pout({ok});
+end

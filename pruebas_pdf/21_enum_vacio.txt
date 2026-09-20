@@ -1,0 +1,5 @@
+prog
+typedef color = [];
+begin
+    pout({ok});
+end

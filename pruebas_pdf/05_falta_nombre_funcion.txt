@@ -1,0 +1,8 @@
+prog
+ulongint function (ulongint x)
+begin
+    ret(x);
+end;
+begin
+    pout({ok});
+end
