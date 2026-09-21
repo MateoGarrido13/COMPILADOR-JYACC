@@ -1,4 +1,0 @@
-Línea 2: Declaracion de variables
-Línea 4: Asignación
-Línea 6: Bloque BEGIN - END
-Línea 6: Programa

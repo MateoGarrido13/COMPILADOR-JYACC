@@ -1,0 +1,7 @@
+{{ r23: dos typedef que solo difieren en mayusculas/minusculas }}
+prog
+typedef nuevoTipo = [1$ul, 2$ul];
+typedef Nuevotipo = [3$ul, 4$ul];
+begin
+    pout({ok});
+end

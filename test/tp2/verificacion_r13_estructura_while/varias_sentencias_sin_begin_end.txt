@@ -1,0 +1,10 @@
+{{ r13: varias sentencias sin begin-end; el cuerpo solo puede ser una sentencia o un bloque }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    repeat
+        pout({primera});
+        x := x + 1$ul;
+    while (x < 3$ul);
+end

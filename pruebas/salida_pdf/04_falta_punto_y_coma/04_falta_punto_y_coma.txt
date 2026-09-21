@@ -1,6 +1,0 @@
-prog
-ulongint x;
-begin
-    x := 1$ul
-    x := 2$ul;
-end

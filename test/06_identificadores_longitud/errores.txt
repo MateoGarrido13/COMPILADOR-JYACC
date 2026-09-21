@@ -1,2 +1,0 @@
-Línea 4: Warning: El identificador abcdefghij1234567890abc fue truncado a: abcdefghij1234567890ab
-Línea 8: Warning: El identificador abcdefghij1234567890abc fue truncado a: abcdefghij1234567890ab

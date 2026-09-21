@@ -1,6 +1,0 @@
-Línea 2: Declaracion de variables
-Línea 5: Sentencia RET
-Línea 6: Declaracion de funcion
-Línea 8: Asignación
-Línea 9: Bloque BEGIN - END
-Línea 9: Programa

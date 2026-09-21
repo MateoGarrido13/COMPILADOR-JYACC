@@ -1,5 +1,0 @@
-Errores: 3 - Warnings: 0
-
-Linea 12: Error: Falta ';' al final de la sentencia
-Linea 12: Error: Constante entera invalida '+2'
-Linea 12: Error: Sentencia mal formada

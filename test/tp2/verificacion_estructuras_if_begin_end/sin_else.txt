@@ -1,0 +1,15 @@
+{{ if sin else: rama unica, sentencia suelta o bloque begin-end }}
+prog
+ulongint x;
+begin
+    x := 1$ul;
+    if (x > 0$ul)
+        pout({una sentencia});
+    end_if;
+    if (x == 1$ul)
+    begin
+        pout({bloque});
+        x := 0$ul;
+    end
+    end_if;
+end

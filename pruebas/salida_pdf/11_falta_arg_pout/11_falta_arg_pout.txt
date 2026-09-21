@@ -1,4 +1,0 @@
-prog
-begin
-    pout();
-end

@@ -1,1 +1,0 @@
-Línea 4: Warning: El identificador contador_identificador_muy_largo fue truncado a: contador_identificador

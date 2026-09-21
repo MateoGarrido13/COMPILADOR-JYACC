@@ -1,0 +1,9 @@
+{{ r13: cuerpo = una sola sentencia ejecutable }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    repeat
+        x := x + 1$ul;
+    while (x < 3$ul);
+end

@@ -1,8 +1,0 @@
-prog
-ulongint function foo(x)
-begin
-    ret(x);
-end;
-begin
-    pout({ok});
-end

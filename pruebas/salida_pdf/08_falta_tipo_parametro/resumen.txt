@@ -1,1 +1,0 @@
-Línea 2: Error: Falta de tipo de parametro formal en declaracion de funcion

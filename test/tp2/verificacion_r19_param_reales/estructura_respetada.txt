@@ -1,0 +1,13 @@
+{{ r19: invocacion con parametros reales y orden entre corchetes }}
+prog
+ulongint x;
+doublef z;
+ulongint function foo(ulongint n, doublef d)
+begin
+    ret(n);
+end;
+begin
+    z := 1.0;
+    x := foo(x, z)[1$ul, 2$ul];
+    x := foo(n=1$ul, z + 1.0)[2$ul, 1$ul];
+end

@@ -1,7 +1,0 @@
-Línea 4: Declaracion de atributo
-Línea 5: Declaracion de clase
-Línea 9: Declaracion de atributo
-Línea 10: Declaracion de clase
-Línea 12: Sentencia POUT
-Línea 13: Bloque BEGIN - END
-Línea 13: Programa

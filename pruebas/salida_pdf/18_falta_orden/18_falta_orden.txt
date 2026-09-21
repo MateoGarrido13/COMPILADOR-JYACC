@@ -1,9 +1,0 @@
-prog
-ulongint x;
-ulongint function foo(ulongint n)
-begin
-    ret(n);
-end;
-begin
-    x := foo(1$ul);
-end

@@ -1,6 +1,0 @@
-Tokens detectados (5):
-Identificador prog
-Palabra reservada ulongint
-Identificador x
-;
-Palabra reservada begin

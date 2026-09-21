@@ -1,0 +1,17 @@
+{{ r31: hija hereda x; desambiguado posicional objeto.clase[indice] }}
+prog
+class padre
+begin
+    ulongint x;
+    ulongint y;
+end;
+class hija
+begin
+    ulongint z;
+    extends padre;
+end;
+hija a1;
+begin
+    a1.padre[0$ul] := 1$ul;
+    pout(a1.padre[0$ul]);
+end

@@ -1,0 +1,8 @@
+{{ r33: todf del lado izquierdo de una asignacion; no es un designador }}
+prog
+ulongint x;
+doublef z;
+begin
+    x := 1$ul;
+    todf(x) := z;
+end

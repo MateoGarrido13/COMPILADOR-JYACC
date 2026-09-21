@@ -1,0 +1,13 @@
+{{ r13: cuerpo = begin-end con varias sentencias }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    repeat
+    begin
+        pout({iteracion});
+        x := x + 1$ul;
+        pout(x);
+    end
+    while (x < 3$ul);
+end

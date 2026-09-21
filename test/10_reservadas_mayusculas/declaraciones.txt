@@ -1,9 +1,0 @@
-Variables declaradas (2):
-  x : ulongint
-  z : doublef
-
-Funciones declaradas (0):
-
-Clases declaradas (0):
-
-Tipos enumerados (0):

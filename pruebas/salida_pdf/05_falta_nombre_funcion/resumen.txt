@@ -1,1 +1,0 @@
-Línea 2: Error: Falta de nombre en funcion

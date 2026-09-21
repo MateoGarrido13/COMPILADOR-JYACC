@@ -1,5 +1,0 @@
-Línea 4: Sentencia RET
-Línea 5: Declaracion de funcion
-Línea 7: Sentencia POUT
-Línea 8: Bloque BEGIN - END
-Línea 8: Programa

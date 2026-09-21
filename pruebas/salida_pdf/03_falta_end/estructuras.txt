@@ -1,3 +1,0 @@
-Línea 2: Declaracion de variables
-Línea 4: Asignación
-Línea 4: Programa

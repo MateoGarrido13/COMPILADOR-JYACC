@@ -1,0 +1,10 @@
+{{ r33: todf en la condicion de un if }}
+prog
+ulongint x;
+doublef z;
+begin
+    x := 1$ul;
+    if (todf(x) > 0.5)
+        z := 1.0;
+    end_if;
+end

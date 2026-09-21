@@ -1,6 +1,0 @@
-Lista de reglas reducidas (5):
-1. NOMBRE_PROGRAMA - Nombre de programa
-2. TIPO - Tipo de dato
-3. LISTA_VARIABLES - Lista de variables
-4. DECL_VARIABLES - Declaracion de variables
-5. LISTA_SENTENCIAS - Lista de sentencias

@@ -1,2 +1,0 @@
-Línea 4: Bloque BEGIN - END
-Línea 4: Programa

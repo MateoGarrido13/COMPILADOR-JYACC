@@ -1,0 +1,13 @@
+{{ begin de la rama then sin su end }}
+prog
+ulongint x;
+begin
+    x := 1$ul;
+    if (x > 0$ul)
+    begin
+        pout({ok});
+        x := 2$ul;
+    else
+        pout({no});
+    end_if;
+end

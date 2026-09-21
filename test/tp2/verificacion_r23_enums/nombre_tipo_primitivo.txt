@@ -1,0 +1,6 @@
+{{ r23: typedef usando el nombre de un tipo primitivo }}
+prog
+typedef ulongint = [2$ul, 4$ul];
+begin
+    pout({ok});
+end

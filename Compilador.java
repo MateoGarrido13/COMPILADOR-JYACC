@@ -54,10 +54,6 @@ public class Compilador {
         System.out.println();
         System.out.print(tabla);
 
-        Reporte.escribirArchivo(rutaFuente, "tokens.txt", tokens);
-        Reporte.escribirArchivo(rutaFuente, "estructuras.txt", estructuras);
-        Reporte.escribirArchivo(rutaFuente, "errores.txt", errores);
-        Reporte.escribirArchivo(rutaFuente, "tabla_simbolos.txt", tabla);
     }
 
     public TablaSimbolos getTablaSimbolos() {

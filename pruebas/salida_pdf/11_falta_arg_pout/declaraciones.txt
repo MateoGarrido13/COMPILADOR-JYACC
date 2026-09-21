@@ -1,7 +1,0 @@
-Variables declaradas (0):
-
-Funciones declaradas (0):
-
-Clases declaradas (0):
-
-Tipos enumerados (0):

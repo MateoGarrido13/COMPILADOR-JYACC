@@ -1,3 +1,0 @@
-Línea 4: Sentencia POUT
-Línea 5: Bloque BEGIN - END
-Línea 5: Programa

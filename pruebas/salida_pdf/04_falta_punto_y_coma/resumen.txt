@@ -1,1 +1,0 @@
-Línea 5: Error: Falta ';' al final de la sentencia

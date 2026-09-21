@@ -1,9 +1,0 @@
-Variables declaradas (2):
-  corto : ulongint
-  abcdefghij1234567890ab : ulongint
-
-Funciones declaradas (0):
-
-Clases declaradas (0):
-
-Tipos enumerados (0):

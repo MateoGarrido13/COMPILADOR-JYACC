@@ -1,0 +1,15 @@
+{{ condicion: invocacion a funcion comparada con constante }}
+prog
+ulongint x;
+ulongint function foo(ulongint n)
+begin
+    ret(n);
+end;
+begin
+    x := 0$ul;
+    if (foo(n=1$ul)[1$ul] > 0$ul)
+        pout({funcion en condicion});
+    else
+        pout({cero});
+    end_if;
+end

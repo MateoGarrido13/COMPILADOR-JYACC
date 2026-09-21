@@ -1,4 +1,0 @@
-Línea 4: Declaracion de variables
-Línea 5: Asignación
-Línea 6: Declaracion de variables
-Línea 7: Asignación

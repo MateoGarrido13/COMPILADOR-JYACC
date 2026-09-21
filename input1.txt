@@ -27,7 +27,7 @@ ulongint function foo(ulongint n, doublef d)
 begin
     ret(n);
 end;
-    x := -32768$ul;
+    x := -1$ul;
 
     z := -2.5;
     z:=-1.7976931348623157d+308;

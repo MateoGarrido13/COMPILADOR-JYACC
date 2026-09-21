@@ -1,6 +1,0 @@
-Errores: 4 - Warnings: 0
-
-Linea 6: Error: Constante entera fuera de rango '4294967296$ul'
-Linea 6: Error: Asignacion mal formada
-Linea 7: Error: Constante entera fuera de rango '-1$ul'
-Linea 7: Error: Asignacion mal formada
