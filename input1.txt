@@ -1,0 +1,36 @@
+{{ Fuente de prueba TP2: temas 6, 8, 9, 13, 16, 17, 19, 23, 25, 28, 31, 33 }}
+{{ Incluye un identificador de mas de 22 caracteres para el warning de truncamiento. }}
+demo_tp2
+ulongint x, y, contador_identificador_muy_largo;
+doublef z;
+typedef pares = [2$ul, 4$ul, 6$ul];
+pares p1, p2
+
+class base
+begin
+    ulongint a;
+    ulongint m(ulongint pa)
+    begin
+        ret(pa);
+    end;
+
+
+class hija
+bEgin
+    ulongint b;
+    extends base;
+end;
+
+hija obj;;
+
+ulongint function foo(ulongint n, doublef d)
+begin
+    ret(n);
+end;
+    x := -32768$ul;
+
+    z := -2.5;
+    z:=-1.7976931348623157d+308;
+
+    x=5$ul;
+    x:=7;

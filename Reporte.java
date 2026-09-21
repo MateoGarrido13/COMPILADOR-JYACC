@@ -1,7 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,16 +92,5 @@ public class Reporte {
             texto.append(mensaje.formateado("Warning")).append("\n");
         }
         return texto.toString();
-    }
-
-    /** Escribe un archivo de salida en la carpeta del codigo fuente compilado. */
-    public static void escribirArchivo(String rutaFuente, String nombreSalida, String contenido) {
-        File carpeta = new File(rutaFuente).getAbsoluteFile().getParentFile();
-        File destino = new File(carpeta, nombreSalida);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(destino))) {
-            writer.write(contenido);
-        } catch (IOException e) {
-            System.err.println("No se pudo escribir " + destino.getPath() + ": " + e.getMessage());
-        }
     }
 }

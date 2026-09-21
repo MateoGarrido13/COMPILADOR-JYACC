@@ -1,0 +1,20 @@
+Tokens detectados por el Analizador Léxico:
+Identificador demo_tp2
+Palabra reservada ulongint
+Identificador x
+,
+Identificador y
+,
+Identificador contador_identificador
+;
+Identificador x
+Operador de asignacion :=
+Constante doublef 4.0
+;
+Palabra reservada doublef
+Identificador x
+;
+Identificador x
+Operador de asignacion :=
+Constante doublef 4.0
+;
