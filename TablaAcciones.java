@@ -2,13 +2,13 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-/**
- * Estructura que almacena las referencias al codigo ejecutable de cada regla.
- *
- * gramatica.y no contiene logica: cada produccion invoca ejecutar(regla, ...) y
- * esta tabla resuelve que accion semantica corresponde. Ademas registra la lista
- * de reglas reducidas, que es la salida del Analisis Sintactico hacia las etapas
- * siguientes.
+/*
+  Estructura que almacena las referencias al codigo ejecutable de cada regla.
+ 
+  gramatica.y no contiene logica: cada produccion invoca ejecutar(regla, ...) y
+  esta tabla resuelve que accion semantica corresponde. Ademas registra la lista
+  de reglas reducidas, que es la salida del Analisis Sintactico hacia las etapas
+  siguientes.
  */
 public class TablaAcciones {
 
@@ -24,12 +24,10 @@ public class TablaAcciones {
         acciones.put(regla, accion);
     }
 
-    /**
-     * Punto de entrada unico desde las acciones de gramatica.y.
-     *
-     * Registra la reduccion, informa la estructura detectada si corresponde y
-     * ejecuta el codigo asociado. Si la regla no tiene accion registrada se
-     * aplica la accion por defecto de YACC: $$ = $1.
+    /*
+      Registra la reduccion, informa la estructura detectada si corresponde y
+      ejecuta el codigo asociado. Si la regla no tiene accion registrada se
+      aplica la accion por defecto de YACC: $$ = $1.
      */
     public Object ejecutar(Reglas regla, Object... valores) {
         int linea = Globals.numeroLinea;
@@ -57,7 +55,7 @@ public class TablaAcciones {
         return acciones.containsKey(regla);
     }
 
-    /** Reglas del catalogo que todavia no tienen codigo asociado. */
+    // Reglas del catalogo que todavia no tienen codigo asociado.
     public List<Reglas> reglasSinAccion() {
         List<Reglas> pendientes = new ArrayList<>();
         for (Reglas regla : Reglas.values()) {

@@ -1,6 +1,6 @@
 import java.io.FileNotFoundException;
 
-/** Reconoce tokens utilizando el automata de MatrizTransiciones. */
+/* Reconoce tokens utilizando el automata de MatrizTransiciones. */
 public class AnalizadorLexico {
 
     private final LectorFuente fuente = new LectorFuente();
@@ -73,9 +73,9 @@ public class AnalizadorLexico {
         }
     }
 
-    /**
-     * El caracter cerro el token pero no forma parte de el: hay que devolverlo
-     * a la fuente para el proximo yylex.
+    /*
+      El caracter cerro el token pero no forma parte de el: hay que devolverlo
+      a la fuente para el proximo yylex.
      */
     private static boolean esLookahead(int estado, char caracter, int siguiente) {
         if (siguiente != MatrizTransiciones.ESTADO_F) {
@@ -118,7 +118,7 @@ public class AnalizadorLexico {
         }
     }
 
-    private int errorLexico(ContextoLexico contexto) { // Genera un reporte generico para todos los errores del tipeo, no evalua las funciones de error de las acciones
+    private int errorLexico(ContextoLexico contexto) { 
         reporte.error(fuente.linea(), "Lexema no reconocido '" + contexto.lexema + "'");
         return -1;
     }

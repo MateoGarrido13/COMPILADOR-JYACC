@@ -1,11 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Fachada de registro de acciones de reduccion.
- *
- * La logica vive en otras_acciones; aca se cablean las tres familias y se
- * exponen los helpers que ellas reutilizan.
+/*
+La logica vive en otras_acciones; aca se cablean las tres familias y se
+ exponen los helpers que ellas reutilizan.
  */
 public class AccionesSemanticas {
 
@@ -15,7 +13,7 @@ public class AccionesSemanticas {
         AccionesExpresiones.registrar(tabla, entorno, v);
     }
 
-    /** Listas recursivas a derecha: el elemento actual mas lo ya acumulado. */
+    // Listas recursivas a derecha, el elemento actual mas lo ya acumulado.
     public static Object concatenarLista(ContextoRegla ctx) {
         List<Object> elementos = new ArrayList<>();
         if (ctx.cantidad() > 0 && ctx.valor(0) != null) {
@@ -27,7 +25,7 @@ public class AccionesSemanticas {
         return elementos;
     }
 
-    /** Acumula "termino OP expresion" sin agrupar; el plegado es posterior. */
+    //Acumula 'termino OP expresion' sin agrupar; el plegado es posterior.
     public static Object combinar(ContextoRegla ctx, char operador) {
         ExpresionDiferida derecha = ctx.expresion(1);
         if (derecha == null) {

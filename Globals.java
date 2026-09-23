@@ -12,7 +12,7 @@ public class Globals {
     public static final int IGUAL_IGUAL = 306;
     public static final int DISTINTO = 307;
 
-    // Palabras Reservadas (insensibles a mayusculas)
+    // Palabras Reservadas 
     public static final int PR_IF = 400;
     public static final int PR_ELSE = 401;
     public static final int PR_END_IF = 402;

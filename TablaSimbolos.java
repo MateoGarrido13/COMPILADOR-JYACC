@@ -46,7 +46,7 @@ public class TablaSimbolos {
         return tokenID >= 400;
     }
 
-    /** Inserta el lexema; el tipo y el rango los asigna la semantica. */
+    // Inserta el lexema; el tipo y el rango los asigna la semantica. 
     public EntradaTabla buscarOInsertarConstante(String lexema, int tokenID) {
         EntradaTabla entrada = tabla.get(lexema);
         if (entrada == null) {
@@ -56,7 +56,7 @@ public class TablaSimbolos {
         return entrada;
     }
 
-    /** Cadenas reconocidas por el lexico (tema 9). El tipo se fija porque coincide con el token. */
+    // Cadenas reconocidas por el lexico (tema 9). El tipo se fija porque coincide con el token.
     public EntradaTabla buscarOInsertarCadena(String cadena) {
         EntradaTabla entrada = tabla.get(cadena);
         if (entrada == null) {
@@ -67,10 +67,7 @@ public class TablaSimbolos {
         return entrada;
     }
 
-    /**
-     * Inserta o actualiza una constante. La usa el Analisis Sintactico al detectar
-     * constantes negativas, segun la consideracion c) del TP2.
-     */
+     // Inserta o actualiza una constante. La usa el Analisis Sintactico al detectar constantes negativas
     public EntradaTabla insertarConstante(String lexema, String tipoDato, int numeroLinea) {
         EntradaTabla entrada = tabla.get(lexema);
         if (entrada == null) {

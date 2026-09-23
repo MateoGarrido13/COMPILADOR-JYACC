@@ -1,8 +1,7 @@
 import java.util.List;
 
-/**
- * Acciones de programa, declaraciones, sentencias y contexto de funcion/clase.
- * Actualizan el Entorno; Verificaciones solo interviene cuando hay un chequeo del PDF.
+/*
+ Acciones de programa, declaraciones, sentencias y contexto de funcion/clase.
  */
 public class AccionesDeclaraciones {
 

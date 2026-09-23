@@ -5,17 +5,17 @@ public class MatrizTransiciones {
     public static final int SIN_SEM = 0;
 
     /*
-     * Columnas:
-     * [0]  digito      [6]  !          [12] }          [18] l (sufijo $ul)
-     * [1]  minuscula   [7]  *          [13] .          [19] d (exponente)
-     * [2]  mayuscula   [8]  +          [14] $          [20] otro
-     * [3]  <,>         [9]  -          [15] ( ) , ; [ ] [21] blanco / tab
-     * [4]  =           [10] /          [16] _          [22] \n
-     * [5]  :           [11] {          [17] u (sufijo $ul)
-     *
-     * Desde un lexema en curso (id, reservada, numero, =, <, >, +,-)
-     * los delimitadores van a ESTADO_F. El lexico retrocede ese caracter
-     * para entregarlo como el siguiente token.
+      Columnas:
+      [0]  digito      [6]  !          [12] }          [18] l (sufijo $ul)
+      [1]  minuscula   [7]  *          [13] .          [19] d (exponente)
+      [2]  mayuscula   [8]  +          [14] $          [20] otro
+      [3]  <,>         [9]  -          [15] ( ) , ; [ ] [21] blanco / tab
+      [4]  =           [10] /          [16] _          [22] \n
+      [5]  :           [11] {          [17] u (sufijo $ul)
+     
+      Desde un lexema en curso (id, reservada, numero, =, <, >, +,-)
+      los delimitadores van a ESTADO_F. El lexico retrocede ese caracter
+      para entregarlo como el siguiente token.
      */
 
     public static final int[][] MATRIZ_ESTADOS = {
@@ -25,9 +25,9 @@ public class MatrizTransiciones {
         {   99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99, 99,  99,  99,  99, 99,  99,  99}, // 2 =
         {   -1,  -1,  -1,  -1,  99,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, -1,  -1,  -1,  -1, -1,  -1,  -1}, // 3 !
         {   99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99, 99,  99,  99,  99, 99,  99,  99}, // 4 < >
-        {    6,   6,   6,   6,   6,   6,   6,   6,   6,   6,   6,   7,   99,   6,   6,   6,  6,   6,   6,   6,  6,   6,  99}, // 5 {
-        {    6,   6,   6,   6,   6,   6,   6,   6,   6,   6,   6,   6,  99,   6,   6,   6, 6,  6,  6,  6,  6,   6,  99}, // 6 cadena
-        {    7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   8,   7,   7,   7, 7, 7,  7,  7,  7,  7,   7}, // 7 {{
+        {    6,   6,   6,   6,   6,   6,   6,   6,   6,   6,   6,   7,  99,   6,   6,   6,  6,   6,   6,   6,  6,   6,  99}, // 5 {
+        {    6,   6,   6,   6,   6,   6,   6,   6,   6,   6,   6,   6,  99,   6,   6,   6,  6,   6,   6,   6,  6,   6,  99}, // 6 cadena
+        {    7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   8,   7,   7,   7,  7,   7,   7,   7,  7,   7,   7}, // 7 {{
         {    7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,   7,  99,   7,   7,   7,  7,   7,   7,   7,  7,   7,   7}, // 8 }}
         {   10,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99, 99,  99,  99,  99, 99,  99,  99}, // 9 + -
         {   10,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  99,  12,  11,  99, 99,  99,  99,  99, 99,  99,  99}, // 10 digitos
@@ -64,7 +64,7 @@ public class MatrizTransiciones {
         {   25,  25,  25,  25,  25,  25,  25,  25,  25,  25,  25,  25,  25,  25,  25,  25, 25,  25,  25,  25, 25,  25,  25}  // 18
     };
 
-    /** Accion con la que se cierra un lexema pendiente al llegar al fin de archivo. */
+    // Accion con la que se cierra un lexema pendiente al llegar al fin de archivo.
     public static int semCierre(int estado) {
         switch (estado) {
             case 1: return 1;

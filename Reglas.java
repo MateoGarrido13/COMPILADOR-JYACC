@@ -1,11 +1,5 @@
-/**
- * Catalogo de reglas de la gramatica.
- 
-  Cada constante identifica una produccion de gramatica.y y lleva asociada la
-  descripcion con la que se informa la estructura sintactica detectada. 
- La marca "estructura" distingue las producciones que el TP pide listar (Asignacion,
-  Sentencia IF, etc.) de las auxiliares, que solo propagan valores.
- */
+//Catalogo de reglas de la gramatica.
+
 public enum Reglas {
 
     // ===== Estructura general del programa =====
@@ -65,7 +59,7 @@ public enum Reglas {
     ACCESO_ATRIBUTO_PREFIJADO("Acceso a atributo con prefijo de clase", true),
     INVOCACION_METODO("Invocacion a metodo", true),
 
-    // ===== Producciones de error (PDF de errores a detectar) =====
+    // ===== Producciones de error =====
     ERR_SENTENCIA("Sentencia mal formada", false),
     ERR_DECLARACION_INVALIDA("Declaracion mal formada", false),
     ERR_LISTA_VARIABLES("Lista de variables mal formada", false),
@@ -107,12 +101,12 @@ public enum Reglas {
         return descripcion;
     }
 
-    /** Indica si la reduccion debe informarse en la lista de estructuras detectadas. */
+    // Indica si la reduccion debe informarse en la lista de estructuras detectadas.
     public boolean esEstructura() {
         return estructura;
     }
 
-    /** Indica si la regla corresponde a una produccion de error. */
+    // Indica si la regla corresponde a una produccion de error.
     public boolean esError() {
         return name().startsWith("ERR_");
     }

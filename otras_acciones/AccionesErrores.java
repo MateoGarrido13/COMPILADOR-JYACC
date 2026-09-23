@@ -1,6 +1,6 @@
-/**
- * Producciones ERR_* del PDF: solo informan por Verificaciones.reportar
- * y devuelven el primer valor para no cortar la recuperacion.
+/*
+  Producciones ERR_*: solo informan por Verificaciones.reportar
+  y devuelven el primer valor para no cortar la recuperacion.
  */
 public class AccionesErrores {
 

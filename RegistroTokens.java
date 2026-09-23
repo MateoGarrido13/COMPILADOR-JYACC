@@ -1,12 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Tira de tokens detectados por el Analizador Lexico, en el formato que pide el
- * enunciado ("Palabra reservada if", "Identificador var_x", etc.).
- *
- * Es la primera de las salidas del compilador. El lexico registra cada token
- * en el momento de reconocerlo, sin dejar de entregarlo al parser.
+/*
+  Tira de tokens detectados por el Analizador Lexico.
+ 
+  Es la primera de las salidas del compilador. El lexico registra cada token
+  en el momento de reconocerlo.
  */
 public class RegistroTokens {
 
@@ -61,7 +60,7 @@ public class RegistroTokens {
         }
     }
 
-    /** Describe la forma lexica; el control de rango lo hace la semantica. */
+    // Describe la forma lexica; el control de rango lo hace la semantica.
     private static String nombreTipoConstante(String lexema) {
         String tipo = Tipos.tipoDeConstante(lexema);
         return tipo == null ? Tipos.INDEFINIDO : tipo;

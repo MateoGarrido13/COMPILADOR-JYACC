@@ -14,7 +14,7 @@ public class AccionIdentificador implements AccionSemantica {
             return -1;
         }
 
-        EntradaTabla reservada = contexto.tablaSimbolos.buscarPalabraReservada(texto); //POSIBLE BUSQUEDA INNECESARIA; SIEMPRE SE EJECUTA 
+        EntradaTabla reservada = contexto.tablaSimbolos.buscarPalabraReservada(texto);
         if (reservada != null) {
             Globals.yylval = reservada;
             return reservada.tokenID;

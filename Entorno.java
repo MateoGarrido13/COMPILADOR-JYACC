@@ -3,12 +3,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Estado semantico que se va armando mientras el parser reduce.
- *
- * Guarda declaraciones y el contexto abierto (funcion/clase). No emite errores:
- * eso queda en Verificaciones. El parser es ascendente, por eso la funcion y la
- * clase se abren con acciones intermedias y no al reducir la declaracion completa.
+/*
+  Estado semantico que se va armando mientras el parser reduce.
+ 
+  Guarda declaraciones y el contexto abierto (funcion/clase). No emite errores,
+  eso queda en Verificaciones. El parser es ascendente, por eso la funcion y la
+  clase se abren con acciones intermedias y no al reducir la declaracion completa.
  */
 public class Entorno {
 
@@ -139,7 +139,7 @@ public class Entorno {
         }
     }
 
-    /** Cierra el contexto y pasa la funcion a la tabla (o a la clase actual). */
+    // Cierra el contexto y pasa la funcion a la tabla o a la clase actual.
     public void cerrarFuncion() {
         if (funcionActual == null) {
             return;

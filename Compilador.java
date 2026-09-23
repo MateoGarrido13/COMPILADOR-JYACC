@@ -1,11 +1,11 @@
 import java.io.FileNotFoundException;
 
-/**
- * Flujo del compilador.
- *
- * Arma el entorno compartido (tabla de simbolos, reporte, tabla de acciones) y
- * encadena las etapas. El Parser generado por BYACC/J desde gramatica.y conduce
- * el analisis sintactico, que pide tokens al Analisis Lexico y ejecuta las acciones semanticas.
+/*
+  Flujo del compilador.
+ 
+  Arma el entorno compartido (tabla de simbolos, reporte, tabla de acciones) y
+  encadena las etapas. El Parser generado por BYACC/J desde gramatica.y conduce
+  el analisis sintactico, que pide tokens al Analisis Lexico y ejecuta las acciones semanticas.
  */
 public class Compilador {
 
@@ -34,9 +34,6 @@ public class Compilador {
             return;
         }
 
-        // Etapas 1 y 2: el Parser generado a partir de gramatica.y conduce el analisis.
-        // yyparse pide tokens con yylex (Analisis Lexico) y en cada reduccion ejecuta
-        // tablaAcciones.ejecutar(Reglas.X, $1, $2, ...) (acciones semanticas).
         Parser parser = new Parser(lexico, tablaAcciones, reporte);
         parser.yyparse();
         lexico.cerrar();

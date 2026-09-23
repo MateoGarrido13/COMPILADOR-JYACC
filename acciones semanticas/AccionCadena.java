@@ -13,7 +13,7 @@ public class AccionCadena implements AccionSemantica {
             return error("Cadena no cerrada '" + lexema + "'");
         }
         String contenido = lexema.substring(1, lexema.length() - 1);
-        if (contenido.indexOf('\n') >= 0) return error("Cadena de una linea con salto de linea"); //La matriz de transicion hace que nunca se llegue a este tipo de estado de error
+        if (contenido.indexOf('\n') >= 0) return error("Cadena de una linea con salto de linea");
         Globals.yylval = contexto.tablaSimbolos.buscarOInsertarCadena(contenido);
         return Globals.CADENA;
     }
