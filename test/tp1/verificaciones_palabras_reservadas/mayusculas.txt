@@ -1,0 +1,16 @@
+{{ TP1: palabras reservadas en MAYUSCULAS; los identificadores siguen en minuscula }}
+prog
+ULONGINT x;
+DOUBLEF z;
+BEGIN
+    x := 1$UL;
+    z := TODF(x);
+    IF (x == 1$UL)
+        POUT({ok});
+    ELSE
+        POUT({no});
+    END_IF;
+    REPEAT
+        x := x + 1$UL;
+    WHILE (x < 3$UL);
+END

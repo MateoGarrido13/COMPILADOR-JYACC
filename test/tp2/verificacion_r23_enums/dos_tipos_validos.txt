@@ -1,0 +1,11 @@
+{{ r23: dos typedef con nombres distintos y validos; typedef ID = [lista]; mas variables del tipo }}
+prog
+typedef pares = [2$ul, 4$ul, 6$ul];
+typedef impares = [1$ul, 3$ul, 5$ul];
+pares p;
+impares i;
+begin
+    p := 2$ul;
+    i := 1$ul;
+    pout({ok});
+end

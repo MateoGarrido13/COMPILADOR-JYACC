@@ -1,0 +1,11 @@
+{{ r19: invocacion sin indicar el orden de evaluacion }}
+prog
+ulongint x;
+ulongint function foo(ulongint n, doublef d)
+begin
+    ret(n);
+end;
+begin
+    x := foo(1$ul, 2.5);
+    x := foo(n=1$ul, 2.5)[];
+end

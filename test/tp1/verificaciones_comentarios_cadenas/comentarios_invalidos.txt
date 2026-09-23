@@ -1,0 +1,8 @@
+{{ TP1: comentario mal escrito, sin secuencia de cierre }}
+prog
+ulongint x;
+begin
+    {{ este comentario nunca se cierra
+    x := 0$ul;
+    pout({mal});
+end

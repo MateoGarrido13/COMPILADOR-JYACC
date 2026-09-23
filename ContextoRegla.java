@@ -1,11 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Informacion que recibe una accion semantica al reducirse una regla.
- *
- * Los valores son los que en YACC se acceden como $1, $2, $3; aca llegan como
- * arreglo, de modo que valor(0) equivale a $1.
+/*
+Informacion que recibe una accion semantica al reducirse una regla.
+ Los valores son los que en YACC se acceden como $1, $2, $3; aca llegan como
+ arreglo, de modo que valor(0) equivale a $1.
  */
 public class ContextoRegla {
 
@@ -55,7 +54,7 @@ public class ContextoRegla {
         return comoExpresion(valor(indice));
     }
 
-    /** Devuelve el valor como lista; si el valor es un elemento suelto, lo envuelve. */
+    // Devuelve el valor como lista; si el valor es un elemento suelto, lo envuelve.
     public List<Object> lista(int indice) {
         return comoLista(valor(indice));
     }

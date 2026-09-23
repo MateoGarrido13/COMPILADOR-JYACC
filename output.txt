@@ -1,1 +1,0 @@
-ID(A) ASIG(:=)CTE(5);ID(hola) ASIG(:=)CTE(3);ID(Hola) ASIG(:=)CTE(4);

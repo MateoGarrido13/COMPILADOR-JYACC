@@ -1,0 +1,6 @@
+{{ r33: conversion vacia todf() }}
+prog
+doublef z;
+begin
+    z := todf();
+end

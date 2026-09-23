@@ -1,0 +1,11 @@
+{{ TP1: doublef primer y ultimo valor FUERA del rango }}
+{{ underflow no nulo: 2.2d-308 < minimo normal ; overflow: 1.8d+308 }}
+prog
+doublef a, b, c, d;
+begin
+    a := 2.2d-308;
+    b := 1.8d+308;
+    c := -2.2d-308;
+    d := -1.8d+308;
+    pout({fuera});
+end

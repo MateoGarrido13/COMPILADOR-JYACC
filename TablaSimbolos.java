@@ -1,11 +1,12 @@
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class TablaSimbolos {
-    private HashMap<String, EntradaTabla> tabla;
+    private Map<String, EntradaTabla> tabla;
 
     // inicializo tabla y ya cargo palabras reservadas, por convencion de nombres, las keys son en minusculas
     public TablaSimbolos() {
-        tabla = new HashMap<>();
+        tabla = new LinkedHashMap<>();
         tabla.put("if",new EntradaTabla("if", Globals.PR_IF));
         tabla.put("else",new EntradaTabla("else", Globals.PR_ELSE));
         tabla.put("end_if",new EntradaTabla("end_if", Globals.PR_END_IF));
@@ -45,7 +46,7 @@ public class TablaSimbolos {
         return tokenID >= 400;
     }
 
-    /** Inserta el lexema; el tipo y el rango los asigna la semantica. */
+    // Inserta el lexema; el tipo y el rango los asigna la semantica. 
     public EntradaTabla buscarOInsertarConstante(String lexema, int tokenID) {
         EntradaTabla entrada = tabla.get(lexema);
         if (entrada == null) {
@@ -55,7 +56,7 @@ public class TablaSimbolos {
         return entrada;
     }
 
-    /** Cadenas reconocidas por el lexico (tema 9). El tipo se fija porque coincide con el token. */
+    // Cadenas reconocidas por el lexico (tema 9). El tipo se fija porque coincide con el token.
     public EntradaTabla buscarOInsertarCadena(String cadena) {
         EntradaTabla entrada = tabla.get(cadena);
         if (entrada == null) {
@@ -66,10 +67,7 @@ public class TablaSimbolos {
         return entrada;
     }
 
-    /**
-     * Inserta o actualiza una constante. La usa el Analisis Sintactico al detectar
-     * constantes negativas, segun la consideracion c) del TP2.
-     */
+     // Inserta o actualiza una constante. La usa el Analisis Sintactico al detectar constantes negativas
     public EntradaTabla insertarConstante(String lexema, String tipoDato, int numeroLinea) {
         EntradaTabla entrada = tabla.get(lexema);
         if (entrada == null) {

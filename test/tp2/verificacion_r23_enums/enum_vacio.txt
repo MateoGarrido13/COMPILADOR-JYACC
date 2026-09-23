@@ -1,0 +1,6 @@
+{{ r23: enumeracion sin valores }}
+prog
+typedef color = [];
+begin
+    pout({ok});
+end

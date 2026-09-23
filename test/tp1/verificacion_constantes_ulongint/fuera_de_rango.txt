@@ -1,0 +1,9 @@
+{{ TP1: ulongint primer y ultimo valor FUERA del rango }}
+{{ debajo del minimo: -1$ul (signo unario) ; encima del maximo: 4294967296$ul }}
+prog
+ulongint x, y;
+begin
+    x := 4294967296$ul;
+    y := -1$ul;
+    pout({fuera});
+end

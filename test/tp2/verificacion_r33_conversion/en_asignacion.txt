@@ -1,0 +1,9 @@
+{{ r33: todf del lado derecho de una asignacion }}
+prog
+ulongint x;
+doublef z;
+begin
+    x := 2$ul;
+    z := todf(x);
+    z := todf(x + 1$ul);
+end

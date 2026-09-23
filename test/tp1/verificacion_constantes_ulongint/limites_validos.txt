@@ -1,0 +1,8 @@
+{{ TP1: ulongint primer y ultimo valor DENTRO del rango [0, 4294967295] }}
+prog
+ulongint x, y;
+begin
+    x := 0$ul;
+    y := 4294967295$ul;
+    pout({ok});
+end

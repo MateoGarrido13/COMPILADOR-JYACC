@@ -1,0 +1,7 @@
+{{ TP1: cadena de una linea que contiene un guion bajo }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    pout({cadena_con_guion});
+end

@@ -1,0 +1,17 @@
+{{ r31: hija hereda y; desambiguado tradicional objeto.clase.y }}
+prog
+class padre
+begin
+    ulongint y;
+end;
+class hija
+begin
+    ulongint y;
+    extends padre;
+end;
+hija a1;
+begin
+    a1.padre.y := 1$ul;
+    a1.hija.y := 2$ul;
+    pout(a1.padre.y);
+end

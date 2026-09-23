@@ -1,16 +1,16 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Valor semantico que viaja por las reglas de expresion.
- *
- * La gramatica es recursiva a derecha, por lo que un parser ascendente reduce de
- * adentro hacia afuera y agrupar en el momento de cada reduccion daria
- * asociatividad a derecha. En lugar de eso se acumulan operandos y operadores, y
- * el plegado a izquierda se hace cuando la expresion se consume por completo.
- *
- * Tambien transporta la marca de "contiene asignacion", necesaria para detectar
- * el anidamiento que el tema 17 prohibe.
+/*
+  Valor semantico que viaja por las reglas de expresion.
+ 
+  La gramatica es recursiva a derecha, por lo que un parser ascendente reduce de
+  adentro hacia afuera y agrupar en el momento de cada reduccion daria
+  asociatividad a derecha. En lugar de eso se acumulan operandos y operadores, y
+  el plegado a izquierda se hace cuando la expresion se consume por completo.
+ 
+  Tambien transporta la marca de 'contiene asignacion', necesaria para detectar
+  el anidamiento que el tema 17 prohibe.
  */
 public class ExpresionDiferida {
 
@@ -24,10 +24,10 @@ public class ExpresionDiferida {
         return expresion;
     }
 
-    /**
-     * Reduccion de "termino OP expresion". Por la recursion a derecha, el termino
-     * que se acaba de reducir es el que esta mas a la izquierda en el fuente, asi
-     * que se antepone para que la lista quede en orden de codigo fuente.
+    /*
+      Reduccion de 'termino OP expresion'. Por la recursion a derecha, el termino
+      que se acaba de reducir es el que esta mas a la izquierda en el fuente, asi
+      que se antepone para que la lista quede en orden de codigo fuente.
      */
     public ExpresionDiferida anteponer(Object operando, char operador) {
         operandos.add(0, operando);
@@ -60,7 +60,7 @@ public class ExpresionDiferida {
         return operadores;
     }
 
-    /** Devuelve el unico operando cuando la expresion no tiene operadores. */
+    // Devuelve el unico operando cuando la expresion no tiene operadores. 
     public EntradaTabla operandoUnico() {
         if (operandos.size() == 1 && operandos.get(0) instanceof EntradaTabla) {
             return (EntradaTabla) operandos.get(0);
@@ -68,7 +68,7 @@ public class ExpresionDiferida {
         return null;
     }
 
-    /** Todas las entradas de tabla de simbolos que participan de la expresion. */
+    // Todas las entradas de tabla de simbolos que participan de la expresion. 
     public List<EntradaTabla> operandosSimples() {
         List<EntradaTabla> entradas = new ArrayList<>();
         for (Object operando : operandos) {
@@ -81,9 +81,9 @@ public class ExpresionDiferida {
         return entradas;
     }
 
-    /**
-     * Agrupacion a izquierda de la expresion acumulada: para "a - b - c" devuelve
-     * "((a - b) - c)", que es la asociatividad correcta pese a la recursion a derecha.
+    /*
+      Agrupacion a izquierda de la expresion acumulada: para 'a - b - c' devuelve
+     '((a - b) - c)', que es la asociatividad correcta pese a la recursion a derecha.
      */
     public String plegarAIzquierda() {
         if (operandos.isEmpty()) {

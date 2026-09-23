@@ -1,13 +1,10 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Salidas del compilador: estructuras sintacticas detectadas, errores y warnings,
- * siempre con el numero de linea del codigo fuente.
+/*
+  Salidas del compilador. estructuras sintacticas detectadas, errores y warnings,
+  siempre con el numero de linea del codigo fuente.
  */
 public class Reporte {
 
@@ -21,14 +18,14 @@ public class Reporte {
         }
 
         public String formateado(String clase) {
-            return "Linea " + linea + ": " + clase + ": " + texto;
+            return "Línea " + linea + ": " + clase + ": " + texto;
         }
     }
 
     private final List<Mensaje> errores = new ArrayList<>();
     private final List<Mensaje> warnings = new ArrayList<>();
     private final List<Mensaje> estructuras = new ArrayList<>();
-    private boolean ecoEnConsola = true;
+    private boolean ecoEnConsola = false;
 
     public void setEcoEnConsola(boolean ecoEnConsola) {
         this.ecoEnConsola = ecoEnConsola;
@@ -79,17 +76,15 @@ public class Reporte {
     }
 
     public String contenidoEstructuras() {
-        StringBuilder texto = new StringBuilder("Estructuras sintacticas detectadas:\n");
+        StringBuilder texto = new StringBuilder();
         for (Mensaje mensaje : estructuras) {
-            texto.append("Linea ").append(mensaje.linea).append(": ").append(mensaje.texto).append("\n");
+            texto.append("Línea ").append(mensaje.linea).append(": ").append(mensaje.texto).append("\n");
         }
         return texto.toString();
     }
 
     public String contenidoErrores() {
         StringBuilder texto = new StringBuilder();
-        texto.append("Errores: ").append(errores.size())
-             .append(" - Warnings: ").append(warnings.size()).append("\n\n");
         for (Mensaje mensaje : errores) {
             texto.append(mensaje.formateado("Error")).append("\n");
         }
@@ -97,16 +92,5 @@ public class Reporte {
             texto.append(mensaje.formateado("Warning")).append("\n");
         }
         return texto.toString();
-    }
-
-    /** Escribe un archivo de salida en la carpeta del codigo fuente compilado. */
-    public static void escribirArchivo(String rutaFuente, String nombreSalida, String contenido) {
-        File carpeta = new File(rutaFuente).getAbsoluteFile().getParentFile();
-        File destino = new File(carpeta, nombreSalida);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(destino))) {
-            writer.write(contenido);
-        } catch (IOException e) {
-            System.err.println("No se pudo escribir " + destino.getPath() + ": " + e.getMessage());
-        }
     }
 }

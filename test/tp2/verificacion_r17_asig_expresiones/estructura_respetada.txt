@@ -1,0 +1,10 @@
+{{ r17: estructura valida: '=' con parentesis, sin anidamiento }}
+prog
+ulongint x, y, w;
+begin
+    x := y = (2$ul);
+    x := y = (x + y) * w = (1$ul);
+    if (x = (1$ul) == 1$ul)
+        pout({ok});
+    end_if;
+end

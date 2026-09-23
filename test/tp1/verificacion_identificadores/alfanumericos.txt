@@ -1,0 +1,10 @@
+{{ TP1: identificadores formados por letras, digitos y guion bajo }}
+prog
+ulongint var_1, abc123, a_b_c, x1_y2_z3;
+begin
+    var_1 := 1$ul;
+    abc123 := 2$ul;
+    a_b_c := 3$ul;
+    x1_y2_z3 := 4$ul;
+    pout({ok});
+end

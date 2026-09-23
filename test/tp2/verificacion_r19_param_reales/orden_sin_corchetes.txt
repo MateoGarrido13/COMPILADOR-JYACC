@@ -1,0 +1,11 @@
+{{ r19: indica el orden pero sin corchetes '[' ']' }}
+prog
+ulongint x;
+ulongint function foo(ulongint n, doublef d)
+begin
+    ret(n);
+end;
+begin
+    x := foo(1$ul, 2.5) 1$ul, 2$ul;
+    x := foo(n=1$ul, 2.5) 2$ul, 1$ul;
+end

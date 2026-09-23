@@ -1,0 +1,10 @@
+{{ r23: typedef, lista de valores y variables del tipo definido }}
+prog
+typedef pares = [2$ul, 4$ul, 6$ul];
+pares a, b, c;
+begin
+    a := 2$ul;
+    b := 4$ul;
+    c := 6$ul;
+    pout({ok});
+end

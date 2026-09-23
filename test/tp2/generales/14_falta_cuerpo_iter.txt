@@ -1,0 +1,6 @@
+prog
+ulongint x;
+begin
+    x := 1$ul;
+    repeat while (x > 0$ul);
+end

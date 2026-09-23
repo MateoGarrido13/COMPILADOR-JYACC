@@ -1,0 +1,6 @@
+{{ r17: sin anidamiento, pero ':=' donde debe usarse '=' }}
+prog
+ulongint x, y;
+begin
+    x := y := (1$ul);
+end

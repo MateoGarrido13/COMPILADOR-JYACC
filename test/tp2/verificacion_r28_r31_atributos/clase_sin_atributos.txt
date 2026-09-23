@@ -1,0 +1,9 @@
+{{ r25/r28: clase sin atributos }}
+prog
+class vacia
+begin
+end;
+vacia obj;
+begin
+    pout({ok});
+end

@@ -1,0 +1,8 @@
+{{ TP1: caracter que no es letra, digito ni guion bajo en un identificador }}
+prog
+ulongint id#malo, otro@nombre;
+begin
+    id#malo := 1$ul;
+    otro@nombre := 2$ul;
+    pout({mal});
+end

@@ -1,0 +1,5 @@
+prog
+ulongint x, y;
+begin
+    x := y := (1$ul);
+end

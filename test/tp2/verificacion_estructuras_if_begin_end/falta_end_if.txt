@@ -1,0 +1,13 @@
+{{ if valido en forma, pero no cierra con end_if }}
+prog
+ulongint x;
+begin
+    x := 1$ul;
+    if (x > 0$ul)
+    begin
+        pout({ok});
+    end
+    else
+        pout({no});
+    pout({despues});
+end

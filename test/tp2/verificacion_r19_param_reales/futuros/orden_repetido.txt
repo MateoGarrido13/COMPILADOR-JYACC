@@ -1,0 +1,11 @@
+{{ r19 futuros: el orden de evaluacion repite un numero }}
+prog
+ulongint x;
+ulongint function foo(ulongint n, doublef d, ulongint m)
+begin
+    ret(n);
+end;
+begin
+    x := foo(1$ul, 2.5, 3$ul)[1$ul, 1$ul, 2$ul];
+    x := foo(n=1$ul, 2.5, 0$ul)[2$ul, 2$ul, 3$ul];
+end
