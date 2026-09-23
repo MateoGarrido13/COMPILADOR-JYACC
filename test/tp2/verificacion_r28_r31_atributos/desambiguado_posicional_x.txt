@@ -1,4 +1,4 @@
-{{ r31: hija hereda x; desambiguado posicional objeto.clase[indice] }}
+{{ r31: hija hereda x; desambiguado posicional objeto.clase[indice],  debe fallar }}
 prog
 class padre
 begin

@@ -1,0 +1,9 @@
+{{ r13: repeat con cuerpo valido, pero sin el while de cierre }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    repeat
+        x := x + 1$ul;
+    (x < 3$ul);
+end
