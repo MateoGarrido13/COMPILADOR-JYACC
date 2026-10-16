@@ -1,0 +1,6542 @@
+Codigo fuente:
+1: {{ TP2 extensivo - recuperacion: 200 lineas, 3 errores por linea
+2:    Objetivo: verificar si el compilador se detiene al encontrar
+3:    el primer error o si continua informando los siguientes.
+4:    Cada linea con casos de error contiene 3 errores, en 3
+5:    sentencias separadas por ';' sobre la misma linea fisica:
+6:    1) identificador mal formado VarMala<letras> (mayuscula);
+7:    2) asignacion anidada posterior: x := y = (z = (N$ul));
+8:    3) falta el parentesis de cierre: if (x > N$ul pout(...);
+9:    Las lineas se agrupan en bloques if/begin/end para acotar
+10:    la recuperacion. Esperado: los 3 errores informados linea
+11:    por linea y el analisis llegando a la ultima linea. }}
+12: prog
+13: ulongint x, y, z;
+14: begin
+15:     if (x > 0$ul) begin
+16:     VarMalaa := 1$ul; x := y = (z = (1$ul)); if (x > 1$ul pout({ok}); end_if;
+17:     VarMalab := 2$ul; x := y = (z = (2$ul)); if (x > 2$ul pout({ok}); end_if;
+18:     VarMalac := 3$ul; x := y = (z = (3$ul)); if (x > 3$ul pout({ok}); end_if;
+19:     VarMalad := 4$ul; x := y = (z = (4$ul)); if (x > 4$ul pout({ok}); end_if;
+20:     VarMalae := 5$ul; x := y = (z = (5$ul)); if (x > 5$ul pout({ok}); end_if;
+21:     VarMalaf := 6$ul; x := y = (z = (6$ul)); if (x > 6$ul pout({ok}); end_if;
+22:     VarMalag := 7$ul; x := y = (z = (7$ul)); if (x > 7$ul pout({ok}); end_if;
+23:     VarMalah := 8$ul; x := y = (z = (8$ul)); if (x > 8$ul pout({ok}); end_if;
+24:     VarMalai := 9$ul; x := y = (z = (9$ul)); if (x > 9$ul pout({ok}); end_if;
+25:     VarMalaj := 10$ul; x := y = (z = (10$ul)); if (x > 10$ul pout({ok}); end_if;
+26:     VarMalak := 11$ul; x := y = (z = (11$ul)); if (x > 11$ul pout({ok}); end_if;
+27:     VarMalal := 12$ul; x := y = (z = (12$ul)); if (x > 12$ul pout({ok}); end_if;
+28:     VarMalam := 13$ul; x := y = (z = (13$ul)); if (x > 13$ul pout({ok}); end_if;
+29:     VarMalan := 14$ul; x := y = (z = (14$ul)); if (x > 14$ul pout({ok}); end_if;
+30:     end
+31:     end_if;
+32:     if (x > 0$ul) begin
+33:     VarMalao := 15$ul; x := y = (z = (15$ul)); if (x > 15$ul pout({ok}); end_if;
+34:     VarMalap := 16$ul; x := y = (z = (16$ul)); if (x > 16$ul pout({ok}); end_if;
+35:     VarMalaq := 17$ul; x := y = (z = (17$ul)); if (x > 17$ul pout({ok}); end_if;
+36:     VarMalar := 18$ul; x := y = (z = (18$ul)); if (x > 18$ul pout({ok}); end_if;
+37:     VarMalas := 19$ul; x := y = (z = (19$ul)); if (x > 19$ul pout({ok}); end_if;
+38:     VarMalat := 20$ul; x := y = (z = (20$ul)); if (x > 20$ul pout({ok}); end_if;
+39:     VarMalau := 21$ul; x := y = (z = (21$ul)); if (x > 21$ul pout({ok}); end_if;
+40:     VarMalav := 22$ul; x := y = (z = (22$ul)); if (x > 22$ul pout({ok}); end_if;
+41:     VarMalaw := 23$ul; x := y = (z = (23$ul)); if (x > 23$ul pout({ok}); end_if;
+42:     VarMalax := 24$ul; x := y = (z = (24$ul)); if (x > 24$ul pout({ok}); end_if;
+43:     VarMalay := 25$ul; x := y = (z = (25$ul)); if (x > 25$ul pout({ok}); end_if;
+44:     VarMalaz := 26$ul; x := y = (z = (26$ul)); if (x > 26$ul pout({ok}); end_if;
+45:     VarMalaaa := 27$ul; x := y = (z = (27$ul)); if (x > 27$ul pout({ok}); end_if;
+46:     VarMalaab := 28$ul; x := y = (z = (28$ul)); if (x > 28$ul pout({ok}); end_if;
+47:     end
+48:     end_if;
+49:     if (x > 0$ul) begin
+50:     VarMalaac := 29$ul; x := y = (z = (29$ul)); if (x > 29$ul pout({ok}); end_if;
+51:     VarMalaad := 30$ul; x := y = (z = (30$ul)); if (x > 30$ul pout({ok}); end_if;
+52:     VarMalaae := 31$ul; x := y = (z = (31$ul)); if (x > 31$ul pout({ok}); end_if;
+53:     VarMalaaf := 32$ul; x := y = (z = (32$ul)); if (x > 32$ul pout({ok}); end_if;
+54:     VarMalaag := 33$ul; x := y = (z = (33$ul)); if (x > 33$ul pout({ok}); end_if;
+55:     VarMalaah := 34$ul; x := y = (z = (34$ul)); if (x > 34$ul pout({ok}); end_if;
+56:     VarMalaai := 35$ul; x := y = (z = (35$ul)); if (x > 35$ul pout({ok}); end_if;
+57:     VarMalaaj := 36$ul; x := y = (z = (36$ul)); if (x > 36$ul pout({ok}); end_if;
+58:     VarMalaak := 37$ul; x := y = (z = (37$ul)); if (x > 37$ul pout({ok}); end_if;
+59:     VarMalaal := 38$ul; x := y = (z = (38$ul)); if (x > 38$ul pout({ok}); end_if;
+60:     VarMalaam := 39$ul; x := y = (z = (39$ul)); if (x > 39$ul pout({ok}); end_if;
+61:     VarMalaan := 40$ul; x := y = (z = (40$ul)); if (x > 40$ul pout({ok}); end_if;
+62:     VarMalaao := 41$ul; x := y = (z = (41$ul)); if (x > 41$ul pout({ok}); end_if;
+63:     VarMalaap := 42$ul; x := y = (z = (42$ul)); if (x > 42$ul pout({ok}); end_if;
+64:     end
+65:     end_if;
+66:     if (x > 0$ul) begin
+67:     VarMalaaq := 43$ul; x := y = (z = (43$ul)); if (x > 43$ul pout({ok}); end_if;
+68:     VarMalaar := 44$ul; x := y = (z = (44$ul)); if (x > 44$ul pout({ok}); end_if;
+69:     VarMalaas := 45$ul; x := y = (z = (45$ul)); if (x > 45$ul pout({ok}); end_if;
+70:     VarMalaat := 46$ul; x := y = (z = (46$ul)); if (x > 46$ul pout({ok}); end_if;
+71:     VarMalaau := 47$ul; x := y = (z = (47$ul)); if (x > 47$ul pout({ok}); end_if;
+72:     VarMalaav := 48$ul; x := y = (z = (48$ul)); if (x > 48$ul pout({ok}); end_if;
+73:     VarMalaaw := 49$ul; x := y = (z = (49$ul)); if (x > 49$ul pout({ok}); end_if;
+74:     VarMalaax := 50$ul; x := y = (z = (50$ul)); if (x > 50$ul pout({ok}); end_if;
+75:     VarMalaay := 51$ul; x := y = (z = (51$ul)); if (x > 51$ul pout({ok}); end_if;
+76:     VarMalaaz := 52$ul; x := y = (z = (52$ul)); if (x > 52$ul pout({ok}); end_if;
+77:     VarMalaba := 53$ul; x := y = (z = (53$ul)); if (x > 53$ul pout({ok}); end_if;
+78:     VarMalabb := 54$ul; x := y = (z = (54$ul)); if (x > 54$ul pout({ok}); end_if;
+79:     VarMalabc := 55$ul; x := y = (z = (55$ul)); if (x > 55$ul pout({ok}); end_if;
+80:     VarMalabd := 56$ul; x := y = (z = (56$ul)); if (x > 56$ul pout({ok}); end_if;
+81:     end
+82:     end_if;
+83:     if (x > 0$ul) begin
+84:     VarMalabe := 57$ul; x := y = (z = (57$ul)); if (x > 57$ul pout({ok}); end_if;
+85:     VarMalabf := 58$ul; x := y = (z = (58$ul)); if (x > 58$ul pout({ok}); end_if;
+86:     VarMalabg := 59$ul; x := y = (z = (59$ul)); if (x > 59$ul pout({ok}); end_if;
+87:     VarMalabh := 60$ul; x := y = (z = (60$ul)); if (x > 60$ul pout({ok}); end_if;
+88:     VarMalabi := 61$ul; x := y = (z = (61$ul)); if (x > 61$ul pout({ok}); end_if;
+89:     VarMalabj := 62$ul; x := y = (z = (62$ul)); if (x > 62$ul pout({ok}); end_if;
+90:     VarMalabk := 63$ul; x := y = (z = (63$ul)); if (x > 63$ul pout({ok}); end_if;
+91:     VarMalabl := 64$ul; x := y = (z = (64$ul)); if (x > 64$ul pout({ok}); end_if;
+92:     VarMalabm := 65$ul; x := y = (z = (65$ul)); if (x > 65$ul pout({ok}); end_if;
+93:     VarMalabn := 66$ul; x := y = (z = (66$ul)); if (x > 66$ul pout({ok}); end_if;
+94:     VarMalabo := 67$ul; x := y = (z = (67$ul)); if (x > 67$ul pout({ok}); end_if;
+95:     VarMalabp := 68$ul; x := y = (z = (68$ul)); if (x > 68$ul pout({ok}); end_if;
+96:     VarMalabq := 69$ul; x := y = (z = (69$ul)); if (x > 69$ul pout({ok}); end_if;
+97:     VarMalabr := 70$ul; x := y = (z = (70$ul)); if (x > 70$ul pout({ok}); end_if;
+98:     end
+99:     end_if;
+100:     if (x > 0$ul) begin
+101:     VarMalabs := 71$ul; x := y = (z = (71$ul)); if (x > 71$ul pout({ok}); end_if;
+102:     VarMalabt := 72$ul; x := y = (z = (72$ul)); if (x > 72$ul pout({ok}); end_if;
+103:     VarMalabu := 73$ul; x := y = (z = (73$ul)); if (x > 73$ul pout({ok}); end_if;
+104:     VarMalabv := 74$ul; x := y = (z = (74$ul)); if (x > 74$ul pout({ok}); end_if;
+105:     VarMalabw := 75$ul; x := y = (z = (75$ul)); if (x > 75$ul pout({ok}); end_if;
+106:     VarMalabx := 76$ul; x := y = (z = (76$ul)); if (x > 76$ul pout({ok}); end_if;
+107:     VarMalaby := 77$ul; x := y = (z = (77$ul)); if (x > 77$ul pout({ok}); end_if;
+108:     VarMalabz := 78$ul; x := y = (z = (78$ul)); if (x > 78$ul pout({ok}); end_if;
+109:     VarMalaca := 79$ul; x := y = (z = (79$ul)); if (x > 79$ul pout({ok}); end_if;
+110:     VarMalacb := 80$ul; x := y = (z = (80$ul)); if (x > 80$ul pout({ok}); end_if;
+111:     VarMalacc := 81$ul; x := y = (z = (81$ul)); if (x > 81$ul pout({ok}); end_if;
+112:     VarMalacd := 82$ul; x := y = (z = (82$ul)); if (x > 82$ul pout({ok}); end_if;
+113:     VarMalace := 83$ul; x := y = (z = (83$ul)); if (x > 83$ul pout({ok}); end_if;
+114:     VarMalacf := 84$ul; x := y = (z = (84$ul)); if (x > 84$ul pout({ok}); end_if;
+115:     end
+116:     end_if;
+117:     if (x > 0$ul) begin
+118:     VarMalacg := 85$ul; x := y = (z = (85$ul)); if (x > 85$ul pout({ok}); end_if;
+119:     VarMalach := 86$ul; x := y = (z = (86$ul)); if (x > 86$ul pout({ok}); end_if;
+120:     VarMalaci := 87$ul; x := y = (z = (87$ul)); if (x > 87$ul pout({ok}); end_if;
+121:     VarMalacj := 88$ul; x := y = (z = (88$ul)); if (x > 88$ul pout({ok}); end_if;
+122:     VarMalack := 89$ul; x := y = (z = (89$ul)); if (x > 89$ul pout({ok}); end_if;
+123:     VarMalacl := 90$ul; x := y = (z = (90$ul)); if (x > 90$ul pout({ok}); end_if;
+124:     VarMalacm := 91$ul; x := y = (z = (91$ul)); if (x > 91$ul pout({ok}); end_if;
+125:     VarMalacn := 92$ul; x := y = (z = (92$ul)); if (x > 92$ul pout({ok}); end_if;
+126:     VarMalaco := 93$ul; x := y = (z = (93$ul)); if (x > 93$ul pout({ok}); end_if;
+127:     VarMalacp := 94$ul; x := y = (z = (94$ul)); if (x > 94$ul pout({ok}); end_if;
+128:     VarMalacq := 95$ul; x := y = (z = (95$ul)); if (x > 95$ul pout({ok}); end_if;
+129:     VarMalacr := 96$ul; x := y = (z = (96$ul)); if (x > 96$ul pout({ok}); end_if;
+130:     VarMalacs := 97$ul; x := y = (z = (97$ul)); if (x > 97$ul pout({ok}); end_if;
+131:     VarMalact := 98$ul; x := y = (z = (98$ul)); if (x > 98$ul pout({ok}); end_if;
+132:     end
+133:     end_if;
+134:     if (x > 0$ul) begin
+135:     VarMalacu := 99$ul; x := y = (z = (99$ul)); if (x > 99$ul pout({ok}); end_if;
+136:     VarMalacv := 100$ul; x := y = (z = (100$ul)); if (x > 100$ul pout({ok}); end_if;
+137:     VarMalacw := 101$ul; x := y = (z = (101$ul)); if (x > 101$ul pout({ok}); end_if;
+138:     VarMalacx := 102$ul; x := y = (z = (102$ul)); if (x > 102$ul pout({ok}); end_if;
+139:     VarMalacy := 103$ul; x := y = (z = (103$ul)); if (x > 103$ul pout({ok}); end_if;
+140:     VarMalacz := 104$ul; x := y = (z = (104$ul)); if (x > 104$ul pout({ok}); end_if;
+141:     VarMalada := 105$ul; x := y = (z = (105$ul)); if (x > 105$ul pout({ok}); end_if;
+142:     VarMaladb := 106$ul; x := y = (z = (106$ul)); if (x > 106$ul pout({ok}); end_if;
+143:     VarMaladc := 107$ul; x := y = (z = (107$ul)); if (x > 107$ul pout({ok}); end_if;
+144:     VarMaladd := 108$ul; x := y = (z = (108$ul)); if (x > 108$ul pout({ok}); end_if;
+145:     VarMalade := 109$ul; x := y = (z = (109$ul)); if (x > 109$ul pout({ok}); end_if;
+146:     VarMaladf := 110$ul; x := y = (z = (110$ul)); if (x > 110$ul pout({ok}); end_if;
+147:     VarMaladg := 111$ul; x := y = (z = (111$ul)); if (x > 111$ul pout({ok}); end_if;
+148:     VarMaladh := 112$ul; x := y = (z = (112$ul)); if (x > 112$ul pout({ok}); end_if;
+149:     end
+150:     end_if;
+151:     if (x > 0$ul) begin
+152:     VarMaladi := 113$ul; x := y = (z = (113$ul)); if (x > 113$ul pout({ok}); end_if;
+153:     VarMaladj := 114$ul; x := y = (z = (114$ul)); if (x > 114$ul pout({ok}); end_if;
+154:     VarMaladk := 115$ul; x := y = (z = (115$ul)); if (x > 115$ul pout({ok}); end_if;
+155:     VarMaladl := 116$ul; x := y = (z = (116$ul)); if (x > 116$ul pout({ok}); end_if;
+156:     VarMaladm := 117$ul; x := y = (z = (117$ul)); if (x > 117$ul pout({ok}); end_if;
+157:     VarMaladn := 118$ul; x := y = (z = (118$ul)); if (x > 118$ul pout({ok}); end_if;
+158:     VarMalado := 119$ul; x := y = (z = (119$ul)); if (x > 119$ul pout({ok}); end_if;
+159:     VarMaladp := 120$ul; x := y = (z = (120$ul)); if (x > 120$ul pout({ok}); end_if;
+160:     VarMaladq := 121$ul; x := y = (z = (121$ul)); if (x > 121$ul pout({ok}); end_if;
+161:     VarMaladr := 122$ul; x := y = (z = (122$ul)); if (x > 122$ul pout({ok}); end_if;
+162:     VarMalads := 123$ul; x := y = (z = (123$ul)); if (x > 123$ul pout({ok}); end_if;
+163:     VarMaladt := 124$ul; x := y = (z = (124$ul)); if (x > 124$ul pout({ok}); end_if;
+164:     VarMaladu := 125$ul; x := y = (z = (125$ul)); if (x > 125$ul pout({ok}); end_if;
+165:     VarMaladv := 126$ul; x := y = (z = (126$ul)); if (x > 126$ul pout({ok}); end_if;
+166:     end
+167:     end_if;
+168:     if (x > 0$ul) begin
+169:     VarMaladw := 127$ul; x := y = (z = (127$ul)); if (x > 127$ul pout({ok}); end_if;
+170:     VarMaladx := 128$ul; x := y = (z = (128$ul)); if (x > 128$ul pout({ok}); end_if;
+171:     VarMalady := 129$ul; x := y = (z = (129$ul)); if (x > 129$ul pout({ok}); end_if;
+172:     VarMaladz := 130$ul; x := y = (z = (130$ul)); if (x > 130$ul pout({ok}); end_if;
+173:     VarMalaea := 131$ul; x := y = (z = (131$ul)); if (x > 131$ul pout({ok}); end_if;
+174:     VarMalaeb := 132$ul; x := y = (z = (132$ul)); if (x > 132$ul pout({ok}); end_if;
+175:     VarMalaec := 133$ul; x := y = (z = (133$ul)); if (x > 133$ul pout({ok}); end_if;
+176:     VarMalaed := 134$ul; x := y = (z = (134$ul)); if (x > 134$ul pout({ok}); end_if;
+177:     VarMalaee := 135$ul; x := y = (z = (135$ul)); if (x > 135$ul pout({ok}); end_if;
+178:     VarMalaef := 136$ul; x := y = (z = (136$ul)); if (x > 136$ul pout({ok}); end_if;
+179:     VarMalaeg := 137$ul; x := y = (z = (137$ul)); if (x > 137$ul pout({ok}); end_if;
+180:     VarMalaeh := 138$ul; x := y = (z = (138$ul)); if (x > 138$ul pout({ok}); end_if;
+181:     VarMalaei := 139$ul; x := y = (z = (139$ul)); if (x > 139$ul pout({ok}); end_if;
+182:     VarMalaej := 140$ul; x := y = (z = (140$ul)); if (x > 140$ul pout({ok}); end_if;
+183:     end
+184:     end_if;
+185:     if (x > 0$ul) begin
+186:     VarMalaek := 141$ul; x := y = (z = (141$ul)); if (x > 141$ul pout({ok}); end_if;
+187:     VarMalael := 142$ul; x := y = (z = (142$ul)); if (x > 142$ul pout({ok}); end_if;
+188:     VarMalaem := 143$ul; x := y = (z = (143$ul)); if (x > 143$ul pout({ok}); end_if;
+189:     VarMalaen := 144$ul; x := y = (z = (144$ul)); if (x > 144$ul pout({ok}); end_if;
+190:     VarMalaeo := 145$ul; x := y = (z = (145$ul)); if (x > 145$ul pout({ok}); end_if;
+191:     VarMalaep := 146$ul; x := y = (z = (146$ul)); if (x > 146$ul pout({ok}); end_if;
+192:     VarMalaeq := 147$ul; x := y = (z = (147$ul)); if (x > 147$ul pout({ok}); end_if;
+193:     VarMalaer := 148$ul; x := y = (z = (148$ul)); if (x > 148$ul pout({ok}); end_if;
+194:     VarMalaes := 149$ul; x := y = (z = (149$ul)); if (x > 149$ul pout({ok}); end_if;
+195:     VarMalaet := 150$ul; x := y = (z = (150$ul)); if (x > 150$ul pout({ok}); end_if;
+196:     VarMalaeu := 151$ul; x := y = (z = (151$ul)); if (x > 151$ul pout({ok}); end_if;
+197:     VarMalaev := 152$ul; x := y = (z = (152$ul)); if (x > 152$ul pout({ok}); end_if;
+198:     end
+199:     end_if;
+200: end
+
+Tokens detectados por el Analizador Léxico:
+[300] Identificador prog
+[414] Palabra reservada ulongint
+[300] Identificador x
+[44] ,
+[300] Identificador y
+[44] ,
+[300] Identificador z
+[59] ;
+[403] Palabra reservada begin
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 1$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 1$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 1$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 2$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 2$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 2$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 3$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 3$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 3$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 4$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 4$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 4$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 5$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 5$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 5$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 6$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 6$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 6$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 7$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 7$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 7$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 8$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 8$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 8$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 9$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 9$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 9$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 10$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 10$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 10$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 11$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 11$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 11$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 12$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 12$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 12$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 13$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 13$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 13$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 14$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 14$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 14$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 15$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 15$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 15$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 16$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 16$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 16$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 17$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 17$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 17$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 18$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 18$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 18$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 19$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 19$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 19$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 20$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 20$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 20$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 21$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 21$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 21$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 22$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 22$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 22$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 23$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 23$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 23$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 24$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 24$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 24$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 25$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 25$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 25$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 26$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 26$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 26$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 27$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 27$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 27$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 28$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 28$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 28$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 29$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 29$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 29$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 30$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 30$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 30$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 31$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 31$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 31$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 32$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 32$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 32$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 33$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 33$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 33$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 34$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 34$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 34$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 35$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 35$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 35$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 36$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 36$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 36$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 37$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 37$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 37$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 38$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 38$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 38$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 39$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 39$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 39$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 40$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 40$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 40$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 41$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 41$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 41$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 42$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 42$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 42$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 43$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 43$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 43$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 44$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 44$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 44$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 45$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 45$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 45$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 46$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 46$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 46$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 47$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 47$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 47$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 48$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 48$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 48$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 49$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 49$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 49$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 50$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 50$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 50$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 51$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 51$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 51$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 52$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 52$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 52$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 53$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 53$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 53$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 54$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 54$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 54$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 55$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 55$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 55$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 56$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 56$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 56$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 57$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 57$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 57$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 58$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 58$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 58$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 59$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 59$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 59$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 60$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 60$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 60$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 61$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 61$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 61$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 62$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 62$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 62$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 63$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 63$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 63$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 64$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 64$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 64$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 65$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 65$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 65$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 66$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 66$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 66$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 67$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 67$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 67$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 68$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 68$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 68$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 69$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 69$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 69$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 70$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 70$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 70$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 71$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 71$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 71$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 72$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 72$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 72$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 73$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 73$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 73$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 74$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 74$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 74$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 75$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 75$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 75$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 76$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 76$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 76$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 77$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 77$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 77$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 78$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 78$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 78$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 79$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 79$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 79$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 80$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 80$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 80$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 81$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 81$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 81$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 82$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 82$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 82$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 83$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 83$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 83$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 84$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 84$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 84$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 85$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 85$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 85$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 86$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 86$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 86$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 87$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 87$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 87$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 88$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 88$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 88$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 89$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 89$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 89$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 90$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 90$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 90$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 91$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 91$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 91$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 92$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 92$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 92$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 93$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 93$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 93$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 94$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 94$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 94$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 95$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 95$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 95$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 96$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 96$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 96$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 97$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 97$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 97$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 98$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 98$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 98$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 99$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 99$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 99$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 100$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 100$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 100$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 101$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 101$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 101$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 102$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 102$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 102$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 103$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 103$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 103$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 104$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 104$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 104$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 105$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 105$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 105$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 106$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 106$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 106$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 107$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 107$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 107$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 108$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 108$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 108$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 109$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 109$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 109$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 110$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 110$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 110$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 111$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 111$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 111$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 112$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 112$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 112$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 113$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 113$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 113$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 114$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 114$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 114$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 115$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 115$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 115$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 116$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 116$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 116$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 117$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 117$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 117$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 118$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 118$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 118$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 119$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 119$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 119$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 120$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 120$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 120$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 121$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 121$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 121$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 122$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 122$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 122$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 123$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 123$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 123$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 124$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 124$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 124$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 125$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 125$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 125$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 126$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 126$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 126$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 127$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 127$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 127$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 128$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 128$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 128$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 129$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 129$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 129$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 130$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 130$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 130$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 131$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 131$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 131$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 132$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 132$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 132$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 133$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 133$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 133$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 134$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 134$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 134$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 135$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 135$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 135$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 136$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 136$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 136$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 137$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 137$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 137$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 138$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 138$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 138$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 139$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 139$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 139$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 140$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 140$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 140$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[403] Palabra reservada begin
+[301] Operador de asignacion :=
+[302] Constante ulongint 141$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 141$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 141$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 142$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 142$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 142$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 143$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 143$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 143$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 144$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 144$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 144$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 145$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 145$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 145$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 146$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 146$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 146$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 147$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 147$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 147$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 148$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 148$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 148$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 149$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 149$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 149$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 150$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 150$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 150$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 151$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 151$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 151$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[301] Operador de asignacion :=
+[302] Constante ulongint 152$ul
+[59] ;
+[300] Identificador x
+[301] Operador de asignacion :=
+[300] Identificador y
+[61] =
+[40] (
+[300] Identificador z
+[61] =
+[40] (
+[302] Constante ulongint 152$ul
+[41] )
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x
+[62] >
+[302] Constante ulongint 152$ul
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+
+Línea 13: Declaracion de variables
+Línea 16: Asignacion en expresion
+Línea 16: Asignacion en expresion
+Línea 16: Asignación
+Línea 16: Sentencia POUT
+Línea 17: Asignacion en expresion
+Línea 17: Asignacion en expresion
+Línea 17: Asignación
+Línea 17: Sentencia POUT
+Línea 18: Asignacion en expresion
+Línea 18: Asignacion en expresion
+Línea 18: Asignación
+Línea 18: Sentencia POUT
+Línea 19: Asignacion en expresion
+Línea 19: Asignacion en expresion
+Línea 19: Asignación
+Línea 19: Sentencia POUT
+Línea 20: Asignacion en expresion
+Línea 20: Asignacion en expresion
+Línea 20: Asignación
+Línea 20: Sentencia POUT
+Línea 21: Asignacion en expresion
+Línea 21: Asignacion en expresion
+Línea 21: Asignación
+Línea 21: Sentencia POUT
+Línea 22: Asignacion en expresion
+Línea 22: Asignacion en expresion
+Línea 22: Asignación
+Línea 22: Sentencia POUT
+Línea 23: Asignacion en expresion
+Línea 23: Asignacion en expresion
+Línea 23: Asignación
+Línea 23: Sentencia POUT
+Línea 24: Asignacion en expresion
+Línea 24: Asignacion en expresion
+Línea 24: Asignación
+Línea 24: Sentencia POUT
+Línea 25: Asignacion en expresion
+Línea 25: Asignacion en expresion
+Línea 25: Asignación
+Línea 25: Sentencia POUT
+Línea 26: Asignacion en expresion
+Línea 26: Asignacion en expresion
+Línea 26: Asignación
+Línea 26: Sentencia POUT
+Línea 27: Asignacion en expresion
+Línea 27: Asignacion en expresion
+Línea 27: Asignación
+Línea 27: Sentencia POUT
+Línea 28: Asignacion en expresion
+Línea 28: Asignacion en expresion
+Línea 28: Asignación
+Línea 28: Sentencia POUT
+Línea 29: Asignacion en expresion
+Línea 29: Asignacion en expresion
+Línea 29: Asignación
+Línea 29: Sentencia POUT
+Línea 30: Bloque BEGIN - END
+Línea 31: Sentencia IF
+Línea 33: Asignacion en expresion
+Línea 33: Asignacion en expresion
+Línea 33: Asignación
+Línea 33: Sentencia POUT
+Línea 34: Asignacion en expresion
+Línea 34: Asignacion en expresion
+Línea 34: Asignación
+Línea 34: Sentencia POUT
+Línea 35: Asignacion en expresion
+Línea 35: Asignacion en expresion
+Línea 35: Asignación
+Línea 35: Sentencia POUT
+Línea 36: Asignacion en expresion
+Línea 36: Asignacion en expresion
+Línea 36: Asignación
+Línea 36: Sentencia POUT
+Línea 37: Asignacion en expresion
+Línea 37: Asignacion en expresion
+Línea 37: Asignación
+Línea 37: Sentencia POUT
+Línea 38: Asignacion en expresion
+Línea 38: Asignacion en expresion
+Línea 38: Asignación
+Línea 38: Sentencia POUT
+Línea 39: Asignacion en expresion
+Línea 39: Asignacion en expresion
+Línea 39: Asignación
+Línea 39: Sentencia POUT
+Línea 40: Asignacion en expresion
+Línea 40: Asignacion en expresion
+Línea 40: Asignación
+Línea 40: Sentencia POUT
+Línea 41: Asignacion en expresion
+Línea 41: Asignacion en expresion
+Línea 41: Asignación
+Línea 41: Sentencia POUT
+Línea 42: Asignacion en expresion
+Línea 42: Asignacion en expresion
+Línea 42: Asignación
+Línea 42: Sentencia POUT
+Línea 43: Asignacion en expresion
+Línea 43: Asignacion en expresion
+Línea 43: Asignación
+Línea 43: Sentencia POUT
+Línea 44: Asignacion en expresion
+Línea 44: Asignacion en expresion
+Línea 44: Asignación
+Línea 44: Sentencia POUT
+Línea 45: Asignacion en expresion
+Línea 45: Asignacion en expresion
+Línea 45: Asignación
+Línea 45: Sentencia POUT
+Línea 46: Asignacion en expresion
+Línea 46: Asignacion en expresion
+Línea 46: Asignación
+Línea 46: Sentencia POUT
+Línea 47: Bloque BEGIN - END
+Línea 48: Sentencia IF
+Línea 50: Asignacion en expresion
+Línea 50: Asignacion en expresion
+Línea 50: Asignación
+Línea 50: Sentencia POUT
+Línea 51: Asignacion en expresion
+Línea 51: Asignacion en expresion
+Línea 51: Asignación
+Línea 51: Sentencia POUT
+Línea 52: Asignacion en expresion
+Línea 52: Asignacion en expresion
+Línea 52: Asignación
+Línea 52: Sentencia POUT
+Línea 53: Asignacion en expresion
+Línea 53: Asignacion en expresion
+Línea 53: Asignación
+Línea 53: Sentencia POUT
+Línea 54: Asignacion en expresion
+Línea 54: Asignacion en expresion
+Línea 54: Asignación
+Línea 54: Sentencia POUT
+Línea 55: Asignacion en expresion
+Línea 55: Asignacion en expresion
+Línea 55: Asignación
+Línea 55: Sentencia POUT
+Línea 56: Asignacion en expresion
+Línea 56: Asignacion en expresion
+Línea 56: Asignación
+Línea 56: Sentencia POUT
+Línea 57: Asignacion en expresion
+Línea 57: Asignacion en expresion
+Línea 57: Asignación
+Línea 57: Sentencia POUT
+Línea 58: Asignacion en expresion
+Línea 58: Asignacion en expresion
+Línea 58: Asignación
+Línea 58: Sentencia POUT
+Línea 59: Asignacion en expresion
+Línea 59: Asignacion en expresion
+Línea 59: Asignación
+Línea 59: Sentencia POUT
+Línea 60: Asignacion en expresion
+Línea 60: Asignacion en expresion
+Línea 60: Asignación
+Línea 60: Sentencia POUT
+Línea 61: Asignacion en expresion
+Línea 61: Asignacion en expresion
+Línea 61: Asignación
+Línea 61: Sentencia POUT
+Línea 62: Asignacion en expresion
+Línea 62: Asignacion en expresion
+Línea 62: Asignación
+Línea 62: Sentencia POUT
+Línea 63: Asignacion en expresion
+Línea 63: Asignacion en expresion
+Línea 63: Asignación
+Línea 63: Sentencia POUT
+Línea 64: Bloque BEGIN - END
+Línea 65: Sentencia IF
+Línea 67: Asignacion en expresion
+Línea 67: Asignacion en expresion
+Línea 67: Asignación
+Línea 67: Sentencia POUT
+Línea 68: Asignacion en expresion
+Línea 68: Asignacion en expresion
+Línea 68: Asignación
+Línea 68: Sentencia POUT
+Línea 69: Asignacion en expresion
+Línea 69: Asignacion en expresion
+Línea 69: Asignación
+Línea 69: Sentencia POUT
+Línea 70: Asignacion en expresion
+Línea 70: Asignacion en expresion
+Línea 70: Asignación
+Línea 70: Sentencia POUT
+Línea 71: Asignacion en expresion
+Línea 71: Asignacion en expresion
+Línea 71: Asignación
+Línea 71: Sentencia POUT
+Línea 72: Asignacion en expresion
+Línea 72: Asignacion en expresion
+Línea 72: Asignación
+Línea 72: Sentencia POUT
+Línea 73: Asignacion en expresion
+Línea 73: Asignacion en expresion
+Línea 73: Asignación
+Línea 73: Sentencia POUT
+Línea 74: Asignacion en expresion
+Línea 74: Asignacion en expresion
+Línea 74: Asignación
+Línea 74: Sentencia POUT
+Línea 75: Asignacion en expresion
+Línea 75: Asignacion en expresion
+Línea 75: Asignación
+Línea 75: Sentencia POUT
+Línea 76: Asignacion en expresion
+Línea 76: Asignacion en expresion
+Línea 76: Asignación
+Línea 76: Sentencia POUT
+Línea 77: Asignacion en expresion
+Línea 77: Asignacion en expresion
+Línea 77: Asignación
+Línea 77: Sentencia POUT
+Línea 78: Asignacion en expresion
+Línea 78: Asignacion en expresion
+Línea 78: Asignación
+Línea 78: Sentencia POUT
+Línea 79: Asignacion en expresion
+Línea 79: Asignacion en expresion
+Línea 79: Asignación
+Línea 79: Sentencia POUT
+Línea 80: Asignacion en expresion
+Línea 80: Asignacion en expresion
+Línea 80: Asignación
+Línea 80: Sentencia POUT
+Línea 81: Bloque BEGIN - END
+Línea 82: Sentencia IF
+Línea 84: Asignacion en expresion
+Línea 84: Asignacion en expresion
+Línea 84: Asignación
+Línea 84: Sentencia POUT
+Línea 85: Asignacion en expresion
+Línea 85: Asignacion en expresion
+Línea 85: Asignación
+Línea 85: Sentencia POUT
+Línea 86: Asignacion en expresion
+Línea 86: Asignacion en expresion
+Línea 86: Asignación
+Línea 86: Sentencia POUT
+Línea 87: Asignacion en expresion
+Línea 87: Asignacion en expresion
+Línea 87: Asignación
+Línea 87: Sentencia POUT
+Línea 88: Asignacion en expresion
+Línea 88: Asignacion en expresion
+Línea 88: Asignación
+Línea 88: Sentencia POUT
+Línea 89: Asignacion en expresion
+Línea 89: Asignacion en expresion
+Línea 89: Asignación
+Línea 89: Sentencia POUT
+Línea 90: Asignacion en expresion
+Línea 90: Asignacion en expresion
+Línea 90: Asignación
+Línea 90: Sentencia POUT
+Línea 91: Asignacion en expresion
+Línea 91: Asignacion en expresion
+Línea 91: Asignación
+Línea 91: Sentencia POUT
+Línea 92: Asignacion en expresion
+Línea 92: Asignacion en expresion
+Línea 92: Asignación
+Línea 92: Sentencia POUT
+Línea 93: Asignacion en expresion
+Línea 93: Asignacion en expresion
+Línea 93: Asignación
+Línea 93: Sentencia POUT
+Línea 94: Asignacion en expresion
+Línea 94: Asignacion en expresion
+Línea 94: Asignación
+Línea 94: Sentencia POUT
+Línea 95: Asignacion en expresion
+Línea 95: Asignacion en expresion
+Línea 95: Asignación
+Línea 95: Sentencia POUT
+Línea 96: Asignacion en expresion
+Línea 96: Asignacion en expresion
+Línea 96: Asignación
+Línea 96: Sentencia POUT
+Línea 97: Asignacion en expresion
+Línea 97: Asignacion en expresion
+Línea 97: Asignación
+Línea 97: Sentencia POUT
+Línea 98: Bloque BEGIN - END
+Línea 99: Sentencia IF
+Línea 101: Asignacion en expresion
+Línea 101: Asignacion en expresion
+Línea 101: Asignación
+Línea 101: Sentencia POUT
+Línea 102: Asignacion en expresion
+Línea 102: Asignacion en expresion
+Línea 102: Asignación
+Línea 102: Sentencia POUT
+Línea 103: Asignacion en expresion
+Línea 103: Asignacion en expresion
+Línea 103: Asignación
+Línea 103: Sentencia POUT
+Línea 104: Asignacion en expresion
+Línea 104: Asignacion en expresion
+Línea 104: Asignación
+Línea 104: Sentencia POUT
+Línea 105: Asignacion en expresion
+Línea 105: Asignacion en expresion
+Línea 105: Asignación
+Línea 105: Sentencia POUT
+Línea 106: Asignacion en expresion
+Línea 106: Asignacion en expresion
+Línea 106: Asignación
+Línea 106: Sentencia POUT
+Línea 107: Asignacion en expresion
+Línea 107: Asignacion en expresion
+Línea 107: Asignación
+Línea 107: Sentencia POUT
+Línea 108: Asignacion en expresion
+Línea 108: Asignacion en expresion
+Línea 108: Asignación
+Línea 108: Sentencia POUT
+Línea 109: Asignacion en expresion
+Línea 109: Asignacion en expresion
+Línea 109: Asignación
+Línea 109: Sentencia POUT
+Línea 110: Asignacion en expresion
+Línea 110: Asignacion en expresion
+Línea 110: Asignación
+Línea 110: Sentencia POUT
+Línea 111: Asignacion en expresion
+Línea 111: Asignacion en expresion
+Línea 111: Asignación
+Línea 111: Sentencia POUT
+Línea 112: Asignacion en expresion
+Línea 112: Asignacion en expresion
+Línea 112: Asignación
+Línea 112: Sentencia POUT
+Línea 113: Asignacion en expresion
+Línea 113: Asignacion en expresion
+Línea 113: Asignación
+Línea 113: Sentencia POUT
+Línea 114: Asignacion en expresion
+Línea 114: Asignacion en expresion
+Línea 114: Asignación
+Línea 114: Sentencia POUT
+Línea 115: Bloque BEGIN - END
+Línea 116: Sentencia IF
+Línea 118: Asignacion en expresion
+Línea 118: Asignacion en expresion
+Línea 118: Asignación
+Línea 118: Sentencia POUT
+Línea 119: Asignacion en expresion
+Línea 119: Asignacion en expresion
+Línea 119: Asignación
+Línea 119: Sentencia POUT
+Línea 120: Asignacion en expresion
+Línea 120: Asignacion en expresion
+Línea 120: Asignación
+Línea 120: Sentencia POUT
+Línea 121: Asignacion en expresion
+Línea 121: Asignacion en expresion
+Línea 121: Asignación
+Línea 121: Sentencia POUT
+Línea 122: Asignacion en expresion
+Línea 122: Asignacion en expresion
+Línea 122: Asignación
+Línea 122: Sentencia POUT
+Línea 123: Asignacion en expresion
+Línea 123: Asignacion en expresion
+Línea 123: Asignación
+Línea 123: Sentencia POUT
+Línea 124: Asignacion en expresion
+Línea 124: Asignacion en expresion
+Línea 124: Asignación
+Línea 124: Sentencia POUT
+Línea 125: Asignacion en expresion
+Línea 125: Asignacion en expresion
+Línea 125: Asignación
+Línea 125: Sentencia POUT
+Línea 126: Asignacion en expresion
+Línea 126: Asignacion en expresion
+Línea 126: Asignación
+Línea 126: Sentencia POUT
+Línea 127: Asignacion en expresion
+Línea 127: Asignacion en expresion
+Línea 127: Asignación
+Línea 127: Sentencia POUT
+Línea 128: Asignacion en expresion
+Línea 128: Asignacion en expresion
+Línea 128: Asignación
+Línea 128: Sentencia POUT
+Línea 129: Asignacion en expresion
+Línea 129: Asignacion en expresion
+Línea 129: Asignación
+Línea 129: Sentencia POUT
+Línea 130: Asignacion en expresion
+Línea 130: Asignacion en expresion
+Línea 130: Asignación
+Línea 130: Sentencia POUT
+Línea 131: Asignacion en expresion
+Línea 131: Asignacion en expresion
+Línea 131: Asignación
+Línea 131: Sentencia POUT
+Línea 132: Bloque BEGIN - END
+Línea 133: Sentencia IF
+Línea 135: Asignacion en expresion
+Línea 135: Asignacion en expresion
+Línea 135: Asignación
+Línea 135: Sentencia POUT
+Línea 136: Asignacion en expresion
+Línea 136: Asignacion en expresion
+Línea 136: Asignación
+Línea 136: Sentencia POUT
+Línea 137: Asignacion en expresion
+Línea 137: Asignacion en expresion
+Línea 137: Asignación
+Línea 137: Sentencia POUT
+Línea 138: Asignacion en expresion
+Línea 138: Asignacion en expresion
+Línea 138: Asignación
+Línea 138: Sentencia POUT
+Línea 139: Asignacion en expresion
+Línea 139: Asignacion en expresion
+Línea 139: Asignación
+Línea 139: Sentencia POUT
+Línea 140: Asignacion en expresion
+Línea 140: Asignacion en expresion
+Línea 140: Asignación
+Línea 140: Sentencia POUT
+Línea 141: Asignacion en expresion
+Línea 141: Asignacion en expresion
+Línea 141: Asignación
+Línea 141: Sentencia POUT
+Línea 142: Asignacion en expresion
+Línea 142: Asignacion en expresion
+Línea 142: Asignación
+Línea 142: Sentencia POUT
+Línea 143: Asignacion en expresion
+Línea 143: Asignacion en expresion
+Línea 143: Asignación
+Línea 143: Sentencia POUT
+Línea 144: Asignacion en expresion
+Línea 144: Asignacion en expresion
+Línea 144: Asignación
+Línea 144: Sentencia POUT
+Línea 145: Asignacion en expresion
+Línea 145: Asignacion en expresion
+Línea 145: Asignación
+Línea 145: Sentencia POUT
+Línea 146: Asignacion en expresion
+Línea 146: Asignacion en expresion
+Línea 146: Asignación
+Línea 146: Sentencia POUT
+Línea 147: Asignacion en expresion
+Línea 147: Asignacion en expresion
+Línea 147: Asignación
+Línea 147: Sentencia POUT
+Línea 148: Asignacion en expresion
+Línea 148: Asignacion en expresion
+Línea 148: Asignación
+Línea 148: Sentencia POUT
+Línea 149: Bloque BEGIN - END
+Línea 150: Sentencia IF
+Línea 152: Asignacion en expresion
+Línea 152: Asignacion en expresion
+Línea 152: Asignación
+Línea 152: Sentencia POUT
+Línea 153: Asignacion en expresion
+Línea 153: Asignacion en expresion
+Línea 153: Asignación
+Línea 153: Sentencia POUT
+Línea 154: Asignacion en expresion
+Línea 154: Asignacion en expresion
+Línea 154: Asignación
+Línea 154: Sentencia POUT
+Línea 155: Asignacion en expresion
+Línea 155: Asignacion en expresion
+Línea 155: Asignación
+Línea 155: Sentencia POUT
+Línea 156: Asignacion en expresion
+Línea 156: Asignacion en expresion
+Línea 156: Asignación
+Línea 156: Sentencia POUT
+Línea 157: Asignacion en expresion
+Línea 157: Asignacion en expresion
+Línea 157: Asignación
+Línea 157: Sentencia POUT
+Línea 158: Asignacion en expresion
+Línea 158: Asignacion en expresion
+Línea 158: Asignación
+Línea 158: Sentencia POUT
+Línea 159: Asignacion en expresion
+Línea 159: Asignacion en expresion
+Línea 159: Asignación
+Línea 159: Sentencia POUT
+Línea 160: Asignacion en expresion
+Línea 160: Asignacion en expresion
+Línea 160: Asignación
+Línea 160: Sentencia POUT
+Línea 161: Asignacion en expresion
+Línea 161: Asignacion en expresion
+Línea 161: Asignación
+Línea 161: Sentencia POUT
+Línea 162: Asignacion en expresion
+Línea 162: Asignacion en expresion
+Línea 162: Asignación
+Línea 162: Sentencia POUT
+Línea 163: Asignacion en expresion
+Línea 163: Asignacion en expresion
+Línea 163: Asignación
+Línea 163: Sentencia POUT
+Línea 164: Asignacion en expresion
+Línea 164: Asignacion en expresion
+Línea 164: Asignación
+Línea 164: Sentencia POUT
+Línea 165: Asignacion en expresion
+Línea 165: Asignacion en expresion
+Línea 165: Asignación
+Línea 165: Sentencia POUT
+Línea 166: Bloque BEGIN - END
+Línea 167: Sentencia IF
+Línea 169: Asignacion en expresion
+Línea 169: Asignacion en expresion
+Línea 169: Asignación
+Línea 169: Sentencia POUT
+Línea 170: Asignacion en expresion
+Línea 170: Asignacion en expresion
+Línea 170: Asignación
+Línea 170: Sentencia POUT
+Línea 171: Asignacion en expresion
+Línea 171: Asignacion en expresion
+Línea 171: Asignación
+Línea 171: Sentencia POUT
+Línea 172: Asignacion en expresion
+Línea 172: Asignacion en expresion
+Línea 172: Asignación
+Línea 172: Sentencia POUT
+Línea 173: Asignacion en expresion
+Línea 173: Asignacion en expresion
+Línea 173: Asignación
+Línea 173: Sentencia POUT
+Línea 174: Asignacion en expresion
+Línea 174: Asignacion en expresion
+Línea 174: Asignación
+Línea 174: Sentencia POUT
+Línea 175: Asignacion en expresion
+Línea 175: Asignacion en expresion
+Línea 175: Asignación
+Línea 175: Sentencia POUT
+Línea 176: Asignacion en expresion
+Línea 176: Asignacion en expresion
+Línea 176: Asignación
+Línea 176: Sentencia POUT
+Línea 177: Asignacion en expresion
+Línea 177: Asignacion en expresion
+Línea 177: Asignación
+Línea 177: Sentencia POUT
+Línea 178: Asignacion en expresion
+Línea 178: Asignacion en expresion
+Línea 178: Asignación
+Línea 178: Sentencia POUT
+Línea 179: Asignacion en expresion
+Línea 179: Asignacion en expresion
+Línea 179: Asignación
+Línea 179: Sentencia POUT
+Línea 180: Asignacion en expresion
+Línea 180: Asignacion en expresion
+Línea 180: Asignación
+Línea 180: Sentencia POUT
+Línea 181: Asignacion en expresion
+Línea 181: Asignacion en expresion
+Línea 181: Asignación
+Línea 181: Sentencia POUT
+Línea 182: Asignacion en expresion
+Línea 182: Asignacion en expresion
+Línea 182: Asignación
+Línea 182: Sentencia POUT
+Línea 183: Bloque BEGIN - END
+Línea 184: Sentencia IF
+Línea 186: Asignacion en expresion
+Línea 186: Asignacion en expresion
+Línea 186: Asignación
+Línea 186: Sentencia POUT
+Línea 187: Asignacion en expresion
+Línea 187: Asignacion en expresion
+Línea 187: Asignación
+Línea 187: Sentencia POUT
+Línea 188: Asignacion en expresion
+Línea 188: Asignacion en expresion
+Línea 188: Asignación
+Línea 188: Sentencia POUT
+Línea 189: Asignacion en expresion
+Línea 189: Asignacion en expresion
+Línea 189: Asignación
+Línea 189: Sentencia POUT
+Línea 190: Asignacion en expresion
+Línea 190: Asignacion en expresion
+Línea 190: Asignación
+Línea 190: Sentencia POUT
+Línea 191: Asignacion en expresion
+Línea 191: Asignacion en expresion
+Línea 191: Asignación
+Línea 191: Sentencia POUT
+Línea 192: Asignacion en expresion
+Línea 192: Asignacion en expresion
+Línea 192: Asignación
+Línea 192: Sentencia POUT
+Línea 193: Asignacion en expresion
+Línea 193: Asignacion en expresion
+Línea 193: Asignación
+Línea 193: Sentencia POUT
+Línea 194: Asignacion en expresion
+Línea 194: Asignacion en expresion
+Línea 194: Asignación
+Línea 194: Sentencia POUT
+Línea 195: Asignacion en expresion
+Línea 195: Asignacion en expresion
+Línea 195: Asignación
+Línea 195: Sentencia POUT
+Línea 196: Asignacion en expresion
+Línea 196: Asignacion en expresion
+Línea 196: Asignación
+Línea 196: Sentencia POUT
+Línea 197: Asignacion en expresion
+Línea 197: Asignacion en expresion
+Línea 197: Asignación
+Línea 197: Sentencia POUT
+Línea 198: Bloque BEGIN - END
+Línea 199: Sentencia IF
+Línea 200: Bloque BEGIN - END
+Línea 200: Programa
+
+Línea 16: Error: Palabra reservada invalida 'VarMalaa'
+Línea 16: Error: Sentencia mal formada
+Línea 16: Error: Anidamiento de asignacion en expresion
+Línea 16: Error: Falta parentesis de cierre para la condicion
+Línea 17: Error: Palabra reservada invalida 'VarMalab'
+Línea 17: Error: Sentencia mal formada
+Línea 17: Error: Anidamiento de asignacion en expresion
+Línea 17: Error: Falta parentesis de cierre para la condicion
+Línea 18: Error: Palabra reservada invalida 'VarMalac'
+Línea 18: Error: Sentencia mal formada
+Línea 18: Error: Anidamiento de asignacion en expresion
+Línea 18: Error: Falta parentesis de cierre para la condicion
+Línea 19: Error: Palabra reservada invalida 'VarMalad'
+Línea 19: Error: Sentencia mal formada
+Línea 19: Error: Anidamiento de asignacion en expresion
+Línea 19: Error: Falta parentesis de cierre para la condicion
+Línea 20: Error: Palabra reservada invalida 'VarMalae'
+Línea 20: Error: Sentencia mal formada
+Línea 20: Error: Anidamiento de asignacion en expresion
+Línea 20: Error: Falta parentesis de cierre para la condicion
+Línea 21: Error: Palabra reservada invalida 'VarMalaf'
+Línea 21: Error: Sentencia mal formada
+Línea 21: Error: Anidamiento de asignacion en expresion
+Línea 21: Error: Falta parentesis de cierre para la condicion
+Línea 22: Error: Palabra reservada invalida 'VarMalag'
+Línea 22: Error: Sentencia mal formada
+Línea 22: Error: Anidamiento de asignacion en expresion
+Línea 22: Error: Falta parentesis de cierre para la condicion
+Línea 23: Error: Palabra reservada invalida 'VarMalah'
+Línea 23: Error: Sentencia mal formada
+Línea 23: Error: Anidamiento de asignacion en expresion
+Línea 23: Error: Falta parentesis de cierre para la condicion
+Línea 24: Error: Palabra reservada invalida 'VarMalai'
+Línea 24: Error: Sentencia mal formada
+Línea 24: Error: Anidamiento de asignacion en expresion
+Línea 24: Error: Falta parentesis de cierre para la condicion
+Línea 25: Error: Palabra reservada invalida 'VarMalaj'
+Línea 25: Error: Sentencia mal formada
+Línea 25: Error: Anidamiento de asignacion en expresion
+Línea 25: Error: Falta parentesis de cierre para la condicion
+Línea 26: Error: Palabra reservada invalida 'VarMalak'
+Línea 26: Error: Sentencia mal formada
+Línea 26: Error: Anidamiento de asignacion en expresion
+Línea 26: Error: Falta parentesis de cierre para la condicion
+Línea 27: Error: Palabra reservada invalida 'VarMalal'
+Línea 27: Error: Sentencia mal formada
+Línea 27: Error: Anidamiento de asignacion en expresion
+Línea 27: Error: Falta parentesis de cierre para la condicion
+Línea 28: Error: Palabra reservada invalida 'VarMalam'
+Línea 28: Error: Sentencia mal formada
+Línea 28: Error: Anidamiento de asignacion en expresion
+Línea 28: Error: Falta parentesis de cierre para la condicion
+Línea 29: Error: Palabra reservada invalida 'VarMalan'
+Línea 29: Error: Sentencia mal formada
+Línea 29: Error: Anidamiento de asignacion en expresion
+Línea 29: Error: Falta parentesis de cierre para la condicion
+Línea 33: Error: Palabra reservada invalida 'VarMalao'
+Línea 33: Error: Sentencia mal formada
+Línea 33: Error: Anidamiento de asignacion en expresion
+Línea 33: Error: Falta parentesis de cierre para la condicion
+Línea 34: Error: Palabra reservada invalida 'VarMalap'
+Línea 34: Error: Sentencia mal formada
+Línea 34: Error: Anidamiento de asignacion en expresion
+Línea 34: Error: Falta parentesis de cierre para la condicion
+Línea 35: Error: Palabra reservada invalida 'VarMalaq'
+Línea 35: Error: Sentencia mal formada
+Línea 35: Error: Anidamiento de asignacion en expresion
+Línea 35: Error: Falta parentesis de cierre para la condicion
+Línea 36: Error: Palabra reservada invalida 'VarMalar'
+Línea 36: Error: Sentencia mal formada
+Línea 36: Error: Anidamiento de asignacion en expresion
+Línea 36: Error: Falta parentesis de cierre para la condicion
+Línea 37: Error: Palabra reservada invalida 'VarMalas'
+Línea 37: Error: Sentencia mal formada
+Línea 37: Error: Anidamiento de asignacion en expresion
+Línea 37: Error: Falta parentesis de cierre para la condicion
+Línea 38: Error: Palabra reservada invalida 'VarMalat'
+Línea 38: Error: Sentencia mal formada
+Línea 38: Error: Anidamiento de asignacion en expresion
+Línea 38: Error: Falta parentesis de cierre para la condicion
+Línea 39: Error: Palabra reservada invalida 'VarMalau'
+Línea 39: Error: Sentencia mal formada
+Línea 39: Error: Anidamiento de asignacion en expresion
+Línea 39: Error: Falta parentesis de cierre para la condicion
+Línea 40: Error: Palabra reservada invalida 'VarMalav'
+Línea 40: Error: Sentencia mal formada
+Línea 40: Error: Anidamiento de asignacion en expresion
+Línea 40: Error: Falta parentesis de cierre para la condicion
+Línea 41: Error: Palabra reservada invalida 'VarMalaw'
+Línea 41: Error: Sentencia mal formada
+Línea 41: Error: Anidamiento de asignacion en expresion
+Línea 41: Error: Falta parentesis de cierre para la condicion
+Línea 42: Error: Palabra reservada invalida 'VarMalax'
+Línea 42: Error: Sentencia mal formada
+Línea 42: Error: Anidamiento de asignacion en expresion
+Línea 42: Error: Falta parentesis de cierre para la condicion
+Línea 43: Error: Palabra reservada invalida 'VarMalay'
+Línea 43: Error: Sentencia mal formada
+Línea 43: Error: Anidamiento de asignacion en expresion
+Línea 43: Error: Falta parentesis de cierre para la condicion
+Línea 44: Error: Palabra reservada invalida 'VarMalaz'
+Línea 44: Error: Sentencia mal formada
+Línea 44: Error: Anidamiento de asignacion en expresion
+Línea 44: Error: Falta parentesis de cierre para la condicion
+Línea 45: Error: Palabra reservada invalida 'VarMalaaa'
+Línea 45: Error: Sentencia mal formada
+Línea 45: Error: Anidamiento de asignacion en expresion
+Línea 45: Error: Falta parentesis de cierre para la condicion
+Línea 46: Error: Palabra reservada invalida 'VarMalaab'
+Línea 46: Error: Sentencia mal formada
+Línea 46: Error: Anidamiento de asignacion en expresion
+Línea 46: Error: Falta parentesis de cierre para la condicion
+Línea 50: Error: Palabra reservada invalida 'VarMalaac'
+Línea 50: Error: Sentencia mal formada
+Línea 50: Error: Anidamiento de asignacion en expresion
+Línea 50: Error: Falta parentesis de cierre para la condicion
+Línea 51: Error: Palabra reservada invalida 'VarMalaad'
+Línea 51: Error: Sentencia mal formada
+Línea 51: Error: Anidamiento de asignacion en expresion
+Línea 51: Error: Falta parentesis de cierre para la condicion
+Línea 52: Error: Palabra reservada invalida 'VarMalaae'
+Línea 52: Error: Sentencia mal formada
+Línea 52: Error: Anidamiento de asignacion en expresion
+Línea 52: Error: Falta parentesis de cierre para la condicion
+Línea 53: Error: Palabra reservada invalida 'VarMalaaf'
+Línea 53: Error: Sentencia mal formada
+Línea 53: Error: Anidamiento de asignacion en expresion
+Línea 53: Error: Falta parentesis de cierre para la condicion
+Línea 54: Error: Palabra reservada invalida 'VarMalaag'
+Línea 54: Error: Sentencia mal formada
+Línea 54: Error: Anidamiento de asignacion en expresion
+Línea 54: Error: Falta parentesis de cierre para la condicion
+Línea 55: Error: Palabra reservada invalida 'VarMalaah'
+Línea 55: Error: Sentencia mal formada
+Línea 55: Error: Anidamiento de asignacion en expresion
+Línea 55: Error: Falta parentesis de cierre para la condicion
+Línea 56: Error: Palabra reservada invalida 'VarMalaai'
+Línea 56: Error: Sentencia mal formada
+Línea 56: Error: Anidamiento de asignacion en expresion
+Línea 56: Error: Falta parentesis de cierre para la condicion
+Línea 57: Error: Palabra reservada invalida 'VarMalaaj'
+Línea 57: Error: Sentencia mal formada
+Línea 57: Error: Anidamiento de asignacion en expresion
+Línea 57: Error: Falta parentesis de cierre para la condicion
+Línea 58: Error: Palabra reservada invalida 'VarMalaak'
+Línea 58: Error: Sentencia mal formada
+Línea 58: Error: Anidamiento de asignacion en expresion
+Línea 58: Error: Falta parentesis de cierre para la condicion
+Línea 59: Error: Palabra reservada invalida 'VarMalaal'
+Línea 59: Error: Sentencia mal formada
+Línea 59: Error: Anidamiento de asignacion en expresion
+Línea 59: Error: Falta parentesis de cierre para la condicion
+Línea 60: Error: Palabra reservada invalida 'VarMalaam'
+Línea 60: Error: Sentencia mal formada
+Línea 60: Error: Anidamiento de asignacion en expresion
+Línea 60: Error: Falta parentesis de cierre para la condicion
+Línea 61: Error: Palabra reservada invalida 'VarMalaan'
+Línea 61: Error: Sentencia mal formada
+Línea 61: Error: Anidamiento de asignacion en expresion
+Línea 61: Error: Falta parentesis de cierre para la condicion
+Línea 62: Error: Palabra reservada invalida 'VarMalaao'
+Línea 62: Error: Sentencia mal formada
+Línea 62: Error: Anidamiento de asignacion en expresion
+Línea 62: Error: Falta parentesis de cierre para la condicion
+Línea 63: Error: Palabra reservada invalida 'VarMalaap'
+Línea 63: Error: Sentencia mal formada
+Línea 63: Error: Anidamiento de asignacion en expresion
+Línea 63: Error: Falta parentesis de cierre para la condicion
+Línea 67: Error: Palabra reservada invalida 'VarMalaaq'
+Línea 67: Error: Sentencia mal formada
+Línea 67: Error: Anidamiento de asignacion en expresion
+Línea 67: Error: Falta parentesis de cierre para la condicion
+Línea 68: Error: Palabra reservada invalida 'VarMalaar'
+Línea 68: Error: Sentencia mal formada
+Línea 68: Error: Anidamiento de asignacion en expresion
+Línea 68: Error: Falta parentesis de cierre para la condicion
+Línea 69: Error: Palabra reservada invalida 'VarMalaas'
+Línea 69: Error: Sentencia mal formada
+Línea 69: Error: Anidamiento de asignacion en expresion
+Línea 69: Error: Falta parentesis de cierre para la condicion
+Línea 70: Error: Palabra reservada invalida 'VarMalaat'
+Línea 70: Error: Sentencia mal formada
+Línea 70: Error: Anidamiento de asignacion en expresion
+Línea 70: Error: Falta parentesis de cierre para la condicion
+Línea 71: Error: Palabra reservada invalida 'VarMalaau'
+Línea 71: Error: Sentencia mal formada
+Línea 71: Error: Anidamiento de asignacion en expresion
+Línea 71: Error: Falta parentesis de cierre para la condicion
+Línea 72: Error: Palabra reservada invalida 'VarMalaav'
+Línea 72: Error: Sentencia mal formada
+Línea 72: Error: Anidamiento de asignacion en expresion
+Línea 72: Error: Falta parentesis de cierre para la condicion
+Línea 73: Error: Palabra reservada invalida 'VarMalaaw'
+Línea 73: Error: Sentencia mal formada
+Línea 73: Error: Anidamiento de asignacion en expresion
+Línea 73: Error: Falta parentesis de cierre para la condicion
+Línea 74: Error: Palabra reservada invalida 'VarMalaax'
+Línea 74: Error: Sentencia mal formada
+Línea 74: Error: Anidamiento de asignacion en expresion
+Línea 74: Error: Falta parentesis de cierre para la condicion
+Línea 75: Error: Palabra reservada invalida 'VarMalaay'
+Línea 75: Error: Sentencia mal formada
+Línea 75: Error: Anidamiento de asignacion en expresion
+Línea 75: Error: Falta parentesis de cierre para la condicion
+Línea 76: Error: Palabra reservada invalida 'VarMalaaz'
+Línea 76: Error: Sentencia mal formada
+Línea 76: Error: Anidamiento de asignacion en expresion
+Línea 76: Error: Falta parentesis de cierre para la condicion
+Línea 77: Error: Palabra reservada invalida 'VarMalaba'
+Línea 77: Error: Sentencia mal formada
+Línea 77: Error: Anidamiento de asignacion en expresion
+Línea 77: Error: Falta parentesis de cierre para la condicion
+Línea 78: Error: Palabra reservada invalida 'VarMalabb'
+Línea 78: Error: Sentencia mal formada
+Línea 78: Error: Anidamiento de asignacion en expresion
+Línea 78: Error: Falta parentesis de cierre para la condicion
+Línea 79: Error: Palabra reservada invalida 'VarMalabc'
+Línea 79: Error: Sentencia mal formada
+Línea 79: Error: Anidamiento de asignacion en expresion
+Línea 79: Error: Falta parentesis de cierre para la condicion
+Línea 80: Error: Palabra reservada invalida 'VarMalabd'
+Línea 80: Error: Sentencia mal formada
+Línea 80: Error: Anidamiento de asignacion en expresion
+Línea 80: Error: Falta parentesis de cierre para la condicion
+Línea 84: Error: Palabra reservada invalida 'VarMalabe'
+Línea 84: Error: Sentencia mal formada
+Línea 84: Error: Anidamiento de asignacion en expresion
+Línea 84: Error: Falta parentesis de cierre para la condicion
+Línea 85: Error: Palabra reservada invalida 'VarMalabf'
+Línea 85: Error: Sentencia mal formada
+Línea 85: Error: Anidamiento de asignacion en expresion
+Línea 85: Error: Falta parentesis de cierre para la condicion
+Línea 86: Error: Palabra reservada invalida 'VarMalabg'
+Línea 86: Error: Sentencia mal formada
+Línea 86: Error: Anidamiento de asignacion en expresion
+Línea 86: Error: Falta parentesis de cierre para la condicion
+Línea 87: Error: Palabra reservada invalida 'VarMalabh'
+Línea 87: Error: Sentencia mal formada
+Línea 87: Error: Anidamiento de asignacion en expresion
+Línea 87: Error: Falta parentesis de cierre para la condicion
+Línea 88: Error: Palabra reservada invalida 'VarMalabi'
+Línea 88: Error: Sentencia mal formada
+Línea 88: Error: Anidamiento de asignacion en expresion
+Línea 88: Error: Falta parentesis de cierre para la condicion
+Línea 89: Error: Palabra reservada invalida 'VarMalabj'
+Línea 89: Error: Sentencia mal formada
+Línea 89: Error: Anidamiento de asignacion en expresion
+Línea 89: Error: Falta parentesis de cierre para la condicion
+Línea 90: Error: Palabra reservada invalida 'VarMalabk'
+Línea 90: Error: Sentencia mal formada
+Línea 90: Error: Anidamiento de asignacion en expresion
+Línea 90: Error: Falta parentesis de cierre para la condicion
+Línea 91: Error: Palabra reservada invalida 'VarMalabl'
+Línea 91: Error: Sentencia mal formada
+Línea 91: Error: Anidamiento de asignacion en expresion
+Línea 91: Error: Falta parentesis de cierre para la condicion
+Línea 92: Error: Palabra reservada invalida 'VarMalabm'
+Línea 92: Error: Sentencia mal formada
+Línea 92: Error: Anidamiento de asignacion en expresion
+Línea 92: Error: Falta parentesis de cierre para la condicion
+Línea 93: Error: Palabra reservada invalida 'VarMalabn'
+Línea 93: Error: Sentencia mal formada
+Línea 93: Error: Anidamiento de asignacion en expresion
+Línea 93: Error: Falta parentesis de cierre para la condicion
+Línea 94: Error: Palabra reservada invalida 'VarMalabo'
+Línea 94: Error: Sentencia mal formada
+Línea 94: Error: Anidamiento de asignacion en expresion
+Línea 94: Error: Falta parentesis de cierre para la condicion
+Línea 95: Error: Palabra reservada invalida 'VarMalabp'
+Línea 95: Error: Sentencia mal formada
+Línea 95: Error: Anidamiento de asignacion en expresion
+Línea 95: Error: Falta parentesis de cierre para la condicion
+Línea 96: Error: Palabra reservada invalida 'VarMalabq'
+Línea 96: Error: Sentencia mal formada
+Línea 96: Error: Anidamiento de asignacion en expresion
+Línea 96: Error: Falta parentesis de cierre para la condicion
+Línea 97: Error: Palabra reservada invalida 'VarMalabr'
+Línea 97: Error: Sentencia mal formada
+Línea 97: Error: Anidamiento de asignacion en expresion
+Línea 97: Error: Falta parentesis de cierre para la condicion
+Línea 101: Error: Palabra reservada invalida 'VarMalabs'
+Línea 101: Error: Sentencia mal formada
+Línea 101: Error: Anidamiento de asignacion en expresion
+Línea 101: Error: Falta parentesis de cierre para la condicion
+Línea 102: Error: Palabra reservada invalida 'VarMalabt'
+Línea 102: Error: Sentencia mal formada
+Línea 102: Error: Anidamiento de asignacion en expresion
+Línea 102: Error: Falta parentesis de cierre para la condicion
+Línea 103: Error: Palabra reservada invalida 'VarMalabu'
+Línea 103: Error: Sentencia mal formada
+Línea 103: Error: Anidamiento de asignacion en expresion
+Línea 103: Error: Falta parentesis de cierre para la condicion
+Línea 104: Error: Palabra reservada invalida 'VarMalabv'
+Línea 104: Error: Sentencia mal formada
+Línea 104: Error: Anidamiento de asignacion en expresion
+Línea 104: Error: Falta parentesis de cierre para la condicion
+Línea 105: Error: Palabra reservada invalida 'VarMalabw'
+Línea 105: Error: Sentencia mal formada
+Línea 105: Error: Anidamiento de asignacion en expresion
+Línea 105: Error: Falta parentesis de cierre para la condicion
+Línea 106: Error: Palabra reservada invalida 'VarMalabx'
+Línea 106: Error: Sentencia mal formada
+Línea 106: Error: Anidamiento de asignacion en expresion
+Línea 106: Error: Falta parentesis de cierre para la condicion
+Línea 107: Error: Palabra reservada invalida 'VarMalaby'
+Línea 107: Error: Sentencia mal formada
+Línea 107: Error: Anidamiento de asignacion en expresion
+Línea 107: Error: Falta parentesis de cierre para la condicion
+Línea 108: Error: Palabra reservada invalida 'VarMalabz'
+Línea 108: Error: Sentencia mal formada
+Línea 108: Error: Anidamiento de asignacion en expresion
+Línea 108: Error: Falta parentesis de cierre para la condicion
+Línea 109: Error: Palabra reservada invalida 'VarMalaca'
+Línea 109: Error: Sentencia mal formada
+Línea 109: Error: Anidamiento de asignacion en expresion
+Línea 109: Error: Falta parentesis de cierre para la condicion
+Línea 110: Error: Palabra reservada invalida 'VarMalacb'
+Línea 110: Error: Sentencia mal formada
+Línea 110: Error: Anidamiento de asignacion en expresion
+Línea 110: Error: Falta parentesis de cierre para la condicion
+Línea 111: Error: Palabra reservada invalida 'VarMalacc'
+Línea 111: Error: Sentencia mal formada
+Línea 111: Error: Anidamiento de asignacion en expresion
+Línea 111: Error: Falta parentesis de cierre para la condicion
+Línea 112: Error: Palabra reservada invalida 'VarMalacd'
+Línea 112: Error: Sentencia mal formada
+Línea 112: Error: Anidamiento de asignacion en expresion
+Línea 112: Error: Falta parentesis de cierre para la condicion
+Línea 113: Error: Palabra reservada invalida 'VarMalace'
+Línea 113: Error: Sentencia mal formada
+Línea 113: Error: Anidamiento de asignacion en expresion
+Línea 113: Error: Falta parentesis de cierre para la condicion
+Línea 114: Error: Palabra reservada invalida 'VarMalacf'
+Línea 114: Error: Sentencia mal formada
+Línea 114: Error: Anidamiento de asignacion en expresion
+Línea 114: Error: Falta parentesis de cierre para la condicion
+Línea 118: Error: Palabra reservada invalida 'VarMalacg'
+Línea 118: Error: Sentencia mal formada
+Línea 118: Error: Anidamiento de asignacion en expresion
+Línea 118: Error: Falta parentesis de cierre para la condicion
+Línea 119: Error: Palabra reservada invalida 'VarMalach'
+Línea 119: Error: Sentencia mal formada
+Línea 119: Error: Anidamiento de asignacion en expresion
+Línea 119: Error: Falta parentesis de cierre para la condicion
+Línea 120: Error: Palabra reservada invalida 'VarMalaci'
+Línea 120: Error: Sentencia mal formada
+Línea 120: Error: Anidamiento de asignacion en expresion
+Línea 120: Error: Falta parentesis de cierre para la condicion
+Línea 121: Error: Palabra reservada invalida 'VarMalacj'
+Línea 121: Error: Sentencia mal formada
+Línea 121: Error: Anidamiento de asignacion en expresion
+Línea 121: Error: Falta parentesis de cierre para la condicion
+Línea 122: Error: Palabra reservada invalida 'VarMalack'
+Línea 122: Error: Sentencia mal formada
+Línea 122: Error: Anidamiento de asignacion en expresion
+Línea 122: Error: Falta parentesis de cierre para la condicion
+Línea 123: Error: Palabra reservada invalida 'VarMalacl'
+Línea 123: Error: Sentencia mal formada
+Línea 123: Error: Anidamiento de asignacion en expresion
+Línea 123: Error: Falta parentesis de cierre para la condicion
+Línea 124: Error: Palabra reservada invalida 'VarMalacm'
+Línea 124: Error: Sentencia mal formada
+Línea 124: Error: Anidamiento de asignacion en expresion
+Línea 124: Error: Falta parentesis de cierre para la condicion
+Línea 125: Error: Palabra reservada invalida 'VarMalacn'
+Línea 125: Error: Sentencia mal formada
+Línea 125: Error: Anidamiento de asignacion en expresion
+Línea 125: Error: Falta parentesis de cierre para la condicion
+Línea 126: Error: Palabra reservada invalida 'VarMalaco'
+Línea 126: Error: Sentencia mal formada
+Línea 126: Error: Anidamiento de asignacion en expresion
+Línea 126: Error: Falta parentesis de cierre para la condicion
+Línea 127: Error: Palabra reservada invalida 'VarMalacp'
+Línea 127: Error: Sentencia mal formada
+Línea 127: Error: Anidamiento de asignacion en expresion
+Línea 127: Error: Falta parentesis de cierre para la condicion
+Línea 128: Error: Palabra reservada invalida 'VarMalacq'
+Línea 128: Error: Sentencia mal formada
+Línea 128: Error: Anidamiento de asignacion en expresion
+Línea 128: Error: Falta parentesis de cierre para la condicion
+Línea 129: Error: Palabra reservada invalida 'VarMalacr'
+Línea 129: Error: Sentencia mal formada
+Línea 129: Error: Anidamiento de asignacion en expresion
+Línea 129: Error: Falta parentesis de cierre para la condicion
+Línea 130: Error: Palabra reservada invalida 'VarMalacs'
+Línea 130: Error: Sentencia mal formada
+Línea 130: Error: Anidamiento de asignacion en expresion
+Línea 130: Error: Falta parentesis de cierre para la condicion
+Línea 131: Error: Palabra reservada invalida 'VarMalact'
+Línea 131: Error: Sentencia mal formada
+Línea 131: Error: Anidamiento de asignacion en expresion
+Línea 131: Error: Falta parentesis de cierre para la condicion
+Línea 135: Error: Palabra reservada invalida 'VarMalacu'
+Línea 135: Error: Sentencia mal formada
+Línea 135: Error: Anidamiento de asignacion en expresion
+Línea 135: Error: Falta parentesis de cierre para la condicion
+Línea 136: Error: Palabra reservada invalida 'VarMalacv'
+Línea 136: Error: Sentencia mal formada
+Línea 136: Error: Anidamiento de asignacion en expresion
+Línea 136: Error: Falta parentesis de cierre para la condicion
+Línea 137: Error: Palabra reservada invalida 'VarMalacw'
+Línea 137: Error: Sentencia mal formada
+Línea 137: Error: Anidamiento de asignacion en expresion
+Línea 137: Error: Falta parentesis de cierre para la condicion
+Línea 138: Error: Palabra reservada invalida 'VarMalacx'
+Línea 138: Error: Sentencia mal formada
+Línea 138: Error: Anidamiento de asignacion en expresion
+Línea 138: Error: Falta parentesis de cierre para la condicion
+Línea 139: Error: Palabra reservada invalida 'VarMalacy'
+Línea 139: Error: Sentencia mal formada
+Línea 139: Error: Anidamiento de asignacion en expresion
+Línea 139: Error: Falta parentesis de cierre para la condicion
+Línea 140: Error: Palabra reservada invalida 'VarMalacz'
+Línea 140: Error: Sentencia mal formada
+Línea 140: Error: Anidamiento de asignacion en expresion
+Línea 140: Error: Falta parentesis de cierre para la condicion
+Línea 141: Error: Palabra reservada invalida 'VarMalada'
+Línea 141: Error: Sentencia mal formada
+Línea 141: Error: Anidamiento de asignacion en expresion
+Línea 141: Error: Falta parentesis de cierre para la condicion
+Línea 142: Error: Palabra reservada invalida 'VarMaladb'
+Línea 142: Error: Sentencia mal formada
+Línea 142: Error: Anidamiento de asignacion en expresion
+Línea 142: Error: Falta parentesis de cierre para la condicion
+Línea 143: Error: Palabra reservada invalida 'VarMaladc'
+Línea 143: Error: Sentencia mal formada
+Línea 143: Error: Anidamiento de asignacion en expresion
+Línea 143: Error: Falta parentesis de cierre para la condicion
+Línea 144: Error: Palabra reservada invalida 'VarMaladd'
+Línea 144: Error: Sentencia mal formada
+Línea 144: Error: Anidamiento de asignacion en expresion
+Línea 144: Error: Falta parentesis de cierre para la condicion
+Línea 145: Error: Palabra reservada invalida 'VarMalade'
+Línea 145: Error: Sentencia mal formada
+Línea 145: Error: Anidamiento de asignacion en expresion
+Línea 145: Error: Falta parentesis de cierre para la condicion
+Línea 146: Error: Palabra reservada invalida 'VarMaladf'
+Línea 146: Error: Sentencia mal formada
+Línea 146: Error: Anidamiento de asignacion en expresion
+Línea 146: Error: Falta parentesis de cierre para la condicion
+Línea 147: Error: Palabra reservada invalida 'VarMaladg'
+Línea 147: Error: Sentencia mal formada
+Línea 147: Error: Anidamiento de asignacion en expresion
+Línea 147: Error: Falta parentesis de cierre para la condicion
+Línea 148: Error: Palabra reservada invalida 'VarMaladh'
+Línea 148: Error: Sentencia mal formada
+Línea 148: Error: Anidamiento de asignacion en expresion
+Línea 148: Error: Falta parentesis de cierre para la condicion
+Línea 152: Error: Palabra reservada invalida 'VarMaladi'
+Línea 152: Error: Sentencia mal formada
+Línea 152: Error: Anidamiento de asignacion en expresion
+Línea 152: Error: Falta parentesis de cierre para la condicion
+Línea 153: Error: Palabra reservada invalida 'VarMaladj'
+Línea 153: Error: Sentencia mal formada
+Línea 153: Error: Anidamiento de asignacion en expresion
+Línea 153: Error: Falta parentesis de cierre para la condicion
+Línea 154: Error: Palabra reservada invalida 'VarMaladk'
+Línea 154: Error: Sentencia mal formada
+Línea 154: Error: Anidamiento de asignacion en expresion
+Línea 154: Error: Falta parentesis de cierre para la condicion
+Línea 155: Error: Palabra reservada invalida 'VarMaladl'
+Línea 155: Error: Sentencia mal formada
+Línea 155: Error: Anidamiento de asignacion en expresion
+Línea 155: Error: Falta parentesis de cierre para la condicion
+Línea 156: Error: Palabra reservada invalida 'VarMaladm'
+Línea 156: Error: Sentencia mal formada
+Línea 156: Error: Anidamiento de asignacion en expresion
+Línea 156: Error: Falta parentesis de cierre para la condicion
+Línea 157: Error: Palabra reservada invalida 'VarMaladn'
+Línea 157: Error: Sentencia mal formada
+Línea 157: Error: Anidamiento de asignacion en expresion
+Línea 157: Error: Falta parentesis de cierre para la condicion
+Línea 158: Error: Palabra reservada invalida 'VarMalado'
+Línea 158: Error: Sentencia mal formada
+Línea 158: Error: Anidamiento de asignacion en expresion
+Línea 158: Error: Falta parentesis de cierre para la condicion
+Línea 159: Error: Palabra reservada invalida 'VarMaladp'
+Línea 159: Error: Sentencia mal formada
+Línea 159: Error: Anidamiento de asignacion en expresion
+Línea 159: Error: Falta parentesis de cierre para la condicion
+Línea 160: Error: Palabra reservada invalida 'VarMaladq'
+Línea 160: Error: Sentencia mal formada
+Línea 160: Error: Anidamiento de asignacion en expresion
+Línea 160: Error: Falta parentesis de cierre para la condicion
+Línea 161: Error: Palabra reservada invalida 'VarMaladr'
+Línea 161: Error: Sentencia mal formada
+Línea 161: Error: Anidamiento de asignacion en expresion
+Línea 161: Error: Falta parentesis de cierre para la condicion
+Línea 162: Error: Palabra reservada invalida 'VarMalads'
+Línea 162: Error: Sentencia mal formada
+Línea 162: Error: Anidamiento de asignacion en expresion
+Línea 162: Error: Falta parentesis de cierre para la condicion
+Línea 163: Error: Palabra reservada invalida 'VarMaladt'
+Línea 163: Error: Sentencia mal formada
+Línea 163: Error: Anidamiento de asignacion en expresion
+Línea 163: Error: Falta parentesis de cierre para la condicion
+Línea 164: Error: Palabra reservada invalida 'VarMaladu'
+Línea 164: Error: Sentencia mal formada
+Línea 164: Error: Anidamiento de asignacion en expresion
+Línea 164: Error: Falta parentesis de cierre para la condicion
+Línea 165: Error: Palabra reservada invalida 'VarMaladv'
+Línea 165: Error: Sentencia mal formada
+Línea 165: Error: Anidamiento de asignacion en expresion
+Línea 165: Error: Falta parentesis de cierre para la condicion
+Línea 169: Error: Palabra reservada invalida 'VarMaladw'
+Línea 169: Error: Sentencia mal formada
+Línea 169: Error: Anidamiento de asignacion en expresion
+Línea 169: Error: Falta parentesis de cierre para la condicion
+Línea 170: Error: Palabra reservada invalida 'VarMaladx'
+Línea 170: Error: Sentencia mal formada
+Línea 170: Error: Anidamiento de asignacion en expresion
+Línea 170: Error: Falta parentesis de cierre para la condicion
+Línea 171: Error: Palabra reservada invalida 'VarMalady'
+Línea 171: Error: Sentencia mal formada
+Línea 171: Error: Anidamiento de asignacion en expresion
+Línea 171: Error: Falta parentesis de cierre para la condicion
+Línea 172: Error: Palabra reservada invalida 'VarMaladz'
+Línea 172: Error: Sentencia mal formada
+Línea 172: Error: Anidamiento de asignacion en expresion
+Línea 172: Error: Falta parentesis de cierre para la condicion
+Línea 173: Error: Palabra reservada invalida 'VarMalaea'
+Línea 173: Error: Sentencia mal formada
+Línea 173: Error: Anidamiento de asignacion en expresion
+Línea 173: Error: Falta parentesis de cierre para la condicion
+Línea 174: Error: Palabra reservada invalida 'VarMalaeb'
+Línea 174: Error: Sentencia mal formada
+Línea 174: Error: Anidamiento de asignacion en expresion
+Línea 174: Error: Falta parentesis de cierre para la condicion
+Línea 175: Error: Palabra reservada invalida 'VarMalaec'
+Línea 175: Error: Sentencia mal formada
+Línea 175: Error: Anidamiento de asignacion en expresion
+Línea 175: Error: Falta parentesis de cierre para la condicion
+Línea 176: Error: Palabra reservada invalida 'VarMalaed'
+Línea 176: Error: Sentencia mal formada
+Línea 176: Error: Anidamiento de asignacion en expresion
+Línea 176: Error: Falta parentesis de cierre para la condicion
+Línea 177: Error: Palabra reservada invalida 'VarMalaee'
+Línea 177: Error: Sentencia mal formada
+Línea 177: Error: Anidamiento de asignacion en expresion
+Línea 177: Error: Falta parentesis de cierre para la condicion
+Línea 178: Error: Palabra reservada invalida 'VarMalaef'
+Línea 178: Error: Sentencia mal formada
+Línea 178: Error: Anidamiento de asignacion en expresion
+Línea 178: Error: Falta parentesis de cierre para la condicion
+Línea 179: Error: Palabra reservada invalida 'VarMalaeg'
+Línea 179: Error: Sentencia mal formada
+Línea 179: Error: Anidamiento de asignacion en expresion
+Línea 179: Error: Falta parentesis de cierre para la condicion
+Línea 180: Error: Palabra reservada invalida 'VarMalaeh'
+Línea 180: Error: Sentencia mal formada
+Línea 180: Error: Anidamiento de asignacion en expresion
+Línea 180: Error: Falta parentesis de cierre para la condicion
+Línea 181: Error: Palabra reservada invalida 'VarMalaei'
+Línea 181: Error: Sentencia mal formada
+Línea 181: Error: Anidamiento de asignacion en expresion
+Línea 181: Error: Falta parentesis de cierre para la condicion
+Línea 182: Error: Palabra reservada invalida 'VarMalaej'
+Línea 182: Error: Sentencia mal formada
+Línea 182: Error: Anidamiento de asignacion en expresion
+Línea 182: Error: Falta parentesis de cierre para la condicion
+Línea 186: Error: Palabra reservada invalida 'VarMalaek'
+Línea 186: Error: Sentencia mal formada
+Línea 186: Error: Anidamiento de asignacion en expresion
+Línea 186: Error: Falta parentesis de cierre para la condicion
+Línea 187: Error: Palabra reservada invalida 'VarMalael'
+Línea 187: Error: Sentencia mal formada
+Línea 187: Error: Anidamiento de asignacion en expresion
+Línea 187: Error: Falta parentesis de cierre para la condicion
+Línea 188: Error: Palabra reservada invalida 'VarMalaem'
+Línea 188: Error: Sentencia mal formada
+Línea 188: Error: Anidamiento de asignacion en expresion
+Línea 188: Error: Falta parentesis de cierre para la condicion
+Línea 189: Error: Palabra reservada invalida 'VarMalaen'
+Línea 189: Error: Sentencia mal formada
+Línea 189: Error: Anidamiento de asignacion en expresion
+Línea 189: Error: Falta parentesis de cierre para la condicion
+Línea 190: Error: Palabra reservada invalida 'VarMalaeo'
+Línea 190: Error: Sentencia mal formada
+Línea 190: Error: Anidamiento de asignacion en expresion
+Línea 190: Error: Falta parentesis de cierre para la condicion
+Línea 191: Error: Palabra reservada invalida 'VarMalaep'
+Línea 191: Error: Sentencia mal formada
+Línea 191: Error: Anidamiento de asignacion en expresion
+Línea 191: Error: Falta parentesis de cierre para la condicion
+Línea 192: Error: Palabra reservada invalida 'VarMalaeq'
+Línea 192: Error: Sentencia mal formada
+Línea 192: Error: Anidamiento de asignacion en expresion
+Línea 192: Error: Falta parentesis de cierre para la condicion
+Línea 193: Error: Palabra reservada invalida 'VarMalaer'
+Línea 193: Error: Sentencia mal formada
+Línea 193: Error: Anidamiento de asignacion en expresion
+Línea 193: Error: Falta parentesis de cierre para la condicion
+Línea 194: Error: Palabra reservada invalida 'VarMalaes'
+Línea 194: Error: Sentencia mal formada
+Línea 194: Error: Anidamiento de asignacion en expresion
+Línea 194: Error: Falta parentesis de cierre para la condicion
+Línea 195: Error: Palabra reservada invalida 'VarMalaet'
+Línea 195: Error: Sentencia mal formada
+Línea 195: Error: Anidamiento de asignacion en expresion
+Línea 195: Error: Falta parentesis de cierre para la condicion
+Línea 196: Error: Palabra reservada invalida 'VarMalaeu'
+Línea 196: Error: Sentencia mal formada
+Línea 196: Error: Anidamiento de asignacion en expresion
+Línea 196: Error: Falta parentesis de cierre para la condicion
+Línea 197: Error: Palabra reservada invalida 'VarMalaev'
+Línea 197: Error: Sentencia mal formada
+Línea 197: Error: Anidamiento de asignacion en expresion
+Línea 197: Error: Falta parentesis de cierre para la condicion
+
+Contenido de la tabla de simbolos:
+if -> 400
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+else -> 401
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+end_if -> 402
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+begin -> 403
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+end -> 404
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+pout -> 405
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+ret -> 406
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+class -> 407
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+function -> 408
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+repeat -> 409
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+while -> 410
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+todf -> 411
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+typedef -> 412
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+extends -> 413
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+ulongint -> 414
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+doublef -> 415
+Numero de linea: 0
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+prog -> 300
+Numero de linea: 12
+Tipo de dato: indefinido
+Direccion de memoria: 0
+--------------------------------
+x -> 300
+Numero de linea: 13
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+y -> 300
+Numero de linea: 13
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+z -> 300
+Numero de linea: 13
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+0$ul -> 302
+Numero de linea: 15
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+1$ul -> 302
+Numero de linea: 16
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+ok -> 303
+Numero de linea: 16
+Tipo de dato: cadena
+Direccion de memoria: 0
+--------------------------------
+2$ul -> 302
+Numero de linea: 17
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+3$ul -> 302
+Numero de linea: 18
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+4$ul -> 302
+Numero de linea: 19
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+5$ul -> 302
+Numero de linea: 20
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+6$ul -> 302
+Numero de linea: 21
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+7$ul -> 302
+Numero de linea: 22
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+8$ul -> 302
+Numero de linea: 23
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+9$ul -> 302
+Numero de linea: 24
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+10$ul -> 302
+Numero de linea: 25
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+11$ul -> 302
+Numero de linea: 26
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+12$ul -> 302
+Numero de linea: 27
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+13$ul -> 302
+Numero de linea: 28
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+14$ul -> 302
+Numero de linea: 29
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+15$ul -> 302
+Numero de linea: 33
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+16$ul -> 302
+Numero de linea: 34
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+17$ul -> 302
+Numero de linea: 35
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+18$ul -> 302
+Numero de linea: 36
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+19$ul -> 302
+Numero de linea: 37
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+20$ul -> 302
+Numero de linea: 38
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+21$ul -> 302
+Numero de linea: 39
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+22$ul -> 302
+Numero de linea: 40
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+23$ul -> 302
+Numero de linea: 41
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+24$ul -> 302
+Numero de linea: 42
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+25$ul -> 302
+Numero de linea: 43
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+26$ul -> 302
+Numero de linea: 44
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+27$ul -> 302
+Numero de linea: 45
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+28$ul -> 302
+Numero de linea: 46
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+29$ul -> 302
+Numero de linea: 50
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+30$ul -> 302
+Numero de linea: 51
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+31$ul -> 302
+Numero de linea: 52
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+32$ul -> 302
+Numero de linea: 53
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+33$ul -> 302
+Numero de linea: 54
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+34$ul -> 302
+Numero de linea: 55
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+35$ul -> 302
+Numero de linea: 56
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+36$ul -> 302
+Numero de linea: 57
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+37$ul -> 302
+Numero de linea: 58
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+38$ul -> 302
+Numero de linea: 59
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+39$ul -> 302
+Numero de linea: 60
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+40$ul -> 302
+Numero de linea: 61
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+41$ul -> 302
+Numero de linea: 62
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+42$ul -> 302
+Numero de linea: 63
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+43$ul -> 302
+Numero de linea: 67
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+44$ul -> 302
+Numero de linea: 68
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+45$ul -> 302
+Numero de linea: 69
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+46$ul -> 302
+Numero de linea: 70
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+47$ul -> 302
+Numero de linea: 71
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+48$ul -> 302
+Numero de linea: 72
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+49$ul -> 302
+Numero de linea: 73
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+50$ul -> 302
+Numero de linea: 74
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+51$ul -> 302
+Numero de linea: 75
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+52$ul -> 302
+Numero de linea: 76
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+53$ul -> 302
+Numero de linea: 77
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+54$ul -> 302
+Numero de linea: 78
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+55$ul -> 302
+Numero de linea: 79
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+56$ul -> 302
+Numero de linea: 80
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+57$ul -> 302
+Numero de linea: 84
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+58$ul -> 302
+Numero de linea: 85
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+59$ul -> 302
+Numero de linea: 86
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+60$ul -> 302
+Numero de linea: 87
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+61$ul -> 302
+Numero de linea: 88
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+62$ul -> 302
+Numero de linea: 89
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+63$ul -> 302
+Numero de linea: 90
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+64$ul -> 302
+Numero de linea: 91
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+65$ul -> 302
+Numero de linea: 92
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+66$ul -> 302
+Numero de linea: 93
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+67$ul -> 302
+Numero de linea: 94
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+68$ul -> 302
+Numero de linea: 95
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+69$ul -> 302
+Numero de linea: 96
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+70$ul -> 302
+Numero de linea: 97
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+71$ul -> 302
+Numero de linea: 101
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+72$ul -> 302
+Numero de linea: 102
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+73$ul -> 302
+Numero de linea: 103
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+74$ul -> 302
+Numero de linea: 104
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+75$ul -> 302
+Numero de linea: 105
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+76$ul -> 302
+Numero de linea: 106
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+77$ul -> 302
+Numero de linea: 107
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+78$ul -> 302
+Numero de linea: 108
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+79$ul -> 302
+Numero de linea: 109
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+80$ul -> 302
+Numero de linea: 110
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+81$ul -> 302
+Numero de linea: 111
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+82$ul -> 302
+Numero de linea: 112
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+83$ul -> 302
+Numero de linea: 113
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+84$ul -> 302
+Numero de linea: 114
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+85$ul -> 302
+Numero de linea: 118
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+86$ul -> 302
+Numero de linea: 119
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+87$ul -> 302
+Numero de linea: 120
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+88$ul -> 302
+Numero de linea: 121
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+89$ul -> 302
+Numero de linea: 122
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+90$ul -> 302
+Numero de linea: 123
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+91$ul -> 302
+Numero de linea: 124
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+92$ul -> 302
+Numero de linea: 125
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+93$ul -> 302
+Numero de linea: 126
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+94$ul -> 302
+Numero de linea: 127
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+95$ul -> 302
+Numero de linea: 128
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+96$ul -> 302
+Numero de linea: 129
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+97$ul -> 302
+Numero de linea: 130
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+98$ul -> 302
+Numero de linea: 131
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+99$ul -> 302
+Numero de linea: 135
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+100$ul -> 302
+Numero de linea: 136
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+101$ul -> 302
+Numero de linea: 137
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+102$ul -> 302
+Numero de linea: 138
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+103$ul -> 302
+Numero de linea: 139
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+104$ul -> 302
+Numero de linea: 140
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+105$ul -> 302
+Numero de linea: 141
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+106$ul -> 302
+Numero de linea: 142
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+107$ul -> 302
+Numero de linea: 143
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+108$ul -> 302
+Numero de linea: 144
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+109$ul -> 302
+Numero de linea: 145
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+110$ul -> 302
+Numero de linea: 146
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+111$ul -> 302
+Numero de linea: 147
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+112$ul -> 302
+Numero de linea: 148
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+113$ul -> 302
+Numero de linea: 152
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+114$ul -> 302
+Numero de linea: 153
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+115$ul -> 302
+Numero de linea: 154
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+116$ul -> 302
+Numero de linea: 155
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+117$ul -> 302
+Numero de linea: 156
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+118$ul -> 302
+Numero de linea: 157
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+119$ul -> 302
+Numero de linea: 158
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+120$ul -> 302
+Numero de linea: 159
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+121$ul -> 302
+Numero de linea: 160
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+122$ul -> 302
+Numero de linea: 161
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+123$ul -> 302
+Numero de linea: 162
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+124$ul -> 302
+Numero de linea: 163
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+125$ul -> 302
+Numero de linea: 164
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+126$ul -> 302
+Numero de linea: 165
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+127$ul -> 302
+Numero de linea: 169
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+128$ul -> 302
+Numero de linea: 170
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+129$ul -> 302
+Numero de linea: 171
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+130$ul -> 302
+Numero de linea: 172
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+131$ul -> 302
+Numero de linea: 173
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+132$ul -> 302
+Numero de linea: 174
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+133$ul -> 302
+Numero de linea: 175
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+134$ul -> 302
+Numero de linea: 176
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+135$ul -> 302
+Numero de linea: 177
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+136$ul -> 302
+Numero de linea: 178
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+137$ul -> 302
+Numero de linea: 179
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+138$ul -> 302
+Numero de linea: 180
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+139$ul -> 302
+Numero de linea: 181
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+140$ul -> 302
+Numero de linea: 182
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+141$ul -> 302
+Numero de linea: 186
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+142$ul -> 302
+Numero de linea: 187
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+143$ul -> 302
+Numero de linea: 188
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+144$ul -> 302
+Numero de linea: 189
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+145$ul -> 302
+Numero de linea: 190
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+146$ul -> 302
+Numero de linea: 191
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+147$ul -> 302
+Numero de linea: 192
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+148$ul -> 302
+Numero de linea: 193
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+149$ul -> 302
+Numero de linea: 194
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+150$ul -> 302
+Numero de linea: 195
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+151$ul -> 302
+Numero de linea: 196
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------
+152$ul -> 302
+Numero de linea: 197
+Tipo de dato: ulongint
+Direccion de memoria: 0
+--------------------------------

@@ -1,0 +1,9 @@
+{{ constante ulongint con signo unario: -1$ul queda fuera de rango }}
+{{ expresiones: a-(-cte) y a--cte }}
+prog
+ulongint a, x;
+begin
+    x := -1$ul;
+    x := a-(-1$ul);
+    x := a--1$ul;
+end

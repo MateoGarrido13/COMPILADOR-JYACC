@@ -4,7 +4,7 @@
 
 Compilador desarrollado para la materia Compiladores e Intérpretes, de la carrera Ingeniería en Sistemas de la Facultad de Ciencias Exactas de la UNICEN.
 
-El programa lee un archivo fuente del lenguaje definido en los trabajos prácticos de la cursada 2026 y encadena el analizador léxico del TP1 con el analizador sintáctico del TP2. El léxico reconoce los tokens con una matriz de transiciones. El sintáctico es un parser LALR(1) generado con BYACC/J a partir de la gramática del grupo. La salida por consola informa los tokens detectados, las estructuras sintácticas, los errores y el contenido de la tabla de símbolos.
+El programa lee un archivo fuente del lenguaje definido en los trabajos prácticos de la cursada 2026 y encadena el analizador léxico del TP1 con el analizador sintáctico del TP2. El léxico reconoce los tokens con una matriz de transiciones. El sintáctico es un parser LALR(1) generado con BYACC/J a partir de la gramática del grupo. La salida por consola comienza con el código fuente con las líneas numeradas (`N: <línea>`) e informa los tokens detectados, las estructuras sintácticas, los errores y el contenido de la tabla de símbolos.
 
 Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef`, las cadenas de una línea, los comentarios multilínea, la sentencia `repeat`/`while`, la asignación de expresiones dentro de expresiones, el orden de evaluación de los parámetros, las enumeraciones, las clases, el acceso a atributos con punto, la herencia múltiple con prefijo y la conversión explícita `todf`.
 

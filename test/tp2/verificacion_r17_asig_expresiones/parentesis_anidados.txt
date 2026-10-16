@@ -1,0 +1,6 @@
+{{ r17: invalido: parentesis anidados en asignacion en expresion }}
+prog
+ulongint x, y;
+begin
+    x := y = ((2$ul));
+end

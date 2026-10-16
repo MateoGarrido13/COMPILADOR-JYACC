@@ -193,7 +193,12 @@
 
  145  referencia_atributo : ID '.' ID
  146                      | ID '.' ID '.' ID
- 147                      | ID '.' ID '(' lista_parametros_reales ')'
+ 147                      | ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'
+ 148                      | ID '.' ID '(' lista_parametros_reales ')' '[' ']'
+ 149                      | ID '.' ID '(' lista_parametros_reales ')'
+ 150                      | ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'
+ 151                      | ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' ']'
+ 152                      | ID '.' ID '.' ID '(' lista_parametros_reales ')'
 
 state 0
 	$accept : . programa $end  (0)
@@ -447,7 +452,12 @@ state 22
 	asignacion : ID . ASIG error  (84)
 	referencia_atributo : ID . '.' ID  (145)
 	referencia_atributo : ID . '.' ID '.' ID  (146)
-	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')'  (147)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')' '[' ']'  (148)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')'  (149)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')'  (152)
 
 	ASIG  shift 60
 	'.'  shift 61
@@ -636,7 +646,12 @@ state 38
 	asignacion : ID . ASIG error  (84)
 	referencia_atributo : ID . '.' ID  (145)
 	referencia_atributo : ID . '.' ID '.' ID  (146)
-	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')'  (147)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')' '[' ']'  (148)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')'  (149)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')'  (152)
 
 	ID  shift 53
 	ASIG  shift 60
@@ -868,7 +883,12 @@ state 60
 state 61
 	referencia_atributo : ID '.' . ID  (145)
 	referencia_atributo : ID '.' . ID '.' ID  (146)
-	referencia_atributo : ID '.' . ID '(' lista_parametros_reales ')'  (147)
+	referencia_atributo : ID '.' . ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID '.' . ID '(' lista_parametros_reales ')' '[' ']'  (148)
+	referencia_atributo : ID '.' . ID '(' lista_parametros_reales ')'  (149)
+	referencia_atributo : ID '.' . ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID '.' . ID '.' ID '(' lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID '.' . ID '.' ID '(' lista_parametros_reales ')'  (152)
 
 	ID  shift 114
 	.  error
@@ -883,7 +903,12 @@ state 62
 	invocacion_funcion : ID . '(' lista_parametros_reales ')'  (138)
 	referencia_atributo : ID . '.' ID  (145)
 	referencia_atributo : ID . '.' ID '.' ID  (146)
-	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')'  (147)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')' '[' ']'  (148)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')'  (149)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')'  (152)
 
 	ASIG  shift 115
 	'('  shift 116
@@ -1425,7 +1450,12 @@ state 113
 state 114
 	referencia_atributo : ID '.' ID .  (145)
 	referencia_atributo : ID '.' ID . '.' ID  (146)
-	referencia_atributo : ID '.' ID . '(' lista_parametros_reales ')'  (147)
+	referencia_atributo : ID '.' ID . '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID '.' ID . '(' lista_parametros_reales ')' '[' ']'  (148)
+	referencia_atributo : ID '.' ID . '(' lista_parametros_reales ')'  (149)
+	referencia_atributo : ID '.' ID . '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID '.' ID . '.' ID '(' lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID '.' ID . '.' ID '(' lista_parametros_reales ')'  (152)
 
 	'('  shift 160
 	'.'  shift 161
@@ -1972,7 +2002,9 @@ state 159
 
 
 state 160
-	referencia_atributo : ID '.' ID '(' . lista_parametros_reales ')'  (147)
+	referencia_atributo : ID '.' ID '(' . lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID '.' ID '(' . lista_parametros_reales ')' '[' ']'  (148)
+	referencia_atributo : ID '.' ID '(' . lista_parametros_reales ')'  (149)
 
 	ID  shift 163
 	CTE  shift 63
@@ -1994,6 +2026,9 @@ state 160
 
 state 161
 	referencia_atributo : ID '.' ID '.' . ID  (146)
+	referencia_atributo : ID '.' ID '.' . ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID '.' ID '.' . ID '(' lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID '.' ID '.' . ID '(' lista_parametros_reales ')'  (152)
 
 	ID  shift 203
 	.  error
@@ -2028,7 +2063,12 @@ state 163
 	parametro_real : ID . '=' expresion  (141)
 	referencia_atributo : ID . '.' ID  (145)
 	referencia_atributo : ID . '.' ID '.' ID  (146)
-	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')'  (147)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')' '[' ']'  (148)
+	referencia_atributo : ID . '.' ID '(' lista_parametros_reales ')'  (149)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID . '.' ID '.' ID '(' lista_parametros_reales ')'  (152)
 
 	ASIG  shift 115
 	'('  shift 116
@@ -2426,7 +2466,9 @@ state 201
 
 
 state 202
-	referencia_atributo : ID '.' ID '(' lista_parametros_reales . ')'  (147)
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales . ')' '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales . ')' '[' ']'  (148)
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales . ')'  (149)
 
 	')'  shift 228
 	.  error
@@ -2434,14 +2476,43 @@ state 202
 
 state 203
 	referencia_atributo : ID '.' ID '.' ID .  (146)
+	referencia_atributo : ID '.' ID '.' ID . '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID '.' ID '.' ID . '(' lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID '.' ID '.' ID . '(' lista_parametros_reales ')'  (152)
 
-	.  reduce 146
+	'('  shift 229
+	$end  reduce 146
+	error  reduce 146
+	ID  reduce 146
+	ASIG  reduce 146
+	CTE  reduce 146
+	MAYOR_IGUAL  reduce 146
+	MENOR_IGUAL  reduce 146
+	IGUAL_IGUAL  reduce 146
+	DISTINTO  reduce 146
+	IF  reduce 146
+	ELSE  reduce 146
+	END_IF  reduce 146
+	END  reduce 146
+	POUT  reduce 146
+	RET  reduce 146
+	REPEAT  reduce 146
+	WHILE  reduce 146
+	';'  reduce 146
+	','  reduce 146
+	')'  reduce 146
+	'>'  reduce 146
+	'<'  reduce 146
+	'+'  reduce 146
+	'-'  reduce 146
+	'*'  reduce 146
+	'/'  reduce 146
 
 
 state 204
 	asignacion_en_expresion : ID ASIG '(' expresion . ')'  (134)
 
-	')'  shift 229
+	')'  shift 230
 	.  error
 
 
@@ -2457,7 +2528,7 @@ state 205
 	.  error
 
 	constante  goto 67
-	expresion  goto 230
+	expresion  goto 231
 	referencia_atributo  goto 69
 	termino  goto 71
 	factor  goto 72
@@ -2471,7 +2542,7 @@ state 206
 	invocacion_funcion : ID '(' lista_parametros_reales ')' . '[' ']'  (137)
 	invocacion_funcion : ID '(' lista_parametros_reales ')' .  (138)
 
-	'['  shift 231
+	'['  shift 232
 	$end  reduce 138
 	error  reduce 138
 	ID  reduce 138
@@ -2516,14 +2587,14 @@ state 207
 	invocacion_funcion  goto 73
 	asignacion_en_expresion  goto 74
 	conversion  goto 75
-	lista_parametros_reales  goto 232
+	lista_parametros_reales  goto 233
 	parametro_real  goto 166
 
 
 state 208
 	asignacion_en_expresion : ID '=' '(' expresion . ')'  (133)
 
-	')'  shift 233
+	')'  shift 234
 	.  error
 
 
@@ -2536,14 +2607,14 @@ state 209
 state 210
 	sentencia_if : IF '(' error ')' bloque_sentencias . END_IF ';'  (93)
 
-	END_IF  shift 234
+	END_IF  shift 235
 	.  error
 
 
 state 211
 	sentencia_if : IF '(' condicion error bloque_sentencias . END_IF ';'  (92)
 
-	END_IF  shift 235
+	END_IF  shift 236
 	.  error
 
 
@@ -2555,16 +2626,16 @@ state 212
 	sentencia_if : IF '(' condicion ')' bloque_sentencias . error  (89)
 	sentencia_if : IF '(' condicion ')' bloque_sentencias . ELSE bloque_sentencias error  (90)
 
-	error  shift 236
-	ELSE  shift 237
-	END_IF  shift 238
+	error  shift 237
+	ELSE  shift 238
+	END_IF  shift 239
 	.  error
 
 
 state 213
 	sentencia_if : IF condicion ')' bloque_sentencias END_IF . ';'  (91)
 
-	';'  shift 239
+	';'  shift 240
 	.  error
 
 
@@ -2589,7 +2660,7 @@ state 216
 state 217
 	sentencia_repeat_while : REPEAT WHILE '(' condicion ')' . ';'  (103)
 
-	';'  shift 240
+	';'  shift 241
 	.  error
 
 
@@ -2598,15 +2669,15 @@ state 218
 	sentencia_repeat_while : REPEAT bloque_sentencias WHILE '(' condicion . ')'  (102)
 	sentencia_repeat_while : REPEAT bloque_sentencias WHILE '(' condicion . ';'  (106)
 
-	';'  shift 241
-	')'  shift 242
+	';'  shift 242
+	')'  shift 243
 	.  error
 
 
 state 219
 	sentencia_repeat_while : REPEAT bloque_sentencias WHILE condicion ')' . ';'  (105)
 
-	';'  shift 243
+	';'  shift 244
 	.  error
 
 
@@ -2619,7 +2690,7 @@ state 220
 state 221
 	declaracion_typedef : TYPEDEF ID '=' '[' lista_valores_enumerado ']' . ';'  (67)
 
-	';'  shift 244
+	';'  shift 245
 	.  error
 
 
@@ -2630,14 +2701,14 @@ state 222
 	'-'  shift 66
 	.  error
 
-	lista_valores_enumerado  goto 245
+	lista_valores_enumerado  goto 246
 	constante  goto 193
 
 
 state 223
 	cierre_funcion : error . END ';'  (44)
 
-	END  shift 246
+	END  shift 247
 	.  error
 
 
@@ -2647,16 +2718,16 @@ state 224
 	cierre_funcion : BEGIN . lista_sentencias END  (42)
 	cierre_funcion : BEGIN . error END ';'  (43)
 
-	error  shift 247
+	error  shift 248
 	ID  shift 22
 	IF  shift 23
-	END  shift 248
+	END  shift 249
 	POUT  shift 25
 	RET  shift 26
 	REPEAT  shift 27
 	.  error
 
-	lista_sentencias  goto 249
+	lista_sentencias  goto 250
 	asignacion  goto 29
 	sentencia_if  goto 30
 	sentencia_repeat_while  goto 31
@@ -2681,72 +2752,123 @@ state 226
 state 227
 	declaracion_metodo : encabezado_metodo '(' lista_parametros_formales ')' . BEGIN lista_sentencias END ';'  (61)
 
-	BEGIN  shift 250
+	BEGIN  shift 251
 	.  error
 
 
 state 228
-	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' .  (147)
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' . '[' lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' . '[' ']'  (148)
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' .  (149)
 
-	.  reduce 147
+	'['  shift 252
+	$end  reduce 149
+	error  reduce 149
+	ID  reduce 149
+	ASIG  reduce 149
+	CTE  reduce 149
+	MAYOR_IGUAL  reduce 149
+	MENOR_IGUAL  reduce 149
+	IGUAL_IGUAL  reduce 149
+	DISTINTO  reduce 149
+	IF  reduce 149
+	ELSE  reduce 149
+	END_IF  reduce 149
+	END  reduce 149
+	POUT  reduce 149
+	RET  reduce 149
+	REPEAT  reduce 149
+	WHILE  reduce 149
+	';'  reduce 149
+	','  reduce 149
+	')'  reduce 149
+	'>'  reduce 149
+	'<'  reduce 149
+	'+'  reduce 149
+	'-'  reduce 149
+	'*'  reduce 149
+	'/'  reduce 149
 
 
 state 229
+	referencia_atributo : ID '.' ID '.' ID '(' . lista_parametros_reales ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID '.' ID '.' ID '(' . lista_parametros_reales ')' '[' ']'  (151)
+	referencia_atributo : ID '.' ID '.' ID '(' . lista_parametros_reales ')'  (152)
+
+	ID  shift 163
+	CTE  shift 63
+	TODF  shift 64
+	'-'  shift 66
+	.  error
+
+	constante  goto 67
+	expresion  goto 164
+	referencia_atributo  goto 69
+	termino  goto 71
+	factor  goto 72
+	invocacion_funcion  goto 73
+	asignacion_en_expresion  goto 74
+	conversion  goto 75
+	lista_parametros_reales  goto 253
+	parametro_real  goto 166
+
+
+state 230
 	asignacion_en_expresion : ID ASIG '(' expresion ')' .  (134)
 
 	.  reduce 134
 
 
-state 230
+state 231
 	parametro_real : ID '=' expresion .  (141)
 
 	.  reduce 141
 
 
-state 231
+state 232
 	invocacion_funcion : ID '(' lista_parametros_reales ')' '[' . lista_orden_evaluacion ']'  (136)
 	invocacion_funcion : ID '(' lista_parametros_reales ')' '[' . ']'  (137)
 
-	CTE  shift 251
-	']'  shift 252
+	CTE  shift 254
+	']'  shift 255
 	.  error
 
-	lista_orden_evaluacion  goto 253
+	lista_orden_evaluacion  goto 256
 
 
-state 232
+state 233
 	lista_parametros_reales : parametro_real ',' lista_parametros_reales .  (139)
 
 	.  reduce 139
 
 
-state 233
+state 234
 	asignacion_en_expresion : ID '=' '(' expresion ')' .  (133)
 
 	.  reduce 133
 
 
-state 234
+state 235
 	sentencia_if : IF '(' error ')' bloque_sentencias END_IF . ';'  (93)
 
-	';'  shift 254
-	.  error
-
-
-state 235
-	sentencia_if : IF '(' condicion error bloque_sentencias END_IF . ';'  (92)
-
-	';'  shift 255
+	';'  shift 257
 	.  error
 
 
 state 236
+	sentencia_if : IF '(' condicion error bloque_sentencias END_IF . ';'  (92)
+
+	';'  shift 258
+	.  error
+
+
+state 237
 	sentencia_if : IF '(' condicion ')' bloque_sentencias error .  (89)
 
 	.  reduce 89
 
 
-state 237
+state 238
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE . bloque_sentencias END_IF ';'  (86)
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE . bloque_sentencias END_IF  (88)
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE . bloque_sentencias error  (90)
@@ -2766,15 +2888,15 @@ state 237
 	sentencia_pout  goto 32
 	sentencia_ret  goto 33
 	sentencia  goto 81
-	bloque_sentencias  goto 256
+	bloque_sentencias  goto 259
 	referencia_atributo  goto 35
 
 
-state 238
+state 239
 	sentencia_if : IF '(' condicion ')' bloque_sentencias END_IF . ';'  (85)
 	sentencia_if : IF '(' condicion ')' bloque_sentencias END_IF .  (87)
 
-	';'  shift 257
+	';'  shift 260
 	$end  reduce 87
 	error  reduce 87
 	ID  reduce 87
@@ -2793,29 +2915,29 @@ state 238
 	DOUBLEF  reduce 87
 
 
-state 239
+state 240
 	sentencia_if : IF condicion ')' bloque_sentencias END_IF ';' .  (91)
 
 	.  reduce 91
 
 
-state 240
+state 241
 	sentencia_repeat_while : REPEAT WHILE '(' condicion ')' ';' .  (103)
 
 	.  reduce 103
 
 
-state 241
+state 242
 	sentencia_repeat_while : REPEAT bloque_sentencias WHILE '(' condicion ';' .  (106)
 
 	.  reduce 106
 
 
-state 242
+state 243
 	sentencia_repeat_while : REPEAT bloque_sentencias WHILE '(' condicion ')' . ';'  (101)
 	sentencia_repeat_while : REPEAT bloque_sentencias WHILE '(' condicion ')' .  (102)
 
-	';'  shift 258
+	';'  shift 261
 	$end  reduce 102
 	error  reduce 102
 	ID  reduce 102
@@ -2834,56 +2956,56 @@ state 242
 	DOUBLEF  reduce 102
 
 
-state 243
+state 244
 	sentencia_repeat_while : REPEAT bloque_sentencias WHILE condicion ')' ';' .  (105)
 
 	.  reduce 105
 
 
-state 244
+state 245
 	declaracion_typedef : TYPEDEF ID '=' '[' lista_valores_enumerado ']' ';' .  (67)
 
 	.  reduce 67
 
 
-state 245
+state 246
 	lista_valores_enumerado : constante ',' lista_valores_enumerado .  (69)
 
 	.  reduce 69
 
 
-state 246
+state 247
 	cierre_funcion : error END . ';'  (44)
 
-	';'  shift 259
-	.  error
-
-
-state 247
-	cierre_funcion : BEGIN error . END ';'  (43)
-	sentencia : error . ';'  (79)
-
-	END  shift 260
-	';'  shift 59
+	';'  shift 262
 	.  error
 
 
 state 248
-	cierre_funcion : BEGIN END . ';'  (41)
+	cierre_funcion : BEGIN error . END ';'  (43)
+	sentencia : error . ';'  (79)
 
-	';'  shift 261
+	END  shift 263
+	';'  shift 59
 	.  error
 
 
 state 249
-	cierre_funcion : BEGIN lista_sentencias . END ';'  (40)
-	cierre_funcion : BEGIN lista_sentencias . END  (42)
+	cierre_funcion : BEGIN END . ';'  (41)
 
-	END  shift 262
+	';'  shift 264
 	.  error
 
 
 state 250
+	cierre_funcion : BEGIN lista_sentencias . END ';'  (40)
+	cierre_funcion : BEGIN lista_sentencias . END  (42)
+
+	END  shift 265
+	.  error
+
+
+state 251
 	declaracion_metodo : encabezado_metodo '(' lista_parametros_formales ')' BEGIN . lista_sentencias END ';'  (61)
 
 	error  shift 78
@@ -2894,7 +3016,7 @@ state 250
 	REPEAT  shift 27
 	.  error
 
-	lista_sentencias  goto 263
+	lista_sentencias  goto 266
 	asignacion  goto 29
 	sentencia_if  goto 30
 	sentencia_repeat_while  goto 31
@@ -2904,85 +3026,105 @@ state 250
 	referencia_atributo  goto 35
 
 
-state 251
+state 252
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' '[' . lista_orden_evaluacion ']'  (147)
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' '[' . ']'  (148)
+
+	CTE  shift 254
+	']'  shift 267
+	.  error
+
+	lista_orden_evaluacion  goto 268
+
+
+state 253
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales . ')' '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales . ')' '[' ']'  (151)
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales . ')'  (152)
+
+	')'  shift 269
+	.  error
+
+
+state 254
 	lista_orden_evaluacion : CTE . ',' lista_orden_evaluacion  (143)
 	lista_orden_evaluacion : CTE .  (144)
 
-	','  shift 264
+	','  shift 270
 	']'  reduce 144
 
 
-state 252
+state 255
 	invocacion_funcion : ID '(' lista_parametros_reales ')' '[' ']' .  (137)
 
 	.  reduce 137
 
 
-state 253
+state 256
 	invocacion_funcion : ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion . ']'  (136)
 
-	']'  shift 265
+	']'  shift 271
 	.  error
 
 
-state 254
+state 257
 	sentencia_if : IF '(' error ')' bloque_sentencias END_IF ';' .  (93)
 
 	.  reduce 93
 
 
-state 255
+state 258
 	sentencia_if : IF '(' condicion error bloque_sentencias END_IF ';' .  (92)
 
 	.  reduce 92
 
 
-state 256
+state 259
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias . END_IF ';'  (86)
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias . END_IF  (88)
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias . error  (90)
 
-	error  shift 266
-	END_IF  shift 267
+	error  shift 272
+	END_IF  shift 273
 	.  error
 
 
-state 257
+state 260
 	sentencia_if : IF '(' condicion ')' bloque_sentencias END_IF ';' .  (85)
 
 	.  reduce 85
 
 
-state 258
+state 261
 	sentencia_repeat_while : REPEAT bloque_sentencias WHILE '(' condicion ')' ';' .  (101)
 
 	.  reduce 101
 
 
-state 259
+state 262
 	cierre_funcion : error END ';' .  (44)
 
 	.  reduce 44
 
 
-state 260
+state 263
 	cierre_funcion : BEGIN error END . ';'  (43)
 
-	';'  shift 268
+	';'  shift 274
 	.  error
 
 
-state 261
+state 264
 	cierre_funcion : BEGIN END ';' .  (41)
 
 	.  reduce 41
 
 
-state 262
+state 265
 	cierre_funcion : BEGIN lista_sentencias END . ';'  (40)
 	cierre_funcion : BEGIN lista_sentencias END .  (42)
 
-	';'  shift 269
+	';'  shift 275
 	error  reduce 42
 	ID  reduce 42
 	IF  reduce 42
@@ -2997,39 +3139,86 @@ state 262
 	DOUBLEF  reduce 42
 
 
-state 263
+state 266
 	declaracion_metodo : encabezado_metodo '(' lista_parametros_formales ')' BEGIN lista_sentencias . END ';'  (61)
 
-	END  shift 270
+	END  shift 276
 	.  error
 
 
-state 264
+state 267
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' '[' ']' .  (148)
+
+	.  reduce 148
+
+
+state 268
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion . ']'  (147)
+
+	']'  shift 277
+	.  error
+
+
+state 269
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')' . '[' lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')' . '[' ']'  (151)
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')' .  (152)
+
+	'['  shift 278
+	$end  reduce 152
+	error  reduce 152
+	ID  reduce 152
+	ASIG  reduce 152
+	CTE  reduce 152
+	MAYOR_IGUAL  reduce 152
+	MENOR_IGUAL  reduce 152
+	IGUAL_IGUAL  reduce 152
+	DISTINTO  reduce 152
+	IF  reduce 152
+	ELSE  reduce 152
+	END_IF  reduce 152
+	END  reduce 152
+	POUT  reduce 152
+	RET  reduce 152
+	REPEAT  reduce 152
+	WHILE  reduce 152
+	';'  reduce 152
+	','  reduce 152
+	')'  reduce 152
+	'>'  reduce 152
+	'<'  reduce 152
+	'+'  reduce 152
+	'-'  reduce 152
+	'*'  reduce 152
+	'/'  reduce 152
+
+
+state 270
 	lista_orden_evaluacion : CTE ',' . lista_orden_evaluacion  (143)
 
-	CTE  shift 251
+	CTE  shift 254
 	.  error
 
-	lista_orden_evaluacion  goto 271
+	lista_orden_evaluacion  goto 279
 
 
-state 265
+state 271
 	invocacion_funcion : ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']' .  (136)
 
 	.  reduce 136
 
 
-state 266
+state 272
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias error .  (90)
 
 	.  reduce 90
 
 
-state 267
+state 273
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias END_IF . ';'  (86)
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias END_IF .  (88)
 
-	';'  shift 272
+	';'  shift 280
 	$end  reduce 88
 	error  reduce 88
 	ID  reduce 88
@@ -3048,42 +3237,78 @@ state 267
 	DOUBLEF  reduce 88
 
 
-state 268
+state 274
 	cierre_funcion : BEGIN error END ';' .  (43)
 
 	.  reduce 43
 
 
-state 269
+state 275
 	cierre_funcion : BEGIN lista_sentencias END ';' .  (40)
 
 	.  reduce 40
 
 
-state 270
+state 276
 	declaracion_metodo : encabezado_metodo '(' lista_parametros_formales ')' BEGIN lista_sentencias END . ';'  (61)
 
-	';'  shift 273
+	';'  shift 281
 	.  error
 
 
-state 271
+state 277
+	referencia_atributo : ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']' .  (147)
+
+	.  reduce 147
+
+
+state 278
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' . lista_orden_evaluacion ']'  (150)
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' . ']'  (151)
+
+	CTE  shift 254
+	']'  shift 282
+	.  error
+
+	lista_orden_evaluacion  goto 283
+
+
+state 279
 	lista_orden_evaluacion : CTE ',' lista_orden_evaluacion .  (143)
 
 	.  reduce 143
 
 
-state 272
+state 280
 	sentencia_if : IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias END_IF ';' .  (86)
 
 	.  reduce 86
 
 
-state 273
+state 281
 	declaracion_metodo : encabezado_metodo '(' lista_parametros_formales ')' BEGIN lista_sentencias END ';' .  (61)
 
 	.  reduce 61
 
 
+state 282
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' ']' .  (151)
+
+	.  reduce 151
+
+
+state 283
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion . ']'  (150)
+
+	']'  shift 284
+	.  error
+
+
+state 284
+	referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']' .  (150)
+
+	.  reduce 150
+
+
 40 terminals, 49 nonterminals
-148 grammar rules, 274 states
+153 grammar rules, 285 states

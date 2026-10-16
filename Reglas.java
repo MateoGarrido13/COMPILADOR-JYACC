@@ -58,6 +58,7 @@ public enum Reglas {
     ACCESO_ATRIBUTO("Acceso a atributo", true),
     ACCESO_ATRIBUTO_PREFIJADO("Acceso a atributo con prefijo de clase", true),
     INVOCACION_METODO("Invocacion a metodo", true),
+    INVOCACION_METODO_PREFIJADO("Invocacion a metodo con prefijo de clase", true),
 
     // ===== Producciones de error =====
     ERR_SENTENCIA("Sentencia mal formada", false),

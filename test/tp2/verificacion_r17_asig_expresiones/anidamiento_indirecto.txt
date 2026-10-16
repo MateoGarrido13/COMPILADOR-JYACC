@@ -1,0 +1,6 @@
+{{ r17: anidamiento indirecto de asignacion en expresion }}
+prog
+ulongint x, y, w, z;
+begin
+    x := y = (w + z = (1$ul));
+end

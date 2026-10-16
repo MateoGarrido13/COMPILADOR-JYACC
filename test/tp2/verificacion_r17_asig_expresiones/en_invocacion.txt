@@ -1,0 +1,10 @@
+{{ r17: estructura valida: asignacion en expresion como parametro real }}
+prog
+ulongint x, y;
+ulongint function f(ulongint p)
+begin
+    ret(p);
+end;
+begin
+    x := f(y = (2$ul))[1$ul];
+end

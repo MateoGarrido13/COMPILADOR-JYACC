@@ -14,9 +14,13 @@
      25 - declaracion de clases sin codigo de estructura
      28 - acceso tradicional a atributos con "."
      31 - herencia multiple con desambiguado por prefijado
+     31+19 - invocacion a metodo heredado prefijado: objeto.clase.metodo(<reales>)[<orden>]
      33 - conversion explicita  todf(<expresion>)
 
-    Gramatica recursiva a derecha. Las reducciones invocan a acciones.ejecutar(Reglas.X).
+    Gramatica recursiva a derecha, sincronizada con el Parser.java vigente (incluye
+   declaracion_clara, encabezado_metodo y parametro_real nombrado). Toda invocacion
+   (funcion o metodo, prefijada o no) exige el orden del Tema 19 entre corchetes.
+   Las reducciones invocan a acciones.ejecutar(Reglas.X).
     TablaAcciones resuelve el codigo, registra la reduccion e informa la estructura.
     Las producciones ERR_* cubren el PDF de errores a detectar del grupo; Verificaciones
     aplica lo que requiere contexto (RET ausente, enum vacio, orden ausente).
@@ -65,13 +69,22 @@
 /* ==========================================================================
    PROGRAMA
    ========================================================================== */
-
 programa
     : nombre_programa sentencias_declarativas bloque_ejecutable
         { $$ = new ParserVal(acciones.ejecutar(Reglas.PROGRAMA, $2.obj, $3.obj)); }
-    | sentencias_declarativas bloque_ejecutable
+    | bloque_ejecutable
         { acciones.ejecutar(Reglas.ERR_FALTA_NOMBRE_PROGRAMA);
-          $$ = new ParserVal(acciones.ejecutar(Reglas.PROGRAMA, $1.obj, $2.obj)); }
+          $$ = new ParserVal(acciones.ejecutar(Reglas.PROGRAMA, null, $1.obj)); }
+    | declaracion_clara sentencias_declarativas bloque_ejecutable
+        { acciones.ejecutar(Reglas.ERR_FALTA_NOMBRE_PROGRAMA);
+          $$ = new ParserVal(acciones.ejecutar(Reglas.PROGRAMA, $1.obj, $3.obj)); }
+    ;
+
+declaracion_clara
+    : declaracion_variables
+    | declaracion_funcion
+    | declaracion_clase
+    | declaracion_typedef
     ;
 
 nombre_programa
@@ -82,18 +95,21 @@ nombre_programa
 bloque_ejecutable
     : BEGIN lista_sentencias END
         { $$ = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_EJECUTABLE, $2.obj)); }
+    | BEGIN END
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_EJECUTABLE, (Object) null)); }
     | BEGIN lista_sentencias
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_BLOQUE_SIN_END, $2.obj)); }
-    | lista_sentencias END
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_BEGIN, $1.obj)); }
+    | BEGIN error END
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_BLOQUE_SIN_END)); }
     | END
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_BEGIN)); }
+    | error END
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_BEGIN)); }
     ;
 
 /* ==========================================================================
    SENTENCIAS DECLARATIVAS
    ========================================================================== */
-
 sentencias_declarativas
     : sentencia_declarativa sentencias_declarativas
         { $$ = new ParserVal(acciones.ejecutar(Reglas.LISTA_SENTENCIAS, $1.obj, $2.obj)); }
@@ -114,20 +130,13 @@ sentencia_declarativa
     | sentencia_ret
     ;
 
-/* <tipo> <lista_de_variables> ; */
 declaracion_variables
     : tipo lista_variables ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_VARIABLES, $1.obj, $2.obj)); }
-    | tipo lista_variables
-        { acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA);
-          $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_VARIABLES, $1.obj, $2.obj)); }
-    | lista_variables ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_TIPO_VARIABLES, $1.obj)); }
     | tipo error ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_LISTA_VARIABLES)); }
     ;
 
-/* Temas 23 y 25: variables de un tipo enumerado u objetos de una clase. */
 declaracion_objetos
     : ID lista_variables ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_OBJETOS, $1.obj, $2.obj)); }
@@ -159,7 +168,6 @@ lista_variables
 /* --------------------------------------------------------------------------
    Declaracion de funciones
    -------------------------------------------------------------------------- */
-
 encabezado_funcion
     : tipo FUNCTION ID
         { acciones.ejecutar(Reglas.INICIO_FUNCION, $1.obj, $3.obj); }
@@ -176,13 +184,15 @@ declaracion_funcion
 cierre_funcion
     : BEGIN lista_sentencias END ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
+    | BEGIN END ';'
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
     | BEGIN lista_sentencias END
         { acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA);
           $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
-    | BEGIN lista_sentencias
+    | BEGIN error END ';'
         { acciones.ejecutar(Reglas.ERR_BLOQUE_SIN_END);
           $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
-    | lista_sentencias END ';'
+    | error END ';'
         { acciones.ejecutar(Reglas.ERR_FALTA_BEGIN);
           $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
     ;
@@ -194,8 +204,6 @@ lista_parametros_formales
         { $$ = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_FORMALES, $1.obj)); }
     ;
 
-/* tipo ID cubre ulongint/doublef; ID ID cubre tipos definidos por el usuario.
-   Las alternativas cortas detectan falta de nombre o de tipo. */
 parametro_formal
     : tipo ID
         { $$ = new ParserVal(acciones.ejecutar(Reglas.PARAMETRO_FORMAL, $1.obj, $2.obj)); }
@@ -209,9 +217,8 @@ parametro_formal
 
 /* --------------------------------------------------------------------------
    Tema 25: declaracion de clases (sin codigo de estructura)
-   Tema 31: herencia multiple mediante EXTENDS
+   Tema 31: herencia multiple mediante EXTENDS e invocacion prefijada
    -------------------------------------------------------------------------- */
-
 encabezado_clase
     : CLASS ID
         { acciones.ejecutar(Reglas.INICIO_CLASE, $2.obj);
@@ -244,12 +251,15 @@ declaracion_atributo
         { $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_ATRIBUTO, $1.obj, $2.obj)); }
     ;
 
-declaracion_metodo
+encabezado_metodo
     : tipo_declarado ID
-        { acciones.ejecutar(Reglas.INICIO_FUNCION, $1.obj, $2.obj); }
-      '(' lista_parametros_formales ')'
-      BEGIN lista_sentencias END ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_METODO, $2.obj)); }
+        { acciones.ejecutar(Reglas.INICIO_FUNCION, $1.obj, $2.obj);
+          $$ = $2; }
+    ;
+
+declaracion_metodo
+    : encabezado_metodo '(' lista_parametros_formales ')' BEGIN lista_sentencias END ';'
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_METODO, $1.obj)); }
     ;
 
 sentencia_extends
@@ -269,10 +279,8 @@ lista_clases_heredadas
     ;
 
 /* --------------------------------------------------------------------------
-   Tema 23: enumeraciones
-   typedef ID = [ <lista_valores> ];
+   Tema 23: enumeraciones - typedef ID = [ <lista_valores> ];
    -------------------------------------------------------------------------- */
-
 declaracion_typedef
     : TYPEDEF ID '=' '[' lista_valores_enumerado ']' ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.DECL_TYPEDEF, $2.obj, $5.obj)); }
@@ -290,7 +298,6 @@ lista_valores_enumerado
 /* ==========================================================================
    SENTENCIAS EJECUTABLES
    ========================================================================== */
-
 lista_sentencias
     : sentencia lista_sentencias
         { $$ = new ParserVal(acciones.ejecutar(Reglas.LISTA_SENTENCIAS, $1.obj, $2.obj)); }
@@ -328,7 +335,6 @@ asignacion
 /* --------------------------------------------------------------------------
    Seleccion
    -------------------------------------------------------------------------- */
-
 sentencia_if
     : IF '(' condicion ')' bloque_sentencias END_IF ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_IF, $3.obj, $5.obj)); }
@@ -338,9 +344,9 @@ sentencia_if
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
     | IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias END_IF
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
-    | IF '(' condicion ')' bloque_sentencias
+    | IF '(' condicion ')' bloque_sentencias error
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_END_IF, $3.obj, $5.obj)); }
-    | IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias
+    | IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias error
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_END_IF, $3.obj, $5.obj, $7.obj)); }
     | IF condicion ')' bloque_sentencias END_IF ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PARENTESIS_APERTURA)); }
@@ -367,7 +373,6 @@ comparador
 /* --------------------------------------------------------------------------
    Tema 13: repeat <bloque> while ( <condicion> );
    -------------------------------------------------------------------------- */
-
 sentencia_repeat_while
     : REPEAT bloque_sentencias WHILE '(' condicion ')' ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_REPEAT_WHILE, $2.obj, $5.obj)); }
@@ -375,8 +380,8 @@ sentencia_repeat_while
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
     | REPEAT WHILE '(' condicion ')' ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_CUERPO_ITERACION, $4.obj)); }
-    | REPEAT bloque_sentencias '(' condicion ')' ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_WHILE, $2.obj, $4.obj)); }
+    | REPEAT bloque_sentencias error ';'
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_WHILE, $2.obj)); }
     | REPEAT bloque_sentencias WHILE condicion ')' ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PARENTESIS_APERTURA)); }
     | REPEAT bloque_sentencias WHILE '(' condicion ';'
@@ -384,9 +389,8 @@ sentencia_repeat_while
     ;
 
 /* --------------------------------------------------------------------------
-   Salida por pantalla
+   Salida por pantalla y retorno
    -------------------------------------------------------------------------- */
-
 sentencia_pout
     : POUT '(' CADENA ')' ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_POUT, $3.obj)); }
@@ -410,8 +414,10 @@ sentencia_ret
 
 /* ==========================================================================
    EXPRESIONES
+   Tema 19: el orden va entre corchetes despues de ')' en toda invocacion.
+   Temas 28/31: objeto.atributo, objeto.clase.atributo,
+   objeto.metodo(<reales>)[<orden>] y objeto.clase.metodo(<reales>)[<orden>].
    ========================================================================== */
-
 expresion
     : termino '+' expresion
         { $$ = new ParserVal(acciones.ejecutar(Reglas.SUMA, $1.obj, $3.obj)); }
@@ -419,10 +425,10 @@ expresion
         { $$ = new ParserVal(acciones.ejecutar(Reglas.RESTA, $1.obj, $3.obj)); }
     | termino '+' error
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERANDO, $1.obj)); }
+    | termino '-' error
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERANDO, $1.obj)); }
     | termino CTE
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERADOR, $1.obj, $2.obj)); }
-    | termino error
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERADOR, $1.obj)); }
     | termino
     ;
 
@@ -455,7 +461,6 @@ constante
         { $$ = new ParserVal(acciones.ejecutar(Reglas.FACTOR_CONSTANTE_NEGATIVA, $2.obj)); }
     ;
 
-/* Tema 17: "=" con parentesis. ':=' en ese contexto es error. */
 asignacion_en_expresion
     : ID '=' '(' expresion ')'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ASIGNACION_EN_EXPRESION, $1.obj, $4.obj)); }
@@ -469,7 +474,6 @@ conversion
         { $$ = new ParserVal(acciones.ejecutar(Reglas.CONVERSION_TODF, $3.obj)); }
     ;
 
-/* Tema 19: orden de evaluacion obligatorio entre corchetes. */
 invocacion_funcion
     : ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.INVOCACION_FUNCION, $1.obj, $3.obj, $6.obj)); }
@@ -480,10 +484,16 @@ invocacion_funcion
     ;
 
 lista_parametros_reales
-    : expresion ',' lista_parametros_reales
+    : parametro_real ',' lista_parametros_reales
         { $$ = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_REALES, $1.obj, $3.obj)); }
-    | expresion
+    | parametro_real
         { $$ = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_REALES, $1.obj)); }
+    ;
+
+parametro_real
+    : ID '=' expresion
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.PARAMETRO_REAL_NOMBRADO, $1.obj, $3.obj)); }
+    | expresion
     ;
 
 lista_orden_evaluacion
@@ -498,11 +508,22 @@ referencia_atributo
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ACCESO_ATRIBUTO, $1.obj, $3.obj)); }
     | ID '.' ID '.' ID
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ACCESO_ATRIBUTO_PREFIJADO, $1.obj, $3.obj, $5.obj)); }
+    | ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.INVOCACION_METODO, $1.obj, $3.obj, $5.obj, $8.obj)); }
+    | ID '.' ID '(' lista_parametros_reales ')' '[' ']'
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, $1.obj, $3.obj, $5.obj)); }
     | ID '.' ID '(' lista_parametros_reales ')'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.INVOCACION_METODO, $1.obj, $3.obj, $5.obj)); }
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, $1.obj, $3.obj, $5.obj)); }
+    | ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' lista_orden_evaluacion ']'
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.INVOCACION_METODO_PREFIJADO, $1.obj, $3.obj, $5.obj, $7.obj, $10.obj)); }
+    | ID '.' ID '.' ID '(' lista_parametros_reales ')' '[' ']'
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, $1.obj, $3.obj, $5.obj, $7.obj)); }
+    | ID '.' ID '.' ID '(' lista_parametros_reales ')'
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, $1.obj, $3.obj, $5.obj, $7.obj)); }
     ;
 
 %%
+
 
 /* ==========================================================================
    SECCION DE CODIGO

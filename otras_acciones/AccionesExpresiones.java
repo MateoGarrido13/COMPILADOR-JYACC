@@ -55,7 +55,14 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.ACCESO_ATRIBUTO_PREFIJADO, ctx ->
                 ExpresionDiferida.deOperando(ctx.entrada(2)));
 
-        tabla.registrar(Reglas.INVOCACION_METODO, ctx ->
-                ExpresionDiferida.deOperando(ctx.entrada(1)));
+        tabla.registrar(Reglas.INVOCACION_METODO, ctx -> {
+            v.verificarOrdenEvaluacion(ctx.valor(3) == null ? null : ctx.lista(3), ctx.getLinea());
+            return ExpresionDiferida.deOperando(ctx.entrada(1));
+        });
+
+        tabla.registrar(Reglas.INVOCACION_METODO_PREFIJADO, ctx -> {
+            v.verificarOrdenEvaluacion(ctx.valor(4) == null ? null : ctx.lista(4), ctx.getLinea());
+            return ExpresionDiferida.deOperando(ctx.entrada(2));
+        });
     }
 }

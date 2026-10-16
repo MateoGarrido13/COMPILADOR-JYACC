@@ -1,0 +1,6 @@
+{{ r17: invalido: '=' como asignacion de sentencia, debe usarse ':=' }}
+prog
+ulongint x, y;
+begin
+    x = y = (2$ul);
+end

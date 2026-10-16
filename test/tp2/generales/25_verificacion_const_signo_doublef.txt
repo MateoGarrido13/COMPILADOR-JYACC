@@ -1,0 +1,9 @@
+{{ constante doublef con signo unario dentro del rango }}
+{{ expresiones: a-(-cte) y a--cte }}
+prog
+doublef a, z;
+begin
+    z := -1.5;
+    z := a-(-1.5);
+    z := a--1.5;
+end

@@ -1,0 +1,30 @@
+{{ r31+r19: invocacion a metodo heredado prefijado objeto.clase.metodo(reales)[orden] }}
+{{ cb y cc definen m con la misma firma; ca hereda de ambas y el prefijo desambigua }}
+{{ el orden del tema 19 va entre corchetes despues del parentesis de cierre, igual que en funciones: [2,1] evalua primero el 2do real y despues el 1ro }}
+prog
+class cb
+begin
+    ulongint m(ulongint pa, ulongint pb)
+    begin
+        ret(pa);
+    end;
+end;
+class cc
+begin
+    ulongint m(ulongint pa, ulongint pb)
+    begin
+        ret(pb);
+    end;
+end;
+class ca
+begin
+    extends cb, cc;
+end;
+ca a1;
+ulongint r, y;
+begin
+    r := a1.cb.m(1$ul, 2$ul)[2$ul, 1$ul];
+    r := a1.cc.m(pa=3$ul, 4$ul)[1$ul, 2$ul];
+    r := a1.cb.m(y = (5$ul), 6$ul)[2$ul, 1$ul] + a1.cc.m(7$ul, 8$ul)[1$ul, 2$ul];
+    pout(a1.cc.m(9$ul, 10$ul)[2$ul, 1$ul]);
+end

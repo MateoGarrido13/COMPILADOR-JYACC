@@ -1,0 +1,23 @@
+{{ r31+r19: metodo heredado de un parametro, prefijado y tradicional, en condicion y expresion }}
+{{ con un solo real el orden es [1]; la forma tradicional objeto.metodo(reales)[orden] aplica el tema 19 igual que la prefijada }}
+prog
+class padre
+begin
+    ulongint m(ulongint pa)
+    begin
+        ret(pa);
+    end;
+end;
+class hija
+begin
+    extends padre;
+end;
+hija a1;
+ulongint r;
+begin
+    r := a1.padre.m(1$ul)[1$ul];
+    r := a1.m(2$ul)[1$ul] + a1.padre.m(3$ul)[1$ul];
+    if (a1.padre.m(4$ul)[1$ul] > 0$ul)
+        pout(a1.m(5$ul)[1$ul]);
+    end_if;
+end

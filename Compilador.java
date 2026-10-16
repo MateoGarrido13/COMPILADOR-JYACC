@@ -1,4 +1,9 @@
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /*
   Flujo del compilador.
@@ -34,6 +39,8 @@ public class Compilador {
             return;
         }
 
+        String fuente = contenidoFuenteNumerado(rutaFuente);
+
         Parser parser = new Parser(lexico, tablaAcciones, reporte);
         parser.yyparse();
         lexico.cerrar();
@@ -43,6 +50,8 @@ public class Compilador {
         String errores = reporte.contenidoErrores();
         String tabla = tablaSimbolos.contenido();
 
+        System.out.print(fuente);
+        System.out.println();
         System.out.print(tokens);
         System.out.println();
         System.out.print(estructuras);
@@ -51,6 +60,29 @@ public class Compilador {
         System.out.println();
         System.out.print(tabla);
 
+    }
+
+    /*
+      Relee el archivo fuente completo y lo devuelve con cada linea numerada
+      ("N: <linea>"), para abrir la salida por consola. Se relee en lugar de
+      reutilizar LectorFuente porque este solo conserva la linea actual y la
+      carga a demanda del lexico: asi el listado es completo aunque el parser
+      no haya consumido todo el programa.
+     */
+    private String contenidoFuenteNumerado(String rutaFuente) {
+        StringBuilder texto = new StringBuilder("Codigo fuente:\n");
+        try (BufferedReader lector = Files.newBufferedReader(Paths.get(rutaFuente), StandardCharsets.UTF_8)) {
+            String linea;
+            int numero = 1;
+            while ((linea = lector.readLine()) != null) {
+                texto.append(numero).append(": ").append(linea).append("\n");
+                numero++;
+            }
+        } catch (IOException e) {
+            // El AnalizadorLexico ya abrio el archivo: si la relectura falla,
+            // se devuelve lo leido hasta el momento sin interrumpir la salida.
+        }
+        return texto.toString();
     }
 
     public TablaSimbolos getTablaSimbolos() {

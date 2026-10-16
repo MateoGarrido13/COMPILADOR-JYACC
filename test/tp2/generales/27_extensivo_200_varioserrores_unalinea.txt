@@ -1,0 +1,200 @@
+{{ TP2 extensivo - recuperacion: 200 lineas, 3 errores por linea
+   Objetivo: verificar si el compilador se detiene al encontrar
+   el primer error o si continua informando los siguientes.
+   Cada linea con casos de error contiene 3 errores, en 3
+   sentencias separadas por ';' sobre la misma linea fisica:
+   1) identificador mal formado VarMala<letras> (mayuscula);
+   2) asignacion anidada posterior: x := y = (z = (N$ul));
+   3) falta el parentesis de cierre: if (x > N$ul pout(...);
+   Las lineas se agrupan en bloques if/begin/end para acotar
+   la recuperacion. Esperado: los 3 errores informados linea
+   por linea y el analisis llegando a la ultima linea. }}
+prog
+ulongint x, y, z;
+begin
+    if (x > 0$ul) begin
+    VarMalaa := 1$ul; x := y = (z = (1$ul)); if (x > 1$ul pout({ok}); end_if;
+    VarMalab := 2$ul; x := y = (z = (2$ul)); if (x > 2$ul pout({ok}); end_if;
+    VarMalac := 3$ul; x := y = (z = (3$ul)); if (x > 3$ul pout({ok}); end_if;
+    VarMalad := 4$ul; x := y = (z = (4$ul)); if (x > 4$ul pout({ok}); end_if;
+    VarMalae := 5$ul; x := y = (z = (5$ul)); if (x > 5$ul pout({ok}); end_if;
+    VarMalaf := 6$ul; x := y = (z = (6$ul)); if (x > 6$ul pout({ok}); end_if;
+    VarMalag := 7$ul; x := y = (z = (7$ul)); if (x > 7$ul pout({ok}); end_if;
+    VarMalah := 8$ul; x := y = (z = (8$ul)); if (x > 8$ul pout({ok}); end_if;
+    VarMalai := 9$ul; x := y = (z = (9$ul)); if (x > 9$ul pout({ok}); end_if;
+    VarMalaj := 10$ul; x := y = (z = (10$ul)); if (x > 10$ul pout({ok}); end_if;
+    VarMalak := 11$ul; x := y = (z = (11$ul)); if (x > 11$ul pout({ok}); end_if;
+    VarMalal := 12$ul; x := y = (z = (12$ul)); if (x > 12$ul pout({ok}); end_if;
+    VarMalam := 13$ul; x := y = (z = (13$ul)); if (x > 13$ul pout({ok}); end_if;
+    VarMalan := 14$ul; x := y = (z = (14$ul)); if (x > 14$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMalao := 15$ul; x := y = (z = (15$ul)); if (x > 15$ul pout({ok}); end_if;
+    VarMalap := 16$ul; x := y = (z = (16$ul)); if (x > 16$ul pout({ok}); end_if;
+    VarMalaq := 17$ul; x := y = (z = (17$ul)); if (x > 17$ul pout({ok}); end_if;
+    VarMalar := 18$ul; x := y = (z = (18$ul)); if (x > 18$ul pout({ok}); end_if;
+    VarMalas := 19$ul; x := y = (z = (19$ul)); if (x > 19$ul pout({ok}); end_if;
+    VarMalat := 20$ul; x := y = (z = (20$ul)); if (x > 20$ul pout({ok}); end_if;
+    VarMalau := 21$ul; x := y = (z = (21$ul)); if (x > 21$ul pout({ok}); end_if;
+    VarMalav := 22$ul; x := y = (z = (22$ul)); if (x > 22$ul pout({ok}); end_if;
+    VarMalaw := 23$ul; x := y = (z = (23$ul)); if (x > 23$ul pout({ok}); end_if;
+    VarMalax := 24$ul; x := y = (z = (24$ul)); if (x > 24$ul pout({ok}); end_if;
+    VarMalay := 25$ul; x := y = (z = (25$ul)); if (x > 25$ul pout({ok}); end_if;
+    VarMalaz := 26$ul; x := y = (z = (26$ul)); if (x > 26$ul pout({ok}); end_if;
+    VarMalaaa := 27$ul; x := y = (z = (27$ul)); if (x > 27$ul pout({ok}); end_if;
+    VarMalaab := 28$ul; x := y = (z = (28$ul)); if (x > 28$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMalaac := 29$ul; x := y = (z = (29$ul)); if (x > 29$ul pout({ok}); end_if;
+    VarMalaad := 30$ul; x := y = (z = (30$ul)); if (x > 30$ul pout({ok}); end_if;
+    VarMalaae := 31$ul; x := y = (z = (31$ul)); if (x > 31$ul pout({ok}); end_if;
+    VarMalaaf := 32$ul; x := y = (z = (32$ul)); if (x > 32$ul pout({ok}); end_if;
+    VarMalaag := 33$ul; x := y = (z = (33$ul)); if (x > 33$ul pout({ok}); end_if;
+    VarMalaah := 34$ul; x := y = (z = (34$ul)); if (x > 34$ul pout({ok}); end_if;
+    VarMalaai := 35$ul; x := y = (z = (35$ul)); if (x > 35$ul pout({ok}); end_if;
+    VarMalaaj := 36$ul; x := y = (z = (36$ul)); if (x > 36$ul pout({ok}); end_if;
+    VarMalaak := 37$ul; x := y = (z = (37$ul)); if (x > 37$ul pout({ok}); end_if;
+    VarMalaal := 38$ul; x := y = (z = (38$ul)); if (x > 38$ul pout({ok}); end_if;
+    VarMalaam := 39$ul; x := y = (z = (39$ul)); if (x > 39$ul pout({ok}); end_if;
+    VarMalaan := 40$ul; x := y = (z = (40$ul)); if (x > 40$ul pout({ok}); end_if;
+    VarMalaao := 41$ul; x := y = (z = (41$ul)); if (x > 41$ul pout({ok}); end_if;
+    VarMalaap := 42$ul; x := y = (z = (42$ul)); if (x > 42$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMalaaq := 43$ul; x := y = (z = (43$ul)); if (x > 43$ul pout({ok}); end_if;
+    VarMalaar := 44$ul; x := y = (z = (44$ul)); if (x > 44$ul pout({ok}); end_if;
+    VarMalaas := 45$ul; x := y = (z = (45$ul)); if (x > 45$ul pout({ok}); end_if;
+    VarMalaat := 46$ul; x := y = (z = (46$ul)); if (x > 46$ul pout({ok}); end_if;
+    VarMalaau := 47$ul; x := y = (z = (47$ul)); if (x > 47$ul pout({ok}); end_if;
+    VarMalaav := 48$ul; x := y = (z = (48$ul)); if (x > 48$ul pout({ok}); end_if;
+    VarMalaaw := 49$ul; x := y = (z = (49$ul)); if (x > 49$ul pout({ok}); end_if;
+    VarMalaax := 50$ul; x := y = (z = (50$ul)); if (x > 50$ul pout({ok}); end_if;
+    VarMalaay := 51$ul; x := y = (z = (51$ul)); if (x > 51$ul pout({ok}); end_if;
+    VarMalaaz := 52$ul; x := y = (z = (52$ul)); if (x > 52$ul pout({ok}); end_if;
+    VarMalaba := 53$ul; x := y = (z = (53$ul)); if (x > 53$ul pout({ok}); end_if;
+    VarMalabb := 54$ul; x := y = (z = (54$ul)); if (x > 54$ul pout({ok}); end_if;
+    VarMalabc := 55$ul; x := y = (z = (55$ul)); if (x > 55$ul pout({ok}); end_if;
+    VarMalabd := 56$ul; x := y = (z = (56$ul)); if (x > 56$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMalabe := 57$ul; x := y = (z = (57$ul)); if (x > 57$ul pout({ok}); end_if;
+    VarMalabf := 58$ul; x := y = (z = (58$ul)); if (x > 58$ul pout({ok}); end_if;
+    VarMalabg := 59$ul; x := y = (z = (59$ul)); if (x > 59$ul pout({ok}); end_if;
+    VarMalabh := 60$ul; x := y = (z = (60$ul)); if (x > 60$ul pout({ok}); end_if;
+    VarMalabi := 61$ul; x := y = (z = (61$ul)); if (x > 61$ul pout({ok}); end_if;
+    VarMalabj := 62$ul; x := y = (z = (62$ul)); if (x > 62$ul pout({ok}); end_if;
+    VarMalabk := 63$ul; x := y = (z = (63$ul)); if (x > 63$ul pout({ok}); end_if;
+    VarMalabl := 64$ul; x := y = (z = (64$ul)); if (x > 64$ul pout({ok}); end_if;
+    VarMalabm := 65$ul; x := y = (z = (65$ul)); if (x > 65$ul pout({ok}); end_if;
+    VarMalabn := 66$ul; x := y = (z = (66$ul)); if (x > 66$ul pout({ok}); end_if;
+    VarMalabo := 67$ul; x := y = (z = (67$ul)); if (x > 67$ul pout({ok}); end_if;
+    VarMalabp := 68$ul; x := y = (z = (68$ul)); if (x > 68$ul pout({ok}); end_if;
+    VarMalabq := 69$ul; x := y = (z = (69$ul)); if (x > 69$ul pout({ok}); end_if;
+    VarMalabr := 70$ul; x := y = (z = (70$ul)); if (x > 70$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMalabs := 71$ul; x := y = (z = (71$ul)); if (x > 71$ul pout({ok}); end_if;
+    VarMalabt := 72$ul; x := y = (z = (72$ul)); if (x > 72$ul pout({ok}); end_if;
+    VarMalabu := 73$ul; x := y = (z = (73$ul)); if (x > 73$ul pout({ok}); end_if;
+    VarMalabv := 74$ul; x := y = (z = (74$ul)); if (x > 74$ul pout({ok}); end_if;
+    VarMalabw := 75$ul; x := y = (z = (75$ul)); if (x > 75$ul pout({ok}); end_if;
+    VarMalabx := 76$ul; x := y = (z = (76$ul)); if (x > 76$ul pout({ok}); end_if;
+    VarMalaby := 77$ul; x := y = (z = (77$ul)); if (x > 77$ul pout({ok}); end_if;
+    VarMalabz := 78$ul; x := y = (z = (78$ul)); if (x > 78$ul pout({ok}); end_if;
+    VarMalaca := 79$ul; x := y = (z = (79$ul)); if (x > 79$ul pout({ok}); end_if;
+    VarMalacb := 80$ul; x := y = (z = (80$ul)); if (x > 80$ul pout({ok}); end_if;
+    VarMalacc := 81$ul; x := y = (z = (81$ul)); if (x > 81$ul pout({ok}); end_if;
+    VarMalacd := 82$ul; x := y = (z = (82$ul)); if (x > 82$ul pout({ok}); end_if;
+    VarMalace := 83$ul; x := y = (z = (83$ul)); if (x > 83$ul pout({ok}); end_if;
+    VarMalacf := 84$ul; x := y = (z = (84$ul)); if (x > 84$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMalacg := 85$ul; x := y = (z = (85$ul)); if (x > 85$ul pout({ok}); end_if;
+    VarMalach := 86$ul; x := y = (z = (86$ul)); if (x > 86$ul pout({ok}); end_if;
+    VarMalaci := 87$ul; x := y = (z = (87$ul)); if (x > 87$ul pout({ok}); end_if;
+    VarMalacj := 88$ul; x := y = (z = (88$ul)); if (x > 88$ul pout({ok}); end_if;
+    VarMalack := 89$ul; x := y = (z = (89$ul)); if (x > 89$ul pout({ok}); end_if;
+    VarMalacl := 90$ul; x := y = (z = (90$ul)); if (x > 90$ul pout({ok}); end_if;
+    VarMalacm := 91$ul; x := y = (z = (91$ul)); if (x > 91$ul pout({ok}); end_if;
+    VarMalacn := 92$ul; x := y = (z = (92$ul)); if (x > 92$ul pout({ok}); end_if;
+    VarMalaco := 93$ul; x := y = (z = (93$ul)); if (x > 93$ul pout({ok}); end_if;
+    VarMalacp := 94$ul; x := y = (z = (94$ul)); if (x > 94$ul pout({ok}); end_if;
+    VarMalacq := 95$ul; x := y = (z = (95$ul)); if (x > 95$ul pout({ok}); end_if;
+    VarMalacr := 96$ul; x := y = (z = (96$ul)); if (x > 96$ul pout({ok}); end_if;
+    VarMalacs := 97$ul; x := y = (z = (97$ul)); if (x > 97$ul pout({ok}); end_if;
+    VarMalact := 98$ul; x := y = (z = (98$ul)); if (x > 98$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMalacu := 99$ul; x := y = (z = (99$ul)); if (x > 99$ul pout({ok}); end_if;
+    VarMalacv := 100$ul; x := y = (z = (100$ul)); if (x > 100$ul pout({ok}); end_if;
+    VarMalacw := 101$ul; x := y = (z = (101$ul)); if (x > 101$ul pout({ok}); end_if;
+    VarMalacx := 102$ul; x := y = (z = (102$ul)); if (x > 102$ul pout({ok}); end_if;
+    VarMalacy := 103$ul; x := y = (z = (103$ul)); if (x > 103$ul pout({ok}); end_if;
+    VarMalacz := 104$ul; x := y = (z = (104$ul)); if (x > 104$ul pout({ok}); end_if;
+    VarMalada := 105$ul; x := y = (z = (105$ul)); if (x > 105$ul pout({ok}); end_if;
+    VarMaladb := 106$ul; x := y = (z = (106$ul)); if (x > 106$ul pout({ok}); end_if;
+    VarMaladc := 107$ul; x := y = (z = (107$ul)); if (x > 107$ul pout({ok}); end_if;
+    VarMaladd := 108$ul; x := y = (z = (108$ul)); if (x > 108$ul pout({ok}); end_if;
+    VarMalade := 109$ul; x := y = (z = (109$ul)); if (x > 109$ul pout({ok}); end_if;
+    VarMaladf := 110$ul; x := y = (z = (110$ul)); if (x > 110$ul pout({ok}); end_if;
+    VarMaladg := 111$ul; x := y = (z = (111$ul)); if (x > 111$ul pout({ok}); end_if;
+    VarMaladh := 112$ul; x := y = (z = (112$ul)); if (x > 112$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMaladi := 113$ul; x := y = (z = (113$ul)); if (x > 113$ul pout({ok}); end_if;
+    VarMaladj := 114$ul; x := y = (z = (114$ul)); if (x > 114$ul pout({ok}); end_if;
+    VarMaladk := 115$ul; x := y = (z = (115$ul)); if (x > 115$ul pout({ok}); end_if;
+    VarMaladl := 116$ul; x := y = (z = (116$ul)); if (x > 116$ul pout({ok}); end_if;
+    VarMaladm := 117$ul; x := y = (z = (117$ul)); if (x > 117$ul pout({ok}); end_if;
+    VarMaladn := 118$ul; x := y = (z = (118$ul)); if (x > 118$ul pout({ok}); end_if;
+    VarMalado := 119$ul; x := y = (z = (119$ul)); if (x > 119$ul pout({ok}); end_if;
+    VarMaladp := 120$ul; x := y = (z = (120$ul)); if (x > 120$ul pout({ok}); end_if;
+    VarMaladq := 121$ul; x := y = (z = (121$ul)); if (x > 121$ul pout({ok}); end_if;
+    VarMaladr := 122$ul; x := y = (z = (122$ul)); if (x > 122$ul pout({ok}); end_if;
+    VarMalads := 123$ul; x := y = (z = (123$ul)); if (x > 123$ul pout({ok}); end_if;
+    VarMaladt := 124$ul; x := y = (z = (124$ul)); if (x > 124$ul pout({ok}); end_if;
+    VarMaladu := 125$ul; x := y = (z = (125$ul)); if (x > 125$ul pout({ok}); end_if;
+    VarMaladv := 126$ul; x := y = (z = (126$ul)); if (x > 126$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMaladw := 127$ul; x := y = (z = (127$ul)); if (x > 127$ul pout({ok}); end_if;
+    VarMaladx := 128$ul; x := y = (z = (128$ul)); if (x > 128$ul pout({ok}); end_if;
+    VarMalady := 129$ul; x := y = (z = (129$ul)); if (x > 129$ul pout({ok}); end_if;
+    VarMaladz := 130$ul; x := y = (z = (130$ul)); if (x > 130$ul pout({ok}); end_if;
+    VarMalaea := 131$ul; x := y = (z = (131$ul)); if (x > 131$ul pout({ok}); end_if;
+    VarMalaeb := 132$ul; x := y = (z = (132$ul)); if (x > 132$ul pout({ok}); end_if;
+    VarMalaec := 133$ul; x := y = (z = (133$ul)); if (x > 133$ul pout({ok}); end_if;
+    VarMalaed := 134$ul; x := y = (z = (134$ul)); if (x > 134$ul pout({ok}); end_if;
+    VarMalaee := 135$ul; x := y = (z = (135$ul)); if (x > 135$ul pout({ok}); end_if;
+    VarMalaef := 136$ul; x := y = (z = (136$ul)); if (x > 136$ul pout({ok}); end_if;
+    VarMalaeg := 137$ul; x := y = (z = (137$ul)); if (x > 137$ul pout({ok}); end_if;
+    VarMalaeh := 138$ul; x := y = (z = (138$ul)); if (x > 138$ul pout({ok}); end_if;
+    VarMalaei := 139$ul; x := y = (z = (139$ul)); if (x > 139$ul pout({ok}); end_if;
+    VarMalaej := 140$ul; x := y = (z = (140$ul)); if (x > 140$ul pout({ok}); end_if;
+    end
+    end_if;
+    if (x > 0$ul) begin
+    VarMalaek := 141$ul; x := y = (z = (141$ul)); if (x > 141$ul pout({ok}); end_if;
+    VarMalael := 142$ul; x := y = (z = (142$ul)); if (x > 142$ul pout({ok}); end_if;
+    VarMalaem := 143$ul; x := y = (z = (143$ul)); if (x > 143$ul pout({ok}); end_if;
+    VarMalaen := 144$ul; x := y = (z = (144$ul)); if (x > 144$ul pout({ok}); end_if;
+    VarMalaeo := 145$ul; x := y = (z = (145$ul)); if (x > 145$ul pout({ok}); end_if;
+    VarMalaep := 146$ul; x := y = (z = (146$ul)); if (x > 146$ul pout({ok}); end_if;
+    VarMalaeq := 147$ul; x := y = (z = (147$ul)); if (x > 147$ul pout({ok}); end_if;
+    VarMalaer := 148$ul; x := y = (z = (148$ul)); if (x > 148$ul pout({ok}); end_if;
+    VarMalaes := 149$ul; x := y = (z = (149$ul)); if (x > 149$ul pout({ok}); end_if;
+    VarMalaet := 150$ul; x := y = (z = (150$ul)); if (x > 150$ul pout({ok}); end_if;
+    VarMalaeu := 151$ul; x := y = (z = (151$ul)); if (x > 151$ul pout({ok}); end_if;
+    VarMalaev := 152$ul; x := y = (z = (152$ul)); if (x > 152$ul pout({ok}); end_if;
+    end
+    end_if;
+end

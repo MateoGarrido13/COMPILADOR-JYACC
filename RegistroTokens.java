@@ -28,14 +28,34 @@ public class RegistroTokens {
         }
     }
 
+    /*
+      Todo token se informa con su numero entero asociado entre corchetes,
+      recuperado del tokenID que devuelve el lexico (el mismo que recibe el
+      parser y que figura en la tabla de simbolos), p. ej.:
+        [300] Identificador prog
+        [414] Palabra reservada ulongint
+        [415] Palabra reservada doublef
+        [302] Constante doublef 1.5d+2   (302 es CONSTANTE_NUMERICA: 414/415
+                                          son solo la palabra reservada)
+        [301] Operador de asignacion :=
+        [59] ;
+      Para los simbolos de un caracter el numero es su codigo ASCII
+      (';' = 59, '(' = 40, '.' = 46, ...), porque ese es el tokenID
+      que devuelven AccionSimbolo/AccionComparador/AccionEstructura.
+     */
     public static String describir(int tokenID, EntradaTabla yylval) {
+        return "[" + tokenID + "] " + descripcionSinCodigo(tokenID, yylval);
+    }
+
+    private static String descripcionSinCodigo(int tokenID, EntradaTabla yylval) {
         String lexema = yylval == null ? "" : yylval.lexema;
 
         if (tokenID < 256) {
             return String.valueOf((char) tokenID);
         }
         if (tokenID >= 400) {
-            return "Palabra reservada " + (lexema.isEmpty() ? Integer.toString(tokenID) : lexema);
+            // Sin lexema alcanza el codigo del prefijo: no se repite el numero.
+            return lexema.isEmpty() ? "Palabra reservada" : "Palabra reservada " + lexema;
         }
 
         switch (tokenID) {
@@ -56,7 +76,8 @@ public class RegistroTokens {
             case Globals.DISTINTO:
                 return "Comparador !=";
             default:
-                return "Token " + tokenID + " " + lexema;
+                // El numero ya va en el prefijo [tokenID].
+                return lexema.isEmpty() ? "Token" : "Token " + lexema;
         }
     }
 
