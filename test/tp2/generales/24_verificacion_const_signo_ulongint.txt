@@ -1,4 +1,4 @@
-{{ constante ulongint con signo unario: -1$ul queda fuera de rango }}
+git{{ constante ulongint con signo unario: -1$ul queda fuera de rango }}
 {{ expresiones: a-(-cte) y a--cte }}
 prog
 ulongint a, x;
