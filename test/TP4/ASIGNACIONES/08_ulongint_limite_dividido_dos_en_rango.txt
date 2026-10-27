@@ -1,0 +1,16 @@
+{{ TP4 asignaciones: contraste del caso anterior.
+   4294967295$ul / 2$ul usa solo constantes dentro del rango.
+   2147483648$ul es el resultado de (limite + 1) / 2 y, escrito
+   asi, tambien entra. El rechazo de 07 no es por la division:
+   es por la constante que se ingreso fuera de rango.
+   Esperado:
+   1. (/, 4294967295$ul, 2$ul)
+   2. (:=, x, [1])
+   3. (:=, x, 2147483648$ul)
+   Sin errores. }}
+prog
+ulongint x;
+begin
+    x := 4294967295$ul / 2$ul;
+    x := 2147483648$ul;
+end

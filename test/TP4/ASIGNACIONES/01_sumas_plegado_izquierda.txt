@@ -1,0 +1,22 @@
+{{ TP4 asignaciones: sumas y restas, plegado a izquierda.
+   Una variable sola no genera terceto de operacion.
+   a + b + c y a - b - c se asocian a izquierda, no a derecha.
+   Esperado:
+   1. (:=, x, a)
+   2. (+, a, b)
+   3. (:=, x, [2])
+   4. (+, a, b)
+   5. (+, [4], c)
+   6. (:=, x, [5])
+   7. (-, a, b)
+   8. (-, [7], c)
+   9. (:=, x, [8])
+   Sin errores. }}
+prog
+ulongint x, a, b, c;
+begin
+    x := a;
+    x := a + b;
+    x := a + b + c;
+    x := a - b - c;
+end

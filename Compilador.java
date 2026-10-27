@@ -45,8 +45,12 @@ public class Compilador {
         parser.yyparse();
         lexico.cerrar();
 
+        GeneradorTercetos generador = new GeneradorTercetos(reporte);
+        generador.generar(tablaAcciones.getReducciones());
+
         String tokens = RegistroTokens.contenido();
         String estructuras = reporte.contenidoEstructuras();
+        String intermedio = generador.contenido();
         String errores = reporte.contenidoErrores();
         String tabla = tablaSimbolos.contenido();
 
@@ -55,6 +59,8 @@ public class Compilador {
         System.out.print(tokens);
         System.out.println();
         System.out.print(estructuras);
+        System.out.println();
+        System.out.print(intermedio);
         System.out.println();
         System.out.print(errores);
         System.out.println();

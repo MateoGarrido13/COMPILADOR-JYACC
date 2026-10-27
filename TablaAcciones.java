@@ -13,7 +13,7 @@ import java.util.List;
 public class TablaAcciones {
 
     private final EnumMap<Reglas, AccionRegla> acciones = new EnumMap<>(Reglas.class);
-    private final List<Reglas> listaReglas = new ArrayList<>();
+    private final List<Reduccion> reducciones = new ArrayList<>();
     private final Reporte reporte;
 
     public TablaAcciones(Reporte reporte) {
@@ -31,7 +31,7 @@ public class TablaAcciones {
      */
     public Object ejecutar(Reglas regla, Object... valores) {
         int linea = Globals.numeroLinea;
-        listaReglas.add(regla);
+        reducciones.add(new Reduccion(regla, linea, valores));
 
         if (regla.esEstructura()) {
             reporte.estructura(linea, regla.getDescripcion());
@@ -48,7 +48,15 @@ public class TablaAcciones {
     }
 
     public List<Reglas> getListaReglas() {
-        return listaReglas;
+        List<Reglas> reglas = new ArrayList<>();
+        for (Reduccion reduccion : reducciones) {
+            reglas.add(reduccion.getRegla());
+        }
+        return reglas;
+    }
+
+    public List<Reduccion> getReducciones() {
+        return reducciones;
     }
 
     public boolean tieneAccion(Reglas regla) {
@@ -66,13 +74,12 @@ public class TablaAcciones {
         return pendientes;
     }
 
-    public String contenidoListaReglas() {
+    public String contenidoListaReglas() { // un getlistareglas implica un recorrido mas y un costo O(2n)
         StringBuilder texto = new StringBuilder();
-        texto.append("Lista de reglas reducidas (").append(listaReglas.size()).append("):\n");
-        for (int i = 0; i < listaReglas.size(); i++) {
-            Reglas regla = listaReglas.get(i);
-            texto.append(i + 1).append(". ").append(regla.name())
-                 .append(" - ").append(regla.getDescripcion()).append("\n");
+        texto.append("Lista de reglas reducidas (").append(reducciones.size()).append("):\n");
+        for(Reduccion reduccion : reducciones) {
+            texto.append(reduccion.getRegla().name())
+                 .append(" - ").append(reduccion.getRegla().getDescripcion()).append("\n");
         }
         return texto.toString();
     }

@@ -1,0 +1,19 @@
+{{ TP4 asignaciones: (limite ulongint + 1) / 2 no procede.
+   El maximo es 4294967295$ul (2^32 - 1).
+   4294967296$ul es ese limite mas uno. Dividido por 2 da 2147483648,
+   que si entraria en el rango. 8589934590$ul / 2 da justo el maximo.
+   Igual no debe proceder: la constante ingresada ya esta fuera de rango,
+   antes de mirar el /2. El parentesis y el blanco no cambian eso.
+   El codigo intermedio queda vacio. No debe aparecer
+   (/, 4294967296$ul, 2$ul) ni (/, 8589934590$ul, 2$ul).
+   Cada sentencia informa Constante entera fuera de rango con el lexema
+   que se ingreso, y Asignacion mal formada. }}
+prog
+ulongint x, y;
+begin
+    x := 4294967296$ul / 2$ul;
+    x := (4294967296$ul) / 2$ul;
+    x := 4294967296$ul/2$ul;
+    x := 8589934590$ul / 2$ul;
+    x := 4294967296$ul / y;
+end

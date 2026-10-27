@@ -30,12 +30,37 @@ public class ExpresionDiferida {
       que se antepone para que la lista quede en orden de codigo fuente.
      */
     public ExpresionDiferida anteponer(Object operando, char operador) {
+        // Un + o - no se aplana sobre un producto: el * o / queda como un solo hijo.
+        if (esSuma(operador) && tieneProducto()) {
+            ExpresionDiferida agrupada = new ExpresionDiferida();
+            agrupada.operandos.add(operando);
+            agrupada.operandos.add(this);
+            agrupada.operadores.add(operador);
+            agrupada.absorber(this);
+            if (operando instanceof ExpresionDiferida) {
+                agrupada.absorber((ExpresionDiferida) operando);
+            }
+            return agrupada;
+        }
         operandos.add(0, operando);
         operadores.add(0, operador);
-        if (operando instanceof ExpresionDiferida && ((ExpresionDiferida) operando).contieneAsignacion) {
-            contieneAsignacion = true;
+        if (operando instanceof ExpresionDiferida) {
+            absorber((ExpresionDiferida) operando);
         }
         return this;
+    }
+
+    private boolean tieneProducto() {
+        for (char operador : operadores) {
+            if (operador == '*' || operador == '/') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean esSuma(char operador) {
+        return operador == '+' || operador == '-';
     }
 
     public void marcarAsignacion() {

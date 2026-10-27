@@ -1,0 +1,23 @@
+{{ TP4 asignaciones: dos '+' seguidos, y el mismo borde con '-'.
+   a++1$ul no es un error. El segundo + va pegado a los digitos,
+   asi que la constante es +1$ul y la suma si se genera:
+   1. (+, a, +1$ul)
+   2. (:=, x, [1])
+   El resto no debe generar (+, a, b), (+, a, 1$ul) ni (-, a, b).
+   a ++ b, a++b y a ++ 1$ul (hay un blanco entre el segundo + y el numero)
+   informan "Falta de operando en expresion".
+   a -- b y a--b hacen lo mismo con el menos.
+   ++1$ul al inicio no es un mas unario: "Asignacion mal formada", sin terceto.
+   Si la recuperacion igual reduce la asignacion, el terceto es solo
+   (:=, x, a): se uso el operando ya leido, no se completo la cuenta. }}
+prog
+ulongint x, a, b;
+begin
+    x := a++1$ul;
+    x := a ++ b;
+    x := a++b;
+    x := a ++ 1$ul;
+    x := a -- b;
+    x := a--b;
+    x := ++1$ul;
+end

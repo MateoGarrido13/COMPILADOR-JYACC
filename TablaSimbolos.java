@@ -1,28 +1,55 @@
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TablaSimbolos {
-    private Map<String, EntradaTabla> tabla;
+    private final Map<String, EntradaTabla> tabla;
+    // Índice 0 vacío: el puntero de una entrada es su posición y empieza en 1.
+    private final List<EntradaTabla> porPuntero;
 
     // inicializo tabla y ya cargo palabras reservadas, por convencion de nombres, las keys son en minusculas
     public TablaSimbolos() {
         tabla = new LinkedHashMap<>();
-        tabla.put("if",new EntradaTabla("if", Globals.PR_IF));
-        tabla.put("else",new EntradaTabla("else", Globals.PR_ELSE));
-        tabla.put("end_if",new EntradaTabla("end_if", Globals.PR_END_IF));
-        tabla.put("begin",new EntradaTabla("begin", Globals.PR_BEGIN));
-        tabla.put("end",new EntradaTabla("end", Globals.PR_END));
-        tabla.put("pout",new EntradaTabla("pout", Globals.PR_POUT));
-        tabla.put("ret",new EntradaTabla("ret", Globals.PR_RET));
-        tabla.put("class",new EntradaTabla("class", Globals.PR_CLASS));
-        tabla.put("function",new EntradaTabla("function", Globals.PR_FUNCTION));
-        tabla.put("repeat",new EntradaTabla("repeat", Globals.PR_REPEAT));
-        tabla.put("while",new EntradaTabla("while", Globals.PR_WHILE));
-        tabla.put("todf",new EntradaTabla("todf", Globals.TODF));
-        tabla.put("typedef",new EntradaTabla("typedef", Globals.PR_TYPEDEF));
-        tabla.put("extends",new EntradaTabla("extends", Globals.PR_EXTENDS));
-        tabla.put("ulongint",new EntradaTabla("ulongint", Globals.PR_ULONGINT));
-        tabla.put("doublef",new EntradaTabla("doublef", Globals.PR_DOUBLEF));
+        porPuntero = new ArrayList<>();
+        porPuntero.add(null);
+        alta("if", Globals.PR_IF, 0);
+        alta("else", Globals.PR_ELSE, 0);
+        alta("end_if", Globals.PR_END_IF, 0);
+        alta("begin", Globals.PR_BEGIN, 0);
+        alta("end", Globals.PR_END, 0);
+        alta("pout", Globals.PR_POUT, 0);
+        alta("ret", Globals.PR_RET, 0);
+        alta("class", Globals.PR_CLASS, 0);
+        alta("function", Globals.PR_FUNCTION, 0);
+        alta("repeat", Globals.PR_REPEAT, 0);
+        alta("while", Globals.PR_WHILE, 0);
+        alta("todf", Globals.TODF, 0);
+        alta("typedef", Globals.PR_TYPEDEF, 0);
+        alta("extends", Globals.PR_EXTENDS, 0);
+        alta("ulongint", Globals.PR_ULONGINT, 0);
+        alta("doublef", Globals.PR_DOUBLEF, 0);
+    }
+
+    // Única creación de entradas. El mismo lexema conserva el puntero que recibió acá.
+    private EntradaTabla crear(String lexema, int tokenID, int numeroLinea) {
+        EntradaTabla entrada = new EntradaTabla(lexema, tokenID, numeroLinea);
+        entrada.puntero = porPuntero.size();
+        porPuntero.add(entrada);
+        return entrada;
+    }
+
+    private EntradaTabla alta(String lexema, int tokenID, int numeroLinea) {
+        EntradaTabla entrada = crear(lexema, tokenID, numeroLinea);
+        tabla.put(lexema, entrada);
+        return entrada;
+    }
+
+    public EntradaTabla obtenerPorPuntero(int puntero) {
+        if (puntero <= 0 || puntero >= porPuntero.size()) {
+            return null;
+        }
+        return porPuntero.get(puntero);
     }
 
     public EntradaTabla buscarPalabraReservada(String lexema) {
@@ -34,12 +61,11 @@ public class TablaSimbolos {
     }
 
     public EntradaTabla buscarOInsertarIdentificador(String lexema) {
-        if (tabla.containsKey(lexema)) {
-            return tabla.get(lexema);
+        EntradaTabla entrada = tabla.get(lexema);
+        if (entrada != null) {
+            return entrada;
         }
-        EntradaTabla nuevaEntrada = new EntradaTabla(lexema, Globals.IDENTIFICADOR, Globals.numeroLinea);
-        tabla.put(lexema, nuevaEntrada);
-        return nuevaEntrada;
+        return alta(lexema, Globals.IDENTIFICADOR, Globals.numeroLinea);
     }
 
     private boolean esPalabraReservada(int tokenID) {
@@ -50,8 +76,7 @@ public class TablaSimbolos {
     public EntradaTabla buscarOInsertarConstante(String lexema, int tokenID) {
         EntradaTabla entrada = tabla.get(lexema);
         if (entrada == null) {
-            entrada = new EntradaTabla(lexema, tokenID, Globals.numeroLinea);
-            tabla.put(lexema, entrada);
+            entrada = alta(lexema, tokenID, Globals.numeroLinea);
         }
         return entrada;
     }
@@ -60,8 +85,7 @@ public class TablaSimbolos {
     public EntradaTabla buscarOInsertarCadena(String cadena) {
         EntradaTabla entrada = tabla.get(cadena);
         if (entrada == null) {
-            entrada = new EntradaTabla(cadena, Globals.CADENA, Globals.numeroLinea);
-            tabla.put(cadena, entrada);
+            entrada = alta(cadena, Globals.CADENA, Globals.numeroLinea);
         }
         entrada.tipoDato = Tipos.CADENA;
         return entrada;
@@ -71,8 +95,7 @@ public class TablaSimbolos {
     public EntradaTabla insertarConstante(String lexema, String tipoDato, int numeroLinea) {
         EntradaTabla entrada = tabla.get(lexema);
         if (entrada == null) {
-            entrada = new EntradaTabla(lexema, Globals.CONSTANTE_NUMERICA, numeroLinea);
-            tabla.put(lexema, entrada);
+            entrada = alta(lexema, Globals.CONSTANTE_NUMERICA, numeroLinea);
         }
         entrada.tipoDato = tipoDato;
         return entrada;
@@ -82,6 +105,7 @@ public class TablaSimbolos {
         StringBuilder texto = new StringBuilder("Contenido de la tabla de simbolos:\n");
         for (EntradaTabla entrada : tabla.values()) {
             texto.append(entrada.lexema).append(" -> ").append(entrada.tokenID).append("\n");
+            texto.append("Puntero: ").append(entrada.puntero).append("\n");
             texto.append("Numero de linea: ").append(entrada.numeroLinea).append("\n");
             texto.append("Tipo de dato: ").append(entrada.tipoDato).append("\n");
             texto.append("Direccion de memoria: ").append(entrada.direccionMemoria).append("\n");

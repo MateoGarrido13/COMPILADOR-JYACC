@@ -1,5 +1,5 @@
 //Catalogo de reglas de la gramatica.
-
+// EL VALOR BOLEANO ES PARA INDICAR SI LA REGLA ES ESTRUCTURA O NO.
 public enum Reglas {
 
     // ===== Estructura general del programa =====
@@ -110,5 +110,15 @@ public enum Reglas {
     // Indica si la regla corresponde a una produccion de error.
     public boolean esError() {
         return name().startsWith("ERR_");
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Reglas) {
+            return obj.esEstructura() == esEstructura() && obj.descripcion.equals(descripcion); 
+        }
+        return false;
     }
 }

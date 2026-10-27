@@ -1,0 +1,22 @@
+{{ TP4 asignaciones: borde +(-4).
+   La expresion no tiene parentesis de agrupacion. a + (-4.0),
+   +(-4.0) y a+(-4.0) no forman el factor de la suma: el '(' deja
+   la expresion sin operando, o la asignacion mal formada si el +
+   abre la sentencia.
+   No debe aparecer (+, a, -4.0) ni (:=, z, -4.0).
+   En ulongint el -4$ul ni siquiera entra, con o sin parentesis:
+   y := w + -4$ul, y := w + (-4$ul), y := +(-4$ul).
+   Cada una informa Constante entera fuera de rango '-4$ul'
+   y no debe generar (+, w, -4$ul) ni (:=, y, -4$ul).
+   La forma valida, sin parentesis, esta en 02_unarios.txt: a + -4.0. }}
+prog
+doublef z, a;
+ulongint y, w;
+begin
+    z := a + (-4.0);
+    z := +(-4.0);
+    z := a+(-4.0);
+    y := w + -4$ul;
+    y := w + (-4$ul);
+    y := +(-4$ul);
+end

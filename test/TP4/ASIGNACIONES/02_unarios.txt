@@ -1,0 +1,38 @@
+{{ TP4 asignaciones: menos unario y suma o resta contra una constante con signo.
+   -4.0 pegado es un solo lexema. - 4.0 usa la constante negativa de la gramatica.
+   +4.0 tambien es un lexema: el mas unario solo existe pegado a la constante.
+   a + -4.0 suma. a - -4.0 y a--4.0 restan: en a--4.0 el segundo menos
+   queda pegado a 4.0, no es un segundo operador suelto.
+   a + - 4.0 y a - - 4.0 separan el signo de los digitos y dan el mismo terceto.
+   Esperado:
+   1. (:=, z, -4.0)
+   2. (:=, z, -4.0)
+   3. (:=, z, +4.0)
+   4. (+, a, -4.0)
+   5. (:=, z, [4])
+   6. (-, a, -4.0)
+   7. (:=, z, [6])
+   8. (-, a, -4.0)
+   9. (:=, z, [8])
+   10. (+, a, -4.0)
+   11. (:=, z, [10])
+   12. (-, a, -4.0)
+   13. (:=, z, [12])
+   x := -4$ul no debe sumar un terceto: ulongint no tiene negativos.
+   Errores de esa sentencia:
+   Constante entera fuera de rango '-4$ul'
+   Asignacion mal formada }}
+prog
+doublef z, a;
+ulongint x;
+begin
+    z := -4.0;
+    z := - 4.0;
+    z := +4.0;
+    z := a + -4.0;
+    z := a - -4.0;
+    z := a--4.0;
+    z := a + - 4.0;
+    z := a - - 4.0;
+    x := -4$ul;
+end
