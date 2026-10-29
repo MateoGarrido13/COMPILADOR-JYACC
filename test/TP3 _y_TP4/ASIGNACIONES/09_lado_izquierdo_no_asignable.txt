@@ -1,0 +1,17 @@
+{{ TP4 asignaciones: el lado izquierdo de := no puede ser una cuenta ni una constante.
+   a+4 := 3$ul no es la suma a + 4. El +4, pegado a los digitos y sin
+   $ul, es una constante entera invalida y se descarta. Lo que queda
+   se lee como a := 3$ul, y esa asignacion si se genera.
+   3 := a tampoco es un entero del lenguaje: '3' es una constante
+   invalida. Sin lado izquierdo, la sentencia queda mal formada.
+   No debe aparecer (+, a, 4) ni (:=, 3, a).
+   Errores: Constante entera invalida '+4',
+   Constante entera invalida '3', Sentencia mal formada.
+   Esperado:
+   1. (:=, a, 3$ul) }}
+prog
+ulongint a;
+begin
+    a:= 3$ul;
+    3 := a;
+end

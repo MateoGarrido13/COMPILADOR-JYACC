@@ -1,0 +1,31 @@
+{{ TP4 iteracion: dos repeat seguidos.
+   label_1 es el primer cuerpo y label_3 el segundo.
+   El segundo BI vuelve a label_3, no a label_1.
+   Esperado:
+   1. (label_1, --, --)
+   2. (+, x, 1$ul)
+   3. (:=, x, [2])
+   4. (<, x, 2$ul)
+   5. (BF, [4], label_2)
+   6. (BI, label_1, --)
+   7. (label_2, --, --)
+   8. (label_3, --, --)
+   9. (+, y, 1$ul)
+   10. (:=, y, [9])
+   11. (<, y, 2$ul)
+   12. (BF, [11], label_4)
+   13. (BI, label_3, --)
+   14. (label_4, --, --)
+   15. (:=, k, x)
+   Sin errores. }}
+prog
+ulongint x, y, k;
+begin
+    repeat
+        x := x + 1$ul;
+    while (x < 2$ul);
+    repeat
+        y := y + 1$ul;
+    while (y < 2$ul);
+    k := x;
+end

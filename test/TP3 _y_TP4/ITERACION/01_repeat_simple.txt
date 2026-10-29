@@ -1,0 +1,27 @@
+{{ TP4 iteracion: repeat-while es un ciclo con la prueba al final.
+   El cuerpo se ejecuta y despues se evalua la condicion.
+   label_1 marca el inicio del cuerpo, despues de la asignacion previa.
+   Si la condicion es falsa, BF sale a label_2. Si no, el BI vuelve
+   a label_1. label_2 queda antes de la asignacion que sigue al ciclo.
+   [n] es un resultado. El destino de un salto es el nombre de la etiqueta.
+   El segundo operando del BI es nulo y se escribe --.
+   Esperado:
+   1. (:=, x, 0$ul)
+   2. (label_1, --, --)
+   3. (+, x, 1$ul)
+   4. (:=, x, [3])
+   5. (<, x, 3$ul)
+   6. (BF, [5], label_2)
+   7. (BI, label_1, --)
+   8. (label_2, --, --)
+   9. (:=, y, x)
+   Sin errores. }}
+prog
+ulongint x, y;
+begin
+    x := 0$ul;
+    repeat
+        x := x + 1$ul;
+    while (x < 3$ul);
+    y := x;
+end

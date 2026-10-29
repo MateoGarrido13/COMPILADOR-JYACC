@@ -1,0 +1,35 @@
+{{ TP4 iteracion: un repeat adentro de otro.
+   label_1 es el cuerpo externo y label_2 el interno.
+   El BI interno vuelve a label_2. El externo, a label_1.
+   La salida del interno, label_3, cae en la condicion del externo.
+   La salida del externo, label_4, queda antes de k := y.
+   Esperado:
+   1. (label_1, --, --)
+   2. (+, x, 1$ul)
+   3. (:=, x, [2])
+   4. (label_2, --, --)
+   5. (+, y, 1$ul)
+   6. (:=, y, [5])
+   7. (<, y, x)
+   8. (BF, [7], label_3)
+   9. (BI, label_2, --)
+   10. (label_3, --, --)
+   11. (<, x, 3$ul)
+   12. (BF, [11], label_4)
+   13. (BI, label_1, --)
+   14. (label_4, --, --)
+   15. (:=, k, y)
+   Sin errores. }}
+prog
+ulongint x, y, k;
+begin
+    repeat
+    begin
+        x := x + 1$ul;
+        repeat
+            y := y + 1$ul;
+        while (y < x);
+    end
+    while (x < 3$ul);
+    k := y;
+end

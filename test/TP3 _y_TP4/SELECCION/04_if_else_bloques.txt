@@ -1,0 +1,33 @@
+{{ TP4 seleccion: begin y end no generan tercetos.
+   Cada rama tiene dos asignaciones. label_1 abre el else.
+   label_2 queda delante de la asignacion que sigue al if.
+   Esperado:
+   1. (>, a, b)
+   2. (BF, [1], label_1)
+   3. (+, a, 1$ul)
+   4. (:=, k, [3])
+   5. (*, k, 2$ul)
+   6. (:=, j, [5])
+   7. (BI, label_2, --)
+   8. (label_1, --, --)
+   9. (:=, k, b)
+   10. (:=, j, 0$ul)
+   11. (label_2, --, --)
+   12. (:=, x, k)
+   Sin errores. }}
+prog
+ulongint a, b, k, j, x;
+begin
+    if (a > b)
+    begin
+        k := a + 1$ul;
+        j := k * 2$ul;
+    end
+    else
+    begin
+        k := b;
+        j := 0$ul;
+    end
+    end_if;
+    x := k;
+end

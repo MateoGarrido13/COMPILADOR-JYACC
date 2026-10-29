@@ -35,6 +35,11 @@ public enum Reglas {
     SENTENCIA_IF("Sentencia IF", true),
     SENTENCIA_IF_ELSE("Sentencia IF con ELSE", true),
     CONDICION("Condicion", false),
+    CONDICION_IF("Condicion de IF", false),
+    BLOQUE_THEN("Bloque THEN", false),
+    BLOQUE_ELSE("Bloque ELSE", false),
+    INICIO_REPEAT("Inicio de REPEAT", false),
+    CERRAR_REPEAT("Cierre de repeat incompleto", false),
     SENTENCIA_REPEAT_WHILE("Sentencia REPEAT - WHILE", true),
     SENTENCIA_POUT("Sentencia POUT", true),
     SENTENCIA_RET("Sentencia RET", true),
@@ -110,15 +115,5 @@ public enum Reglas {
     // Indica si la regla corresponde a una produccion de error.
     public boolean esError() {
         return name().startsWith("ERR_");
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj instanceof Reglas) {
-            return obj.esEstructura() == esEstructura() && obj.descripcion.equals(descripcion); 
-        }
-        return false;
     }
 }

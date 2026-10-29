@@ -1,0 +1,32 @@
+{{ TP4 iteracion: el then es un repeat y el else es una asignacion.
+   label_1 es el cuerpo del ciclo. Al salir, label_2 cae en el BI del if,
+   que va a label_4 y saltea el else. Si el if es falso, su BF va a
+   label_3, el inicio del else.
+   Esperado:
+   1. (>, a, 0$ul)
+   2. (BF, [1], label_3)
+   3. (label_1, --, --)
+   4. (-, a, 1$ul)
+   5. (:=, a, [4])
+   6. (>, a, 0$ul)
+   7. (BF, [6], label_2)
+   8. (BI, label_1, --)
+   9. (label_2, --, --)
+   10. (BI, label_4, --)
+   11. (label_3, --, --)
+   12. (:=, b, 0$ul)
+   13. (label_4, --, --)
+   14. (:=, k, a)
+   Sin errores. }}
+prog
+ulongint a, b, k;
+begin
+    if (a > 0$ul)
+        repeat
+            a := a - 1$ul;
+        while (a > 0$ul);
+    else
+        b := 0$ul;
+    end_if;
+    k := a;
+end

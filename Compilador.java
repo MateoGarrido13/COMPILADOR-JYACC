@@ -60,11 +60,11 @@ public class Compilador {
         System.out.println();
         System.out.print(estructuras);
         System.out.println();
-        System.out.print(intermedio);
-        System.out.println();
         System.out.print(errores);
         System.out.println();
         System.out.print(tabla);
+        System.out.println();
+        System.out.print(intermedio);
 
     }
 

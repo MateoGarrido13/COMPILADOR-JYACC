@@ -1,0 +1,31 @@
+{{ TP4 iteracion: adentro del ciclo hay un if sin else y, despues, otra sentencia.
+   label_1 es el inicio del ciclo. El BF del if va a label_2, la suma
+   de b, y no sale del ciclo. El BF del while sale a label_3, antes de k := b.
+   Esperado:
+   1. (label_1, --, --)
+   2. (>, a, 0$ul)
+   3. (BF, [2], label_2)
+   4. (-, a, 1$ul)
+   5. (:=, a, [4])
+   6. (label_2, --, --)
+   7. (+, b, 1$ul)
+   8. (:=, b, [7])
+   9. (<, b, 4$ul)
+   10. (BF, [9], label_3)
+   11. (BI, label_1, --)
+   12. (label_3, --, --)
+   13. (:=, k, b)
+   Sin errores. }}
+prog
+ulongint a, b, k;
+begin
+    repeat
+    begin
+        if (a > 0$ul)
+            a := a - 1$ul;
+        end_if;
+        b := b + 1$ul;
+    end
+    while (b < 4$ul);
+    k := b;
+end

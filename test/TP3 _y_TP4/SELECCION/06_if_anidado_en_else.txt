@@ -1,0 +1,33 @@
+{{ TP4 seleccion: el else es otro if con else.
+   El BI externo se crea antes del else y se completa al terminar,
+   con label_4. label_1 abre ese else. El if interno usa label_2
+   para su rama falsa y label_3 para cerrarse. label_3 y label_4
+   quedan seguidas, al final del if externo.
+   Esperado:
+   1. (>, a, 0$ul)
+   2. (BF, [1], label_1)
+   3. (:=, k, 1$ul)
+   4. (BI, label_4, --)
+   5. (label_1, --, --)
+   6. (>, b, 0$ul)
+   7. (BF, [6], label_2)
+   8. (:=, k, 2$ul)
+   9. (BI, label_3, --)
+   10. (label_2, --, --)
+   11. (:=, k, 3$ul)
+   12. (label_3, --, --)
+   13. (label_4, --, --)
+   Sin errores. }}
+prog
+ulongint a, b, k;
+begin
+    if (a > 0$ul)
+        k := 1$ul;
+    else
+        if (b > 0$ul)
+            k := 2$ul;
+        else
+            k := 3$ul;
+        end_if;
+    end_if;
+end

@@ -1,0 +1,36 @@
+{{ TP4 seleccion: dos if con else seguidos.
+   Al terminar el primero la pila queda vacia. El segundo usa
+   label_3 y label_4. label_2 queda delante de su condicion
+   y label_4 delante de la asignacion final.
+   Esperado:
+   1. (>, a, 0$ul)
+   2. (BF, [1], label_1)
+   3. (:=, k, 1$ul)
+   4. (BI, label_2, --)
+   5. (label_1, --, --)
+   6. (:=, k, 2$ul)
+   7. (label_2, --, --)
+   8. (>, b, 0$ul)
+   9. (BF, [8], label_3)
+   10. (:=, j, 1$ul)
+   11. (BI, label_4, --)
+   12. (label_3, --, --)
+   13. (:=, j, 2$ul)
+   14. (label_4, --, --)
+   15. (:=, x, k)
+   Sin errores. }}
+prog
+ulongint a, b, k, j, x;
+begin
+    if (a > 0$ul)
+        k := 1$ul;
+    else
+        k := 2$ul;
+    end_if;
+    if (b > 0$ul)
+        j := 1$ul;
+    else
+        j := 2$ul;
+    end_if;
+    x := k;
+end

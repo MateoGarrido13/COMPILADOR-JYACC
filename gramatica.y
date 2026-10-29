@@ -336,17 +336,12 @@ asignacion
    Seleccion
    -------------------------------------------------------------------------- */
 sentencia_if
-    : IF '(' condicion ')' bloque_sentencias END_IF ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_IF, $3.obj, $5.obj)); }
-    | IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias END_IF ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_IF_ELSE, $3.obj, $5.obj, $7.obj)); }
-    | IF '(' condicion ')' bloque_sentencias END_IF
+    : cuerpo_if ';'
+    | cuerpo_if
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
-    | IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias END_IF
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
-    | IF '(' condicion ')' bloque_sentencias error
+    | IF '(' condicion_if ')' bloque_sentencias error
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_END_IF, $3.obj, $5.obj)); }
-    | IF '(' condicion ')' bloque_sentencias ELSE bloque_sentencias error
+    | IF '(' condicion_if ')' bloque_then ELSE bloque_else error
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_END_IF, $3.obj, $5.obj, $7.obj)); }
     | IF condicion ')' bloque_sentencias END_IF ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PARENTESIS_APERTURA)); }
@@ -356,6 +351,32 @@ sentencia_if
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_CONDICION_INVALIDA)); }
     ;
 
+/* El cierre del if, con o sin else. El ';' queda afuera para poder avisar
+   si falta, despues de haber completado los saltos. */
+cuerpo_if
+    : IF '(' condicion_if ')' bloque_sentencias END_IF
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_IF, $3.obj, $5.obj)); }
+    | IF '(' condicion_if ')' bloque_then ELSE bloque_else END_IF
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_IF_ELSE, $3.obj, $5.obj, $7.obj)); }
+    ;
+
+/* Puntos de control del if. El then solo aparece en la produccion con else,
+   para completar el BF y abrir el BI antes del bloque else. */
+condicion_if
+    : condicion
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.CONDICION_IF, $1.obj)); }
+    ;
+
+bloque_then
+    : bloque_sentencias
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_THEN, $1.obj)); }
+    ;
+
+bloque_else
+    : bloque_sentencias
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_ELSE, $1.obj)); }
+    ;
+
 condicion
     : expresion comparador expresion
         { $$ = new ParserVal(acciones.ejecutar(Reglas.CONDICION, $1.obj, $2.obj, $3.obj)); }
@@ -363,29 +384,47 @@ condicion
 
 comparador
     : MAYOR_IGUAL
+        { $$ = new ParserVal((Object) ">="); }
     | MENOR_IGUAL
+        { $$ = new ParserVal((Object) "<="); }
     | IGUAL_IGUAL
+        { $$ = new ParserVal((Object) "=="); }
     | DISTINTO
+        { $$ = new ParserVal((Object) "!="); }
     | '>'
+        { $$ = new ParserVal((Object) ">"); }
     | '<'
+        { $$ = new ParserVal((Object) "<"); }
     ;
 
 /* --------------------------------------------------------------------------
    Tema 13: repeat <bloque> while ( <condicion> );
+   inicio_repeat se reduce al ver REPEAT, antes del cuerpo, para poder
+   emitir la etiqueta de regreso en ese punto.
    -------------------------------------------------------------------------- */
+inicio_repeat
+    : REPEAT
+        { $$ = new ParserVal(acciones.ejecutar(Reglas.INICIO_REPEAT)); }
+    ;
+
 sentencia_repeat_while
-    : REPEAT bloque_sentencias WHILE '(' condicion ')' ';'
+    : inicio_repeat bloque_sentencias WHILE '(' condicion ')' ';'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_REPEAT_WHILE, $2.obj, $5.obj)); }
-    | REPEAT bloque_sentencias WHILE '(' condicion ')'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
-    | REPEAT WHILE '(' condicion ')' ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_CUERPO_ITERACION, $4.obj)); }
-    | REPEAT bloque_sentencias error ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_WHILE, $2.obj)); }
-    | REPEAT bloque_sentencias WHILE condicion ')' ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PARENTESIS_APERTURA)); }
-    | REPEAT bloque_sentencias WHILE '(' condicion ';'
-        { $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_CONDICION_SIN_CIERRE)); }
+    | inicio_repeat bloque_sentencias WHILE '(' condicion ')'
+        { acciones.ejecutar(Reglas.CERRAR_REPEAT);
+          $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
+    | inicio_repeat WHILE '(' condicion ')' ';'
+        { acciones.ejecutar(Reglas.CERRAR_REPEAT);
+          $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_CUERPO_ITERACION, $4.obj)); }
+    | inicio_repeat bloque_sentencias error ';'
+        { acciones.ejecutar(Reglas.CERRAR_REPEAT);
+          $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_WHILE, $2.obj)); }
+    | inicio_repeat bloque_sentencias WHILE condicion ')' ';'
+        { acciones.ejecutar(Reglas.CERRAR_REPEAT);
+          $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PARENTESIS_APERTURA)); }
+    | inicio_repeat bloque_sentencias WHILE '(' condicion ';'
+        { acciones.ejecutar(Reglas.CERRAR_REPEAT);
+          $$ = new ParserVal(acciones.ejecutar(Reglas.ERR_CONDICION_SIN_CIERRE)); }
     ;
 
 /* --------------------------------------------------------------------------

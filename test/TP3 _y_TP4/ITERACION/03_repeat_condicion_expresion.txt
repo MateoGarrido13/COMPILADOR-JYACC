@@ -1,0 +1,25 @@
+{{ TP4 iteracion: la condicion del while tiene cuentas de los dos lados.
+   El BF referencia el terceto de la comparacion, no el del producto.
+   label_1 queda despues de la asignacion previa. El BI vuelve ahi.
+   El BF sale a label_2, antes de k := x.
+   Esperado:
+   1. (:=, x, 0$ul)
+   2. (label_1, --, --)
+   3. (+, x, a)
+   4. (:=, x, [3])
+   5. (*, x, 2$ul)
+   6. (<=, [5], lim)
+   7. (BF, [6], label_2)
+   8. (BI, label_1, --)
+   9. (label_2, --, --)
+   10. (:=, k, x)
+   Sin errores. }}
+prog
+ulongint x, a, lim, k;
+begin
+    x := 0$ul;
+    repeat
+        x := x + a;
+    while (x * 2$ul <= lim);
+    k := x;
+end

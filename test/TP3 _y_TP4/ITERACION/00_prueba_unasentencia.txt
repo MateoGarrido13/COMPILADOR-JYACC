@@ -1,0 +1,22 @@
+{{ TP4 iteracion: repeat-while con una sentencia. La prueba es al final.
+   label_1 es el inicio del cuerpo: ahi vuelve el ciclo si la condicion
+   se cumple. BF salta si la comparacion es falsa, a label_2, y el ciclo
+   termina. Si no se toma el BF, el BI vuelve a label_1.
+   El comparador se emite como esta escrito. x < 3$ul es (<, x, 3$ul).
+   [n] es un resultado. El destino de un salto es el nombre de la etiqueta.
+   Esperado:
+   1. (label_1, --, --)
+   2. (+, x, 1$ul)
+   3. (:=, x, [2])
+   4. (<, x, 3$ul)
+   5. (BF, [4], label_2)
+   6. (BI, label_1, --)
+   7. (label_2, --, --)
+   Sin errores. }}
+prog
+ulongint x;
+begin
+    repeat
+        x := x + 1$ul;
+    while (x < 3$ul);
+end

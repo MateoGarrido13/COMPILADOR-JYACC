@@ -1,0 +1,26 @@
+{{ TP4 seleccion: hay tercetos antes y despues del if.
+   El destino de BF y de BI es una etiqueta. label_1 abre el else.
+   label_2 queda delante de la asignacion que sigue al if.
+   Una asignacion de variable sola no agrega terceto de operacion.
+   Esperado:
+   1. (:=, x, 1$ul)
+   2. (>, a, 0$ul)
+   3. (BF, [2], label_1)
+   4. (:=, k, a)
+   5. (BI, label_2, --)
+   6. (label_1, --, --)
+   7. (:=, k, b)
+   8. (label_2, --, --)
+   9. (:=, x, k)
+   Sin errores. }}
+prog
+ulongint x, a, b, k;
+begin
+    x := 1$ul;
+    if (a > 0$ul)
+        k := a;
+    else
+        k := b;
+    end_if;
+    x := k;
+end

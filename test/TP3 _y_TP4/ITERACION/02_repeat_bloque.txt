@@ -1,0 +1,26 @@
+{{ TP4 iteracion: el cuerpo es un begin-end de dos asignaciones.
+   begin y end no generan tercetos. label_1 queda antes de la primera.
+   El BI vuelve a label_1. El BF sale a label_2, antes de k := y.
+   Esperado:
+   1. (label_1, --, --)
+   2. (+, x, 1$ul)
+   3. (:=, x, [2])
+   4. (+, y, x)
+   5. (:=, y, [4])
+   6. (<, y, 10$ul)
+   7. (BF, [6], label_2)
+   8. (BI, label_1, --)
+   9. (label_2, --, --)
+   10. (:=, k, y)
+   Sin errores. }}
+prog
+ulongint x, y, k;
+begin
+    repeat
+    begin
+        x := x + 1$ul;
+        y := y + x;
+    end
+    while (y < 10$ul);
+    k := y;
+end

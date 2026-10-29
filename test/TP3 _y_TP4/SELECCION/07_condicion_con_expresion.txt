@@ -1,0 +1,28 @@
+{{ TP4 seleccion: la condicion no es una comparacion de hojas.
+   Primero se pliega la izquierda (a + b + c, a izquierda) y despues
+   la derecha (d * e). El BF referencia el terceto de la comparacion,
+   no la primera suma, y salta a label_1, que abre el else.
+   label_2 queda delante de la asignacion que sigue al if.
+   Esperado:
+   1. (+, a, b)
+   2. (+, [1], c)
+   3. (*, d, e)
+   4. (>, [2], [3])
+   5. (BF, [4], label_1)
+   6. (:=, k, a)
+   7. (BI, label_2, --)
+   8. (label_1, --, --)
+   9. (:=, k, d)
+   10. (label_2, --, --)
+   11. (:=, x, k)
+   Sin errores. }}
+prog
+ulongint a, b, c, d, e, k, x;
+begin
+    if (a + b + c > d * e)
+        k := a;
+    else
+        k := d;
+    end_if;
+    x := k;
+end

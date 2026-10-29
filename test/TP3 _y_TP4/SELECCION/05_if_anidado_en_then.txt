@@ -1,0 +1,33 @@
+{{ TP4 seleccion: if con else adentro del then.
+   Las etiquetas internas se reservan antes. label_1 abre el else
+   interno y label_2 queda justo antes del BI externo: despues del
+   then interno todavia hay que saltear el else externo.
+   Ese else abre label_3. label_4 cierra el if de afuera.
+   Esperado:
+   1. (>, a, 0$ul)
+   2. (BF, [1], label_3)
+   3. (>, b, 0$ul)
+   4. (BF, [3], label_1)
+   5. (:=, k, 1$ul)
+   6. (BI, label_2, --)
+   7. (label_1, --, --)
+   8. (:=, k, 2$ul)
+   9. (label_2, --, --)
+   10. (BI, label_4, --)
+   11. (label_3, --, --)
+   12. (:=, k, 3$ul)
+   13. (label_4, --, --)
+   Sin errores. }}
+prog
+ulongint a, b, k;
+begin
+    if (a > 0$ul)
+        if (b > 0$ul)
+            k := 1$ul;
+        else
+            k := 2$ul;
+        end_if;
+    else
+        k := 3$ul;
+    end_if;
+end

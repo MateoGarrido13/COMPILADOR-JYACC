@@ -1,0 +1,21 @@
+{{ TP4 seleccion: if sin else. No se crea BI.
+   Al cerrar el then se emite label_1 y el BF queda apuntando a esa
+   etiqueta. La asignacion que sigue al if va despues de la etiqueta.
+   Esperado:
+   1. (:=, x, 1$ul)
+   2. (>, a, 0$ul)
+   3. (BF, [2], label_1)
+   4. (+, k, 1$ul)
+   5. (:=, k, [4])
+   6. (label_1, --, --)
+   7. (:=, x, k)
+   Sin errores. }}
+prog
+ulongint x, a, k;
+begin
+    x := 1$ul;
+    if (a > 0$ul)
+        k := k + 1$ul;
+    end_if;
+    x := k;
+end

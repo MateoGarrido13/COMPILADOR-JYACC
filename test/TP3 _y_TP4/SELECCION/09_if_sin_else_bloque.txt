@@ -1,0 +1,24 @@
+{{ TP4 seleccion: if sin else y cuerpo begin-end de dos sentencias.
+   El BF salta a label_1, puesta despues de las dos asignaciones
+   y delante de la que sigue al if.
+   Esperado:
+   1. (>=, a, 1$ul)
+   2. (BF, [1], label_1)
+   3. (+, a, b)
+   4. (:=, k, [3])
+   5. (-, k, 1$ul)
+   6. (:=, j, [5])
+   7. (label_1, --, --)
+   8. (:=, x, j)
+   Sin errores. }}
+prog
+ulongint a, b, k, j, x;
+begin
+    if (a >= 1$ul)
+    begin
+        k := a + b;
+        j := k - 1$ul;
+    end
+    end_if;
+    x := j;
+end

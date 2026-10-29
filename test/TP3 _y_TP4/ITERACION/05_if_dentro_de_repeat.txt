@@ -1,0 +1,33 @@
+{{ TP4 iteracion: el cuerpo del repeat es un if con else.
+   label_1 es el inicio del ciclo, antes del if.
+   El BI del if va a label_3, justo antes de la condicion del while,
+   no afuera del ciclo. El BF del while sale a label_4, antes de k := b.
+   Esperado:
+   1. (label_1, --, --)
+   2. (>, a, 0$ul)
+   3. (BF, [2], label_2)
+   4. (-, a, 1$ul)
+   5. (:=, a, [4])
+   6. (BI, label_3, --)
+   7. (label_2, --, --)
+   8. (+, b, 1$ul)
+   9. (:=, b, [8])
+   10. (label_3, --, --)
+   11. (<, b, 5$ul)
+   12. (BF, [11], label_4)
+   13. (BI, label_1, --)
+   14. (label_4, --, --)
+   15. (:=, k, b)
+   Sin errores. }}
+prog
+ulongint a, b, k;
+begin
+    repeat
+        if (a > 0$ul)
+            a := a - 1$ul;
+        else
+            b := b + 1$ul;
+        end_if;
+    while (b < 5$ul);
+    k := b;
+end

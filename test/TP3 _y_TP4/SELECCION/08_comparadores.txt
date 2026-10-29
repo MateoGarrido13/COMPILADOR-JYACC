@@ -1,0 +1,54 @@
+{{ TP4 seleccion: los seis comparadores, cada uno en un if sin else.
+   El operador del terceto es el lexema: > < >= <= == !=.
+   Cada BF salta a su etiqueta, puesta despues del cuerpo.
+   label_6 queda delante de la asignacion final.
+   Esperado:
+   1. (>, a, b)
+   2. (BF, [1], label_1)
+   3. (:=, k, 1$ul)
+   4. (label_1, --, --)
+   5. (<, a, b)
+   6. (BF, [5], label_2)
+   7. (:=, k, 2$ul)
+   8. (label_2, --, --)
+   9. (>=, a, b)
+   10. (BF, [9], label_3)
+   11. (:=, k, 3$ul)
+   12. (label_3, --, --)
+   13. (<=, a, b)
+   14. (BF, [13], label_4)
+   15. (:=, k, 4$ul)
+   16. (label_4, --, --)
+   17. (==, a, b)
+   18. (BF, [17], label_5)
+   19. (:=, k, 5$ul)
+   20. (label_5, --, --)
+   21. (!=, a, b)
+   22. (BF, [21], label_6)
+   23. (:=, k, 6$ul)
+   24. (label_6, --, --)
+   25. (:=, x, k)
+   Sin errores. }}
+prog
+ulongint a, b, k, x;
+begin
+    if (a > b)
+        k := 1$ul;
+    end_if;
+    if (a < b)
+        k := 2$ul;
+    end_if;
+    if (a >= b)
+        k := 3$ul;
+    end_if;
+    if (a <= b)
+        k := 4$ul;
+    end_if;
+    if (a == b)
+        k := 5$ul;
+    end_if;
+    if (a != b)
+        k := 6$ul;
+    end_if;
+    x := k;
+end
