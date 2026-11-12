@@ -1,0 +1,22 @@
+**Diagnóstico**
+
+| Tema | Estado y faltante |
+|---|---|
+| **6 y 8: `ulongint`, `doublef`** | El léxico reconoce los formatos y rangos, pero TP03 exige registrar el tipo de cada constante durante el análisis léxico. Las acciones léxicas insertan las constantes sin asignarles tipo; se tipan después, al procesarlas como factores. (enteros, reales, `EntradaTabla.java:1-22`) |
+| **9 y 16: cadenas y comentarios** | No detecté un faltante léxico importante: se valida que las cadenas sean de una línea, se les asigna tipo y los comentarios multilínea se descartan. Hay casos TP1 para estos temas. (`AccionCadena.java`) |
+| **13: `repeat ... while`** | La generación básica del ciclo está implementada: una prueba actual produce etiqueta, condición, `BF` y salto de regreso. Falta integrar los chequeos de tipos de condiciones exigidos por TP03; tampoco están cubiertas todas las sentencias ejecutables. (`GeneradorTercetos.java:57-65`, prueba) |
+| **17: asignación dentro de expresiones** | Se reconoce la sintaxis y se detecta el anidamiento, pero no se genera la asignación interna ni se chequean sus tipos. En la prueba actual, `y = (2$ul)` se reduce a su valor y no genera una asignación a `y`. (`AccionesExpresiones.java:31-40`, `Verificaciones.java:52-56`, `GeneradorTercetos.java:187-214`) |
+| **19: orden obligatorio de parámetros** | Solo se verifica que la lista no esté vacía. Faltan controlar que su cantidad coincida con los parámetros formales y que el orden sea válido. Tampoco se generan la copia de reales a formales ni la invocación. En una prueba, la llamada termina como una asignación cuyo origen es el nombre de la función. (`Verificaciones.java:59-63`, `AccionesExpresiones.java:44-53`) |
+| **23: enumeraciones** | Se registran el nombre y los valores del `typedef`, y se rechazan enumeraciones vacías. Faltan comprobar que el tipo exista al declarar variables y que una constante asignada pertenezca a la enumeración. (`AccionesDeclaraciones.java:71-86`, `Entorno.java:212-245`) |
+| **25: asignación de objetos** | Se aceptan declaraciones de objetos, pero no se verifica que la clase exista ni que dos objetos sean estructuralmente compatibles. La asignación actual genera una asignación simple, no la copia estructural que requiere el tema. (`AccionesDeclaraciones.java:22-26`, `GeneradorTercetos.java:80-86`) |
+| **28: acceso tradicional a atributos** | La gramática admite `objeto.atributo`, pero la acción devuelve una referencia sin verificar que el atributo exista y sea visible en la clase del objeto. (`gramatica.y:530-543`, `AccionesExpresiones.java:55-60`) |
+| **31: herencia múltiple con prefijo** | Se guardan los nombres de las clases heredadas y se acepta la forma prefijada. Faltan validar las clases base, que el prefijo corresponda a una clase heredada y que el atributo o método exista y sea accesible. Las llamadas a métodos tampoco generan código. ([registro de herencia](Entorno.java#L188-L205), `AccionesExpresiones.java:55-70`) |
+| **33: conversión explícita `todf`** | Se reconoce la conversión, pero la acción semántica devuelve la expresión sin transformarla. No se emite un terceto de conversión ni se comprueba la compatibilidad de tipos en expresiones, comparaciones y asignaciones. La ejecución de la prueba muestra `z := todf(x)` como una asignación directa de `x` a `z`. (`AccionesExpresiones.java:42`, `GeneradorTercetos.java:187-214`) |
+
+**Faltantes transversales de TP03**
+
+- El generador procesa asignaciones simples, `if` y `repeat`; no emite `pout`, `ret`, llamadas ni conversiones. Tampoco delimita por función o método el código de sus cuerpos, como exige TP03. (`GeneradorTercetos.java:37-65`)
+- La tabla tiene `tipoDato`, pero no un atributo `Uso` para distinguir variables, funciones, parámetros, clases y demás identificadores. Las firmas sí aparecen parcialmente en estructuras auxiliares de `Entorno`, pero no se usan para validar llamadas.
+- Las pruebas TP03 actuales cubren asignaciones aritméticas, selección e iteración. No encontré pruebas TP03 de enumeraciones, objetos, atributos, herencia, llamadas, conversiones ni asignaciones dentro de expresiones; las pruebas TP02 solo demuestran la etapa sintáctica.
+
+**Prioridad sugerida:** completar primero el tipado y la semántica de expresiones (`17`, `33`), luego llamadas y parámetros (`19` y funciones/métodos), y después enumeraciones y objetos (`23`, `25`, `28`, `31`). El `repeat while` ya tiene una base de generación funcional.
