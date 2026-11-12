@@ -28,6 +28,19 @@ public class Verificaciones {
         return entorno;
     }
 
+    // El identificador no esta declarado en el ambito actual ni en uno que lo envuelve.
+    public void verificarAlcance(EntradaTabla id) {
+        if (id == null) {
+            return;
+        }
+        String nombre = TablaSimbolos.nombreDe(id.lexema);
+        if (ControlAmbito.alcanzable(nombre)) {
+            return;
+        }
+        int linea = id.lineaAparicion > 0 ? id.lineaAparicion : id.numeroLinea;
+        reporte.error(linea, "Error de ambito '" + nombre + "' no es alcanzable");
+    }
+
     public void reportar(Reglas regla, int linea) {
         if (regla == null) {
             return;

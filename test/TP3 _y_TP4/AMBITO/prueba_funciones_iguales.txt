@@ -1,0 +1,33 @@
+{{ Estructura: a { b { c }, c { d } }. }}
+{{ Las dos c conviven: una anidada en b y otra hermana de b. }}
+{{ var_1 se declara en la c de b. La c hermana no puede usarla. }}
+prog
+ulongint function a(ulongint n)
+    doublef var_2;
+    ulongint function b(ulongint m)
+        ulongint function fun_c(ulongint p)
+            ulongint var_1;
+        begin
+            var_1 := p;
+            ret(var_1);
+        end;
+    begin
+        ret(m);
+    end;
+    ulongint function fun_c(ulongint q)
+        ulongint function d(ulongint r)
+        begin
+            ret(r);
+        end;
+    begin
+        {{nunca la declaro}}
+        var_1 := q;
+        ret(q);
+    end;
+begin
+    var_2 :=2.2d+5
+    ret(n);
+end;
+
+begin
+end

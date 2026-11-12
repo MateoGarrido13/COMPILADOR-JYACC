@@ -11,8 +11,10 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.MULTIPLICACION, ctx -> AccionesSemanticas.combinar(ctx, '*'));
         tabla.registrar(Reglas.DIVISION, ctx -> AccionesSemanticas.combinar(ctx, '/'));
 
-        tabla.registrar(Reglas.FACTOR_ID, ctx ->
-                ExpresionDiferida.deOperando(ctx.entrada(0)));
+        tabla.registrar(Reglas.FACTOR_ID, ctx -> {
+            v.verificarAlcance(ctx.entrada(0));
+            return ExpresionDiferida.deOperando(ctx.entrada(0));
+        });
 
         tabla.registrar(Reglas.FACTOR_CONSTANTE, ctx ->
                 ExpresionDiferida.deOperando(entorno.tiparConstante(ctx.entrada(0))));
@@ -27,6 +29,7 @@ public class AccionesExpresiones {
                 ExpresionDiferida.deOperando(ctx.entrada(0)));
 
         tabla.registrar(Reglas.ASIGNACION_EN_EXPRESION, ctx -> {
+            v.verificarAlcance(ctx.entrada(0));
             ExpresionDiferida expresion = ctx.expresion(1);
             if (expresion == null) {
                 expresion = new ExpresionDiferida();

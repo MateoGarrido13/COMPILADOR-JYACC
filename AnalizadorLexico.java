@@ -18,6 +18,7 @@ public class AnalizadorLexico {
         int tokenID = siguienteToken();
         if (tokenID > 0) {
             RegistroTokens.registrar(tokenID, Globals.yylval, fuente.linea());
+            ControlAmbito.consumir(tokenID);
         }
         return tokenID;
     }

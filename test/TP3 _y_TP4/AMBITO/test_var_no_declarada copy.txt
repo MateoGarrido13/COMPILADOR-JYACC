@@ -1,0 +1,22 @@
+{{ secreta vive en interna. Usarla en externa es fuera de ambito. }}
+{{ fantasma no se declara en ningun ambito. }}
+prog
+ulongint global;
+
+ulongint function externa(ulongint n)
+    ulongint propia;
+    ulongint function interna(ulongint m)
+        ulongint secreta;
+    begin
+        secreta := m;
+        ret(secreta);
+    end;
+begin
+    propia := n;
+    secreta := propia;
+end;
+
+begin
+    global := 1$ul;
+    fantasma := 2$ul;
+end

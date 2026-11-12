@@ -32,6 +32,7 @@ public class AccionIdentificador implements AccionSemantica {
             texto = truncado;
             }
             Globals.yylval = contexto.tablaSimbolos.buscarOInsertarIdentificador(texto);
+            Globals.yylval.lineaAparicion = contexto.fuente.linea();
             return Globals.yylval.tokenID;
         }
     }

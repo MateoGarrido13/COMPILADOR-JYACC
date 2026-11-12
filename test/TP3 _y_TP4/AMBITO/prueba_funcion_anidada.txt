@@ -1,0 +1,12 @@
+prog
+ulongint function a(ulongint n)
+    ulongint function b(ulongint m)
+    begin
+        ret(m);
+    end;
+begin
+    ret(n);
+end;
+
+begin
+end

@@ -61,11 +61,63 @@ public class TablaSimbolos {
     }
 
     public EntradaTabla buscarOInsertarIdentificador(String lexema) {
-        EntradaTabla entrada = tabla.get(lexema);
+        String clave = lexema + ":" + Globals.AMBITO_ACTUAL;
+        EntradaTabla entrada = tabla.get(clave);
         if (entrada != null) {
             return entrada;
         }
-        return alta(lexema, Globals.IDENTIFICADOR, Globals.numeroLinea);
+        return alta(clave, Globals.IDENTIFICADOR, Globals.numeroLinea);
+    }
+
+    public static String nombreDe(String lexema) {
+        if (lexema == null) {
+            return null;
+        }
+        int corte = lexema.indexOf(':');
+        if (corte < 0) {
+            return lexema;
+        }
+        return lexema.substring(0, corte);
+    }
+
+    public static String ambitoDe(String lexema) {
+        if (lexema == null) {
+            return "";
+        }
+        int corte = lexema.indexOf(':');
+        if (corte < 0 || corte == lexema.length() - 1) {
+            return "";
+        }
+        return lexema.substring(corte + 1);
+    }
+
+    public void renombrar(EntradaTabla entrada, String nuevoLexema) {
+        if (entrada == null || nuevoLexema == null || nuevoLexema.equals(entrada.lexema)) {
+            return;
+        }
+        tabla.remove(entrada.lexema);
+        entrada.lexema = nuevoLexema;
+        tabla.put(nuevoLexema, entrada);
+    }
+
+    public void eliminar(EntradaTabla entrada) {
+        if (entrada == null) {
+            return;
+        }
+        tabla.remove(entrada.lexema);
+        if (entrada.puntero > 0 && entrada.puntero < porPuntero.size()) {
+            porPuntero.set(entrada.puntero, null);
+        }
+    }
+
+    public List<EntradaTabla> conAmbito() {
+        List<EntradaTabla> copia = new ArrayList<>();
+        for (EntradaTabla entrada : tabla.values()) {
+            if (entrada.ambito != null) {
+                copia.add(entrada);
+            }
+        }
+        return copia;
     }
 
     private boolean esPalabraReservada(int tokenID) {

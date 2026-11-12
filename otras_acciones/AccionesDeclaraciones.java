@@ -83,7 +83,12 @@ public class AccionesDeclaraciones {
 
         tabla.registrar(Reglas.LISTA_VALORES_ENUMERADO, AccionesSemanticas::concatenarLista);
 
-        tabla.registrar(Reglas.ASIGNACION, ctx -> ctx.entrada(0));
+        tabla.registrar(Reglas.ASIGNACION, ctx -> {
+            if (ctx.valor(0) instanceof EntradaTabla) {
+                v.verificarAlcance((EntradaTabla) ctx.valor(0));
+            }
+            return ctx.entrada(0);
+        });
         tabla.registrar(Reglas.CONDICION, ctx -> new Object[] {
             ctx.valor(0), ctx.valor(1), ctx.valor(2)
         });

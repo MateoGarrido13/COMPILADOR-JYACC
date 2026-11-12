@@ -1,0 +1,12 @@
+
+ c:= 3$ul;
+ulongint function externa(ulongint n)
+    b:= 3$ul;
+    ulongint function interna(ulongint m)
+    begin
+        a:= 3$ul;
+        ret(m);
+    end;
+begin
+    ret(n);
+end;

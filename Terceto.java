@@ -78,7 +78,7 @@ class ListaTercetos {
     public void crearEtiqueta(String nombre) {
         crear(nombre, null, null);
     }
-
+    //(?)
     public void completar(int numero, int posicion, Object valor) {
         if (numero < 1 || numero > tercetos.size()) {
             return;

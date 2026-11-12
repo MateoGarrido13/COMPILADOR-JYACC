@@ -162,6 +162,8 @@ public class GeneradorTercetos {
         if (pendiente == null) {
             return;
         }
+
+ 
         String etiqueta = lista.reservarEtiqueta();
         int posicion;
         if (pendiente.incondicional) {

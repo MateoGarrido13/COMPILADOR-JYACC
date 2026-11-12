@@ -91,8 +91,11 @@ public class Entorno {
             declararAtributo(id, tipo, linea);
             return;
         }
-        variables.put(id.lexema, tipo);
+        String nombre = TablaSimbolos.nombreDe(id.lexema);
+        variables.put(nombre, tipo);
         id.tipoDato = tipo;
+        ControlAmbito.declarar(nombre);
+        fijarAmbito(id);
     }
 
     public String tipoDeVariable(String nombre) {
@@ -119,11 +122,12 @@ public class Entorno {
     }
 
     public FuncionDeclarada abrirFuncion(EntradaTabla id, String tipoRetorno, int linea) {
-        String nombre = id == null ? null : id.lexema;
+        String nombre = id == null ? null : TablaSimbolos.nombreDe(id.lexema);
         FuncionDeclarada funcion = new FuncionDeclarada(nombre, tipoRetorno, linea);
         funcionActual = funcion;
         if (id != null) {
             id.tipoDato = tipoRetorno;
+            fijarAmbito(id);
         }
         return funcion;
     }
@@ -132,10 +136,13 @@ public class Entorno {
         if (funcionActual == null) {
             return;
         }
-        String nombre = id == null ? null : id.lexema;
+        String nombre = id == null ? null : TablaSimbolos.nombreDe(id.lexema);
         funcionActual.parametros.add(new Parametro(nombre, tipo));
         if (id != null) {
             id.tipoDato = tipo;
+            ControlAmbito.declarar(nombre);
+            fijarAmbito(id);
+            ControlAmbito.anotarParametro(id);
         }
     }
 
@@ -158,8 +165,10 @@ public class Entorno {
         if (id == null) {
             return null;
         }
-        ClaseDeclarada clase = new ClaseDeclarada(id.lexema, linea);
-        clases.put(id.lexema, clase);
+        String nombre = TablaSimbolos.nombreDe(id.lexema);
+        fijarAmbito(id);
+        ClaseDeclarada clase = new ClaseDeclarada(nombre, linea);
+        clases.put(nombre, clase);
         claseActual = clase;
         return clase;
     }
@@ -204,14 +213,16 @@ public class Entorno {
         if (id == null) {
             return;
         }
+        String nombre = TablaSimbolos.nombreDe(id.lexema);
+        fijarAmbito(id);
         if (valores == null || valores.isEmpty()) {
-            enumerados.put(id.lexema, new TipoEnumerado(id.lexema, null, linea));
+            enumerados.put(nombre, new TipoEnumerado(nombre, null, linea));
             id.tipoDato = "tipo enumerado";
             return;
         }
 
         String tipoBase = null;
-        TipoEnumerado enumerado = new TipoEnumerado(id.lexema, null, linea);
+        TipoEnumerado enumerado = new TipoEnumerado(nombre, null, linea);
         for (Object elemento : valores) {
             EntradaTabla valor = ContextoRegla.comoEntrada(elemento);
             if (valor == null) {
@@ -224,10 +235,24 @@ public class Entorno {
             enumerado.valores.add(valor.lexema);
         }
 
-        TipoEnumerado definitivo = new TipoEnumerado(id.lexema, tipoBase, linea);
+        TipoEnumerado definitivo = new TipoEnumerado(nombre, tipoBase, linea);
         definitivo.valores.addAll(enumerado.valores);
-        enumerados.put(id.lexema, definitivo);
+        enumerados.put(nombre, definitivo);
         id.tipoDato = "tipo enumerado";
+    }
+
+    // El atributo queda en el ambito de esta declaracion. Si el lexico vio el
+    // nombre antes del cambio de ambito, la clave se corrige ahora.
+    private void fijarAmbito(EntradaTabla id) {
+        if (id == null) {
+            return;
+        }
+        String nombre = TablaSimbolos.nombreDe(id.lexema);
+        id.ambito = Globals.AMBITO_ACTUAL;
+        String clave = nombre + ":" + id.ambito;
+        if (!clave.equals(id.lexema)) {
+            tablaSimbolos.renombrar(id, clave);
+        }
     }
 
     public boolean esTipoConocido(String nombre) {
