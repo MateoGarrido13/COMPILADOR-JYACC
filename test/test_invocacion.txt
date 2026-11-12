@@ -1,0 +1,10 @@
+{{ prueba: invocacion de funcion con orden de evaluacion [2,1] }}
+prog
+ulongint a, b, c;
+ulongint function f(ulongint x, ulongint y)
+begin
+    ret(x);
+end;
+begin
+    c := f(a, b)[2$ul, 1$ul];
+end

@@ -79,6 +79,13 @@ public class Entorno {
         return funcionActual;
     }
 
+    public FuncionDeclarada getFuncion(String nombre) {
+        if (nombre == null) {
+            return null;
+        }
+        return funciones.get(nombre);
+    }
+
     public ClaseDeclarada getClaseActual() {
         return claseActual;
     }

@@ -1,4 +1,5 @@
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
@@ -42,6 +43,9 @@ public class GeneradorTercetos {
                 case ASIGNACION:
                     generarAsignacion(reduccion);
                     break;
+                case INVOCACION_FUNCION:
+                    generarInvocacionFuncion(reduccion);
+                    break;
                 case CONDICION_IF:
                     generarCondicionIf(reduccion);
                     break;
@@ -84,6 +88,61 @@ public class GeneradorTercetos {
             return;
         }
         lista.crear(":=", destino, origen);
+    }
+
+    /*
+      Genera los tercetos de invocacion de funcion:
+      un PAR por cada parametro real (en el orden de evaluacion indicado)
+      y un CALL que devuelve el resultado de la funcion.
+     */
+    private void generarInvocacionFuncion(Reduccion reduccion) {
+        Object valor = reduccion.resultado();
+        if (!(valor instanceof LlamadaFuncion)) {
+            reporte.error(reduccion.getLinea(), "Invocacion de funcion sin semántica");
+            return;
+        }
+        LlamadaFuncion llamada = (LlamadaFuncion) valor;
+        List<ParametroReal> parametros = llamada.parametros;
+        List<Integer> orden = llamada.ordenEvaluacion;
+
+        // Determina el orden de evaluacion. Si no hay [], se usa el orden fuente 1..n.
+        List<Integer> posiciones;
+        if (orden == null || orden.isEmpty()) {
+            posiciones = new ArrayList<>();
+            for (int i = 1; i <= parametros.size(); i++) {
+                posiciones.add(i);
+            }
+        } else {
+            posiciones = orden;
+        }
+
+        // Emite un PAR por cada parametro, en el orden de evaluacion indicado.
+        for (int pos : posiciones) {
+            if (pos < 1 || pos > parametros.size()) {
+                continue; // ya fue reportado por Verificaciones
+            }
+            ParametroReal param = parametros.get(pos - 1);
+            Object valorParam = emitirValor(param.valor, reduccion.getLinea());
+            lista.crear("PAR", valorParam, null);
+        }
+
+        // Emite el CALL y guarda su numero para que emitir(LlamadaFuncion) lo devuelva.
+        int numeroCall = lista.crear("CALL", llamada.funcion, null);
+        llamada.setNumeroCall(numeroCall);
+    }
+
+    /*
+      Emite el valor de un parametro real. Puede ser una EntradaTabla hoja,
+      una ExpresionDiferida (que genera tercetos intermedios) o un Integer.
+     */
+    private Object emitirValor(Object valor, int linea) {
+        if (valor instanceof EntradaTabla || valor instanceof Integer) {
+            return valor;
+        }
+        if (valor instanceof ExpresionDiferida) {
+            return emitir(valor, linea);
+        }
+        return null;
     }
 
     private void generarCondicionIf(Reduccion reduccion) {
@@ -187,6 +246,15 @@ public class GeneradorTercetos {
     private Object emitir(Object valor, int linea) {
         if (valor instanceof EntradaTabla || valor instanceof Integer) {
             return valor;
+        }
+        if (valor instanceof LlamadaFuncion) {
+            LlamadaFuncion llamada = (LlamadaFuncion) valor;
+            Integer numero = llamada.getNumeroCall();
+            if (numero == null) {
+                reporte.error(linea, "Invocacion de funcion sin terceto CALL");
+                return null;
+            }
+            return numero;
         }
         if (!(valor instanceof ExpresionDiferida)) {
             return null;

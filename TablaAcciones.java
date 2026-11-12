@@ -31,20 +31,25 @@ public class TablaAcciones {
      */
     public Object ejecutar(Reglas regla, Object... valores) {
         int linea = Globals.numeroLinea;
-        reducciones.add(new Reduccion(regla, linea, valores));
+
+        AccionRegla accion = acciones.get(regla);
+        Object resultado;
+        if (accion == null) {
+            if (regla.esError()) {
+                reporte.error(linea, regla.getDescripcion());
+            }
+            resultado = valores != null && valores.length > 0 ? valores[0] : null;
+        } else {
+            resultado = accion.ejecutar(new ContextoRegla(regla, linea, valores));
+        }
+
+        reducciones.add(new Reduccion(regla, linea, valores, resultado));
 
         if (regla.esEstructura()) {
             reporte.estructura(linea, regla.getDescripcion());
         }
 
-        AccionRegla accion = acciones.get(regla);
-        if (accion == null) {
-            if (regla.esError()) {
-                reporte.error(linea, regla.getDescripcion());
-            }
-            return valores != null && valores.length > 0 ? valores[0] : null;
-        }
-        return accion.ejecutar(new ContextoRegla(regla, linea, valores));
+        return resultado;
     }
 
     public List<Reglas> getListaReglas() {

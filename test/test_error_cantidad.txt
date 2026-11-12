@@ -1,0 +1,10 @@
+{{ prueba: cantidad de parametros reales no coincide con formales }}
+prog
+ulongint x;
+ulongint function foo(ulongint n, doublef d)
+begin
+    ret(n);
+end;
+begin
+    x := foo(1$ul, 2.5, 3$ul)[1$ul, 2$ul, 3$ul];
+end
