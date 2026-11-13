@@ -1,0 +1,18 @@
+prog
+ulongint global;
+class ca
+begin
+    ulongint m(ulongint p)
+    begin
+        global := p;
+        ret(p);
+    end;
+end;
+ulongint function f(ulongint q)
+begin
+    global := q;
+    ret(q);
+end;
+begin
+    global := 1$ul;
+end

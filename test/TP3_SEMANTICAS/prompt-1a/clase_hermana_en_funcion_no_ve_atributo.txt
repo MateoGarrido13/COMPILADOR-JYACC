@@ -1,0 +1,20 @@
+prog
+ulongint function f(ulongint n)
+    ulongint local_f;
+    class ca
+    begin
+        ulongint x;
+    end;
+    class cb
+    begin
+        ulongint m(ulongint p)
+        begin
+            x := p;
+            ret(p);
+        end;
+    end;
+begin
+    ret(n);
+end;
+begin
+end

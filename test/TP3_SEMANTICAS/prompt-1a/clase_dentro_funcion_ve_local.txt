@@ -1,0 +1,16 @@
+prog
+ulongint function contenedora(ulongint n)
+    ulongint externa;
+    class ca
+    begin
+        ulongint m(ulongint p)
+        begin
+            externa := p;
+            ret(p);
+        end;
+    end;
+begin
+    ret(n);
+end;
+begin
+end

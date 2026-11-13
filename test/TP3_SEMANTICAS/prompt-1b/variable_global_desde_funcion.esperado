@@ -1,0 +1,4 @@
+SIN ERRORES
+DECLARADO_SI:global:main
+DECLARADO_NO:global:main:a
+TERCETO:(:=, global:main, n:main:a)

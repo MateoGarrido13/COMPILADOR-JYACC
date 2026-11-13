@@ -1,0 +1,34 @@
+# TP3_SEMANTICAS
+
+Casos de regresion de las semanticas de TP3. Cada tema o prompt tiene su
+subdirectorio, con un `.txt` de entrada y un `.esperado` con las condiciones
+que deben cumplirse.
+
+## Ejecutar
+
+```bash
+bash test/TP3_SEMANTICAS/ejecutar.sh
+```
+
+El script compila el proyecto y ejecuta todos los casos. Respeta `TP3_BUILD`
+para elegir el directorio de clases (por defecto `/tmp/opencode/tp3build`).
+
+## Formato de `.esperado`
+
+- `SIN ERRORES`: la salida no debe tener ningun `Error:`.
+- `ERROR:<texto>`: debe aparecer el texto, por ejemplo un error de ambito.
+- `SIMBOLO:<clave>`: la tabla debe contener `<clave> -> 300`.
+- `NO_SIMBOLO:<clave>`: la tabla no debe contener esa clave.
+- `DECLARADO_SI:<clave>` / `DECLARADO_NO:<clave>`: estado de `declarado` de la entrada.
+- `TERCETO:<texto>`: el codigo intermedio debe contener el texto.
+
+Las claves de la tabla incluyen el ambito: `nombre:ambito`. Una entrada con
+`Declarado: no` es un placeholder creado por un uso, no una declaracion.
+
+## Carpetas
+
+- `prompt-1a/`: resolucion por cadena de ambitos. Funciones y clases hermanas
+  no ven los locales/atributos de la otra; funciones y clases anidadas si ven
+  las declaraciones externas; las globales se ven desde cualquier ambito.
+- `prompt-1b/`: name mangling y apertura/cierre de ambitos. Funciones, metodos
+  y clases generan claves propias; las entradas no se borran al cerrar ambito.

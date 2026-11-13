@@ -1,0 +1,22 @@
+prog
+ulongint function a(ulongint n)
+    ulongint function b(ulongint m)
+        ulongint function fun_c(ulongint p)
+            ulongint var_1;
+        begin
+            var_1 := p;
+            ret(var_1);
+        end;
+    begin
+        ret(m);
+    end;
+    ulongint function fun_c(ulongint q)
+    begin
+        var_1 := q;
+        ret(q);
+    end;
+begin
+    ret(n);
+end;
+begin
+end

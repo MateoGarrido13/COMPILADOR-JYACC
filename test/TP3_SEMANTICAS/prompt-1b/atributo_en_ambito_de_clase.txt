@@ -1,0 +1,9 @@
+prog
+class ca
+begin
+    ulongint x;
+end;
+ca a1;
+begin
+    a1.x := 3$ul;
+end

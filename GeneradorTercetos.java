@@ -77,7 +77,10 @@ public class GeneradorTercetos {
     }
 
     private void generarAsignacion(Reduccion reduccion) {
-        Object destino = reduccion.operando(0);
+        Object destino = reduccion.resultado();
+        if (!(destino instanceof EntradaTabla)) {
+            destino = reduccion.operando(0);
+        }
         if (!(destino instanceof EntradaTabla)) {
             reporte.error(reduccion.getLinea(), "No se puede asignar un valor a una cte o variable sin referencia");
             return;

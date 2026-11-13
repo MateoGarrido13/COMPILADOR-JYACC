@@ -85,7 +85,8 @@ public class AccionesDeclaraciones {
 
         tabla.registrar(Reglas.ASIGNACION, ctx -> {
             if (ctx.valor(0) instanceof EntradaTabla) {
-                v.verificarAlcance((EntradaTabla) ctx.valor(0));
+                EntradaTabla destino = v.verificarAlcance((EntradaTabla) ctx.valor(0));
+                return destino != null ? destino : ctx.valor(0);
             }
             return ctx.entrada(0);
         });

@@ -33,17 +33,23 @@ public class Verificaciones {
         return entorno;
     }
 
-    // El identificador no esta declarado en el ambito actual ni en uno que lo envuelve.
-    public void verificarAlcance(EntradaTabla id) {
+    /*
+      Devuelve la declaracion resuelta por la cadena de ambitos. Si no existe,
+      reporta el error y devuelve null. Las acciones usan la entrada devuelta
+      en lugar del placeholder creado por el lexico.
+     */
+    public EntradaTabla verificarAlcance(EntradaTabla id) {
         if (id == null) {
-            return;
+            return null;
         }
         String nombre = TablaSimbolos.nombreDe(id.lexema);
-        if (ControlAmbito.alcanzable(nombre)) {
-            return;
+        EntradaTabla declaracion = entorno.resolver(nombre, Globals.AMBITO_ACTUAL);
+        if (declaracion != null) {
+            return declaracion;
         }
         int linea = id.lineaAparicion > 0 ? id.lineaAparicion : id.numeroLinea;
         reporte.error(linea, "Error de ambito '" + nombre + "' no es alcanzable");
+        return null;
     }
 
     public void reportar(Reglas regla, int linea) {
@@ -133,7 +139,8 @@ public class Verificaciones {
             return;
         }
         String nombre = TablaSimbolos.nombreDe(funcion.lexema);
-        Entorno.FuncionDeclarada fd = entorno.getFuncion(nombre);
+        EntradaTabla declaracion = entorno.resolver(nombre, Globals.AMBITO_ACTUAL);
+        Entorno.FuncionDeclarada fd = declaracion == null ? null : entorno.getFuncion(declaracion.lexema);
         if (fd == null) {
             reporte.error(linea, "Funcion no declarada '" + nombre + "'");
             return;

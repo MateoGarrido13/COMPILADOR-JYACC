@@ -13,22 +13,27 @@ public class TablaSimbolos {
         tabla = new LinkedHashMap<>();
         porPuntero = new ArrayList<>();
         porPuntero.add(null);
-        alta("if", Globals.PR_IF, 0);
-        alta("else", Globals.PR_ELSE, 0);
-        alta("end_if", Globals.PR_END_IF, 0);
-        alta("begin", Globals.PR_BEGIN, 0);
-        alta("end", Globals.PR_END, 0);
-        alta("pout", Globals.PR_POUT, 0);
-        alta("ret", Globals.PR_RET, 0);
-        alta("class", Globals.PR_CLASS, 0);
-        alta("function", Globals.PR_FUNCTION, 0);
-        alta("repeat", Globals.PR_REPEAT, 0);
-        alta("while", Globals.PR_WHILE, 0);
-        alta("todf", Globals.TODF, 0);
-        alta("typedef", Globals.PR_TYPEDEF, 0);
-        alta("extends", Globals.PR_EXTENDS, 0);
-        alta("ulongint", Globals.PR_ULONGINT, 0);
-        alta("doublef", Globals.PR_DOUBLEF, 0);
+        altaReservada("if", Globals.PR_IF);
+        altaReservada("else", Globals.PR_ELSE);
+        altaReservada("end_if", Globals.PR_END_IF);
+        altaReservada("begin", Globals.PR_BEGIN);
+        altaReservada("end", Globals.PR_END);
+        altaReservada("pout", Globals.PR_POUT);
+        altaReservada("ret", Globals.PR_RET);
+        altaReservada("class", Globals.PR_CLASS);
+        altaReservada("function", Globals.PR_FUNCTION);
+        altaReservada("repeat", Globals.PR_REPEAT);
+        altaReservada("while", Globals.PR_WHILE);
+        altaReservada("todf", Globals.TODF);
+        altaReservada("typedef", Globals.PR_TYPEDEF);
+        altaReservada("extends", Globals.PR_EXTENDS);
+        altaReservada("ulongint", Globals.PR_ULONGINT);
+        altaReservada("doublef", Globals.PR_DOUBLEF);
+    }
+
+    private void altaReservada(String lexema, int tokenID) {
+        EntradaTabla entrada = alta(lexema, tokenID, 0);
+        entrada.uso = EntradaTabla.Uso.RESERVADA;
     }
 
     // Única creación de entradas. El mismo lexema conserva el puntero que recibió acá.
@@ -50,6 +55,69 @@ public class TablaSimbolos {
             return null;
         }
         return porPuntero.get(puntero);
+    }
+
+    public EntradaTabla buscarIdentificador(String nombre, String ambito) {
+        if (nombre == null || ambito == null) {
+            return null;
+        }
+        return tabla.get(nombre + ":" + ambito);
+    }
+
+    /*
+      Busca una declaracion desde el ambito actual hacia sus padres. Una entrada creada
+      por un uso previo no cuenta: solo se acepta si esta marcada como declarada.
+      Ejemplo: desde `main:f:g`, prueba `x:main:f:g`, `x:main:f`, `x:main`.
+     */
+    public EntradaTabla resolver(String nombre, String ambito) {
+        if (nombre == null || ambito == null) {
+            return null;
+        }
+        String actual = ambito;
+        while (true) {
+            EntradaTabla entrada = buscarIdentificador(nombre, actual);
+            if (entrada != null && entrada.declarado) {
+                return entrada;
+            }
+            int corte = actual.lastIndexOf(':');
+            if (corte < 0) {
+                return null;
+            }
+            actual = actual.substring(0, corte);
+        }
+    }
+
+    // Indica si la clave exacta corresponde a una declaracion. No sube de ambito.
+    public boolean estaDeclarado(String nombre, String ambito) {
+        EntradaTabla entrada = buscarIdentificador(nombre, ambito);
+        return entrada != null && entrada.declarado;
+    }
+
+    /*
+      Da de alta o confirma una declaracion. Si ya habia un placeholder en la misma clave
+      (creado por un uso anterior), se reutiliza esa entrada para conservar el puntero.
+      Devuelve null si la clave ya pertenece a otra declaracion.
+     */
+    public EntradaTabla declarar(EntradaTabla entrada, String nombre, String ambito,
+            EntradaTabla.Uso uso) {
+        if (entrada == null || nombre == null || ambito == null) {
+            return null;
+        }
+        String clave = nombre + ":" + ambito;
+        EntradaTabla existente = tabla.get(clave);
+        if (existente != null && existente != entrada && existente.declarado) {
+            return null;
+        }
+        if (existente != null && existente != entrada) {
+            entrada = existente;
+        }
+        entrada.ambito = ambito;
+        entrada.uso = uso;
+        entrada.declarado = true;
+        if (!clave.equals(entrada.lexema)) {
+            renombrar(entrada, clave);
+        }
+        return entrada;
     }
 
     public EntradaTabla buscarPalabraReservada(String lexema) {
@@ -130,6 +198,8 @@ public class TablaSimbolos {
         if (entrada == null) {
             entrada = alta(lexema, tokenID, Globals.numeroLinea);
         }
+        entrada.uso = EntradaTabla.Uso.CONSTANTE;
+        entrada.declarado = true;
         return entrada;
     }
 
@@ -140,6 +210,8 @@ public class TablaSimbolos {
             entrada = alta(cadena, Globals.CADENA, Globals.numeroLinea);
         }
         entrada.tipoDato = Tipos.CADENA;
+        entrada.uso = EntradaTabla.Uso.CADENA;
+        entrada.declarado = true;
         return entrada;
     }
 
@@ -150,6 +222,8 @@ public class TablaSimbolos {
             entrada = alta(lexema, Globals.CONSTANTE_NUMERICA, numeroLinea);
         }
         entrada.tipoDato = tipoDato;
+        entrada.uso = EntradaTabla.Uso.CONSTANTE;
+        entrada.declarado = true;
         return entrada;
     }
 
@@ -160,6 +234,8 @@ public class TablaSimbolos {
             texto.append("Puntero: ").append(entrada.puntero).append("\n");
             texto.append("Numero de linea: ").append(entrada.numeroLinea).append("\n");
             texto.append("Tipo de dato: ").append(entrada.tipoDato).append("\n");
+            texto.append("Uso: ").append(entrada.uso.getDescripcion()).append("\n");
+            texto.append("Declarado: ").append(entrada.declarado ? "si" : "no").append("\n");
             texto.append("Direccion de memoria: ").append(entrada.direccionMemoria).append("\n");
             texto.append("--------------------------------\n");
         }

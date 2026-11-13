@@ -1,0 +1,15 @@
+prog
+ulongint global;
+ulongint function a(ulongint n)
+    ulongint externa;
+    ulongint function b(ulongint m)
+    begin
+        externa := n;
+        global := m;
+        ret(externa);
+    end;
+begin
+    ret(n);
+end;
+begin
+end

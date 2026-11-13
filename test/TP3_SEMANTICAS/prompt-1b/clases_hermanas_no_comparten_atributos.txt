@@ -1,0 +1,11 @@
+prog
+class ca
+begin
+    ulongint x;
+end;
+class cb
+begin
+    ulongint x;
+end;
+begin
+end

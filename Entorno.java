@@ -1,24 +1,32 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /*
   Estado semantico que se va armando mientras el parser reduce.
- 
-  Guarda declaraciones y el contexto abierto (funcion/clase). No emite errores,
-  eso queda en Verificaciones. El parser es ascendente, por eso la funcion y la
-  clase se abren con acciones intermedias y no al reducir la declaracion completa.
+
+  Guarda declaraciones y el contexto abierto (funcion/metodo/clase). No emite
+  errores, eso queda en Verificaciones. El parser es ascendente, por eso la
+  funcion y la clase se abren con acciones intermedias y no al reducir la
+  declaracion completa.
+
+  Todas las claves de los mapas incluyen el ambito, para que dos declaraciones
+  con el mismo nombre en funciones distintas no se pisen.
  */
 public class Entorno {
 
     public static class Parametro {
         public final String nombre;
         public final String tipo;
+        public final EntradaTabla entrada;
 
-        public Parametro(String nombre, String tipo) {
+        public Parametro(String nombre, String tipo, EntradaTabla entrada) {
             this.nombre = nombre;
             this.tipo = tipo;
+            this.entrada = entrada;
         }
     }
 
@@ -27,24 +35,48 @@ public class Entorno {
         public final String tipoRetorno;
         public final List<Parametro> parametros = new ArrayList<>();
         public final int linea;
+        public final EntradaTabla entrada;
+        public final boolean esMetodo;
+        public final String ambitoDeclaracion;
+        public final String ambitoPropio;
 
-        public FuncionDeclarada(String nombre, String tipoRetorno, int linea) {
+        public FuncionDeclarada(String nombre, String tipoRetorno, int linea,
+                EntradaTabla entrada, boolean esMetodo, String ambitoDeclaracion) {
             this.nombre = nombre;
             this.tipoRetorno = tipoRetorno;
             this.linea = linea;
+            this.entrada = entrada;
+            this.esMetodo = esMetodo;
+            this.ambitoDeclaracion = ambitoDeclaracion;
+            this.ambitoPropio = ambitoDeclaracion + ":" + nombre;
+        }
+
+        public String clave() {
+            return nombre + ":" + ambitoDeclaracion;
         }
     }
 
     public static class ClaseDeclarada {
         public final String nombre;
         public final int linea;
+        public final EntradaTabla entrada;
+        public final String ambitoDeclaracion;
+        public final String ambitoPropio;
         public final Map<String, String> atributos = new LinkedHashMap<>();
         public final Map<String, FuncionDeclarada> metodos = new LinkedHashMap<>();
         public final List<String> heredaDe = new ArrayList<>();
 
-        public ClaseDeclarada(String nombre, int linea) {
+        public ClaseDeclarada(String nombre, int linea, EntradaTabla entrada,
+                String ambitoDeclaracion) {
             this.nombre = nombre;
             this.linea = linea;
+            this.entrada = entrada;
+            this.ambitoDeclaracion = ambitoDeclaracion;
+            this.ambitoPropio = ambitoDeclaracion + ":" + nombre;
+        }
+
+        public String clave() {
+            return nombre + ":" + ambitoDeclaracion;
         }
     }
 
@@ -53,11 +85,20 @@ public class Entorno {
         public final String tipoBase;
         public final List<String> valores = new ArrayList<>();
         public final int linea;
+        public final EntradaTabla entrada;
+        public final String ambito;
 
-        public TipoEnumerado(String nombre, String tipoBase, int linea) {
+        public TipoEnumerado(String nombre, String tipoBase, int linea,
+                EntradaTabla entrada, String ambito) {
             this.nombre = nombre;
             this.tipoBase = tipoBase;
             this.linea = linea;
+            this.entrada = entrada;
+            this.ambito = ambito;
+        }
+
+        public String clave() {
+            return nombre + ":" + ambito;
         }
     }
 
@@ -68,45 +109,65 @@ public class Entorno {
     private final Map<String, ClaseDeclarada> clases = new LinkedHashMap<>();
     private final Map<String, TipoEnumerado> enumerados = new LinkedHashMap<>();
 
-    private ClaseDeclarada claseActual = null;
-    private FuncionDeclarada funcionActual = null;
+    private final Deque<FuncionDeclarada> pilaFunciones = new ArrayDeque<>();
+    private final Deque<ClaseDeclarada> pilaClases = new ArrayDeque<>();
 
     public Entorno(TablaSimbolos tablaSimbolos) {
         this.tablaSimbolos = tablaSimbolos;
     }
 
     public FuncionDeclarada getFuncionActual() {
-        return funcionActual;
+        return pilaFunciones.peek();
     }
 
-    public FuncionDeclarada getFuncion(String nombre) {
-        if (nombre == null) {
+    // Busca por clave completa nombre:ambito, no por nombre pelado.
+    public FuncionDeclarada getFuncion(String clave) {
+        if (clave == null) {
             return null;
         }
-        return funciones.get(nombre);
+        return funciones.get(clave);
+    }
+
+    public EntradaTabla buscarIdentificador(String nombre, String ambito) {
+        return tablaSimbolos.buscarIdentificador(nombre, ambito);
+    }
+
+    // Resuelve por la cadena de ambitos y solo acepta declaraciones (DEC-3).
+    public EntradaTabla resolver(String nombre, String ambito) {
+        return tablaSimbolos.resolver(nombre, ambito);
     }
 
     public ClaseDeclarada getClaseActual() {
-        return claseActual;
+        return pilaClases.peek();
+    }
+
+    public ClaseDeclarada getClase(String clave) {
+        if (clave == null) {
+            return null;
+        }
+        return clases.get(clave);
     }
 
     public void declararVariable(EntradaTabla id, String tipo, int linea) {
         if (id == null) {
             return;
         }
-        if (claseActual != null) {
+        if (pilaFunciones.isEmpty() && !pilaClases.isEmpty()) {
             declararAtributo(id, tipo, linea);
             return;
         }
+        String ambito = Globals.AMBITO_ACTUAL;
         String nombre = TablaSimbolos.nombreDe(id.lexema);
-        variables.put(nombre, tipo);
-        id.tipoDato = tipo;
-        ControlAmbito.declarar(nombre);
-        fijarAmbito(id);
+        EntradaTabla entrada = tablaSimbolos.declarar(id, nombre, ambito, EntradaTabla.Uso.VARIABLE);
+        if (entrada == null) {
+            return;
+        }
+        entrada.tipoDato = tipo;
+        variables.put(nombre + ":" + ambito, tipo);
     }
 
-    public String tipoDeVariable(String nombre) {
-        return variables.get(nombre);
+    public String tipoDeVariable(String clave) {
+        return variables.get(clave);
     }
 
     public EntradaTabla tiparConstante(EntradaTabla constante) {
@@ -130,42 +191,56 @@ public class Entorno {
 
     public FuncionDeclarada abrirFuncion(EntradaTabla id, String tipoRetorno, int linea) {
         String nombre = id == null ? null : TablaSimbolos.nombreDe(id.lexema);
-        FuncionDeclarada funcion = new FuncionDeclarada(nombre, tipoRetorno, linea);
-        funcionActual = funcion;
+        String ambitoDeclaracion = ControlAmbito.ambitoDeclaracionDe(nombre, Globals.AMBITO_ACTUAL);
+        boolean esMetodo = !pilaClases.isEmpty()
+                && pilaClases.peek().ambitoPropio.equals(ambitoDeclaracion);
+
+        EntradaTabla entrada = id;
         if (id != null) {
-            id.tipoDato = tipoRetorno;
-            fijarAmbito(id);
+            EntradaTabla.Uso uso = esMetodo ? EntradaTabla.Uso.METODO : EntradaTabla.Uso.FUNCION;
+            entrada = tablaSimbolos.declarar(id, nombre, ambitoDeclaracion, uso);
+            if (entrada != null) {
+                entrada.tipoDato = tipoRetorno;
+            }
         }
+
+        FuncionDeclarada funcion = new FuncionDeclarada(nombre, tipoRetorno, linea,
+                entrada, esMetodo, ambitoDeclaracion);
+        pilaFunciones.push(funcion);
         return funcion;
     }
 
     public void agregarParametroFormal(EntradaTabla id, String tipo) {
-        if (funcionActual == null) {
+        FuncionDeclarada funcion = pilaFunciones.peek();
+        if (funcion == null) {
             return;
         }
+        String ambito = Globals.AMBITO_ACTUAL;
         String nombre = id == null ? null : TablaSimbolos.nombreDe(id.lexema);
-        funcionActual.parametros.add(new Parametro(nombre, tipo));
+        EntradaTabla entrada = id;
         if (id != null) {
-            id.tipoDato = tipo;
-            ControlAmbito.declarar(nombre);
-            fijarAmbito(id);
-            ControlAmbito.anotarParametro(id);
+            entrada = tablaSimbolos.declarar(id, nombre, ambito, EntradaTabla.Uso.PARAMETRO);
+            if (entrada != null) {
+                entrada.tipoDato = tipo;
+            }
         }
+        funcion.parametros.add(new Parametro(nombre, tipo, entrada));
     }
 
     // Cierra el contexto y pasa la funcion a la tabla o a la clase actual.
     public void cerrarFuncion() {
-        if (funcionActual == null) {
+        FuncionDeclarada funcion = pilaFunciones.poll();
+        if (funcion == null || funcion.nombre == null) {
             return;
         }
-        if (claseActual != null) {
-            if (funcionActual.nombre != null) {
-                claseActual.metodos.put(funcionActual.nombre, funcionActual);
+        if (funcion.esMetodo) {
+            ClaseDeclarada clase = pilaClases.peek();
+            if (clase != null) {
+                clase.metodos.put(funcion.nombre, funcion);
             }
-        } else if (funcionActual.nombre != null) {
-            funciones.put(funcionActual.nombre, funcionActual);
+        } else {
+            funciones.put(funcion.clave(), funcion);
         }
-        funcionActual = null;
     }
 
     public ClaseDeclarada abrirClase(EntradaTabla id, int linea) {
@@ -173,27 +248,40 @@ public class Entorno {
             return null;
         }
         String nombre = TablaSimbolos.nombreDe(id.lexema);
-        fijarAmbito(id);
-        ClaseDeclarada clase = new ClaseDeclarada(nombre, linea);
-        clases.put(nombre, clase);
-        claseActual = clase;
+        String ambitoDeclaracion = ControlAmbito.ambitoDeclaracionDe(nombre, Globals.AMBITO_ACTUAL);
+        EntradaTabla entrada = tablaSimbolos.declarar(id, nombre, ambitoDeclaracion,
+                EntradaTabla.Uso.CLASE);
+        if (entrada != null) {
+            entrada.tipoDato = nombre;
+        }
+        ClaseDeclarada clase = new ClaseDeclarada(nombre, linea, entrada, ambitoDeclaracion);
+        clases.put(clase.clave(), clase);
+        pilaClases.push(clase);
         return clase;
     }
 
     public void cerrarClase() {
-        claseActual = null;
+        pilaClases.poll();
     }
 
     public void declararAtributo(EntradaTabla id, String tipo, int linea) {
-        if (id == null || claseActual == null) {
+        ClaseDeclarada clase = pilaClases.peek();
+        if (id == null || clase == null) {
             return;
         }
-        claseActual.atributos.put(id.lexema, tipo);
-        id.tipoDato = tipo;
+        String nombre = TablaSimbolos.nombreDe(id.lexema);
+        EntradaTabla entrada = tablaSimbolos.declarar(id, nombre, clase.ambitoPropio,
+                EntradaTabla.Uso.ATRIBUTO);
+        if (entrada == null) {
+            return;
+        }
+        entrada.tipoDato = tipo;
+        clase.atributos.put(nombre, tipo);
     }
 
     public void registrarHerencia(List<Object> clasesPadre) {
-        if (claseActual == null || clasesPadre == null) {
+        ClaseDeclarada clase = pilaClases.peek();
+        if (clase == null || clasesPadre == null) {
             return;
         }
         for (Object elemento : clasesPadre) {
@@ -201,8 +289,8 @@ public class Entorno {
             if (padre == null) {
                 continue;
             }
-            if (!claseActual.heredaDe.contains(padre.lexema)) {
-                claseActual.heredaDe.add(padre.lexema);
+            if (!clase.heredaDe.contains(padre.lexema)) {
+                clase.heredaDe.add(padre.lexema);
             }
         }
     }
@@ -211,8 +299,14 @@ public class Entorno {
         if (identificadores == null) {
             return;
         }
+        String nombre = TablaSimbolos.nombreDe(nombreClase);
+        EntradaTabla declaracion = resolver(nombre, Globals.AMBITO_ACTUAL);
+        String tipo = nombreClase;
+        if (declaracion != null && declaracion.uso == EntradaTabla.Uso.CLASE) {
+            tipo = declaracion.lexema;
+        }
         for (Object elemento : identificadores) {
-            declararVariable(ContextoRegla.comoEntrada(elemento), nombreClase, linea);
+            declararVariable(ContextoRegla.comoEntrada(elemento), tipo, linea);
         }
     }
 
@@ -220,16 +314,21 @@ public class Entorno {
         if (id == null) {
             return;
         }
+        String ambito = Globals.AMBITO_ACTUAL;
         String nombre = TablaSimbolos.nombreDe(id.lexema);
-        fijarAmbito(id);
+        EntradaTabla entrada = tablaSimbolos.declarar(id, nombre, ambito, EntradaTabla.Uso.TIPO);
+        if (entrada == null) {
+            return;
+        }
+        entrada.tipoDato = "tipo enumerado";
         if (valores == null || valores.isEmpty()) {
-            enumerados.put(nombre, new TipoEnumerado(nombre, null, linea));
-            id.tipoDato = "tipo enumerado";
+            enumerados.put(nombre + ":" + ambito,
+                    new TipoEnumerado(nombre, null, linea, entrada, ambito));
             return;
         }
 
         String tipoBase = null;
-        TipoEnumerado enumerado = new TipoEnumerado(nombre, null, linea);
+        List<String> valoresEnumerado = new ArrayList<>();
         for (Object elemento : valores) {
             EntradaTabla valor = ContextoRegla.comoEntrada(elemento);
             if (valor == null) {
@@ -239,40 +338,41 @@ public class Entorno {
             if (tipoBase == null) {
                 tipoBase = Tipos.tipoDeConstante(valor.lexema);
             }
-            enumerado.valores.add(valor.lexema);
+            valoresEnumerado.add(valor.lexema);
         }
 
-        TipoEnumerado definitivo = new TipoEnumerado(nombre, tipoBase, linea);
-        definitivo.valores.addAll(enumerado.valores);
-        enumerados.put(nombre, definitivo);
-        id.tipoDato = "tipo enumerado";
-    }
-
-    // El atributo queda en el ambito de esta declaracion. Si el lexico vio el
-    // nombre antes del cambio de ambito, la clave se corrige ahora.
-    private void fijarAmbito(EntradaTabla id) {
-        if (id == null) {
-            return;
-        }
-        String nombre = TablaSimbolos.nombreDe(id.lexema);
-        id.ambito = Globals.AMBITO_ACTUAL;
-        String clave = nombre + ":" + id.ambito;
-        if (!clave.equals(id.lexema)) {
-            tablaSimbolos.renombrar(id, clave);
-        }
+        TipoEnumerado definitivo = new TipoEnumerado(nombre, tipoBase, linea, entrada, ambito);
+        definitivo.valores.addAll(valoresEnumerado);
+        enumerados.put(definitivo.clave(), definitivo);
     }
 
     public boolean esTipoConocido(String nombre) {
         if (nombre == null) {
             return false;
         }
-        return Tipos.esTipoBasico(nombre)
-                || clases.containsKey(nombre)
-                || enumerados.containsKey(nombre);
+        if (Tipos.esTipoBasico(nombre)) {
+            return true;
+        }
+        EntradaTabla entrada = resolverTipo(nombre);
+        return entrada != null
+                && (entrada.uso == EntradaTabla.Uso.CLASE || entrada.uso == EntradaTabla.Uso.TIPO);
     }
 
     public boolean esClase(String nombre) {
-        return clases.containsKey(nombre);
+        EntradaTabla entrada = resolverTipo(nombre);
+        return entrada != null && entrada.uso == EntradaTabla.Uso.CLASE;
+    }
+
+    // Acepta un nombre pelado o una clave ya resuelta nombre:ambito.
+    private EntradaTabla resolverTipo(String nombre) {
+        String base = TablaSimbolos.nombreDe(nombre);
+        String ambito = nombre.indexOf(':') >= 0
+                ? TablaSimbolos.ambitoDe(nombre)
+                : Globals.AMBITO_ACTUAL;
+        if (nombre.indexOf(':') >= 0) {
+            return tablaSimbolos.buscarIdentificador(base, ambito);
+        }
+        return tablaSimbolos.resolver(base, ambito);
     }
 
     public String contenidoDeclaraciones() {

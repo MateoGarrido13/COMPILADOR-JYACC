@@ -1,0 +1,10 @@
+prog
+ulongint global;
+ulongint function a(ulongint n)
+begin
+    global := n;
+    ret(n);
+end;
+begin
+    global := 1$ul;
+end

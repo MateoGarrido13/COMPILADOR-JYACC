@@ -1,0 +1,16 @@
+prog
+ulongint function a(ulongint n)
+    class ca
+    begin
+        ulongint x;
+        ulongint m(ulongint p)
+        begin
+            x := p;
+            ret(p);
+        end;
+    end;
+begin
+    ret(n);
+end;
+begin
+end

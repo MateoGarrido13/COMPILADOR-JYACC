@@ -1,0 +1,6 @@
+SIN ERRORES
+DECLARADO_SI:ca:main
+DECLARADO_SI:x:main:ca
+DECLARADO_SI:m:main:ca
+DECLARADO_SI:p:main:ca:m
+NO_SIMBOLO:p:main:ca

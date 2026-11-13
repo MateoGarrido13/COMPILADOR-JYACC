@@ -1,0 +1,15 @@
+prog
+class ca
+begin
+    ulongint x;
+end;
+class cb
+begin
+    ulongint m(ulongint n)
+    begin
+        x := n;
+        ret(n);
+    end;
+end;
+begin
+end

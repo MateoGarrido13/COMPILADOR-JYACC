@@ -1,0 +1,14 @@
+prog
+ulongint function a(ulongint n)
+    ulongint local_a;
+begin
+    local_a := n;
+    ret(local_a);
+end;
+ulongint function b(ulongint m)
+begin
+    local_a := m;
+    ret(m);
+end;
+begin
+end

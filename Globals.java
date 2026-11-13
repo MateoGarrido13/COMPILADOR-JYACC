@@ -1,8 +1,8 @@
 public class Globals {
     public static EntradaTabla yylval;
     public static int numeroLinea = 1;
-    // Ambito de la declaracion en curso. Arranca en MAIN y cada funcion agrega :NOMBRE.
-    public static String AMBITO_ACTUAL = "MAIN";
+    // Ambito de la declaracion en curso. Arranca en main y cada funcion agrega :nombre.
+    public static String AMBITO_ACTUAL = "main";
 
     // Tokens compuestos (valores > 255)
     public static final int IDENTIFICADOR = 300;

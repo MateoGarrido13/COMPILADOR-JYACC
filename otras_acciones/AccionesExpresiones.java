@@ -28,8 +28,9 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.DIVISION, ctx -> AccionesSemanticas.combinar(ctx, '/'));
 
         tabla.registrar(Reglas.FACTOR_ID, ctx -> {
-            v.verificarAlcance(ctx.entrada(0));
-            return ExpresionDiferida.deOperando(ctx.entrada(0));
+            EntradaTabla id = ctx.entrada(0);
+            EntradaTabla declaracion = v.verificarAlcance(id);
+            return ExpresionDiferida.deOperando(declaracion != null ? declaracion : id);
         });
 
         tabla.registrar(Reglas.FACTOR_CONSTANTE, ctx ->
@@ -79,7 +80,9 @@ public class AccionesExpresiones {
             // Verifica orden de evaluacion: rango, duplicados, completitud
             v.verificarOrdenEvaluacion(ordenRaw, parametros.size(), ctx.getLinea());
 
-            return new LlamadaFuncion(funcion, parametros, ordenEvaluacion, ctx.getLinea());
+            EntradaTabla resuelta = resolverFuncion(entorno, funcion);
+            return new LlamadaFuncion(resuelta != null ? resuelta : funcion,
+                    parametros, ordenEvaluacion, ctx.getLinea());
         });
 
         tabla.registrar(Reglas.PARAMETRO_REAL_NOMBRADO, ctx -> {
@@ -122,6 +125,26 @@ public class AccionesExpresiones {
             v.verificarOrdenEvaluacion(ordenEvaluacion, ctx.getLinea());
             return ExpresionDiferida.deOperando(ctx.entrada(2));
         });
+    }
+
+    /*
+      Resuelve el nombre de la funcion en el ambito de la llamada. Devuelve
+      null si no hay una declaracion visible.
+     */
+    private static EntradaTabla resolverFuncion(Entorno entorno, EntradaTabla funcion) {
+        if (funcion == null) {
+            return null;
+        }
+        String nombre = TablaSimbolos.nombreDe(funcion.lexema);
+        EntradaTabla declaracion = entorno.resolver(nombre, Globals.AMBITO_ACTUAL);
+        if (declaracion == null) {
+            return null;
+        }
+        if (declaracion.uso != EntradaTabla.Uso.FUNCION
+                && declaracion.uso != EntradaTabla.Uso.METODO) {
+            return null;
+        }
+        return declaracion;
     }
 
     /*
