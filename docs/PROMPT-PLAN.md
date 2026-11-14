@@ -77,11 +77,12 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Documentar en `docs/PROMPT-6-8.md`.
 - Resultado: `docs/PROMPT-6-8.md`. Cambios en `AccionConstanteEntera.java` y `AccionConstanteFloat.java`: usar `insertarConstante(lexema, tipo, linea)` para registrar `tipoDato` y `uso = CONSTANTE` en el lexico.
 
-## Prompt 9 y 16 - Cadenas y comentarios
+## Prompt 9 y 16 - Cadenas y comentarios (ejecutado)
 
 - Verificar el estado actual contra TP1/TP3.
 - Completar solo si falta validacion o tipo.
 - Documentar en `docs/PROMPT-9-16.md`.
+- Resultado: `docs/PROMPT-9-16.md`. Validado por el lexico en `AccionCadena.java`: cadenas con tipo `cadena`, comentarios `{{...}}` descartados, sin saltos de línea en cadenas. No requiere cambios de código.
 
 ## Prompt 13 - `repeat while`
 

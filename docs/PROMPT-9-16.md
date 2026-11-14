@@ -1,46 +1,42 @@
 # PROMPT-9-16: Cadenas y comentarios
 
-## Objetivo
+## Estado
 
-Verificar que las cadenas de una línea `{texto}` se inserten en la Tabla de Símbolos con Tipo de dato: `cadena`, que no se permitan saltos de línea, y que los comentarios multilínea `{{ ... }}` se descarten por completo (ni en la TS ni en la tira de tokens).
+**Validado por el léxico. No requiere cambios de código.**
 
-## Cambios realizados
+El analizador léxico (`AccionCadena.java`) ya implementa correctamente los requisitos de TP3 para los temas 9 y 16.
 
-Ninguno. Tras verificar el estado actual del código, no se encontró defecto:
+## Qué implementa `AccionCadena.java`
 
-- `acciones semanticas/AccionCadena.java`: descarta comentarios (`{{ ... }}` → `-1`), rechaza cadenas sin cerrar (`Cadena no cerrada`) y con salto de línea (`Cadena de una linea con salto de linea`), e inserta el contenido con `buscarOInsertarCadena` (token `CADENA` = 303, `tipoDato = cadena`, `uso = CADENA`, `declarado = true`).
-- `MatrizTransiciones.java`: estados 5/6 (cadena) y 7/8 (comentario `{{`) con cierres `}` correctos; semCierre cierra estados 5 y 6 con acción 15 al fin de archivo.
-- `TablaSimbolos.java`: `buscarOInsertarCadena()` asigna `tipoDato = Tipos.CADENA`, `uso = Uso.CADENA`, `declarado = true`.
+- **Cadenas de una línea** `{texto}`:
+  - Se insertan en la Tabla de Símbolos con `tipoDato = cadena`, `uso = cadena`, `declarado = true`.
+  - No se permiten saltos de línea dentro de la cadena: error léxico `"Cadena de una linea con salto de linea"`.
+  - Cadena sin cerrar: error léxico `"Cadena no cerrada '<lexema>'"`.
+  - El contenido se inserta sin las llaves delimitadoras.
+- **Comentarios multilínea** `{{ ... }}`:
+  - Se descartan por completo (retorna -1).
+  - No aparecen en la Tabla de Símbolos ni en la tira de tokens.
+  - Pueden contener llaves, guiones bajos y varias líneas.
 
-No se agregó funcionalidad nueva.
+## Verificación con tests existentes
 
-## Casos verificados (existentes, en test/tp1/)
+Los siguientes tests de `test/tp1/verificaciones_comentarios_cadenas/` se ejecutaron y pasaron sin defectos:
 
-- `test/tp1/verificaciones_comentarios_cadenas/cadenas_validas.txt` — `{hola}`, `{texto con espacios 123}`, `{simbolos = + - * /}`: tokens `CADENA`, TS con Tipo de dato: `cadena`, intermedio `(pout, hola, --)` etc. ✅
-- `test/tp1/verificaciones_comentarios_cadenas/cadenas_invalidas.txt` — cadena con salto de línea y cadena sin cerrar: `Error: Cadena no cerrada`. ✅
-- `test/tp1/verificaciones_comentarios_cadenas/comentarios_validos.txt` — comentario multilinea descartado, `{ok}` sigue siendo la única cadena. ✅
-- `test/tp1/verificaciones_comentarios_cadenas/comentarios_invalidos.txt` — comentario sin cerrar: `Error: Lexema no reconocido`. ✅
+- `cadenas_validas.txt`: cadenas `{hola}`, `{texto con espacios 123}`, `{simbolos = + - * /}` se insertan con tipo `cadena` y generan `(pout, contenido, --)`.
+- `cadenas_invalidas.txt`: `{cadena` y `{sin cierre` reportan error léxico de cadena no cerrada.
+- `comentarios_validos.txt`: comentarios `{{ ... }}` se descartan sin errores.
+- `comentarios_invalidos.txt`: comentario sin cerrar `{{ este comentario nunca se cierra` reporta error léxico.
+- `cadena_con_guion_bajo.txt`: cadena con guion bajo se inserta correctamente.
+- `guion_bajo_en_comentario_y_cadena.txt`: guion bajo en comentario y cadena se maneja correctamente.
 
-## Casos de regresión nuevos (test/TP3 _y_TP4/CADENAS_COMENTARIOS/)
+No se detectaron defectos ni faltantes léxicos importantes.
 
-| Archivo | Qué verifica | Resultado |
-|---|---|---|
-| `01_cadena_valida_unica.txt` | `{hola}` → `(pout, hola, --)`, TS Tipo de dato: `cadena` | ✅ |
-| `02_cadena_con_guion_bajo.txt` | `{cadena_con_guion}` con guion bajo | ✅ |
-| `03_cadena_llaves_internas.txt` | `{a { b}` con llave interna válida | ✅ |
-| `04_comentario_multilinea.txt` | `{{ ... }}` con guion bajo, llave interna y varias líneas, descartado por completo | ✅ |
-| `05_cadena_sin_cerrar.txt` | `{sin cierre` → `Error: Cadena no cerrada` | ✅ |
-| `06_comentario_sin_cerrar.txt` | `{{ ...` sin cierre → `Error: Lexema no reconocido` | ✅ |
-| `07_cadena_salto_de_linea.txt` | `{cadena\ncon salto}` → `Error: Cadena no cerrada` | ✅ |
-
-## Criterio de aceptación
+## Criterios de aceptación cumplidos
 
 - Los casos válidos no generan errores. ✅
 - Los inválidos generan el error léxico correspondiente. ✅
-- Las cadenas llegan al codegen con su tipo (`CADENA` = 303, Tipo de dato: `cadena`). ✅
+- Las cadenas llegan al codegen con su tipo (`pout, contenido, --`). ✅
 
-## Verificación
+## Riesgo
 
-Compilación limpia con `javac -encoding UTF-8 -d /tmp/tp3build *.java "acciones semanticas"/*.java otras_acciones/*.java`.
-
-Todos los 7 casos nuevos pasan; los casos TP1 existentes siguen pasando.
+Futuras modificaciones sobre el core del compilador (léxico, tabla de símbolos o acciones semánticas) llevarán a una revisión de estas reglas antes de la entrega final.

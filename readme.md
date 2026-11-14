@@ -14,9 +14,9 @@ Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
 | Último commit | `746c60d` — generacion de codigo base |
-| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8 |
-| Prompt en curso / siguiente | **9 y 16 — Cadenas y comentarios** |
-| Commits del plan completados | 6 de 15 |
+| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16 |
+| Prompt en curso / siguiente | **13 — `repeat while`** |
+| Commits del plan completados | 7 de 15 |
 
 ### Reglas de granularidad para commits
 
@@ -40,7 +40,7 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 2 | Igualdad estricta de tipos | ✅ Ejecutado | `docs/PROMPT-2.md` | `prompt-2-tipos-estrictos/` |
 | 2B | Codegen base (tercetos, `pout`, `ret`, `todf`, `PAR`/`CALL`/`CALLMET`) | ✅ Ejecutado | `docs/PROMPT-2B.md` | `prompt-2b-codegen-base/` |
 | **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ✅ Ejecutado | `docs/PROMPT-6-8.md` | `test/tp1/verificacion_constantes_*` |
-| 9 y 16 | Cadenas y comentarios | ⏳ **Siguiente** | `docs/PROMPT-9-16.md` (por crear) | `test/tp1/verificacion_*` |
+| 9 y 16 | Cadenas y comentarios | ✅ **Ejecutado (validado por lexico)** | `docs/PROMPT-9-16.md` | `test/tp1/verificaciones_comentarios_cadenas/` |
 | 13 | `repeat while` — condiciones booleanas y tipo | ❌ Pendiente | `docs/PROMPT-13.md` (por crear) | `test/TP3 _y_TP4/ITERACION/` |
 | 17 | Asignación dentro de expresiones | ❌ Pendiente | `docs/PROMPT-17.md` (por crear) | `test/tp2/verificacion_r17_asig_expresiones/` |
 | 33 | Conversión `todf` — restricción de origen | ❌ Pendiente | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
@@ -52,9 +52,9 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 
 ### Próximos a implementar (orden del plan)
 
-1. **Prompt 9 y 16 — Cadenas y comentarios** (siguiente inmediato): validar estado actual contra TP1/TP3, completar solo si falta validación o tipo.
-2. **Prompt 13 — `repeat while`**: condición obligatoria y booleana por comparación de tipos; integrar todas las sentencias ejecutables.
-3. **Prompt 17 — Asignación dentro de expresiones**: generar asignación interna y chequear tipos.
+1. **Prompt 13 — `repeat while`** (siguiente inmediato): condición obligatoria y booleana por comparación de tipos; integrar todas las sentencias ejecutables.
+2. **Prompt 17 — Asignación dentro de expresiones**: generar asignación interna y chequear tipos.
+3. **Prompt 33 — Conversión `todf`**: restringir el origen a `ulongint` o enum con base `ulongint`.
 
 ---
 
@@ -65,7 +65,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Issue | Prompt | Descripción | Prioridad |
 |-------|--------|-------------|-----------|
 | Tipado de constantes en el léxico | 6 y 8 | `AccionConstanteEntera` y `AccionConstanteFloat` ahora insertan las constantes con `tipoDato` (`ulongint` o `doublef`) y `uso = CONSTANTE` durante el análisis léxico, usando `insertarConstante`. Resuelto. | Alta (completado) |
-| Validación de cadenas y comentarios | 9 y 16 | Verificar que las cadenas de una línea se inserten con tipo `cadena`, que no se permitan saltos de línea, y que los comentarios multilínea se descarten por completo. | Media |
+| Validación de cadenas y comentarios | 9 y 16 | `AccionCadena.java` ya inserta cadenas con tipo `cadena`, no permite saltos de línea y descarta comentarios `{{...}}`. Validado por el lexico. | Media (completado) |
 | Condiciones booleanas en `repeat while` | 13 | Falta integrar chequeos de tipos de condiciones exigidos por TP03. | Media |
 | Asignación interna en expresiones | 17 | Se reconoce la sintaxis y se detecta el anidamiento, pero no se genera la asignación interna ni se chequean sus tipos. | Media |
 | Restricción de origen en `todf` | 33 | `todf` ya emite terceto y devuelve `doublef`, pero falta restringir el origen a `ulongint` o enum con base `ulongint`, y rechazar conversiones vacías, de `doublef` o de objetos. | Media |
