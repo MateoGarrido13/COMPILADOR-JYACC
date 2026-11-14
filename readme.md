@@ -14,9 +14,9 @@ Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
 | Último commit | `746c60d` — generacion de codigo base |
-| Prompts ejecutados | 0, 1A, 1B, 2, 2B |
-| Prompt en curso / siguiente | **6 y 8 — Constantes `ulongint` y `doublef`** |
-| Commits del plan completados | 5 de 15 |
+| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8 |
+| Prompt en curso / siguiente | **9 y 16 — Cadenas y comentarios** |
+| Commits del plan completados | 6 de 15 |
 
 ### Reglas de granularidad para commits
 
@@ -39,8 +39,8 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 1B | Apertura y cierre real de ámbitos | ✅ Ejecutado | `docs/PROMPT-1B.md` | `prompt-1b-name-mangling/` |
 | 2 | Igualdad estricta de tipos | ✅ Ejecutado | `docs/PROMPT-2.md` | `prompt-2-tipos-estrictos/` |
 | 2B | Codegen base (tercetos, `pout`, `ret`, `todf`, `PAR`/`CALL`/`CALLMET`) | ✅ Ejecutado | `docs/PROMPT-2B.md` | `prompt-2b-codegen-base/` |
-| **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ⏳ **Siguiente** | `docs/PROMPT-6-8.md` (por crear) | `test/tp1/verificacion_constantes_*` |
-| 9 y 16 | Cadenas y comentarios | ❌ Pendiente | `docs/PROMPT-9-16.md` (por crear) | `test/tp1/verificacion_*` |
+| **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ✅ Ejecutado | `docs/PROMPT-6-8.md` | `test/tp1/verificacion_constantes_*` |
+| 9 y 16 | Cadenas y comentarios | ⏳ **Siguiente** | `docs/PROMPT-9-16.md` (por crear) | `test/tp1/verificacion_*` |
 | 13 | `repeat while` — condiciones booleanas y tipo | ❌ Pendiente | `docs/PROMPT-13.md` (por crear) | `test/TP3 _y_TP4/ITERACION/` |
 | 17 | Asignación dentro de expresiones | ❌ Pendiente | `docs/PROMPT-17.md` (por crear) | `test/tp2/verificacion_r17_asig_expresiones/` |
 | 33 | Conversión `todf` — restricción de origen | ❌ Pendiente | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
@@ -52,9 +52,9 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 
 ### Próximos a implementar (orden del plan)
 
-1. **Prompt 6 y 8 — Constantes `ulongint` y `doublef`** (siguiente inmediato): tipar cada constante en el momento del análisis léxico, mantener rango y formato. Archivos clave: `acciones semanticas/AccionConstanteEntera.java`, `acciones semanticas/AccionConstanteFloat.java`, `TablaSimbolos.java`, `Entorno.java`, `Tipos.java`.
-2. **Prompt 9 y 16 — Cadenas y comentarios**: validar estado actual contra TP1/TP3, completar solo si falta validación o tipo.
-3. **Prompt 13 — `repeat while`**: condición obligatoria y booleana por comparación de tipos; integrar todas las sentencias ejecutables.
+1. **Prompt 9 y 16 — Cadenas y comentarios** (siguiente inmediato): validar estado actual contra TP1/TP3, completar solo si falta validación o tipo.
+2. **Prompt 13 — `repeat while`**: condición obligatoria y booleana por comparación de tipos; integrar todas las sentencias ejecutables.
+3. **Prompt 17 — Asignación dentro de expresiones**: generar asignación interna y chequear tipos.
 
 ---
 
@@ -64,7 +64,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 
 | Issue | Prompt | Descripción | Prioridad |
 |-------|--------|-------------|-----------|
-| Tipado de constantes en el léxico | 6 y 8 | `AccionConstanteEntera` y `AccionConstanteFloat` insertan las constantes sin asignarles tipo en la tabla de símbolos. El tipo se asigna después al procesarlas como factores. TP3 exige registrar el tipo durante el análisis léxico. | Alta (siguiente) |
+| Tipado de constantes en el léxico | 6 y 8 | `AccionConstanteEntera` y `AccionConstanteFloat` ahora insertan las constantes con `tipoDato` (`ulongint` o `doublef`) y `uso = CONSTANTE` durante el análisis léxico, usando `insertarConstante`. Resuelto. | Alta (completado) |
 | Validación de cadenas y comentarios | 9 y 16 | Verificar que las cadenas de una línea se inserten con tipo `cadena`, que no se permitan saltos de línea, y que los comentarios multilínea se descarten por completo. | Media |
 | Condiciones booleanas en `repeat while` | 13 | Falta integrar chequeos de tipos de condiciones exigidos por TP03. | Media |
 | Asignación interna en expresiones | 17 | Se reconoce la sintaxis y se detecta el anidamiento, pero no se genera la asignación interna ni se chequean sus tipos. | Media |

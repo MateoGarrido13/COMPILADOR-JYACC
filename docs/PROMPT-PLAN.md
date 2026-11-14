@@ -70,11 +70,12 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Resultado: `docs/PROMPT-2B.md`. Casos en
   `test/TP3_SEMANTICAS/prompt-2b-codegen-base/`.
 
-## Prompt 6 y 8 - Constantes `ulongint` y `doublef`
+## Prompt 6 y 8 - Constantes `ulongint` y `doublef` (ejecutado)
 
 - Tipar cada constante en el momento del analisis lexico.
 - Mantener rango y formato.
 - Documentar en `docs/PROMPT-6-8.md`.
+- Resultado: `docs/PROMPT-6-8.md`. Cambios en `AccionConstanteEntera.java` y `AccionConstanteFloat.java`: usar `insertarConstante(lexema, tipo, linea)` para registrar `tipoDato` y `uso = CONSTANTE` en el lexico.
 
 ## Prompt 9 y 16 - Cadenas y comentarios
 

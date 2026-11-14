@@ -22,8 +22,8 @@ public class AccionConstanteEntera implements AccionSemantica {
             return -1;
         }
 
-        Globals.yylval = contexto.tablaSimbolos.buscarOInsertarConstante(
-            lexema, Globals.CONSTANTE_NUMERICA);
+        Globals.yylval = contexto.tablaSimbolos.insertarConstante(
+            lexema, Tipos.ULONGINT, Globals.numeroLinea);
         return Globals.CONSTANTE_NUMERICA;
     }
 }
