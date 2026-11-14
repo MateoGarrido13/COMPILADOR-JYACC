@@ -10,18 +10,92 @@ import java.util.List;
   el plegado a izquierda se hace cuando la expresion se consume por completo.
  
   Tambien transporta la marca de 'contiene asignacion', necesaria para detectar
-  el anidamiento que el tema 17 prohibe.
+  el anidamiento que el tema 17 prohibe, y el tipo resultante de la expresion.
  */
 public class ExpresionDiferida {
 
     private final List<Object> operandos = new ArrayList<>();
     private final List<Character> operadores = new ArrayList<>();
     private boolean contieneAsignacion = false;
+    // Una expresion invalida ya reporto un error semantico y no debe generar
+    // tercetos: evita emitir codigo intermedio para codigo que no compila.
+    private boolean valida = true;
+    private String tipo = Tipos.INDEFINIDO;
 
     public static ExpresionDiferida deOperando(Object operando) {
+        return deOperando(operando, tipoDe(operando));
+    }
+
+    public static ExpresionDiferida deOperando(Object operando, String tipo) {
         ExpresionDiferida expresion = new ExpresionDiferida();
         expresion.operandos.add(operando);
+        expresion.tipo = normalizarTipo(tipo);
+        if (operando instanceof ExpresionDiferida && !((ExpresionDiferida) operando).esValida()) {
+            expresion.valida = false;
+        }
         return expresion;
+    }
+
+    public boolean esValida() {
+        return valida;
+    }
+
+    public ExpresionDiferida marcarInvalida() {
+        this.valida = false;
+        return this;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public ExpresionDiferida conTipo(String tipo) {
+        this.tipo = normalizarTipo(tipo);
+        return this;
+    }
+
+    /*
+      Tipo de un operando suelto. Una expresion anidada aporta su propio tipo;
+      una entrada de tabla su tipoDato (con la forma lexica como fallback para
+      constantes); una llamada el tipo de retorno de la funcion; una referencia
+      de atributo su tipo; y una conversion el tipo destino.
+     */
+    public static String tipoDe(Object operando) {
+        if (operando == null) {
+            return Tipos.INDEFINIDO;
+        }
+        if (operando instanceof ExpresionDiferida) {
+            return ((ExpresionDiferida) operando).getTipo();
+        }
+        if (operando instanceof EntradaTabla) {
+            EntradaTabla entrada = (EntradaTabla) operando;
+            if (entrada.tipoDato != null && !entrada.tipoDato.isEmpty()
+                    && !Tipos.INDEFINIDO.equals(entrada.tipoDato)) {
+                return entrada.tipoDato;
+            }
+            if (entrada.uso == EntradaTabla.Uso.CADENA) {
+                return Tipos.CADENA;
+            }
+            String inferido = Tipos.tipoDeConstante(entrada.lexema);
+            return inferido == null ? Tipos.INDEFINIDO : inferido;
+        }
+        if (operando instanceof LlamadaFuncion) {
+            return ((LlamadaFuncion) operando).getTipoRetorno();
+        }
+        if (operando instanceof ReferenciaAtributo) {
+            return ((ReferenciaAtributo) operando).getTipo();
+        }
+        if (operando instanceof Conversion) {
+            return ((Conversion) operando).getTipoDestino();
+        }
+        if (operando instanceof AsignacionEnExpresion) {
+            return ((AsignacionEnExpresion) operando).getTipo();
+        }
+        return Tipos.INDEFINIDO;
+    }
+
+    private static String normalizarTipo(String tipo) {
+        return tipo == null ? Tipos.INDEFINIDO : tipo;
     }
 
     /*
@@ -30,12 +104,18 @@ public class ExpresionDiferida {
       que se antepone para que la lista quede en orden de codigo fuente.
      */
     public ExpresionDiferida anteponer(Object operando, char operador) {
+        String tipoIzquierdo = tipoDe(operando);
+        if (operando instanceof ExpresionDiferida && !((ExpresionDiferida) operando).esValida()) {
+            valida = false;
+        }
+
         // Un + o - no se aplana sobre un producto: el * o / queda como un solo hijo.
         if (esSuma(operador) && tieneProducto()) {
             ExpresionDiferida agrupada = new ExpresionDiferida();
             agrupada.operandos.add(operando);
             agrupada.operandos.add(this);
             agrupada.operadores.add(operador);
+            agrupada.tipo = tipoIzquierdo;
             agrupada.absorber(this);
             if (operando instanceof ExpresionDiferida) {
                 agrupada.absorber((ExpresionDiferida) operando);
@@ -44,6 +124,11 @@ public class ExpresionDiferida {
         }
         operandos.add(0, operando);
         operadores.add(0, operador);
+        // El resultado de la operacion conserva el tipo del operando izquierdo.
+        // Si ese tipo no se conoce, se mantiene el que ya traia la expresion.
+        if (!Tipos.INDEFINIDO.equals(tipoIzquierdo)) {
+            tipo = tipoIzquierdo;
+        }
         if (operando instanceof ExpresionDiferida) {
             absorber((ExpresionDiferida) operando);
         }
@@ -72,8 +157,18 @@ public class ExpresionDiferida {
     }
 
     public void absorber(ExpresionDiferida otra) {
-        if (otra != null && otra.contieneAsignacion) {
+        if (otra == null) {
+            return;
+        }
+        if (otra.contieneAsignacion) {
             contieneAsignacion = true;
+        }
+        if (!otra.valida) {
+            valida = false;
+        }
+        // Conservar el tipo: solo se completa cuando la expresion aun no lo tiene.
+        if (Tipos.INDEFINIDO.equals(tipo) && !Tipos.INDEFINIDO.equals(otra.tipo)) {
+            tipo = otra.tipo;
         }
     }
 
@@ -130,6 +225,9 @@ public class ExpresionDiferida {
         }
         if (operando instanceof ExpresionDiferida) {
             return ((ExpresionDiferida) operando).plegarAIzquierda();
+        }
+        if (operando instanceof ReferenciaAtributo) {
+            return operando.toString();
         }
         return String.valueOf(operando);
     }

@@ -35,7 +35,7 @@ actuales con llamadas del tipo `a1.m(...)` deben quedar como error esperado o mi
 
 ### Experimento realizado
 
-Comprobado con `test/TP3_SEMANTICAS/prompt-1b/`:
+Comprobado con `test/TP3_SEMANTICAS/prompt-1b-name-mangling/`:
 
 - `atributo_en_ambito_de_clase`: `x:main:ca` declarado, `x:main` solo placeholder.
 - `metodo_abre_ambito_propio`: `m:main:ca` y `p:main:ca:m`.

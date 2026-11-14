@@ -1,0 +1,12 @@
+{{ prompt 2: operandos del mismo tipo doublef }}
+prog
+doublef z;
+begin
+    z := z + 1.0;
+end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+TERCETO:(+, z:main, 1.0)
+}}

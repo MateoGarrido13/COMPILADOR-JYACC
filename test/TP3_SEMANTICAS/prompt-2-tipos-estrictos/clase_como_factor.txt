@@ -1,0 +1,16 @@
+{{ prompt 2: una clase no es un valor; no puede usarse como factor }}
+prog
+class ca
+begin
+    ulongint a;
+end;
+ca obj;
+begin
+    obj := ca;
+end
+
+{{
+--- ESPERADO ---
+ERROR:'ca' no es un valor utilizable como factor
+SIN TERCETOS
+}}

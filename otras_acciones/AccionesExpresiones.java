@@ -22,15 +22,23 @@ public class AccionesExpresiones {
     }
 
     public static void registrar(TablaAcciones tabla, Entorno entorno, Verificaciones v) {
-        tabla.registrar(Reglas.SUMA, ctx -> AccionesSemanticas.combinar(ctx, '+'));
-        tabla.registrar(Reglas.RESTA, ctx -> AccionesSemanticas.combinar(ctx, '-'));
-        tabla.registrar(Reglas.MULTIPLICACION, ctx -> AccionesSemanticas.combinar(ctx, '*'));
-        tabla.registrar(Reglas.DIVISION, ctx -> AccionesSemanticas.combinar(ctx, '/'));
+        tabla.registrar(Reglas.SUMA, ctx -> AccionesSemanticas.combinar(ctx, '+', v));
+        tabla.registrar(Reglas.RESTA, ctx -> AccionesSemanticas.combinar(ctx, '-', v));
+        tabla.registrar(Reglas.MULTIPLICACION, ctx -> AccionesSemanticas.combinar(ctx, '*', v));
+        tabla.registrar(Reglas.DIVISION, ctx -> AccionesSemanticas.combinar(ctx, '/', v));
 
         tabla.registrar(Reglas.FACTOR_ID, ctx -> {
-            EntradaTabla id = ctx.entrada(0);
-            EntradaTabla declaracion = v.verificarAlcance(id);
-            return ExpresionDiferida.deOperando(declaracion != null ? declaracion : id);
+            EntradaTabla declaracion = v.resolverIdentificador(ctx.entrada(0), ctx.getLinea(),
+                    EntradaTabla.Uso.VARIABLE,
+                    EntradaTabla.Uso.PARAMETRO,
+                    EntradaTabla.Uso.ATRIBUTO);
+            if (declaracion == null) {
+                // Ya se reporto el error; el tipo indefinido evita cascadear y
+                // la marca de invalida evita generar tercetos para el uso.
+                return ExpresionDiferida.deOperando(ctx.entrada(0), Tipos.INDEFINIDO)
+                        .marcarInvalida();
+            }
+            return ExpresionDiferida.deOperando(declaracion);
         });
 
         tabla.registrar(Reglas.FACTOR_CONSTANTE, ctx ->
@@ -43,17 +51,38 @@ public class AccionesExpresiones {
         });
 
         tabla.registrar(Reglas.FACTOR_CADENA, ctx ->
-                ExpresionDiferida.deOperando(ctx.entrada(0)));
+                ExpresionDiferida.deOperando(ctx.entrada(0), Tipos.CADENA));
 
         tabla.registrar(Reglas.ASIGNACION_EN_EXPRESION, ctx -> {
-            v.verificarAlcance(ctx.entrada(0));
+            EntradaTabla destino = v.verificarAlcance(ctx.entrada(0));
             ExpresionDiferida expresion = ctx.expresion(1);
             if (expresion == null) {
                 expresion = new ExpresionDiferida();
             }
             v.verificarAsignacionAnidada(expresion, ctx.getLinea());
-            expresion.marcarAsignacion();
-            return expresion;
+            if (destino == null) {
+                expresion.conTipo(Tipos.INDEFINIDO);
+                expresion.marcarAsignacion();
+                return expresion;
+            }
+            v.verificarAsignable(destino, ctx.getLinea());
+            String tipoDestino = entorno.tipoEfectivo(destino.tipoDato);
+            String tipoValor = entorno.tipoEfectivo(expresion.getTipo());
+            boolean tiposCompatibles = Tipos.INDEFINIDO.equals(tipoDestino)
+                    || Tipos.INDEFINIDO.equals(tipoValor)
+                    || Tipos.mismoTipo(tipoDestino, tipoValor);
+            if (!tiposCompatibles) {
+                v.errorTipos(ctx.getLinea(),
+                        "la asignación a '" + TablaSimbolos.nombreDe(destino.lexema) + "'",
+                        tipoDestino, tipoValor);
+            }
+            ExpresionDiferida resultado = ExpresionDiferida.deOperando(
+                    new AsignacionEnExpresion(destino, expresion, tipoDestino));
+            resultado.marcarAsignacion();
+            if (!expresion.esValida() || !tiposCompatibles) {
+                resultado.marcarInvalida();
+            }
+            return resultado;
         });
 
         tabla.registrar(Reglas.CONVERSION_TODF, ctx -> ctx.expresion(0));
@@ -81,8 +110,9 @@ public class AccionesExpresiones {
             v.verificarOrdenEvaluacion(ordenRaw, parametros.size(), ctx.getLinea());
 
             EntradaTabla resuelta = resolverFuncion(entorno, funcion);
+            Entorno.FuncionDeclarada firma = resuelta == null ? null : entorno.getFuncion(resuelta.lexema);
             return new LlamadaFuncion(resuelta != null ? resuelta : funcion,
-                    parametros, ordenEvaluacion, ctx.getLinea());
+                    parametros, ordenEvaluacion, ctx.getLinea(), firma, null);
         });
 
         tabla.registrar(Reglas.PARAMETRO_REAL_NOMBRADO, ctx -> {
@@ -109,10 +139,10 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.LISTA_ORDEN_EVALUACION, AccionesSemanticas::concatenarLista);
 
         tabla.registrar(Reglas.ACCESO_ATRIBUTO, ctx ->
-                ExpresionDiferida.deOperando(ctx.entrada(1)));
+                referenciaAtributo(entorno, v, ctx.entrada(0), null, ctx.entrada(1), ctx.getLinea()));
 
         tabla.registrar(Reglas.ACCESO_ATRIBUTO_PREFIJADO, ctx ->
-                ExpresionDiferida.deOperando(ctx.entrada(2)));
+                referenciaAtributo(entorno, v, ctx.entrada(0), ctx.entrada(1), ctx.entrada(2), ctx.getLinea()));
 
         tabla.registrar(Reglas.INVOCACION_METODO, ctx -> {
             List<Object> ordenEvaluacion = ctx.valor(3) == null ? null : ctx.lista(3);
@@ -125,6 +155,37 @@ public class AccionesExpresiones {
             v.verificarOrdenEvaluacion(ordenEvaluacion, ctx.getLinea());
             return ExpresionDiferida.deOperando(ctx.entrada(2));
         });
+    }
+
+    /*
+      Resuelve el atributo en la clase del objeto (o en la clase prefijada) y
+      devuelve una referencia con su tipo. Si no se puede resolver, la
+      referencia queda con tipo indefinido; la validacion completa de miembros
+      pertenece al Tema 28/31.
+     */
+    private static ReferenciaAtributo referenciaAtributo(Entorno entorno, Verificaciones v,
+            EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla atributo, int linea) {
+        EntradaTabla objetoResuelto = objeto;
+        if (objeto != null) {
+            EntradaTabla resuelto = v.verificarAlcance(objeto);
+            if (resuelto != null) {
+                objetoResuelto = resuelto;
+            }
+        }
+        String nombreClase = clasePrefijo == null ? null : clasePrefijo.lexema;
+        String nombreAtributo = atributo == null ? null : TablaSimbolos.nombreDe(atributo.lexema);
+        EntradaTabla declaracion = entorno.resolverAtributo(objetoResuelto, nombreClase, nombreAtributo);
+
+        String nombreObjeto = objetoResuelto == null ? "?" : TablaSimbolos.nombreDe(objetoResuelto.lexema);
+        StringBuilder texto = new StringBuilder(nombreObjeto);
+        if (clasePrefijo != null) {
+            texto.append(".").append(TablaSimbolos.nombreDe(clasePrefijo.lexema));
+        }
+        texto.append(".").append(nombreAtributo == null ? "?" : nombreAtributo);
+
+        String tipo = declaracion == null ? null : declaracion.tipoDato;
+        return new ReferenciaAtributo(objetoResuelto,
+                declaracion != null ? declaracion : atributo, texto.toString(), tipo);
     }
 
     /*

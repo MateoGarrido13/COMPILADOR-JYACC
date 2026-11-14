@@ -121,8 +121,9 @@ funcion: `n:main:a` y `m:main:a:b`.
 
 Se creo `test/TP3_SEMANTICAS/` con un ejecutor propio y dos subdirectorios:
 
-- `prompt-1a/`: 6 casos de resolucion por cadena (hermanos, anidados, globales, clases).
-- `prompt-1b/`: 7 casos de name mangling y apertura/cierre de ambitos.
+- `prompt-1a-ambitos/`: 6 casos de resolucion por cadena (hermanos, anidados,
+  globales, clases).
+- `prompt-1b-name-mangling/`: 7 casos de name mangling y apertura/cierre de ambitos.
 
 Resultado:
 
@@ -131,8 +132,9 @@ bash test/TP3_SEMANTICAS/ejecutar.sh
 # 13/13 casos OK
 ```
 
-Cada caso tiene un `.esperado` con reglas `SIN ERRORES`, `ERROR`, `SIMBOLO`,
-`NO_SIMBOLO`, `DECLARADO_SI`, `DECLARADO_NO` y `TERCETO`.
+Cada `.txt` incluye sus propias expectativas dentro de un comentario `{{ ... }}`
+que empieza con `--- ESPERADO ---`, con reglas `SIN ERRORES`, `ERROR`,
+`SIMBOLO`, `NO_SIMBOLO`, `DECLARADO_SI`, `DECLARADO_NO` y `TERCETO`.
 
 ## Regresion
 

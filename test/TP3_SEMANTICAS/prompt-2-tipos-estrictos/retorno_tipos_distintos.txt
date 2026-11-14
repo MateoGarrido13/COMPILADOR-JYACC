@@ -1,0 +1,15 @@
+{{ prompt 2: el valor de ret debe coincidir con el tipo de retorno }}
+prog
+doublef function f(ulongint n)
+begin
+    ret(1$ul);
+end;
+begin
+    pout({ok});
+end
+
+{{
+--- ESPERADO ---
+ERROR:Tipos incompatibles en el retorno de la función 'f': se esperaba doublef y se encontró ulongint
+SIN TERCETOS
+}}

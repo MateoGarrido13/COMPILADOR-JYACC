@@ -1,0 +1,13 @@
+{{ prompt 2: todf todavia no convierte; queda para el Tema 33 }}
+prog
+ulongint x;
+doublef z;
+begin
+    x := 1$ul;
+    z := todf(x);
+end
+
+{{
+--- ESPERADO ---
+ERROR:Tipos incompatibles en la asignación a 'z': se esperaba doublef y se encontró ulongint
+}}

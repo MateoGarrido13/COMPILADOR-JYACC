@@ -26,3 +26,13 @@ begin
 end;
 begin
 end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+DECLARADO_SI:ca:main:a
+DECLARADO_SI:x:main:a:ca
+DECLARADO_SI:m:main:a:ca
+DECLARADO_SI:p:main:a:ca:m
+NO_SIMBOLO:ca:main
+}}

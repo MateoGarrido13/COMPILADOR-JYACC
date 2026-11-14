@@ -29,6 +29,9 @@ public class GeneradorTercetos {
     private final Reporte reporte;
     private final Deque<Pendiente> pila = new ArrayDeque<>(); // pila de saltos pendientes
     private final Deque<String> iniciosRepeat = new ArrayDeque<>(); // pila de etiquetas de inicio de repeat
+    // Numero centinela para un salto que no debe emitirse porque la condicion ya
+    // reporto un error. Mantiene balanceada la pila de saltos en ifs anidados.
+    private static final int SALTO_INVALIDO = -1;
 
     public GeneradorTercetos(Reporte reporte) {
         this.reporte = reporte;
@@ -78,10 +81,15 @@ public class GeneradorTercetos {
 
     private void generarAsignacion(Reduccion reduccion) {
         Object destino = reduccion.resultado();
-        if (!(destino instanceof EntradaTabla)) {
+        // La accion semantica devuelve null cuando la asignacion ya reporto un
+        // error (destino no asignable, tipos incompatibles o expresion invalida).
+        if (destino == null) {
+            return;
+        }
+        if (!(destino instanceof EntradaTabla) && !(destino instanceof ReferenciaAtributo)) {
             destino = reduccion.operando(0);
         }
-        if (!(destino instanceof EntradaTabla)) {
+        if (!(destino instanceof EntradaTabla) && !(destino instanceof ReferenciaAtributo)) {
             reporte.error(reduccion.getLinea(), "No se puede asignar un valor a una cte o variable sin referencia");
             return;
         }
@@ -139,7 +147,8 @@ public class GeneradorTercetos {
       una ExpresionDiferida (que genera tercetos intermedios) o un Integer.
      */
     private Object emitirValor(Object valor, int linea) {
-        if (valor instanceof EntradaTabla || valor instanceof Integer) {
+        if (valor instanceof EntradaTabla || valor instanceof Integer
+                || valor instanceof ReferenciaAtributo) {
             return valor;
         }
         if (valor instanceof ExpresionDiferida) {
@@ -151,6 +160,9 @@ public class GeneradorTercetos {
     private void generarCondicionIf(Reduccion reduccion) {
         Integer comparacion = emitirComparacion(reduccion.operando(0), reduccion.getLinea());
         if (comparacion == null) {
+            // La condicion ya reporto un error: se apila un BF centinela para
+            // que los cierres del if no emitan saltos ni etiquetas.
+            pila.push(new Pendiente(SALTO_INVALIDO, false));
             return;
         }
         int bf = lista.crear("BF", comparacion, null);
@@ -188,6 +200,10 @@ public class GeneradorTercetos {
     }
 
     private Integer emitirComparacion(Object valor, int linea) {
+        if (valor == null) {
+            // CONDICION devuelve null cuando ya reporto un error de tipos.
+            return null;
+        }
         if (!(valor instanceof Object[]) || ((Object[]) valor).length < 3) {
             reporte.error(linea, "Condicion sin operando");
             return null;
@@ -209,6 +225,12 @@ public class GeneradorTercetos {
         if (bf == null) {
             return;
         }
+        if (bf.numero == SALTO_INVALIDO) {
+            // No hay BF que completar; se apila el BI centinela que cerrara la
+            // sentencia, sin etiquetas ni saltos.
+            pila.push(new Pendiente(SALTO_INVALIDO, true));
+            return;
+        }
         String etiquetaElse = lista.reservarEtiqueta();
         lista.completar(bf.numero, 2, etiquetaElse);
         int bi = lista.crear("BI", null, null);
@@ -221,7 +243,7 @@ public class GeneradorTercetos {
        mismo cierre para no dejar el BF o el BI vacios. */
     private void cerrarSalto(Reduccion reduccion) {
         Pendiente pendiente = desapilar(reduccion.getLinea()); // paso la linea por si hay error 
-        if (pendiente == null) {
+        if (pendiente == null || pendiente.numero == SALTO_INVALIDO) {
             return;
         }
 
@@ -247,8 +269,14 @@ public class GeneradorTercetos {
 
     // Devuelve la EntradaTabla hoja o el numero del terceto que resume la expresion.
     private Object emitir(Object valor, int linea) {
-        if (valor instanceof EntradaTabla || valor instanceof Integer) {
+        if (valor instanceof EntradaTabla || valor instanceof Integer
+                || valor instanceof ReferenciaAtributo) {
             return valor;
+        }
+        if (valor instanceof AsignacionEnExpresion) {
+            // El terceto de la asignacion interna es del Tema 17; por ahora la
+            // expresion vale lo mismo que su lado derecho.
+            return emitir(((AsignacionEnExpresion) valor).valor, linea);
         }
         if (valor instanceof LlamadaFuncion) {
             LlamadaFuncion llamada = (LlamadaFuncion) valor;
@@ -263,6 +291,10 @@ public class GeneradorTercetos {
             return null;
         }
         ExpresionDiferida expresion = (ExpresionDiferida) valor;
+        if (!expresion.esValida()) {
+            // La expresion ya reporto un error; no se emite codigo intermedio.
+            return null;
+        }
         List<Object> operandos = expresion.getOperandos();
         List<Character> operadores = expresion.getOperadores();
         if (operandos.isEmpty()) {

@@ -52,11 +52,71 @@ public class Verificaciones {
         return null;
     }
 
+    /*
+      Resuelve un identificador usado como valor y exige que su uso sea uno de
+      los permitidos. Se usa en los factores para que una funcion o una clase
+      no puedan aparecer donde el lenguaje espera una variable.
+     */
+    public EntradaTabla resolverIdentificador(EntradaTabla id, int linea,
+            EntradaTabla.Uso... usosPermitidos) {
+        EntradaTabla declaracion = verificarAlcance(id);
+        if (declaracion == null) {
+            return null;
+        }
+        for (EntradaTabla.Uso uso : usosPermitidos) {
+            if (declaracion.uso == uso) {
+                return declaracion;
+            }
+        }
+        reporte.error(linea, "'" + TablaSimbolos.nombreDe(declaracion.lexema)
+                + "' no es un valor utilizable como factor");
+        return null;
+    }
+
     public void reportar(Reglas regla, int linea) {
         if (regla == null) {
             return;
         }
         reporte.error(linea, regla.getDescripcion());
+    }
+
+    /*
+      Canal unico de errores de tipos. contexto describe la construccion
+      (operador, asignacion, condicion, retorno) y esperado/obtenido son los
+      tipos ya normalizados con Entorno.tipoEfectivo.
+     */
+    public void errorTipos(int linea, String contexto, String esperado, String obtenido) {
+        reporte.error(linea, "Tipos incompatibles en " + contexto
+                + ": se esperaba " + texto(esperado) + " y se encontró " + texto(obtenido));
+    }
+
+    public void errorTipoNoDeclarado(String tipo, int linea) {
+        reporte.error(linea, "tipo no declarado '" + tipo + "'");
+    }
+
+    public void errorRetornoFueraDeFuncion(int linea) {
+        reporte.error(linea, "Sentencia ret fuera de una funcion");
+    }
+
+    // El destino de una asignacion debe ser variable, parametro o atributo.
+    public boolean esAsignable(EntradaTabla destino) {
+        return destino != null && destino.declarado
+                && (destino.uso == EntradaTabla.Uso.VARIABLE
+                || destino.uso == EntradaTabla.Uso.PARAMETRO
+                || destino.uso == EntradaTabla.Uso.ATRIBUTO);
+    }
+
+    public void verificarAsignable(EntradaTabla destino, int linea) {
+        if (destino == null || !destino.declarado) {
+            return;
+        }
+        if (!esAsignable(destino)) {
+            reporte.error(linea, "'" + TablaSimbolos.nombreDe(destino.lexema) + "' no es asignable");
+        }
+    }
+
+    private static String texto(String tipo) {
+        return tipo == null || tipo.isEmpty() ? Tipos.INDEFINIDO : tipo;
     }
 
     // Tema 17: ID = (expr) no puede contener otra asignacion. 

@@ -1,9 +1,11 @@
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
   Estado semantico que se va armando mientras el parser reduce.
@@ -361,6 +363,105 @@ public class Entorno {
     public boolean esClase(String nombre) {
         EntradaTabla entrada = resolverTipo(nombre);
         return entrada != null && entrada.uso == EntradaTabla.Uso.CLASE;
+    }
+
+    /*
+      Tipo que participa en una operacion. Un enumerado vale por su tipo base;
+      una clase conserva su clave completa para que dos clases distintas no se
+      confundan. Tipos.tipoEfectivo queda como normalizacion para los basicos.
+     */
+    public String tipoEfectivo(String tipo) {
+        if (tipo == null) {
+            return Tipos.INDEFINIDO;
+        }
+        EntradaTabla entrada = resolverTipo(tipo);
+        if (entrada != null) {
+            if (entrada.uso == EntradaTabla.Uso.TIPO) {
+                TipoEnumerado enumerado = enumerados.get(entrada.lexema);
+                if (enumerado != null && enumerado.tipoBase != null) {
+                    return enumerado.tipoBase;
+                }
+            }
+            if (entrada.uso == EntradaTabla.Uso.CLASE) {
+                return entrada.lexema;
+            }
+        }
+        return Tipos.tipoEfectivo(tipo);
+    }
+
+    /*
+      Devuelve el atributo declarado en la clase indicada por el prefijo o, si
+      no hay prefijo, en la clase del objeto; en ambos casos busca tambien en las
+      bases. No reporta errores: el motor de tipos solo necesita el tipo y la
+      validacion completa de miembros es de los temas 28/31. Devuelve null si no
+      se puede resolver.
+     */
+    public EntradaTabla resolverAtributo(EntradaTabla objeto, String nombreClase, String nombreAtributo) {
+        if (nombreAtributo == null) {
+            return null;
+        }
+        // Con prefijo explicito (objeto.Clase.atributo) manda la clase prefijada:
+        // asi `a1.padre.y` busca en `padre` y no en la clase del objeto. Sin
+        // prefijo se parte de la clase del objeto.
+        ClaseDeclarada clase = nombreClase == null || nombreClase.isEmpty()
+                ? claseDeObjeto(objeto)
+                : clasePorNombre(nombreClase);
+        if (clase == null) {
+            return null;
+        }
+        return buscarAtributo(clase, TablaSimbolos.nombreDe(nombreAtributo), new HashSet<>());
+    }
+
+    private ClaseDeclarada claseDeObjeto(EntradaTabla objeto) {
+        if (objeto == null) {
+            return null;
+        }
+        ClaseDeclarada clase = getClase(objeto.lexema);
+        if (clase != null) {
+            return clase;
+        }
+        clase = getClase(objeto.tipoDato);
+        if (clase != null) {
+            return clase;
+        }
+        return clasePorNombre(objeto.tipoDato);
+    }
+
+    private ClaseDeclarada clasePorNombre(String nombre) {
+        if (nombre == null) {
+            return null;
+        }
+        EntradaTabla entrada = resolverTipo(nombre);
+        if (entrada != null && entrada.uso == EntradaTabla.Uso.CLASE) {
+            ClaseDeclarada clase = getClase(entrada.lexema);
+            if (clase != null) {
+                return clase;
+            }
+        }
+        String buscado = TablaSimbolos.nombreDe(nombre);
+        for (ClaseDeclarada clase : clases.values()) {
+            if (clase.nombre.equals(buscado)) {
+                return clase;
+            }
+        }
+        return null;
+    }
+
+    private EntradaTabla buscarAtributo(ClaseDeclarada clase, String nombre, Set<String> visitadas) {
+        if (clase == null || !visitadas.add(clase.clave())) {
+            return null;
+        }
+        EntradaTabla entrada = tablaSimbolos.buscarIdentificador(nombre, clase.ambitoPropio);
+        if (entrada != null && entrada.declarado && entrada.uso == EntradaTabla.Uso.ATRIBUTO) {
+            return entrada;
+        }
+        for (String base : clase.heredaDe) {
+            EntradaTabla heredada = buscarAtributo(clasePorNombre(base), nombre, visitadas);
+            if (heredada != null) {
+                return heredada;
+            }
+        }
+        return null;
     }
 
     // Acepta un nombre pelado o una clave ya resuelta nombre:ambito.

@@ -1,12 +1,11 @@
 {{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
 Tercetos:
-1. (:=, x:main:cb:m, n:main:cb:m)
+  (ninguno)
 Variables de la tabla de simbolos (declaradas, sin palabras clave):
 - ca:main -> ca, clase
 - x:main:ca -> ulongint, atributo
 - cb:main -> cb, clase
-- m:main:cb -> ulongint, metodo
-- n:main:cb:m -> ulongint, parametro
+- x:main:cb -> ulongint, atributo
 }}
 
 prog
@@ -16,11 +15,15 @@ begin
 end;
 class cb
 begin
-    ulongint m(ulongint n)
-    begin
-        x := n;
-        ret(n);
-    end;
+    ulongint x;
 end;
 begin
 end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+DECLARADO_SI:x:main:ca
+DECLARADO_SI:x:main:cb
+NO_SIMBOLO:x:main
+}}

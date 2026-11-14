@@ -1,32 +1,32 @@
 {{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
 Tercetos:
-1. (:=, global:main, p:main:ca:m)
-2. (:=, global:main, q:main:f)
-3. (:=, global:main, 1$ul)
+1. (:=, x:main:ca, p:main:ca:m)
 Variables de la tabla de simbolos (declaradas, sin palabras clave):
-- global:main -> ulongint, variable
 - ca:main -> ca, clase
+- x:main:ca -> ulongint, atributo
 - m:main:ca -> ulongint, metodo
 - p:main:ca:m -> ulongint, parametro
-- f:main -> ulongint, funcion
-- q:main:f -> ulongint, parametro
 }}
 
 prog
-ulongint global;
 class ca
 begin
+    ulongint x;
     ulongint m(ulongint p)
     begin
-        global := p;
+        x := p;
         ret(p);
     end;
 end;
-ulongint function f(ulongint q)
 begin
-    global := q;
-    ret(q);
-end;
-begin
-    global := 1$ul;
 end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+DECLARADO_SI:ca:main
+DECLARADO_SI:x:main:ca
+DECLARADO_SI:m:main:ca
+DECLARADO_SI:p:main:ca:m
+NO_SIMBOLO:p:main:ca
+}}

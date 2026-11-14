@@ -45,6 +45,9 @@ public class Terceto {
         if (operando instanceof Integer) {
             return "[" + operando + "]";
         }
+        if (operando instanceof ReferenciaAtributo) {
+            return operando.toString();
+        }
         return "?";
     }
 }

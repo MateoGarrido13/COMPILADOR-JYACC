@@ -1,0 +1,12 @@
+{{ prompt 2: los operandos de + deben tener el mismo tipo }}
+prog
+ulongint x;
+begin
+    x := x + 1.0;
+end
+
+{{
+--- ESPERADO ---
+ERROR:Tipos incompatibles en el operador '+': se esperaba ulongint y se encontró doublef
+SIN TERCETOS
+}}

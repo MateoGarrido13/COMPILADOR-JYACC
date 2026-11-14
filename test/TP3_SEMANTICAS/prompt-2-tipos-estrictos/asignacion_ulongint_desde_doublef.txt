@@ -1,0 +1,13 @@
+{{ prompt 2: no hay conversion implicita doublef -> ulongint }}
+prog
+ulongint x;
+doublef z;
+begin
+    x := z;
+end
+
+{{
+--- ESPERADO ---
+ERROR:Tipos incompatibles en la asignación a 'x': se esperaba ulongint y se encontró doublef
+SIN TERCETOS
+}}

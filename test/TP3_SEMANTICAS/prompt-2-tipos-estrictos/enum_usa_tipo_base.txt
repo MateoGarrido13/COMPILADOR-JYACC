@@ -1,0 +1,14 @@
+{{ prompt 2: un enumerado participa con su tipo base; sigue sin haber promociones }}
+prog
+typedef pares = [2$ul, 4$ul];
+pares p;
+doublef z;
+begin
+    p := 2$ul;
+    z := p;
+end
+
+{{
+--- ESPERADO ---
+ERROR:Tipos incompatibles en la asignación a 'z': se esperaba doublef y se encontró ulongint
+}}

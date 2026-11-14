@@ -1,0 +1,16 @@
+{{ prompt 2: una funcion no es un valor; no puede usarse como factor }}
+prog
+ulongint function f(ulongint n)
+begin
+    ret(n);
+end;
+ulongint x;
+begin
+    x := f;
+end
+
+{{
+--- ESPERADO ---
+ERROR:'f' no es un valor utilizable como factor
+SIN TERCETOS
+}}

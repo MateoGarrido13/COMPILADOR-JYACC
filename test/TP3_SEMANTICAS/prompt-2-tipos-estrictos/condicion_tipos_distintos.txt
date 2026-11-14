@@ -1,0 +1,14 @@
+{{ prompt 2: los operandos de la condicion deben tener el mismo tipo }}
+prog
+ulongint x;
+begin
+    if (x > 1.0)
+        pout({mayor});
+    end_if;
+end
+
+{{
+--- ESPERADO ---
+ERROR:Tipos incompatibles en la condición: se esperaba ulongint y se encontró doublef
+SIN TERCETOS
+}}

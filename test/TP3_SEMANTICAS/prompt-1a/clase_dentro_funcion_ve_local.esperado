@@ -1,5 +1,0 @@
-SIN ERRORES
-DECLARADO_SI:externa:main:contenedora
-DECLARADO_SI:ca:main:contenedora
-DECLARADO_SI:m:main:contenedora:ca
-DECLARADO_SI:p:main:contenedora:ca:m

@@ -1,0 +1,27 @@
+{{ prompt 2: todos los operadores aceptan operandos del mismo tipo }}
+prog
+ulongint x, y;
+doublef z, w;
+begin
+    x := x + y;
+    z := z + w;
+    x := x - 1$ul;
+    z := z - 1.0;
+    x := x * 2$ul;
+    z := z * 2.0;
+    x := x / 2$ul;
+    z := z / 2.0;
+end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+TERCETO:(+, x:main, y:main)
+TERCETO:(+, z:main, w:main)
+TERCETO:(-, x:main, 1$ul)
+TERCETO:(-, z:main, 1.0)
+TERCETO:(*, x:main, 2$ul)
+TERCETO:(*, z:main, 2.0)
+TERCETO:(/, x:main, 2$ul)
+TERCETO:(/, z:main, 2.0)
+}}

@@ -1,0 +1,23 @@
+{{ prompt 2: el prefijo de clase decide donde se busca el atributo }}
+prog
+class padre
+begin
+    doublef y;
+end;
+class hija
+begin
+    ulongint y;
+    extends padre;
+end;
+hija a1;
+begin
+    a1.padre.y := 1.0;
+    a1.hija.y := 2$ul;
+end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+TERCETO:(:=, a1.padre.y, 1.0)
+TERCETO:(:=, a1.hija.y, 2$ul)
+}}

@@ -1,0 +1,36 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (:=, externa:main:a, n:main:a)
+2. (:=, global:main, m:main:a:b)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- global:main -> ulongint, variable
+- a:main -> ulongint, funcion
+- n:main:a -> ulongint, parametro
+- externa:main:a -> ulongint, variable
+- b:main:a -> ulongint, funcion
+- m:main:a:b -> ulongint, parametro
+}}
+
+prog
+ulongint global;
+ulongint function a(ulongint n)
+    ulongint externa;
+    ulongint function b(ulongint m)
+    begin
+        externa := n;
+        global := m;
+        ret(externa);
+    end;
+begin
+    ret(n);
+end;
+begin
+end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+DECLARADO_SI:externa:main:a
+DECLARADO_SI:global:main
+DECLARADO_SI:m:main:a:b
+}}

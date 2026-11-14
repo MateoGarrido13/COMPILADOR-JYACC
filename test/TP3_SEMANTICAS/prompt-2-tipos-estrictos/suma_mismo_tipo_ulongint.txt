@@ -1,0 +1,12 @@
+{{ prompt 2: operandos del mismo tipo ulongint }}
+prog
+ulongint x;
+begin
+    x := x + 1$ul;
+end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+TERCETO:(+, x:main, 1$ul)
+}}

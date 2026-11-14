@@ -5,7 +5,8 @@ Estado actual:
 - Prompt 0: ejecutado. Resultado en `docs/PROMPT-0.md`.
 - Prompt 1A: ejecutado. Resultado en `docs/PROMPT-1A.md`.
 - Prompt 1B: ejecutado. Resultado en `docs/PROMPT-1B.md`.
-- Siguiente: Prompt 2 (motor de tipos).
+- Prompt 2: ejecutado. Resultado en `docs/PROMPT-2.md`.
+- Siguiente: Prompt 2B (codegen base).
 
 ### Prompt 0 — Baseline (ejecutado)
 Estás trabajando en /home/rafael/Documents/Compiladores/COMPILADOR/TP3.
@@ -166,7 +167,7 @@ nombre en el ámbito padre correcto. La lista original de aceptación escribía
 `n:main` y `m:main:a`; los parámetros se lexan dentro de la función, así que
 las claves correctas son `n:main:a` y `m:main:a:b`.
 
-### Prompt 2 — Motor de tipos y prohibición de conversiones implícitas
+### Prompt 2 — Motor de tipos y prohibición de conversiones implícitas (ejecutado)
 Implementá el chequeo de tipos de TP3. Regla central: no hay conversiones implícitas.
 Dos operandos de una operación deben tener el mismo tipo. La única conversión permitida
 es la explícita todf del Tema 33, que se implementa después.
@@ -233,6 +234,13 @@ Criterio de aceptación:
 - z := z + 1.0; -> válido.
 - if (x > 1.0) -> error.
 - No debe haber promociones automáticas en ningún operador.
+
+Nota de ejecución (ver `docs/PROMPT-2.md`): los casos viven en
+`test/TP3_SEMANTICAS/prompt-2-tipos-estrictos/`. `FACTOR_ID` solo acepta
+variables, parámetros y atributos; una función o una clase usada como factor es
+error. El acceso con prefijo de clase (`objeto.Clase.atributo`) resuelve el
+atributo en la clase prefijada. `Tipos.tipoEfectivo` normaliza básicos y
+`Entorno.tipoEfectivo` resuelve enumerados y clases.
 
 ### Prompt 2B — Codegen base: pout, ret, delimitadores, llamadas y conversiones
 Implementá la generación de código intermedio base que falta. No implementes todavía

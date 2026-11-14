@@ -1,4 +1,0 @@
-ERROR:Error de ambito 'x' no es alcanzable
-DECLARADO_SI:x:main:f:ca
-DECLARADO_NO:x:main:f:cb:m
-DECLARADO_SI:local_f:main:f

@@ -1,0 +1,12 @@
+{{ prompt 2: el tipo de una declaracion debe existir }}
+prog
+fantasma f;
+begin
+    pout({ok});
+end
+
+{{
+--- ESPERADO ---
+ERROR:tipo no declarado 'fantasma:main'
+SIN TERCETOS
+}}

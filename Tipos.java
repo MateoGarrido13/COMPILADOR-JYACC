@@ -33,6 +33,39 @@ public class Tipos {
         return ULONGINT.equals(normalizado) || DOUBLEF.equals(normalizado);
     }
 
+    public static boolean esNumerico(String tipo) {
+        return esEntero(tipo) || esFlotante(tipo);
+    }
+
+    public static boolean esEntero(String tipo) {
+        return ULONGINT.equals(tipo);
+    }
+
+    public static boolean esFlotante(String tipo) {
+        return DOUBLEF.equals(tipo);
+    }
+
+    // No hay promociones: dos tipos son compatibles solo si son exactamente iguales.
+    public static boolean mismoTipo(String a, String b) {
+        return a != null && a.equals(b);
+    }
+
+    /*
+      Normalizacion de tipos que no necesita la tabla de simbolos. Los basicos
+      se devuelven tal cual y null pasa a INDEFINIDO.
+
+      La resolucion de tipos de usuario (enumerado -> tipo base, clase -> su
+      clave completa) vive en Entorno.tipoEfectivo, porque requiere consultar
+      la tabla de simbolos y los ambitos. Este helper es el fallback para los
+      basicos.
+     */
+    public static String tipoEfectivo(String tipo) {
+        if (tipo == null) {
+            return INDEFINIDO;
+        }
+        return tipo;
+    }
+
     // Deduce el tipo de una constante a partir de su forma lexica. 
     public static String tipoDeConstante(String lexema) {
         if (lexema == null) {

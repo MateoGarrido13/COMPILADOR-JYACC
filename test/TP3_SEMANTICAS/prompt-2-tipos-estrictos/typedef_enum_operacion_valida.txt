@@ -1,0 +1,15 @@
+{{ prompt 2: un enumerado opera con su tipo base }}
+prog
+typedef estado = [0$ul, 1$ul, 2$ul];
+estado s1, s2;
+begin
+    s1 := 0$ul;
+    s2 := 1$ul;
+    s1 := s1 + 1$ul;
+end
+
+{{
+--- ESPERADO ---
+SIN ERRORES
+TERCETO:(+, s1:main, 1$ul)
+}}

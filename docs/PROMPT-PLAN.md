@@ -40,17 +40,21 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - No borrar entradas al cerrar; solo restaurar `AMBITO_ACTUAL`.
 - Actualizar `Entorno`, `Verificaciones` y acciones para usar claves con ambito.
 - Documentar D1, D2 y D5 en `docs/PROMPT-1B.md`.
-- Resultado: `docs/PROMPT-1B.md`. Casos en `test/TP3_SEMANTICAS/prompt-1a/` y
-  `prompt-1b/`.
+- Resultado: `docs/PROMPT-1B.md`. Casos en
+  `test/TP3_SEMANTICAS/prompt-1a-ambitos/` y `prompt-1b-name-mangling/`.
 
-## Prompt 2 - Igualdad estricta de tipos
+## Prompt 2 - Igualdad estricta de tipos (ejecutado)
 
 - No conversiones implicitas.
 - `ulongint` solo con `ulongint`; `doublef` solo con `doublef`; objetos solo con la misma
   clase o estructura compatible (D4).
 - Chequear asignacion, operadores aritmeticos, comparaciones, condiciones, `ret`, `pout`
   y parametros reales.
+- `FACTOR_ID` restringido a variables, parametros y atributos.
+- Resolucion de atributos heredados con prefijo de clase.
 - Documentar en `docs/PROMPT-2.md`.
+- Resultado: `docs/PROMPT-2.md`. Casos en
+  `test/TP3_SEMANTICAS/prompt-2-tipos-estrictos/`.
 
 ## Prompt 2B - Expresiones con tipo y tercetos
 

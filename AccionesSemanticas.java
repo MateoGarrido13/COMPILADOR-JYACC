@@ -26,11 +26,32 @@ public class AccionesSemanticas {
     }
 
     //Acumula 'termino OP expresion' sin agrupar; el plegado es posterior.
-    public static Object combinar(ContextoRegla ctx, char operador) {
+    public static Object combinar(ContextoRegla ctx, char operador, Verificaciones v) {
         ExpresionDiferida derecha = ctx.expresion(1);
         if (derecha == null) {
             derecha = new ExpresionDiferida();
         }
-        return derecha.anteponer(ctx.valor(0), operador);
+        Entorno entorno = v.getEntorno();
+        String tipoIzquierdo = entorno.tipoEfectivo(ExpresionDiferida.tipoDe(ctx.valor(0)));
+        String tipoDerecho = entorno.tipoEfectivo(derecha.getTipo());
+
+        ExpresionDiferida resultado = derecha.anteponer(ctx.valor(0), operador);
+
+        // Si falta un tipo, no se sigue chequeando para no cascadear errores.
+        if (Tipos.INDEFINIDO.equals(tipoIzquierdo) || Tipos.INDEFINIDO.equals(tipoDerecho)) {
+            return resultado.conTipo(Tipos.INDEFINIDO);
+        }
+        if (!Tipos.mismoTipo(tipoIzquierdo, tipoDerecho)) {
+            v.errorTipos(ctx.getLinea(), "el operador '" + operador + "'",
+                    tipoIzquierdo, tipoDerecho);
+            return resultado.conTipo(Tipos.INDEFINIDO).marcarInvalida();
+        }
+        // cadena solo es valida en pout y en asignaciones de cadena.
+        if (Tipos.CADENA.equals(tipoIzquierdo) || !Tipos.esNumerico(tipoIzquierdo)) {
+            v.errorTipos(ctx.getLinea(), "el operador '" + operador + "'",
+                    "un operando numerico", tipoIzquierdo);
+            return resultado.conTipo(Tipos.INDEFINIDO).marcarInvalida();
+        }
+        return resultado.conTipo(tipoIzquierdo);
     }
 }

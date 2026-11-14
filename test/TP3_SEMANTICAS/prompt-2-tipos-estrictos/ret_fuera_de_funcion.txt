@@ -1,0 +1,12 @@
+{{ prompt 2: ret solo tiene sentido dentro de una funcion }}
+prog
+ulongint x;
+begin
+    ret(x);
+end
+
+{{
+--- ESPERADO ---
+ERROR:Sentencia ret fuera de una funcion
+SIN TERCETOS
+}}
