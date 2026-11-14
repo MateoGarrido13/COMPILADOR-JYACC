@@ -14,9 +14,9 @@ Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
 | Último commit | `746c60d` — generacion de codigo base |
-| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16 |
-| Prompt en curso / siguiente | **13 — `repeat while`** |
-| Commits del plan completados | 7 de 15 |
+| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13 |
+| Prompt en curso / siguiente | **17 — Asignación dentro de expresiones** |
+| Commits del plan completados | 8 de 15 |
 
 ### Reglas de granularidad para commits
 
@@ -41,8 +41,8 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 2B | Codegen base (tercetos, `pout`, `ret`, `todf`, `PAR`/`CALL`/`CALLMET`) | ✅ Ejecutado | `docs/PROMPT-2B.md` | `prompt-2b-codegen-base/` |
 | **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ✅ Ejecutado | `docs/PROMPT-6-8.md` | `test/tp1/verificacion_constantes_*` |
 | 9 y 16 | Cadenas y comentarios | ✅ **Ejecutado (validado por lexico)** | `docs/PROMPT-9-16.md` | `test/tp1/verificaciones_comentarios_cadenas/` |
-| 13 | `repeat while` — condiciones booleanas y tipo | ❌ Pendiente | `docs/PROMPT-13.md` (por crear) | `test/TP3 _y_TP4/ITERACION/` |
-| 17 | Asignación dentro de expresiones | ❌ Pendiente | `docs/PROMPT-17.md` (por crear) | `test/tp2/verificacion_r17_asig_expresiones/` |
+| 13 | `repeat while` — condiciones booleanas y tipo | ✅ **Ejecutado** | `docs/PROMPT-13.md` | `test/TP3 _y_TP4/ITERACION/` |
+| 17 | Asignación dentro de expresiones | ⏳ **Siguiente** | `docs/PROMPT-17.md` (por crear) | `test/tp2/verificacion_r17_asig_expresiones/` |
 | 33 | Conversión `todf` — restricción de origen | ❌ Pendiente | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
 | 19 | Parámetros reales y orden | ❌ Pendiente | `docs/PROMPT-19.md` (por crear) | `test/tp2/verificacion_r19_param_reales/` |
 | 23 | Enumeraciones | ❌ Pendiente | `docs/PROMPT-23.md` (por crear) | `test/tp2/verificacion_r23_enums/` |
@@ -52,9 +52,9 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 
 ### Próximos a implementar (orden del plan)
 
-1. **Prompt 13 — `repeat while`** (siguiente inmediato): condición obligatoria y booleana por comparación de tipos; integrar todas las sentencias ejecutables.
-2. **Prompt 17 — Asignación dentro de expresiones**: generar asignación interna y chequear tipos.
-3. **Prompt 33 — Conversión `todf`**: restringir el origen a `ulongint` o enum con base `ulongint`.
+1. **Prompt 17 — Asignación dentro de expresiones** (siguiente inmediato): generar asignación interna y chequear tipos.
+2. **Prompt 33 — Conversión `todf`**: restringir el origen a `ulongint` o enum con base `ulongint`.
+3. **Prompt 19 — Parámetros reales y orden**: chequear tipos de parámetros reales contra formales.
 
 ---
 
@@ -66,7 +66,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 |-------|--------|-------------|-----------|
 | Tipado de constantes en el léxico | 6 y 8 | `AccionConstanteEntera` y `AccionConstanteFloat` ahora insertan las constantes con `tipoDato` (`ulongint` o `doublef`) y `uso = CONSTANTE` durante el análisis léxico, usando `insertarConstante`. Resuelto. | Alta (completado) |
 | Validación de cadenas y comentarios | 9 y 16 | `AccionCadena.java` ya inserta cadenas con tipo `cadena`, no permite saltos de línea y descarta comentarios `{{...}}`. Validado por el lexico. | Media (completado) |
-| Condiciones booleanas en `repeat while` | 13 | Falta integrar chequeos de tipos de condiciones exigidos por TP03. | Media |
+| Condiciones booleanas en `repeat while` | 13 | Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con todas las sentencias ejecutables. Todos los 11 casos de ITERACION pasan. | Media (completado) |
 | Asignación interna en expresiones | 17 | Se reconoce la sintaxis y se detecta el anidamiento, pero no se genera la asignación interna ni se chequean sus tipos. | Media |
 | Restricción de origen en `todf` | 33 | `todf` ya emite terceto y devuelve `doublef`, pero falta restringir el origen a `ulongint` o enum con base `ulongint`, y rechazar conversiones vacías, de `doublef` o de objetos. | Media |
 | Tipos de parámetros reales | 19 | Se verifica cantidad, orden y ubicación del formal, pero falta chequear que los tipos de los parámetros reales coincidan con los formales. | Media |

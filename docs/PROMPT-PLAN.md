@@ -84,11 +84,12 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Documentar en `docs/PROMPT-9-16.md`.
 - Resultado: `docs/PROMPT-9-16.md`. Validado por el lexico en `AccionCadena.java`: cadenas con tipo `cadena`, comentarios `{{...}}` descartados, sin saltos de línea en cadenas. No requiere cambios de código.
 
-## Prompt 13 - `repeat while`
+## Prompt 13 - `repeat while` (ejecutado)
 
 - Condicion obligatoria y booleana por comparacion de tipos.
 - Integrar todas las sentencias ejecutables.
 - Documentar en `docs/PROMPT-13.md`.
+- Resultado: `docs/PROMPT-13.md`. Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con asignaciones, pout, if/else, repeat anidado, invocaciones y ret. Todos los 11 casos de ITERACION pasan.
 
 ## Prompt 17 - Asignacion dentro de expresiones
 
