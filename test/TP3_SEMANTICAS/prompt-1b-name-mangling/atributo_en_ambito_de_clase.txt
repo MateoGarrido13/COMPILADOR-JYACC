@@ -17,9 +17,3 @@ begin
     a1.x := 3$ul;
 end
 
-{{
---- ESPERADO ---
-DECLARADO_SI:x:main:ca
-DECLARADO_NO:x:main
-DECLARADO_SI:ca:main
-}}

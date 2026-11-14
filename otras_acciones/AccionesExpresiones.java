@@ -21,6 +21,73 @@ public class AccionesExpresiones {
         return new ParametroReal(null, ExpresionDiferida.deOperando(valor), linea);
     }
 
+    /*
+      Envuelve cada valor de la lista de parametros reales en un ParametroReal.
+      Si ya viene envuelto (parametro nombrado) se conserva.
+     */
+    private static List<ParametroReal> envolverParametros(List<Object> reales, int linea) {
+        List<ParametroReal> parametros = new ArrayList<>();
+        if (reales == null) {
+            return parametros;
+        }
+        for (Object valor : reales) {
+            parametros.add((ParametroReal) envolverParametro(valor, linea));
+        }
+        return parametros;
+    }
+
+    /*
+      Completa cada ParametroReal con la EntradaTabla del formal que le
+      corresponde. Devuelve null por parametro cuando no se pudo resolver.
+     */
+    private static List<ParametroReal> asignarFormales(Verificaciones v,
+            Entorno.FuncionDeclarada firma, List<ParametroReal> parametros, int linea) {
+        List<ParametroReal> resultado = new ArrayList<>();
+        for (int i = 0; i < parametros.size(); i++) {
+            ParametroReal parametro = parametros.get(i);
+            EntradaTabla formal = v.formalDe(firma, parametro, i, linea);
+            resultado.add(parametro.conFormal(formal));
+        }
+        return resultado;
+    }
+
+    private static boolean formalesCompletos(List<ParametroReal> parametros) {
+        for (ParametroReal parametro : parametros) {
+            if (parametro.formal == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+      Arma una invocacion de metodo. La convencion de codigo intermedio es
+      (CALLMET, objeto, metodo), precedida por los PAR de los parametros.
+     */
+    private static LlamadaFuncion llamadaMetodo(Entorno entorno, Verificaciones v,
+            EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla metodo,
+            List<Object> parametrosReales, List<Object> ordenRaw, int linea) {
+        EntradaTabla objetoResuelto = objeto == null ? null : v.verificarAlcance(objeto);
+        String nombreClase = clasePrefijo == null ? null : clasePrefijo.lexema;
+        String nombreMetodo = metodo == null ? null : TablaSimbolos.nombreDe(metodo.lexema);
+        Entorno.FuncionDeclarada firma = entorno.buscarMetodo(objetoResuelto, nombreClase, nombreMetodo);
+
+        List<ParametroReal> parametros = envolverParametros(parametrosReales, linea);
+        List<ParametroReal> conFormales = asignarFormales(v, firma, parametros, linea);
+        boolean cantidadOk = v.verificarCantidadParametros(firma, conFormales, linea);
+        boolean ordenOk = v.verificarOrdenEvaluacion(ordenRaw, conFormales.size(), linea);
+        List<Integer> ordenEvaluacion = comoListaEnteros(ordenRaw, linea);
+
+        LlamadaFuncion llamada = new LlamadaFuncion(
+                firma != null ? firma.entrada : metodo,
+                conFormales, ordenEvaluacion, linea, firma, null, objetoResuelto, true);
+        if (firma == null || objetoResuelto == null || !cantidadOk || !ordenOk
+                || !formalesCompletos(conFormales)) {
+            llamada.marcarInvalida();
+        }
+        return llamada;
+    }
+
     public static void registrar(TablaAcciones tabla, Entorno entorno, Verificaciones v) {
         tabla.registrar(Reglas.SUMA, ctx -> AccionesSemanticas.combinar(ctx, '+', v));
         tabla.registrar(Reglas.RESTA, ctx -> AccionesSemanticas.combinar(ctx, '-', v));
@@ -85,34 +152,43 @@ public class AccionesExpresiones {
             return resultado;
         });
 
-        tabla.registrar(Reglas.CONVERSION_TODF, ctx -> ctx.expresion(0));
+        tabla.registrar(Reglas.CONVERSION_TODF, ctx -> {
+            ExpresionDiferida expresion = ctx.expresion(0);
+            if (expresion == null) {
+                return new ExpresionDiferida().conTipo(Tipos.DOUBLEF).marcarInvalida();
+            }
+            ExpresionDiferida resultado = ExpresionDiferida.deOperando(
+                    new Conversion(expresion, Tipos.DOUBLEF), Tipos.DOUBLEF);
+            if (!expresion.esValida()) {
+                resultado.marcarInvalida();
+            }
+            return resultado;
+        });
 
         tabla.registrar(Reglas.INVOCACION_FUNCION, ctx -> {
             EntradaTabla funcion = ctx.entrada(0);
             List<Object> parametrosReales = ctx.lista(1);
             List<Object> ordenRaw = ctx.valor(2) == null ? null : ctx.lista(2);
-            List<Integer> ordenEvaluacion = comoListaEnteros(ordenRaw, ctx.getLinea());
 
-            // Envuelve parametros posicionales sueltos en ParametroReal
-            List<ParametroReal> parametros = new ArrayList<>();
-            for (Object p : parametrosReales) {
-                if (p instanceof ParametroReal) {
-                    parametros.add((ParametroReal) p);
-                } else {
-                    parametros.add(new ParametroReal(null, p, ctx.getLinea()));
-                }
-            }
-
-            // Verifica cantidad de parametros reales vs formales (tambien reporta si la funcion no existe)
-            v.verificarCantidadParametros(funcion, parametros, ctx.getLinea());
-
-            // Verifica orden de evaluacion: rango, duplicados, completitud
-            v.verificarOrdenEvaluacion(ordenRaw, parametros.size(), ctx.getLinea());
-
+            List<ParametroReal> parametros = envolverParametros(parametrosReales, ctx.getLinea());
             EntradaTabla resuelta = resolverFuncion(entorno, funcion);
             Entorno.FuncionDeclarada firma = resuelta == null ? null : entorno.getFuncion(resuelta.lexema);
-            return new LlamadaFuncion(resuelta != null ? resuelta : funcion,
-                    parametros, ordenEvaluacion, ctx.getLinea(), firma, null);
+
+            // Verifica cantidad de parametros reales vs formales (tambien
+            // reporta si la funcion no existe) y el orden de evaluacion.
+            boolean cantidadOk = v.verificarCantidadParametros(
+                    resuelta != null ? resuelta : funcion, parametros, ctx.getLinea());
+            boolean ordenOk = v.verificarOrdenEvaluacion(ordenRaw, parametros.size(), ctx.getLinea());
+
+            List<ParametroReal> conFormales = asignarFormales(v, firma, parametros, ctx.getLinea());
+            List<Integer> ordenEvaluacion = comoListaEnteros(ordenRaw, ctx.getLinea());
+            LlamadaFuncion llamada = new LlamadaFuncion(
+                    resuelta != null ? resuelta : funcion,
+                    conFormales, ordenEvaluacion, ctx.getLinea(), firma, null);
+            if (firma == null || !cantidadOk || !ordenOk || !formalesCompletos(conFormales)) {
+                llamada.marcarInvalida();
+            }
+            return llamada;
         });
 
         tabla.registrar(Reglas.PARAMETRO_REAL_NOMBRADO, ctx -> {
@@ -145,15 +221,15 @@ public class AccionesExpresiones {
                 referenciaAtributo(entorno, v, ctx.entrada(0), ctx.entrada(1), ctx.entrada(2), ctx.getLinea()));
 
         tabla.registrar(Reglas.INVOCACION_METODO, ctx -> {
-            List<Object> ordenEvaluacion = ctx.valor(3) == null ? null : ctx.lista(3);
-            v.verificarOrdenEvaluacion(ordenEvaluacion, ctx.getLinea());
-            return ExpresionDiferida.deOperando(ctx.entrada(1));
+            List<Object> ordenRaw = ctx.valor(3) == null ? null : ctx.lista(3);
+            return llamadaMetodo(entorno, v, ctx.entrada(0), null, ctx.entrada(1),
+                    ctx.lista(2), ordenRaw, ctx.getLinea());
         });
 
         tabla.registrar(Reglas.INVOCACION_METODO_PREFIJADO, ctx -> {
-            List<Object> ordenEvaluacion = ctx.valor(4) == null ? null : ctx.lista(4);
-            v.verificarOrdenEvaluacion(ordenEvaluacion, ctx.getLinea());
-            return ExpresionDiferida.deOperando(ctx.entrada(2));
+            List<Object> ordenRaw = ctx.valor(4) == null ? null : ctx.lista(4);
+            return llamadaMetodo(entorno, v, ctx.entrada(0), ctx.entrada(1), ctx.entrada(2),
+                    ctx.lista(3), ordenRaw, ctx.getLinea());
         });
     }
 

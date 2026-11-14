@@ -4,7 +4,9 @@
 
 Implementar la igualdad estricta de tipos. Dos operandos de una operación solo son
 compatibles si tienen exactamente el mismo tipo. No hay promociones ni conversiones
-implícitas. La única conversión prevista es `todf` del Tema 33, que todavía no convierte.
+implícitas. La única conversión permitida es `todf` del Tema 33. El motor de tipos la
+reconoce; su emisión de código se completó en el Prompt 2B y la restricción de tipos de
+origen queda para el Prompt 3.5.
 
 ## Cambios realizados
 
@@ -54,7 +56,8 @@ implícitas. La única conversión prevista es `todf` del Tema 33, que todavía 
 - `ACCESO_ATRIBUTO` y `ACCESO_ATRIBUTO_PREFIJADO` devuelven una `ReferenciaAtributo` con
   el tipo del atributo resuelto. Los métodos quedan sin tipar hasta el Tema 31 para no
   confundir un método con el objeto que lo contiene.
-- `CONVERSION_TODF` sigue devolviendo la expresión original. No convierte todavía.
+- `CONVERSION_TODF` construye una `Conversion` con tipo destino `doublef`. El generador
+  emite `(todf, valor, --)` a partir del Prompt 2B.
 
 ### `otras_acciones/AccionesDeclaraciones`
 
@@ -96,10 +99,10 @@ implícitas. La única conversión prevista es `todf` del Tema 33, que todavía 
 ### Clases auxiliares nuevas
 
 - `ReferenciaAtributo`: objeto, atributo resuelto, texto para tercetos y tipo.
-- `Conversion`: valor y tipo destino. Queda preparada para el Tema 33.
+- `Conversion`: valor y tipo destino. La usa `CONVERSION_TODF` y el generador emite
+  su terceto desde Prompt 2B.
 - `AsignacionEnExpresion`: destino, valor y tipo. Ya la usa
-  `ASIGNACION_EN_EXPRESION`; el terceto propio de la asignación interna queda para el
-  Tema 17.
+  `ASIGNACION_EN_EXPRESION`; desde el Prompt 2B el generador emite su terceto propio.
 
 ### Código intermedio
 
@@ -124,7 +127,7 @@ Verificados manualmente y en `test/TP3_SEMANTICAS/prompt-2-tipos-estrictos/`:
 | `doublef function f(...) ret(1$ul);` | error: retorno de `f`, se esperaba `doublef` y se encontró `ulongint` |
 | `ret(x)` en `main` | error: sentencia ret fuera de una función |
 | enum `pares` asignado a `doublef` | error: el enum participa como `ulongint` |
-| `z := todf(x);` | error hasta el Tema 33: todavía no hay conversión |
+| `z := todf(x);` | válido desde el Prompt 2B; genera `(todf, x:main, --)` y la asignación a `z` |
 | tipo inexistente `fantasma` | error: `tipo no declarado` |
 
 ## Pruebas agregadas
@@ -142,7 +145,7 @@ Se creó `test/TP3_SEMANTICAS/prompt-2-tipos-estrictos/` con 16 casos:
 - `ret_fuera_de_funcion`
 - `enum_usa_tipo_base`
 - `typedef_enum_operacion_valida`
-- `todf_pendiente_tema33`
+- `todf_convierte_ulongint_a_doublef`
 - `tipo_no_declarado`
 - `funcion_como_factor`
 - `clase_como_factor`
@@ -151,14 +154,15 @@ Se creó `test/TP3_SEMANTICAS/prompt-2-tipos-estrictos/` con 16 casos:
 Cada `.txt` incluye el programa y, dentro de un comentario `{{ ... }}` que
 empieza con `--- ESPERADO ---`, sus propias expectativas. Ya no hay archivos
 `.esperado` separados y compilar el `.txt` directamente no incorpora las reglas
-a la tabla de símbolos. Los casos inválidos sin código intermedio usan además la
-regla `SIN TERCETOS`.
+a la tabla de símbolos. Los casos inválidos sin tercetos ejecutables usan además la
+regla `SIN TERCETOS`; los que conservan sentencias válidas no relacionadas con el
+error usan `TERCETO:`.
 
 Resultado:
 
 ```bash
 bash test/TP3_SEMANTICAS/ejecutar.sh
-# 29/29 casos OK
+# 41/41 casos OK (incluye los casos de Prompt 2B)
 ```
 
 ## Regresión
@@ -171,7 +175,7 @@ bash test/TP3_SEMANTICAS/ejecutar.sh
 
 - Contra el baseline de 65 casos de Prompt 1A, los únicos cambios de diagnóstico son:
   - `tp2/verificacion_r33_conversion/en_asignacion.txt`: nuevos errores de tipo porque
-    `todf` todavía no convierte.
+    en ese momento `todf` todavía no convertía.
   - `tp2/verificacion_r33_conversion/en_condicion_if.txt`: nuevo error de condición por
     el mismo motivo.
   - `tp2/verificacion_r28_r31_atributos/clase_con_atributos.txt` y
@@ -187,6 +191,24 @@ bash test/TP3_SEMANTICAS/ejecutar.sh
   - `tp2/verificacion_r33_conversion/en_condicion_if.txt`
 
   No hay promociones automáticas ni diagnósticos nuevos por otra causa.
+
+### Actualización de Prompt 2B
+
+Al implementar `todf`, desaparecen los errores de tipo que el Prompt 2 registraba
+porque la conversión todavía no existía. La comparación contra el baseline pasa de 13
+a 9 archivos con diferencias, todas ellas eliminaciones de errores:
+
+- `TP3_SEMANTICAS/prompt-2-tipos-estrictos/todf_convierte_ulongint_a_doublef.txt`
+- `TP3_SEMANTICAS/prompt-2b-codegen-base/todf_asignacion.txt`
+- `TP3_SEMANTICAS/prompt-2b-codegen-base/todf_expresion.txt`
+- `tp1/verificaciones_palabras_reservadas/combinaciones.txt`
+- `tp1/verificaciones_palabras_reservadas/mayusculas.txt`
+- `tp2/generales/00_programa_valido.txt`
+- `tp2/generales/26_extensivo_3000_lineas.txt`
+- `tp2/verificacion_r33_conversion/en_asignacion.txt`
+- `tp2/verificacion_r33_conversion/en_condicion_if.txt`
+
+No aparecen diagnósticos nuevos. El detalle está en `docs/PROMPT-2B.md`.
 
 ## ARREGLOS DE LA SEGUNDA ITERACIÓN: Correcciones posteriores a la revisión
 
@@ -209,25 +231,23 @@ bash test/TP3_SEMANTICAS/ejecutar.sh
   prefijada. Antes se ignoraba el prefijo y se usaba la clase del objeto, lo que daba un
   tipo incorrecto cuando base y derivada declaraban el mismo nombre con tipos distintos.
 - `ASIGNACION_EN_EXPRESION` devuelve una `AsignacionEnExpresion` envuelta en
-  `ExpresionDiferida`; el generador la acepta y, por ahora, emite el valor del lado
-  derecho.
+  `ExpresionDiferida`; en Prompt 2 el generador la aceptaba y emitía el valor del lado
+  derecho. Prompt 2B agrega el `(:=, destino, valor)` propio de la asignación interna.
 - Los tests se renombraron a `prompt-1a-ambitos/`, `prompt-1b-name-mangling/` y
   `prompt-2-tipos-estrictos/`. Las expectativas ahora viven dentro de cada `.txt`, en
   un comentario multilínea `{{ ... }}` que empieza con `--- ESPERADO ---`; así el
   archivo se puede compilar directamente sin que las reglas entren a la tabla de
   símbolos.
 - Resultado de la iteración: `bash test/TP3_SEMANTICAS/ejecutar.sh` pasa
-  `29/29 casos OK`.
+  `29/29 casos OK`. Con los 12 casos de Prompt 2B el conjunto completo pasa
+  `41/41 casos OK`.
 
 ## Pendiente
 
-- Tema 33: hacer que `todf` convierta realmente de `ulongint` a `doublef` y eliminar los
-  errores esperados de los casos anteriores.
+- Prompt 3.5: restringir `todf` a `ulongint` o enum con base `ulongint`; rechazar
+  conversiones vacías, de `doublef` o de objetos.
 - Tema 19: chequear tipos de parámetros reales contra los formales. La cantidad y el orden
-  ya se verifican; los tipos quedan para esa fila.
-- Tema 17: emitir el terceto propio de la asignación interna. La expresión ya transporta
-  la `AsignacionEnExpresion` y el tipo; falta el `(:=, destino, valor)` dentro de la
-  expresión.
+  ya se verifican; la ubicación del formal también se resuelve desde Prompt 2B.
 - Temas 28/31: validar existencia, visibilidad y herencia de atributos y métodos. El motor
   de tipos ya obtiene el tipo cuando la referencia es resoluble, incluido el prefijo
   explícito.

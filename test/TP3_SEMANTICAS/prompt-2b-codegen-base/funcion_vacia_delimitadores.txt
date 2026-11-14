@@ -1,0 +1,20 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (FUNCION, vacia, --)
+3. (FIN_FUNCION, vacia, --)
+4. (pout, ok, --)
+5. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- vacia:main -> ulongint, funcion
+- n:main:vacia -> ulongint, parametro
+}}
+
+prog
+ulongint function vacia(ulongint n)
+begin
+end;
+begin
+    pout({ok});
+end
+

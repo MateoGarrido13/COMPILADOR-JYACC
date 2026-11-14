@@ -56,12 +56,19 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Resultado: `docs/PROMPT-2.md`. Casos en
   `test/TP3_SEMANTICAS/prompt-2-tipos-estrictos/`.
 
-## Prompt 2B - Expresiones con tipo y tercetos
+## Prompt 2B - Codegen base (ejecutado)
 
-- `ExpresionDiferida` debe transportar tipo y operador.
-- Emitir tercetos de operaciones, conversion y asignacion interna.
-- Resolver referencias a atributos y llamadas.
+- Delimitadores `PROGRAMA`, `FUNCION`, `METODO`, `CLASE` y sus cierres.
+- `pout`, `ret`, invocaciones de funcion y de metodo.
+- Convencion de llamadas: `(PAR, formal, real)` y `(CALL, funcion, cantidad)`; para
+  metodos, `(CALLMET, objeto, metodo)`.
+- `todf` emite `(todf, valor, --)` y devuelve tipo `doublef`; la restriccion de tipo de
+  origen queda para el Prompt 3.5.
+- La asignacion en expresion emite su propio `(:=, destino, valor)` y vale el numero de
+  ese terceto.
 - Documentar en `docs/PROMPT-2B.md`.
+- Resultado: `docs/PROMPT-2B.md`. Casos en
+  `test/TP3_SEMANTICAS/prompt-2b-codegen-base/`.
 
 ## Prompt 6 y 8 - Constantes `ulongint` y `doublef`
 

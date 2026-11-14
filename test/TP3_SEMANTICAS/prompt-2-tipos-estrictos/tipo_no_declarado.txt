@@ -1,12 +1,15 @@
-{{ prompt 2: el tipo de una declaracion debe existir }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (pout, ok, --)
+3. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- f:main -> fantasma:main, variable
+}}
+
 prog
 fantasma f;
 begin
     pout({ok});
 end
 
-{{
---- ESPERADO ---
-ERROR:tipo no declarado 'fantasma:main'
-SIN TERCETOS
-}}

@@ -412,6 +412,41 @@ public class Entorno {
         return buscarAtributo(clase, TablaSimbolos.nombreDe(nombreAtributo), new HashSet<>());
     }
 
+    /*
+      Busca un metodo en la clase del objeto o en la clase prefijada, y en sus
+      bases. La convencion de codigo intermedio para una invocacion de metodo es
+      (CALLMET, objeto, metodo); esta busqueda solo resuelve la firma.
+     */
+    public FuncionDeclarada buscarMetodo(EntradaTabla objeto, String nombreClase, String nombreMetodo) {
+        if (nombreMetodo == null) {
+            return null;
+        }
+        ClaseDeclarada clase = nombreClase == null || nombreClase.isEmpty()
+                ? claseDeObjeto(objeto)
+                : clasePorNombre(nombreClase);
+        if (clase == null) {
+            return null;
+        }
+        return buscarMetodo(clase, TablaSimbolos.nombreDe(nombreMetodo), new HashSet<>());
+    }
+
+    private FuncionDeclarada buscarMetodo(ClaseDeclarada clase, String nombre, Set<String> visitadas) {
+        if (clase == null || !visitadas.add(clase.clave())) {
+            return null;
+        }
+        FuncionDeclarada propia = clase.metodos.get(nombre);
+        if (propia != null) {
+            return propia;
+        }
+        for (String base : clase.heredaDe) {
+            FuncionDeclarada heredada = buscarMetodo(clasePorNombre(base), nombre, visitadas);
+            if (heredada != null) {
+                return heredada;
+            }
+        }
+        return null;
+    }
+
     private ClaseDeclarada claseDeObjeto(EntradaTabla objeto) {
         if (objeto == null) {
             return null;

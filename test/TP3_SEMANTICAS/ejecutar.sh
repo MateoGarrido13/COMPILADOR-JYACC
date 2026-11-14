@@ -12,7 +12,8 @@
 #   DECLARADO_SI:<clave>   la entrada <clave> debe tener "Declarado: si"
 #   DECLARADO_NO:<clave>   la entrada <clave> debe tener "Declarado: no"
 #   TERCETO:<texto>        la salida debe contener <texto>
-#   SIN TERCETOS           la salida no debe tener tercetos numerados
+#   SIN TERCETOS           la salida no debe tener tercetos ejecutables
+#                          (se ignoran los delimitadores estructurales)
 set -u
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -124,7 +125,11 @@ for caso in "$DIR"/prompt-*/*.txt; do
                 fi
                 ;;
             "SIN TERCETOS")
-                if grep -Eq '^[0-9]+\. \(' <<<"$salida"; then
+                # Los delimitadores estructurales no cuentan como codigo
+                # ejecutable: un cuerpo invalido puede conservar PROGRAMA,
+                # FUNCION, CLASE y sus cierres.
+                if grep -E '^[0-9]+\. \(' <<<"$salida" \
+                        | grep -Evq '^[0-9]+\. \((PROGRAMA|FIN_PROGRAMA|FUNCION|FIN_FUNCION|METODO|FIN_METODO|CLASE|FIN_CLASE), '; then
                     echo "  fallo: se esperaban cero tercetos"
                     errores_caso=$((errores_caso + 1))
                 fi

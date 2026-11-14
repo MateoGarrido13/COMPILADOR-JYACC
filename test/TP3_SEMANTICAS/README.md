@@ -13,6 +13,15 @@ bash test/TP3_SEMANTICAS/ejecutar.sh
 El script compila el proyecto y ejecuta todos los casos. Respeta `TP3_BUILD`
 para elegir el directorio de clases (por defecto `/tmp/opencode/tp3build`).
 
+## Ejecución individual de cada test
+
+Luego de compilar: 
+cd /home/rafael/Documents/Compiladores/COMPILADOR/TP3
+javac -encoding UTF-8 -d /tmp/opencode/tp3build *.java "acciones semanticas"/*.java otras_acciones/*.java
+
+Ejemplo: 
+java -cp /tmp/opencode/tp3build Main test/TP3_SEMANTICAS/prompt-2b-codegen-base/asignacion_en_expresion.txt 2>&1
+
 ## Formato de cada `.txt`
 
 El archivo tiene dos partes:

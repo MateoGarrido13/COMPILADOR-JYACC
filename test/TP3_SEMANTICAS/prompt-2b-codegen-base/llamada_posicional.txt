@@ -1,0 +1,33 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (FUNCION, foo, --)
+3. (ret, a:main:foo, --)
+4. (FIN_FUNCION, foo, --)
+5. (:=, x:main, 1$ul)
+6. (:=, z:main, 2$ul)
+7. (PAR, a:main:foo, x:main)
+8. (PAR, b:main:foo, z:main)
+9. (CALL, foo:main, 2)
+10. (:=, x:main, [9])
+11. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- foo:main -> ulongint, funcion
+- a:main:foo -> ulongint, parametro
+- b:main:foo -> ulongint, parametro
+- x:main -> ulongint, variable
+- z:main -> ulongint, variable
+}}
+
+prog
+ulongint function foo(ulongint a, ulongint b)
+begin
+    ret(a);
+end;
+ulongint x, z;
+begin
+    x := 1$ul;
+    z := 2$ul;
+    x := foo(x, z)[1$ul, 2$ul];
+end
+

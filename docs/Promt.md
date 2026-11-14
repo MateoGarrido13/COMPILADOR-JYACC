@@ -6,7 +6,8 @@ Estado actual:
 - Prompt 1A: ejecutado. Resultado en `docs/PROMPT-1A.md`.
 - Prompt 1B: ejecutado. Resultado en `docs/PROMPT-1B.md`.
 - Prompt 2: ejecutado. Resultado en `docs/PROMPT-2.md`.
-- Siguiente: Prompt 2B (codegen base).
+- Prompt 2B: ejecutado. Resultado en `docs/PROMPT-2B.md`.
+- Siguiente: Prompt 3.1 (temas 6 y 8).
 
 ### Prompt 0 — Baseline (ejecutado)
 Estás trabajando en /home/rafael/Documents/Compiladores/COMPILADOR/TP3.
@@ -242,7 +243,7 @@ error. El acceso con prefijo de clase (`objeto.Clase.atributo`) resuelve el
 atributo en la clase prefijada. `Tipos.tipoEfectivo` normaliza básicos y
 `Entorno.tipoEfectivo` resuelve enumerados y clases.
 
-### Prompt 2B — Codegen base: pout, ret, delimitadores, llamadas y conversiones
+### Prompt 2B — Codegen base: pout, ret, delimitadores, llamadas y conversiones (ejecutado)
 Implementá la generación de código intermedio base que falta. No implementes todavía
 enumeraciones, objetos, atributos ni herencia; eso va en sus filas.
 

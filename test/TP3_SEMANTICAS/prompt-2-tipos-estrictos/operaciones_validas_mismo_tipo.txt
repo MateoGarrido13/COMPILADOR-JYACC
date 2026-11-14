@@ -1,4 +1,30 @@
-{{ prompt 2: todos los operadores aceptan operandos del mismo tipo }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (+, x:main, y:main)
+3. (:=, x:main, [2])
+4. (+, z:main, w:main)
+5. (:=, z:main, [4])
+6. (-, x:main, 1$ul)
+7. (:=, x:main, [6])
+8. (-, z:main, 1.0)
+9. (:=, z:main, [8])
+10. (*, x:main, 2$ul)
+11. (:=, x:main, [10])
+12. (*, z:main, 2.0)
+13. (:=, z:main, [12])
+14. (/, x:main, 2$ul)
+15. (:=, x:main, [14])
+16. (/, z:main, 2.0)
+17. (:=, z:main, [16])
+18. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- x:main -> ulongint, variable
+- y:main -> ulongint, variable
+- z:main -> doublef, variable
+- w:main -> doublef, variable
+}}
+
 prog
 ulongint x, y;
 doublef z, w;
@@ -13,15 +39,3 @@ begin
     z := z / 2.0;
 end
 
-{{
---- ESPERADO ---
-SIN ERRORES
-TERCETO:(+, x:main, y:main)
-TERCETO:(+, z:main, w:main)
-TERCETO:(-, x:main, 1$ul)
-TERCETO:(-, z:main, 1.0)
-TERCETO:(*, x:main, 2$ul)
-TERCETO:(*, z:main, 2.0)
-TERCETO:(/, x:main, 2$ul)
-TERCETO:(/, z:main, 2.0)
-}}

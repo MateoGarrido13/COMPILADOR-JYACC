@@ -1,4 +1,16 @@
-{{ prompt 2: una funcion no es un valor; no puede usarse como factor }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (FUNCION, f, --)
+3. (ret, n:main:f, --)
+4. (FIN_FUNCION, f, --)
+5. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- f:main -> ulongint, funcion
+- n:main:f -> ulongint, parametro
+- x:main -> ulongint, variable
+}}
+
 prog
 ulongint function f(ulongint n)
 begin
@@ -9,8 +21,3 @@ begin
     x := f;
 end
 
-{{
---- ESPERADO ---
-ERROR:'f' no es un valor utilizable como factor
-SIN TERCETOS
-}}

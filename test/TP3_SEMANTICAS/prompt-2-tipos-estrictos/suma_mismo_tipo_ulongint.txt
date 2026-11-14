@@ -1,12 +1,16 @@
-{{ prompt 2: operandos del mismo tipo ulongint }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (+, x:main, 1$ul)
+3. (:=, x:main, [2])
+4. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- x:main -> ulongint, variable
+}}
+
 prog
 ulongint x;
 begin
     x := x + 1$ul;
 end
 
-{{
---- ESPERADO ---
-SIN ERRORES
-TERCETO:(+, x:main, 1$ul)
-}}

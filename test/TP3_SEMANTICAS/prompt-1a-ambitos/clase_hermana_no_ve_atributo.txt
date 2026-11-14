@@ -25,9 +25,3 @@ end;
 begin
 end
 
-{{
---- ESPERADO ---
-ERROR:Error de ambito 'x' no es alcanzable
-DECLARADO_SI:x:main:ca
-DECLARADO_NO:x:main:cb:m
-}}

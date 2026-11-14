@@ -25,10 +25,3 @@ end;
 begin
 end
 
-{{
---- ESPERADO ---
-ERROR:Error de ambito 'local_a' no es alcanzable
-SIMBOLO:local_a:main:a
-DECLARADO_SI:local_a:main:a
-DECLARADO_NO:local_a:main:b
-}}

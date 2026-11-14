@@ -37,11 +37,3 @@ end;
 begin
 end
 
-{{
---- ESPERADO ---
-ERROR:Error de ambito 'var_1' no es alcanzable
-DECLARADO_SI:var_1:main:a:b:fun_c
-DECLARADO_NO:var_1:main:a:fun_c
-DECLARADO_SI:fun_c:main:a:b
-DECLARADO_SI:fun_c:main:a
-}}

@@ -41,22 +41,27 @@ public class AccionesDeclaraciones {
 
         tabla.registrar(Reglas.LISTA_PARAMETROS_FORMALES, AccionesSemanticas::concatenarLista);
 
+        // El generador necesita la firma para cerrar el delimitador con el
+        // nombre correcto, incluso despues de que el entorno cierre el ambito.
         tabla.registrar(Reglas.DECL_FUNCION, ctx -> {
+            Entorno.FuncionDeclarada funcion = entorno.getFuncionActual();
             entorno.cerrarFuncion();
-            return ctx.valor(0);
+            return funcion != null ? funcion : ctx.valor(0);
         });
 
         tabla.registrar(Reglas.DECL_METODO, ctx -> {
+            Entorno.FuncionDeclarada funcion = entorno.getFuncionActual();
             entorno.cerrarFuncion();
-            return ctx.valor(0);
+            return funcion != null ? funcion : ctx.valor(0);
         });
 
         tabla.registrar(Reglas.INICIO_CLASE, ctx -> entorno.abrirClase(ctx.entrada(0), ctx.getLinea()));
 
         tabla.registrar(Reglas.DECL_CLASE, ctx -> {
+            Entorno.ClaseDeclarada clase = entorno.getClaseActual();
             Object valor = ctx.valor(0);
             entorno.cerrarClase();
-            return valor;
+            return clase != null ? clase : valor;
         });
 
         tabla.registrar(Reglas.DECL_ATRIBUTO, ctx -> {
@@ -150,17 +155,22 @@ public class AccionesDeclaraciones {
             Entorno.FuncionDeclarada funcion = entorno.getFuncionActual();
             if (funcion == null) {
                 v.errorRetornoFueraDeFuncion(ctx.getLinea());
-                return ctx.valor(0);
+                return null;
+            }
+            ExpresionDiferida valor = ctx.expresion(0);
+            if (valor == null || !valor.esValida()) {
+                return null;
             }
             String tipoRetorno = entorno.tipoEfectivo(funcion.tipoRetorno);
-            String tipoValor = entorno.tipoEfectivo(ExpresionDiferida.tipoDe(ctx.valor(0)));
+            String tipoValor = entorno.tipoEfectivo(valor.getTipo());
             if (!Tipos.INDEFINIDO.equals(tipoRetorno) && !Tipos.INDEFINIDO.equals(tipoValor)
                     && !Tipos.mismoTipo(tipoRetorno, tipoValor)) {
                 v.errorTipos(ctx.getLinea(),
                         "el retorno de la función '" + funcion.nombre + "'",
                         tipoRetorno, tipoValor);
+                return null;
             }
-            return ctx.valor(0);
+            return valor;
         });
     }
 

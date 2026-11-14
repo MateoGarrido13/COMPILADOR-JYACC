@@ -1,4 +1,12 @@
-{{ prompt 2: los operandos de la condicion deben tener el mismo tipo }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (pout, mayor, --)
+3. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- x:main -> ulongint, variable
+}}
+
 prog
 ulongint x;
 begin
@@ -7,8 +15,3 @@ begin
     end_if;
 end
 
-{{
---- ESPERADO ---
-ERROR:Tipos incompatibles en la condición: se esperaba ulongint y se encontró doublef
-SIN TERCETOS
-}}

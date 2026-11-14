@@ -1,4 +1,15 @@
-{{ prompt 2: el valor de ret debe coincidir con el tipo de retorno }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (FUNCION, f, --)
+3. (FIN_FUNCION, f, --)
+4. (pout, ok, --)
+5. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- f:main -> doublef, funcion
+- n:main:f -> ulongint, parametro
+}}
+
 prog
 doublef function f(ulongint n)
 begin
@@ -8,8 +19,3 @@ begin
     pout({ok});
 end
 
-{{
---- ESPERADO ---
-ERROR:Tipos incompatibles en el retorno de la función 'f': se esperaba doublef y se encontró ulongint
-SIN TERCETOS
-}}

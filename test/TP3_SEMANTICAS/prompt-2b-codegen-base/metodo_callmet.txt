@@ -1,0 +1,36 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (CLASE, ca, --)
+3. (METODO, m, --)
+4. (ret, p:main:ca:m, --)
+5. (FIN_METODO, m, --)
+6. (FIN_CLASE, ca, --)
+7. (:=, x:main, 1$ul)
+8. (PAR, p:main:ca:m, x:main)
+9. (CALLMET, a:main, m:main:ca)
+10. (:=, x:main, [9])
+11. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- ca:main -> ca, clase
+- m:main:ca -> ulongint, metodo
+- p:main:ca:m -> ulongint, parametro
+- a:main -> ca:main, variable
+- x:main -> ulongint, variable
+}}
+
+prog
+class ca
+begin
+    ulongint m(ulongint p)
+    begin
+        ret(p);
+    end;
+end;
+ca a;
+ulongint x;
+begin
+    x := 1$ul;
+    x := a.m(x)[1$ul];
+end
+

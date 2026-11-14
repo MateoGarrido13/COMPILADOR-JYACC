@@ -1,4 +1,15 @@
-{{ prompt 2: una clase no es un valor; no puede usarse como factor }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (CLASE, ca, --)
+3. (FIN_CLASE, ca, --)
+4. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- ca:main -> ca, clase
+- a:main:ca -> ulongint, atributo
+- obj:main -> ca:main, variable
+}}
+
 prog
 class ca
 begin
@@ -9,8 +20,3 @@ begin
     obj := ca;
 end
 
-{{
---- ESPERADO ---
-ERROR:'ca' no es un valor utilizable como factor
-SIN TERCETOS
-}}

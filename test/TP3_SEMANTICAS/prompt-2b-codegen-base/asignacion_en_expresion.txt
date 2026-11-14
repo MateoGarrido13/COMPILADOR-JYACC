@@ -1,0 +1,17 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (:=, y:main, 2$ul)
+3. (:=, x:main, [2])
+4. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- x:main -> ulongint, variable
+- y:main -> ulongint, variable
+}}
+
+prog
+ulongint x, y;
+begin
+    x := y = (2$ul);
+end
+

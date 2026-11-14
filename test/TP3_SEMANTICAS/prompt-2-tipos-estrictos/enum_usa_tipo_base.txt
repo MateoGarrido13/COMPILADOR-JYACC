@@ -1,4 +1,14 @@
-{{ prompt 2: un enumerado participa con su tipo base; sigue sin haber promociones }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (:=, p:main, 2$ul)
+3. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- pares:main -> tipo enumerado, tipo
+- p:main -> pares:main, variable
+- z:main -> doublef, variable
+}}
+
 prog
 typedef pares = [2$ul, 4$ul];
 pares p;
@@ -8,7 +18,3 @@ begin
     z := p;
 end
 
-{{
---- ESPERADO ---
-ERROR:Tipos incompatibles en la asignación a 'z': se esperaba doublef y se encontró ulongint
-}}

@@ -10,6 +10,11 @@ import java.util.List;
   con una etiqueta label_N. Con else, abre un BI hacia otra etiqueta.
   El repeat abre la label de inicio al reducirse INICIO_REPEAT, antes del
   cuerpo. Al cerrar, BF sale si la condicion es falsa y BI vuelve a esa label.
+
+  Convencion de invocaciones:
+    funcion: (PAR, formal, real) ... (CALL, funcion, cantidadDeParametros)
+    metodo:  (PAR, formal, real) ... (CALLMET, objeto, metodo)
+  El resultado de la invocacion es el numero del terceto CALL/CALLMET.
  */
 public class GeneradorTercetos {
 
@@ -41,16 +46,38 @@ public class GeneradorTercetos {
         if (reducciones == null) {
             return;
         }
+        lista.crear("PROGRAMA", null, null);
         for (Reduccion reduccion : reducciones) {
             switch (reduccion.getRegla()) {
+                case INICIO_FUNCION:
+                    abrirFuncion(reduccion);
+                    break;
+                case DECL_FUNCION:
+                case DECL_METODO:
+                    cerrarFuncion(reduccion);
+                    break;
+                case INICIO_CLASE:
+                    abrirClase(reduccion);
+                    break;
+                case DECL_CLASE:
+                    cerrarClase(reduccion);
+                    break;
                 case ASIGNACION:
                     generarAsignacion(reduccion);
                     break;
                 case INVOCACION_FUNCION:
-                    generarInvocacionFuncion(reduccion);
+                case INVOCACION_METODO:
+                case INVOCACION_METODO_PREFIJADO:
+                    generarInvocacion(reduccion);
                     break;
                 case CONDICION_IF:
                     generarCondicionIf(reduccion);
+                    break;
+                case SENTENCIA_POUT:
+                    generarPout(reduccion);
+                    break;
+                case SENTENCIA_RET:
+                    generarRet(reduccion);
                     break;
                 case BLOQUE_THEN:
                     cerrarThen(reduccion);
@@ -73,10 +100,58 @@ public class GeneradorTercetos {
                     break;
             }
         }
+        lista.crear("FIN_PROGRAMA", null, null);
     }
 
     public String contenido() {
         return lista.contenido();
+    }
+
+    /* Delimitadores de funcion y metodo tomados de la firma que devuelve la accion. */
+    private void abrirFuncion(Reduccion reduccion) {
+        Object valor = reduccion.resultado();
+        if (!(valor instanceof Entorno.FuncionDeclarada)) {
+            return;
+        }
+        Entorno.FuncionDeclarada funcion = (Entorno.FuncionDeclarada) valor;
+        if (funcion.nombre == null) {
+            return;
+        }
+        lista.crear(funcion.esMetodo ? "METODO" : "FUNCION", funcion.nombre, null);
+    }
+
+    private void cerrarFuncion(Reduccion reduccion) {
+        Object valor = reduccion.resultado();
+        if (!(valor instanceof Entorno.FuncionDeclarada)) {
+            return;
+        }
+        Entorno.FuncionDeclarada funcion = (Entorno.FuncionDeclarada) valor;
+        if (funcion.nombre == null) {
+            return;
+        }
+        lista.crear(funcion.esMetodo ? "FIN_METODO" : "FIN_FUNCION", funcion.nombre, null);
+    }
+
+    private void abrirClase(Reduccion reduccion) {
+        Object valor = reduccion.resultado();
+        if (!(valor instanceof Entorno.ClaseDeclarada)) {
+            return;
+        }
+        Entorno.ClaseDeclarada clase = (Entorno.ClaseDeclarada) valor;
+        if (clase.nombre != null) {
+            lista.crear("CLASE", clase.nombre, null);
+        }
+    }
+
+    private void cerrarClase(Reduccion reduccion) {
+        Object valor = reduccion.resultado();
+        if (!(valor instanceof Entorno.ClaseDeclarada)) {
+            return;
+        }
+        Entorno.ClaseDeclarada clase = (Entorno.ClaseDeclarada) valor;
+        if (clase.nombre != null) {
+            lista.crear("FIN_CLASE", clase.nombre, null);
+        }
     }
 
     private void generarAsignacion(Reduccion reduccion) {
@@ -93,68 +168,98 @@ public class GeneradorTercetos {
             reporte.error(reduccion.getLinea(), "No se puede asignar un valor a una cte o variable sin referencia");
             return;
         }
-        Object origen = emitir(reduccion.operando(1), reduccion.getLinea());
+        Object valorOrigen = reduccion.operando(1);
+        Object origen = emitir(valorOrigen, reduccion.getLinea());
         if (origen == null) {
-            reporte.error(reduccion.getLinea(), "Asignacion sin operando");
+            // Si habia un valor semantico (invocacion o expresion) pero resulto
+            // invalido, su error ya se reporto y no se agrega ruido. Solo se
+            // reporta cuando falta el operando por un error de sintaxis.
+            if (valorOrigen == null) {
+                reporte.error(reduccion.getLinea(), "Asignacion sin operando");
+            }
             return;
         }
         lista.crear(":=", destino, origen);
     }
 
+    private void generarPout(Reduccion reduccion) {
+        Object valor = reduccion.resultado();
+        if (valor == null) {
+            return;
+        }
+        Object operando = emitir(valor, reduccion.getLinea());
+        if (operando != null) {
+            lista.crear("pout", operando, null);
+        }
+    }
+
+    private void generarRet(Reduccion reduccion) {
+        Object valor = reduccion.resultado();
+        if (valor == null) {
+            return;
+        }
+        Object operando = emitir(valor, reduccion.getLinea());
+        if (operando != null) {
+            lista.crear("ret", operando, null);
+        }
+    }
+
     /*
-      Genera los tercetos de invocacion de funcion:
+      Genera los tercetos de invocacion de funcion o metodo:
       un PAR por cada parametro real (en el orden de evaluacion indicado)
-      y un CALL que devuelve el resultado de la funcion.
+      y un CALL con la cantidad de parametros, o un CALLMET con el objeto
+      receptor y el metodo. El numero del terceto final queda en la llamada.
      */
-    private void generarInvocacionFuncion(Reduccion reduccion) {
+    private void generarInvocacion(Reduccion reduccion) {
         Object valor = reduccion.resultado();
         if (!(valor instanceof LlamadaFuncion)) {
-            reporte.error(reduccion.getLinea(), "Invocacion de funcion sin semántica");
             return;
         }
         LlamadaFuncion llamada = (LlamadaFuncion) valor;
+        if (!llamada.esValida() || llamada.funcion == null) {
+            return;
+        }
+        if (llamada.esMetodo && llamada.objeto == null) {
+            return;
+        }
         List<ParametroReal> parametros = llamada.parametros;
-        List<Integer> orden = llamada.ordenEvaluacion;
 
         // Determina el orden de evaluacion. Si no hay [], se usa el orden fuente 1..n.
         List<Integer> posiciones;
-        if (orden == null || orden.isEmpty()) {
+        if (llamada.ordenEvaluacion == null || llamada.ordenEvaluacion.isEmpty()) {
             posiciones = new ArrayList<>();
             for (int i = 1; i <= parametros.size(); i++) {
                 posiciones.add(i);
             }
         } else {
-            posiciones = orden;
+            posiciones = llamada.ordenEvaluacion;
         }
 
         // Emite un PAR por cada parametro, en el orden de evaluacion indicado.
         for (int pos : posiciones) {
             if (pos < 1 || pos > parametros.size()) {
-                continue; // ya fue reportado por Verificaciones
+                return; // ya fue reportado por Verificaciones
             }
             ParametroReal param = parametros.get(pos - 1);
-            Object valorParam = emitirValor(param.valor, reduccion.getLinea());
-            lista.crear("PAR", valorParam, null);
+            if (param.formal == null) {
+                return; // sin formal resuelto no se puede emitir una copia valida
+            }
+            Object valorParam = emitir(param.valor, reduccion.getLinea());
+            if (valorParam == null) {
+                return;
+            }
+            lista.crear("PAR", param.formal, valorParam);
         }
 
-        // Emite el CALL y guarda su numero para que emitir(LlamadaFuncion) lo devuelva.
-        int numeroCall = lista.crear("CALL", llamada.funcion, null);
+        // Emite el CALL/CALLMET y guarda su numero para que emitir(LlamadaFuncion) lo devuelva.
+        int numeroCall;
+        if (llamada.esMetodo) {
+            numeroCall = lista.crear("CALLMET", llamada.objeto, llamada.funcion);
+        } else {
+            numeroCall = lista.crear("CALL", llamada.funcion,
+                    String.valueOf(parametros.size()));
+        }
         llamada.setNumeroCall(numeroCall);
-    }
-
-    /*
-      Emite el valor de un parametro real. Puede ser una EntradaTabla hoja,
-      una ExpresionDiferida (que genera tercetos intermedios) o un Integer.
-     */
-    private Object emitirValor(Object valor, int linea) {
-        if (valor instanceof EntradaTabla || valor instanceof Integer
-                || valor instanceof ReferenciaAtributo) {
-            return valor;
-        }
-        if (valor instanceof ExpresionDiferida) {
-            return emitir(valor, linea);
-        }
-        return null;
     }
 
     private void generarCondicionIf(Reduccion reduccion) {
@@ -270,16 +375,33 @@ public class GeneradorTercetos {
     // Devuelve la EntradaTabla hoja o el numero del terceto que resume la expresion.
     private Object emitir(Object valor, int linea) {
         if (valor instanceof EntradaTabla || valor instanceof Integer
-                || valor instanceof ReferenciaAtributo) {
+                || valor instanceof ReferenciaAtributo || valor instanceof String) {
             return valor;
         }
+        if (valor instanceof Conversion) {
+            Conversion conversion = (Conversion) valor;
+            Object convertido = emitir(conversion.getValor(), linea);
+            if (convertido == null) {
+                return null;
+            }
+            return lista.crear("todf", convertido, null);
+        }
         if (valor instanceof AsignacionEnExpresion) {
-            // El terceto de la asignacion interna es del Tema 17; por ahora la
-            // expresion vale lo mismo que su lado derecho.
-            return emitir(((AsignacionEnExpresion) valor).valor, linea);
+            AsignacionEnExpresion asignacion = (AsignacionEnExpresion) valor;
+            if (asignacion.destino == null) {
+                return null;
+            }
+            Object derecho = emitir(asignacion.valor, linea);
+            if (derecho == null) {
+                return null;
+            }
+            return lista.crear(":=", asignacion.destino, derecho);
         }
         if (valor instanceof LlamadaFuncion) {
             LlamadaFuncion llamada = (LlamadaFuncion) valor;
+            if (!llamada.esValida()) {
+                return null;
+            }
             Integer numero = llamada.getNumeroCall();
             if (numero == null) {
                 reporte.error(linea, "Invocacion de funcion sin terceto CALL");

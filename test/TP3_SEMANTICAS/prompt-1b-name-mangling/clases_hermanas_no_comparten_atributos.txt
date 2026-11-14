@@ -20,10 +20,3 @@ end;
 begin
 end
 
-{{
---- ESPERADO ---
-SIN ERRORES
-DECLARADO_SI:x:main:ca
-DECLARADO_SI:x:main:cb
-NO_SIMBOLO:x:main
-}}

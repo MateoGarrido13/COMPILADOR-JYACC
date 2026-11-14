@@ -1,0 +1,22 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (FUNCION, f, --)
+3. (ret, n:main:f, --)
+4. (FIN_FUNCION, f, --)
+5. (pout, ok, --)
+6. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- f:main -> ulongint, funcion
+- n:main:f -> ulongint, parametro
+}}
+
+prog
+ulongint function f(ulongint n)
+begin
+    ret(n);
+end;
+begin
+    pout({ok});
+end
+

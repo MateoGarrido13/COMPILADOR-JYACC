@@ -1,12 +1,16 @@
-{{ prompt 2: operandos del mismo tipo doublef }}
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (+, z:main, 1.0)
+3. (:=, z:main, [2])
+4. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- z:main -> doublef, variable
+}}
+
 prog
 doublef z;
 begin
     z := z + 1.0;
 end
 
-{{
---- ESPERADO ---
-SIN ERRORES
-TERCETO:(+, z:main, 1.0)
-}}

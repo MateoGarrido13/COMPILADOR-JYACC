@@ -143,32 +143,37 @@ public class Verificaciones {
       - la cantidad de posiciones indicadas debe coincidir con la cantidad de
         parametros reales
      */
-    public void verificarOrdenEvaluacion(List<Object> constantes, int cantidadParametros, int linea) {
+    public boolean verificarOrdenEvaluacion(List<Object> constantes, int cantidadParametros, int linea) {
         if (constantes == null || constantes.isEmpty()) {
             reportar(Reglas.ERR_FALTA_ORDEN_EVALUACION, linea);
-            return;
+            return false;
         }
 
         List<Integer> posiciones = extraerPosiciones(constantes, linea);
         if (posiciones == null) {
-            return;
+            return false;
         }
 
+        boolean valido = true;
         Set<Integer> vistos = new HashSet<>();
         for (Integer pos : posiciones) {
             if (pos < 1 || pos > cantidadParametros) {
                 reporte.error(linea, "Posicion de orden de evaluacion fuera de rango: " + pos);
+                valido = false;
                 continue;
             }
             if (!vistos.add(pos)) {
                 reporte.error(linea, "Posicion de orden de evaluacion duplicada: " + pos);
+                valido = false;
             }
         }
 
         if (vistos.size() != cantidadParametros) {
             reporte.error(linea, "Cantidad de posiciones de orden de evaluacion (" + vistos.size()
                     + ") no coincide con la cantidad de parametros (" + cantidadParametros + ")");
+            valido = false;
         }
+        return valido;
     }
 
     /*
@@ -194,23 +199,59 @@ public class Verificaciones {
     }
 
     // Verifica que la cantidad de parametros reales coincida con los formales declarados.
-    public void verificarCantidadParametros(EntradaTabla funcion, List<ParametroReal> parametros, int linea) {
+    public boolean verificarCantidadParametros(EntradaTabla funcion, List<ParametroReal> parametros, int linea) {
         if (funcion == null) {
-            return;
+            return false;
         }
         String nombre = TablaSimbolos.nombreDe(funcion.lexema);
         EntradaTabla declaracion = entorno.resolver(nombre, Globals.AMBITO_ACTUAL);
         Entorno.FuncionDeclarada fd = declaracion == null ? null : entorno.getFuncion(declaracion.lexema);
         if (fd == null) {
             reporte.error(linea, "Funcion no declarada '" + nombre + "'");
-            return;
+            return false;
         }
-        int formales = fd.parametros.size();
-        int reales = parametros.size();
+        return verificarCantidadParametros(fd, parametros, linea);
+    }
+
+    public boolean verificarCantidadParametros(Entorno.FuncionDeclarada firma,
+            List<ParametroReal> parametros, int linea) {
+        if (firma == null) {
+            return false;
+        }
+        int formales = firma.parametros.size();
+        int reales = parametros == null ? 0 : parametros.size();
         if (reales != formales) {
             reporte.error(linea, "Cantidad de parametros reales (" + reales
                     + ") no coincide con los formales declarados (" + formales + ")");
+            return false;
         }
+        return true;
+    }
+
+    /*
+      Devuelve la entrada del parametro formal que corresponde a un real.
+      Para un real nombrado se busca por nombre; para uno posicional, por la
+      posicion en la lista de formales. Si el nombre no existe, se reporta.
+     */
+    public EntradaTabla formalDe(Entorno.FuncionDeclarada firma, ParametroReal parametro,
+            int posicion, int linea) {
+        if (firma == null || parametro == null) {
+            return null;
+        }
+        if (parametro.nombreFormal != null) {
+            for (Entorno.Parametro formal : firma.parametros) {
+                if (parametro.nombreFormal.equals(formal.nombre)) {
+                    return formal.entrada;
+                }
+            }
+            reporte.error(linea, "Parametro formal '" + parametro.nombreFormal
+                    + "' no existe en la funcion '" + firma.nombre + "'");
+            return null;
+        }
+        if (posicion < 0 || posicion >= firma.parametros.size()) {
+            return null;
+        }
+        return firma.parametros.get(posicion).entrada;
     }
 
     // el signo unario puede sacar la constante de rango. 
