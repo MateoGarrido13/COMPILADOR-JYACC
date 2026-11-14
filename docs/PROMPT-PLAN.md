@@ -91,12 +91,13 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Documentar en `docs/PROMPT-13.md`.
 - Resultado: `docs/PROMPT-13.md`. Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con asignaciones, pout, if/else, repeat anidado, invocaciones y ret. Todos los 11 casos de ITERACION pasan.
 
-## Prompt 17 - Asignacion dentro de expresiones
+## Prompt 17 - Asignación dentro de expresiones (ejecutado)
 
 - `ID = (expr)` genera asignacion interna y devuelve el valor asignado.
 - Prohibir anidamiento.
 - Verificar tipos del destino y de la expresion.
 - Documentar en `docs/PROMPT-17.md`.
+- Resultado: `docs/PROMPT-17.md`. `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento. Todos los tests de r17 pasan.
 
 ## Prompt 33 - Conversion `todf`
 

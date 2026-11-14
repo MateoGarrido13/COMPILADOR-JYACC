@@ -14,9 +14,9 @@ Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
 | Último commit | `746c60d` — generacion de codigo base |
-| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13 |
-| Prompt en curso / siguiente | **17 — Asignación dentro de expresiones** |
-| Commits del plan completados | 8 de 15 |
+| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17 |
+| Prompt en curso / siguiente | **33 — Conversión `todf`** |
+| Commits del plan completados | 9 de 15 |
 
 ### Reglas de granularidad para commits
 
@@ -42,7 +42,8 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ✅ Ejecutado | `docs/PROMPT-6-8.md` | `test/tp1/verificacion_constantes_*` |
 | 9 y 16 | Cadenas y comentarios | ✅ **Ejecutado (validado por lexico)** | `docs/PROMPT-9-16.md` | `test/tp1/verificaciones_comentarios_cadenas/` |
 | 13 | `repeat while` — condiciones booleanas y tipo | ✅ **Ejecutado** | `docs/PROMPT-13.md` | `test/TP3 _y_TP4/ITERACION/` |
-| 17 | Asignación dentro de expresiones | ⏳ **Siguiente** | `docs/PROMPT-17.md` (por crear) | `test/tp2/verificacion_r17_asig_expresiones/` |
+| **17** | **Asignación dentro de expresiones** | ✅ **Ejecutado** | `docs/PROMPT-17.md` | `test/tp2/verificacion_r17_asig_expresiones/` |
+| 33 | Conversión `todf` — restricción de origen | ⏳ **Siguiente** | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
 | 33 | Conversión `todf` — restricción de origen | ❌ Pendiente | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
 | 19 | Parámetros reales y orden | ❌ Pendiente | `docs/PROMPT-19.md` (por crear) | `test/tp2/verificacion_r19_param_reales/` |
 | 23 | Enumeraciones | ❌ Pendiente | `docs/PROMPT-23.md` (por crear) | `test/tp2/verificacion_r23_enums/` |
@@ -52,9 +53,9 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 
 ### Próximos a implementar (orden del plan)
 
-1. **Prompt 17 — Asignación dentro de expresiones** (siguiente inmediato): generar asignación interna y chequear tipos.
-2. **Prompt 33 — Conversión `todf`**: restringir el origen a `ulongint` o enum con base `ulongint`.
-3. **Prompt 19 — Parámetros reales y orden**: chequear tipos de parámetros reales contra formales.
+1. **Prompt 33 — Conversión `todf`** (siguiente inmediato): restringir el origen a `ulongint` o enum con base `ulongint`.
+2. **Prompt 19 — Parámetros reales y orden**: chequear tipos de parámetros reales contra formales.
+3. **Prompt 23 — Enumeraciones**: verificar que el tipo exista al declarar variables.
 
 ---
 
@@ -67,7 +68,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Tipado de constantes en el léxico | 6 y 8 | `AccionConstanteEntera` y `AccionConstanteFloat` ahora insertan las constantes con `tipoDato` (`ulongint` o `doublef`) y `uso = CONSTANTE` durante el análisis léxico, usando `insertarConstante`. Resuelto. | Alta (completado) |
 | Validación de cadenas y comentarios | 9 y 16 | `AccionCadena.java` ya inserta cadenas con tipo `cadena`, no permite saltos de línea y descarta comentarios `{{...}}`. Validado por el lexico. | Media (completado) |
 | Condiciones booleanas en `repeat while` | 13 | Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con todas las sentencias ejecutables. Todos los 11 casos de ITERACION pasan. | Media (completado) |
-| Asignación interna en expresiones | 17 | Se reconoce la sintaxis y se detecta el anidamiento, pero no se genera la asignación interna ni se chequean sus tipos. | Media |
+| Asignación interna en expresiones | 17 | `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento. Todos los tests de r17 pasan. | Media (completado) |
 | Restricción de origen en `todf` | 33 | `todf` ya emite terceto y devuelve `doublef`, pero falta restringir el origen a `ulongint` o enum con base `ulongint`, y rechazar conversiones vacías, de `doublef` o de objetos. | Media |
 | Tipos de parámetros reales | 19 | Se verifica cantidad, orden y ubicación del formal, pero falta chequear que los tipos de los parámetros reales coincidan con los formales. | Media |
 | Existen tipos al declarar variables | 23 | Falta verificar que el tipo exista al declarar variables y que la constante asignada pertenezca al enumerado. | Media |
@@ -131,5 +132,6 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
  - `docs/PROMPT-6-8.md` — tipado de constantes ulongint y doublef en el lexico
  - `docs/PROMPT-9-16.md` — cadenas y comentarios validados por el lexico
  - `docs/PROMPT-13.md` — condicion booleana y tipo en repeat while
+ - `docs/PROMPT-17.md` — asignación dentro de expresiones
  - `docs/DEC-6.md` — registro de tipos de constantes en el analisis lexico
  - `docs/DEC-8.md` — condicion booleana y tipo en repeat while (prompt 3.3)
