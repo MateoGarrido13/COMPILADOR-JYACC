@@ -128,3 +128,8 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
 - `docs/PROMPT-2B.md` — codegen base
 - `docs/PROMPT-3.10.md` — herencia múltiple con prefijo (D3 revisada)
 - `docs/SEMANTICAS_FALTANTES.md` — diagnóstico de faltantes por tema
+ - `docs/PROMPT-6-8.md` — tipado de constantes ulongint y doublef en el lexico
+ - `docs/PROMPT-9-16.md` — cadenas y comentarios validados por el lexico
+ - `docs/PROMPT-13.md` — condicion booleana y tipo en repeat while
+ - `docs/DEC-6.md` — registro de tipos de constantes en el analisis lexico
+ - `docs/DEC-8.md` — condicion booleana y tipo en repeat while (prompt 3.3)
