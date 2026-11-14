@@ -1,12 +1,81 @@
-# Compilador
-
-## Descripción general
+# Compilador - Grupo 43
 
 Compilador desarrollado para la materia Compiladores e Intérpretes, de la carrera Ingeniería en Sistemas de la Facultad de Ciencias Exactas de la UNICEN.
 
 El programa lee un archivo fuente del lenguaje definido en los trabajos prácticos de la cursada 2026 y encadena el analizador léxico del TP1 con el analizador sintáctico del TP2. El léxico reconoce los tokens con una matriz de transiciones. El sintáctico es un parser LALR(1) generado con BYACC/J a partir de la gramática del grupo. La salida por consola comienza con el código fuente con las líneas numeradas (`N: <línea>`) e informa los tokens detectados, las estructuras sintácticas, los errores y el contenido de la tabla de símbolos.
 
 Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef`, las cadenas de una línea, los comentarios multilínea, la sentencia `repeat`/`while`, la asignación de expresiones dentro de expresiones, el orden de evaluación de los parámetros, las enumeraciones, las clases, el acceso a atributos con punto, la herencia múltiple con prefijo y la conversión explícita `todf`.
+
+---
+
+## Estado actual del proyecto
+
+| Campo | Valor |
+|-------|-------|
+| Rama | `SEMANTICAStp03` |
+| Último commit | `746c60d` — generacion de codigo base |
+| Prompts ejecutados | 0, 1A, 1B, 2, 2B |
+| Prompt en curso / siguiente | **6 y 8 — Constantes `ulongint` y `doublef`** |
+| Commits del plan completados | 5 de 15 |
+
+### Reglas de granularidad para commits
+
+Cada commit del plan debe cumplir, salvo excepciones justificadas:
+
+- **Máximo 200 líneas modificadas** por commit (suma de inserciones y borrados).
+- **Máximo 10 archivos modificados** por commit.
+- Cada commit debe ser reviewable de forma independiente (tests y docs junto al código).
+
+Cuando un prompt supere esos límites, se divide en commits más pequeños manteniendo el orden del plan.
+
+---
+
+## Plan de prompts — progreso
+
+| # | Prompt | Estado | Archivo de decisiones | Tests |
+|---|--------|--------|----------------------|-------|
+| 0 | Baseline reproducible | ✅ Ejecutado | `docs/PROMPT-0.md` | 65 casos de regresión |
+| 1A | Base de Name Mangling | ✅ Ejecutado | `docs/PROMPT-1A.md` | `prompt-1a-ambitos/` |
+| 1B | Apertura y cierre real de ámbitos | ✅ Ejecutado | `docs/PROMPT-1B.md` | `prompt-1b-name-mangling/` |
+| 2 | Igualdad estricta de tipos | ✅ Ejecutado | `docs/PROMPT-2.md` | `prompt-2-tipos-estrictos/` |
+| 2B | Codegen base (tercetos, `pout`, `ret`, `todf`, `PAR`/`CALL`/`CALLMET`) | ✅ Ejecutado | `docs/PROMPT-2B.md` | `prompt-2b-codegen-base/` |
+| **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ⏳ **Siguiente** | `docs/PROMPT-6-8.md` (por crear) | `test/tp1/verificacion_constantes_*` |
+| 9 y 16 | Cadenas y comentarios | ❌ Pendiente | `docs/PROMPT-9-16.md` (por crear) | `test/tp1/verificacion_*` |
+| 13 | `repeat while` — condiciones booleanas y tipo | ❌ Pendiente | `docs/PROMPT-13.md` (por crear) | `test/TP3 _y_TP4/ITERACION/` |
+| 17 | Asignación dentro de expresiones | ❌ Pendiente | `docs/PROMPT-17.md` (por crear) | `test/tp2/verificacion_r17_asig_expresiones/` |
+| 33 | Conversión `todf` — restricción de origen | ❌ Pendiente | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
+| 19 | Parámetros reales y orden | ❌ Pendiente | `docs/PROMPT-19.md` (por crear) | `test/tp2/verificacion_r19_param_reales/` |
+| 23 | Enumeraciones | ❌ Pendiente | `docs/PROMPT-23.md` (por crear) | `test/tp2/verificacion_r23_enums/` |
+| 25 | Objetos y asignación estructural | ❌ Pendiente | `docs/PROMPT-25.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
+| 28 | Acceso tradicional a atributos | ❌ Pendiente | `docs/PROMPT-28.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
+| 31 | Herencia múltiple con prefijo (D3 revisada) | ❌ Pendiente | `docs/PROMPT-31.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
+
+### Próximos a implementar (orden del plan)
+
+1. **Prompt 6 y 8 — Constantes `ulongint` y `doublef`** (siguiente inmediato): tipar cada constante en el momento del análisis léxico, mantener rango y formato. Archivos clave: `acciones semanticas/AccionConstanteEntera.java`, `acciones semanticas/AccionConstanteFloat.java`, `TablaSimbolos.java`, `Entorno.java`, `Tipos.java`.
+2. **Prompt 9 y 16 — Cadenas y comentarios**: validar estado actual contra TP1/TP3, completar solo si falta validación o tipo.
+3. **Prompt 13 — `repeat while`**: condición obligatoria y booleana por comparación de tipos; integrar todas las sentencias ejecutables.
+
+---
+
+## Issues abiertas
+
+Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FALTANTES.md`:
+
+| Issue | Prompt | Descripción | Prioridad |
+|-------|--------|-------------|-----------|
+| Tipado de constantes en el léxico | 6 y 8 | `AccionConstanteEntera` y `AccionConstanteFloat` insertan las constantes sin asignarles tipo en la tabla de símbolos. El tipo se asigna después al procesarlas como factores. TP3 exige registrar el tipo durante el análisis léxico. | Alta (siguiente) |
+| Validación de cadenas y comentarios | 9 y 16 | Verificar que las cadenas de una línea se inserten con tipo `cadena`, que no se permitan saltos de línea, y que los comentarios multilínea se descarten por completo. | Media |
+| Condiciones booleanas en `repeat while` | 13 | Falta integrar chequeos de tipos de condiciones exigidos por TP03. | Media |
+| Asignación interna en expresiones | 17 | Se reconoce la sintaxis y se detecta el anidamiento, pero no se genera la asignación interna ni se chequean sus tipos. | Media |
+| Restricción de origen en `todf` | 33 | `todf` ya emite terceto y devuelve `doublef`, pero falta restringir el origen a `ulongint` o enum con base `ulongint`, y rechazar conversiones vacías, de `doublef` o de objetos. | Media |
+| Tipos de parámetros reales | 19 | Se verifica cantidad, orden y ubicación del formal, pero falta chequear que los tipos de los parámetros reales coincidan con los formales. | Media |
+| Existen tipos al declarar variables | 23 | Falta verificar que el tipo exista al declarar variables y que la constante asignada pertenezca al enumerado. | Media |
+| Asignación estructural de objetos | 25 | Falta verificar que la clase exista y que dos objetos sean estructuralmente compatibles; generar copia estructural, no asignación simple. | Media |
+| Acceso a atributos con punto | 28 | Falta verificar existencia, visibilidad y tipo del atributo en la clase del objeto; generar terceto con la referencia. | Media |
+| Herencia múltiple con prefijo | 31 | Falta validar clases base, que el prefijo corresponda a una clase heredada, y que el atributo o método exista y sea accesible. | Media |
+
+---
 
 ## Requisitos para correrlo
 
@@ -36,3 +105,18 @@ Cualquier archivo de esa carpeta se puede pasar como argumento. Por ejemplo:
 java Main test/tp1/verificacion_constantes_ulongint/limites_validos.txt
 java Main test/tp2/verificacion_r13_estructura_while/una_sentencia.txt
 ```
+
+---
+
+## Documentos de decisión
+
+Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
+
+- `docs/PROMPT-PLAN.md` — plan reajustado de prompts con decisiones D1 a D5
+- `docs/PROMPT-0.md` — baseline reproducible
+- `docs/PROMPT-1A.md` — base de Name Mangling
+- `docs/PROMPT-1B.md` — apertura y cierre real de ámbitos
+- `docs/PROMPT-2.md` — igualdad estricta de tipos
+- `docs/PROMPT-2B.md` — codegen base
+- `docs/PROMPT-3.10.md` — herencia múltiple con prefijo (D3 revisada)
+- `docs/SEMANTICAS_FALTANTES.md` — diagnóstico de faltantes por tema
