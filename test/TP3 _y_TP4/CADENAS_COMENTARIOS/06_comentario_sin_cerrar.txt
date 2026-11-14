@@ -1,0 +1,12 @@
+{{ TP4 cadenas y comentarios: comentario multilinea sin cerrar.
+   Utilidad: verificar que un comentario de llaves dobles que nunca se
+   cierra genera el error lexico correspondiente (Lexema no reconocido).
+   Esperado:
+   Error: Lexema no reconocido 'llaves dobles que nunca se cierra...'
+   No hay terceto de pout. }}
+prog
+ulongint x;
+begin
+    {{ este comentario nunca se cierra
+    x := 0$ul;
+end

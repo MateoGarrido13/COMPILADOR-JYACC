@@ -1,0 +1,11 @@
+{{ TP4 cadenas y comentarios: cadena sin cerrar.
+   Utilidad: verificar que {sin cierre genera el error lexico
+   "Cadena no cerrada".
+   Esperado:
+   Error: Cadena no cerrada '{sin cierre'
+   No hay terceto de pout. }}
+prog
+ulongint x;
+begin
+    pout({sin cierre
+end

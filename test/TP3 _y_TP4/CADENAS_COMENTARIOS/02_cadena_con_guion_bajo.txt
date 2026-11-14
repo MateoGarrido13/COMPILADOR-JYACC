@@ -1,0 +1,14 @@
+{{ TP4 cadenas y comentarios: cadena de una linea con guion bajo.
+   Utilidad: verificar que {cadena_con_guion} se reconoce como CADENA
+   y se inserta en la TS con Tipo de dato: cadena.
+   Esperado:
+   [303] Cadena {cadena_con_guion}
+   cadena_con_guion -> 303   Tipo de dato: cadena   Uso: cadena   Declarado: si
+   3. (pout, cadena_con_guion, --)
+   Sin errores. }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    pout({cadena_con_guion});
+end

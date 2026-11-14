@@ -1,0 +1,12 @@
+{{ TP4 cadenas y comentarios: cadena con salto de linea interno.
+   Utilidad: verificar que una cadena que abarca dos lineas genera
+   el error lexico "Cadena no cerrada" (no se permite salto de linea).
+   Esperado:
+   Error: Cadena no cerrada '{cadena'
+   No hay terceto de pout. }}
+prog
+ulongint x;
+begin
+    pout({cadena
+con salto});
+end

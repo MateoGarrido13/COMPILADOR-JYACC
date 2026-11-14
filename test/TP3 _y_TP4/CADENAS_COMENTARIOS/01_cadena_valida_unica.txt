@@ -1,0 +1,14 @@
+{{ TP4 cadenas y comentarios: cadena de una linea entre llaves.
+   Utilidad: verificar que {texto} se reconoce como token CADENA (303),
+   se inserta en la TS con Tipo de dato: cadena, y llega al codegen.
+   Esperado:
+   [303] Cadena {hola}
+   hola -> 303   Tipo de dato: cadena   Uso: cadena   Declarado: si
+   3. (pout, hola, --)
+   Sin errores. }}
+prog
+ulongint x;
+begin
+    x := 0$ul;
+    pout({hola});
+end

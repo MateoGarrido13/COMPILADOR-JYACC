@@ -1,0 +1,20 @@
+{{ TP4 cadenas y comentarios: comentario multilinea descartado.
+   Utilidad: verificar que un comentario entre llaves dobles de apertura
+   y cierre, con guion bajo, llave interna y varias lineas, se descarta
+   por completo: no aparece en la tira de tokens ni en la Tabla de
+   Simbolos. Solo la cadena {ok} permanece.
+   Esperado:
+   [303] Cadena {ok}
+   ok -> 303   Tipo de dato: cadena   Uso: cadena   Declarado: si
+   3. (pout, ok, --)
+   Sin errores. }}
+prog
+ulongint x;
+{{
+    comentario con _ guion bajo y { llave interna
+    varias lineas
+    y mas contenido }}
+begin
+    x := 0$ul;
+    pout({ok});
+end
