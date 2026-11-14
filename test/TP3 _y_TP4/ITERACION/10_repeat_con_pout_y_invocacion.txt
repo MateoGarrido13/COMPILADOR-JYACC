@@ -1,0 +1,31 @@
+{{ TP4 iteracion: repeat con pout y una invocacion dentro del cuerpo.
+   label_1 es el inicio del ciclo. La invocacion genera PAR y CALL,
+   y el resultado se imprime con pout.
+   Esperado:
+   1. (:=, x:main, 0$ul)
+   2. (label_1, --, --)
+   3. (PAR, n:main:foo, x:main)
+   4. (CALL, foo:main, 1)
+   5. (:=, r:main, [4])
+   6. (pout, r:main, --)
+   7. (+, x:main, 1$ul)
+   8. (:=, x:main, [7])
+   9. (<, x:main, 3$ul)
+   10. (BF, [9], label_2)
+   11. (BI, label_1, --)
+   12. (label_2, --, --)
+   Sin errores. }}
+prog
+ulongint function foo(ulongint n)
+begin
+    ret(n);
+end;
+ulongint x, r;
+begin
+    x := 0$ul;
+    repeat
+        r := foo(x)[1$ul];
+        pout(r);
+        x := x + 1$ul;
+    while (x < 3$ul);
+end

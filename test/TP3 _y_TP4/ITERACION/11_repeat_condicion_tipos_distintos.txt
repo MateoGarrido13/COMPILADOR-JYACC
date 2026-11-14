@@ -1,0 +1,15 @@
+{{ TP4 iteracion: condicion del while con tipos distintos (ulongint vs doublef).
+   La condición compara x (ulongint) con 1.0 (doublef), lo cual debe informar
+   error de tipos y no generar tercetos del ciclo.
+   Esperado:
+   Error: Tipos incompatibles en la condicion: se esperaba ulongint y se encontro doublef
+   Sin tercetos del ciclo repeat. }}
+prog
+ulongint x;
+doublef d;
+begin
+    x := 0$ul;
+    repeat
+        x := x + 1$ul;
+    while (x > 1.0);
+end
