@@ -1,3 +1,13 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+  (ninguno)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- a:main -> ulongint, funcion
+- n:main:a -> ulongint, parametro
+- b:main:a -> ulongint, funcion
+- m:main:a:b -> ulongint, parametro
+}}
+
 prog
 ulongint function a(ulongint n)
     ulongint function b(ulongint m)

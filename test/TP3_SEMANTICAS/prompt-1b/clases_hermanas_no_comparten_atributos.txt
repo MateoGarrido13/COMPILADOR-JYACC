@@ -1,3 +1,13 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+  (ninguno)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- ca:main -> ca, clase
+- x:main:ca -> ulongint, atributo
+- cb:main -> cb, clase
+- x:main:cb -> ulongint, atributo
+}}
+
 prog
 class ca
 begin

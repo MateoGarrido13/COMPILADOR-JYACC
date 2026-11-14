@@ -6,5 +6,7 @@ begin
     ret(x);
 end;
 begin
+    c := f(a, b)[1$ul, 2$ul];
     c := f(a, b)[2$ul, 1$ul];
+
 end

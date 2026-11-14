@@ -1,3 +1,17 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (:=, global:main, p:main:ca:m)
+2. (:=, global:main, q:main:f)
+3. (:=, global:main, 1$ul)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- global:main -> ulongint, variable
+- ca:main -> ca, clase
+- m:main:ca -> ulongint, metodo
+- p:main:ca:m -> ulongint, parametro
+- f:main -> ulongint, funcion
+- q:main:f -> ulongint, parametro
+}}
+
 prog
 ulongint global;
 class ca

@@ -1,3 +1,13 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (:=, global:main, n:main:a)
+2. (:=, global:main, 1$ul)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- global:main -> ulongint, variable
+- a:main -> ulongint, funcion
+- n:main:a -> ulongint, parametro
+}}
+
 prog
 ulongint global;
 ulongint function a(ulongint n)

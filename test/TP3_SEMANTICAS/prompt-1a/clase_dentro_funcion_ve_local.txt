@@ -1,3 +1,15 @@
+{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+Tercetos:
+1. (:=, externa:main:contenedora, p:main:contenedora:ca:m)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- contenedora:main -> ulongint, funcion
+- n:main:contenedora -> ulongint, parametro
+- externa:main:contenedora -> ulongint, variable
+- ca:main:contenedora -> ca, clase
+- m:main:contenedora:ca -> ulongint, metodo
+- p:main:contenedora:ca:m -> ulongint, parametro
+}}
+
 prog
 ulongint function contenedora(ulongint n)
     ulongint externa;
