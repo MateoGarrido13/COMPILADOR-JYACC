@@ -77,6 +77,14 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 
 ---
 
+### Nota: cadenas y comentarios (Prompt 9 y 16)
+
+**Validado por el léxico.** Según `docs/SEMANTICAS_FALTANTES.md` y `docs/Promt.md` (Prompt 3.2), las cadenas de una línea se insertan con tipo `cadena`, no se permiten saltos de línea, y los comentarios multilínea `{{ ... }}` se descartan por completo. No se detectó un faltante léxico importante; hay casos TP1 para estos temas en `test/tp1/`.
+
+> **RIESGO:** futuras modificaciones sobre el core del compilador (léxico, tabla de símbolos o acciones semánticas) llevarán a una revisión de estas reglas antes de la entrega final.
+
+---
+
 ## Requisitos para correrlo
 
 Hace falta un JDK, con `javac` y `java`. El proyecto se probó con OpenJDK 21. No usa librerías externas: el parser ya está generado en `Parser.java`, así que no hace falta instalar BYACC/J para ejecutarlo.
