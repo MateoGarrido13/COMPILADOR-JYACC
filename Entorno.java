@@ -176,9 +176,11 @@ public class Entorno {
         if (constante == null) {
             return null;
         }
-        String tipo = Tipos.tipoDeConstante(constante.lexema);
-        if (tipo != null) {
-            constante.tipoDato = tipo;
+        if (constante.tipoDato == null || Tipos.INDEFINIDO.equals(constante.tipoDato)) {
+            String tipo = Tipos.tipoDeConstante(constante.lexema);
+            if (tipo != null) {
+                constante.tipoDato = tipo;
+            }
         }
         return constante;
     }
@@ -187,7 +189,10 @@ public class Entorno {
         if (constante == null) {
             return null;
         }
-        String tipo = Tipos.tipoDeConstante(constante.lexema);
+        String tipo = constante.tipoDato;
+        if (tipo == null || Tipos.INDEFINIDO.equals(tipo)) {
+            tipo = Tipos.tipoDeConstante(constante.lexema);
+        }
         return tablaSimbolos.insertarConstante("-" + constante.lexema, tipo, linea);
     }
 

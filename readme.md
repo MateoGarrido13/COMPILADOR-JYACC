@@ -13,7 +13,7 @@ Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef
 | Campo | Valor |
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
-| Último commit | `746c60d` — generacion de codigo base |
+| Último commit | `c251e78` — mas_pruebas_iteraciones |
 | Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17 |
 | Prompt en curso / siguiente | **33 — Conversión `todf`** |
 | Commits del plan completados | 9 de 15 |
@@ -39,12 +39,11 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 1B | Apertura y cierre real de ámbitos | ✅ Ejecutado | `docs/PROMPT-1B.md` | `prompt-1b-name-mangling/` |
 | 2 | Igualdad estricta de tipos | ✅ Ejecutado | `docs/PROMPT-2.md` | `prompt-2-tipos-estrictos/` |
 | 2B | Codegen base (tercetos, `pout`, `ret`, `todf`, `PAR`/`CALL`/`CALLMET`) | ✅ Ejecutado | `docs/PROMPT-2B.md` | `prompt-2b-codegen-base/` |
-| **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ✅ Ejecutado | `docs/PROMPT-6-8.md` | `test/tp1/verificacion_constantes_*` |
-| 9 y 16 | Cadenas y comentarios | ✅ **Ejecutado (validado por lexico)** | `docs/PROMPT-9-16.md` | `test/tp1/verificaciones_comentarios_cadenas/` |
+| **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ✅ Ejecutado | `docs/PROMPT-6-8.md` | `test/tp1/verificacion_constantes_*` + `prompt-3-1-constantes/` |
+| 9 y 16 | Cadenas y comentarios | ✅ **Ejecutado (validado por lexico)** | `docs/PROMPT-9-16.md` | `test/tp1/verificaciones_comentarios_cadenas/` + `test/TP3 _y_TP4/CADENAS_COMENTARIOS/` |
 | 13 | `repeat while` — condiciones booleanas y tipo | ✅ **Ejecutado** | `docs/PROMPT-13.md` | `test/TP3 _y_TP4/ITERACION/` |
 | **17** | **Asignación dentro de expresiones** | ✅ **Ejecutado** | `docs/PROMPT-17.md` | `test/tp2/verificacion_r17_asig_expresiones/` |
 | 33 | Conversión `todf` — restricción de origen | ⏳ **Siguiente** | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
-| 33 | Conversión `todf` — restricción de origen | ❌ Pendiente | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
 | 19 | Parámetros reales y orden | ❌ Pendiente | `docs/PROMPT-19.md` (por crear) | `test/tp2/verificacion_r19_param_reales/` |
 | 23 | Enumeraciones | ❌ Pendiente | `docs/PROMPT-23.md` (por crear) | `test/tp2/verificacion_r23_enums/` |
 | 25 | Objetos y asignación estructural | ❌ Pendiente | `docs/PROMPT-25.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
@@ -134,4 +133,6 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
  - `docs/PROMPT-13.md` — condicion booleana y tipo en repeat while
  - `docs/PROMPT-17.md` — asignación dentro de expresiones
  - `docs/DEC-6.md` — registro de tipos de constantes en el analisis lexico
+ - `docs/DEC-7.md` — cadenas y comentarios (prompt 3.2)
  - `docs/DEC-8.md` — condicion booleana y tipo en repeat while (prompt 3.3)
+ - `docs/REVISION-3-1-3-2.md` — revisión y correcciones de las iteraciones 3.1 y 3.2

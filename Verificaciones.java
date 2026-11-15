@@ -255,16 +255,18 @@ public class Verificaciones {
     }
 
     // el signo unario puede sacar la constante de rango. 
-    public void verificarRangoConstante(EntradaTabla constante, int linea) {
+    public boolean verificarRangoConstante(EntradaTabla constante, int linea) {
         if (constante == null || constante.lexema == null) {
-            return;
+            return true;
         }
         String tipo = constante.tipoDato != null
                 ? constante.tipoDato
                 : Tipos.tipoDeConstante(constante.lexema);
         if (tipo != null && !Tipos.rangoValido(constante.lexema, tipo)) {
             reporte.error(linea, "Constante fuera de rango '" + constante.lexema + "'");
+            return false;
         }
+        return true;
     }
 
     // Tema 23: typedef sin valores. 

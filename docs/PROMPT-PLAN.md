@@ -75,14 +75,14 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Tipar cada constante en el momento del analisis lexico.
 - Mantener rango y formato.
 - Documentar en `docs/PROMPT-6-8.md`.
-- Resultado: `docs/PROMPT-6-8.md`. Cambios en `AccionConstanteEntera.java` y `AccionConstanteFloat.java`: usar `insertarConstante(lexema, tipo, linea)` para registrar `tipoDato` y `uso = CONSTANTE` en el lexico.
+- Resultado: `docs/PROMPT-6-8.md`. Cambios en `AccionConstanteEntera.java` y `AccionConstanteFloat.java`: usar `insertarConstante(lexema, tipo, linea)` para registrar `tipoDato` y `uso = CONSTANTE` en el lexico. Casos en `test/TP3_SEMANTICAS/prompt-3-1-constantes/`.
 
 ## Prompt 9 y 16 - Cadenas y comentarios (ejecutado)
 
 - Verificar el estado actual contra TP1/TP3.
 - Completar solo si falta validacion o tipo.
 - Documentar en `docs/PROMPT-9-16.md`.
-- Resultado: `docs/PROMPT-9-16.md`. Validado por el lexico en `AccionCadena.java`: cadenas con tipo `cadena`, comentarios `{{...}}` descartados, sin saltos de línea en cadenas. No requiere cambios de código.
+- Resultado: `docs/PROMPT-9-16.md`. Validado por el lexico en `AccionCadena.java`: cadenas con tipo `cadena`, comentarios `{{...}}` descartados, sin saltos de línea en cadenas. En la revisión se corrigió la colisión de claves en `TablaSimbolos.java`. Casos en `test/TP3 _y_TP4/CADENAS_COMENTARIOS/`.
 
 ## Prompt 13 - `repeat while` (ejecutado)
 

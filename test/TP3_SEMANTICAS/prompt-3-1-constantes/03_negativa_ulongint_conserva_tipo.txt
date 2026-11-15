@@ -1,0 +1,21 @@
+{{ Salida ideal esperada (tercetos y tabla de simbolos, sin palabras clave):
+El lexico registra 1$ul como ulongint. El sintactico crea la entrada
+negativa -1$ul conservando ese tipo y, despues del signo, detecta que
+queda fuera del rango sin signo [0, 4294967295].
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- x:main -> ulongint, variable
+Constantes de la tabla de simbolos:
+- 1$ul -> ulongint, constante
+- -1$ul -> ulongint, constante
+Error esperado:
+- Constante fuera de rango '-1$ul'
+}}
+
+prog
+ulongint x;
+begin
+    x := -1$ul;
+end

@@ -4,6 +4,16 @@ import java.util.List;
 import java.util.Map;
 
 public class TablaSimbolos {
+    /*
+      Constantes y cadenas comparten la tabla con identificadores y palabras
+      reservadas, pero no pueden compartir clave: el contenido de una cadena
+      puede coincidir con una reservada ("if"), con la clave de una variable
+      ("x:main") o con el lexema de una constante ("1$ul"). Se las aísla con
+      prefijos que no aparecen en las claves de identificadores.
+     */
+    private static final String PREFIJO_CONSTANTE = "$const:";
+    private static final String PREFIJO_CADENA = "$cadena:";
+
     private final Map<String, EntradaTabla> tabla;
     // Índice 0 vacío: el puntero de una entrada es su posición y empieza en 1.
     private final List<EntradaTabla> porPuntero;
@@ -36,7 +46,7 @@ public class TablaSimbolos {
         entrada.uso = EntradaTabla.Uso.RESERVADA;
     }
 
-    // Única creación de entradas. El mismo lexema conserva el puntero que recibió acá.
+    // Única creación de entradas. La misma clave conserva el puntero que recibió acá.
     private EntradaTabla crear(String lexema, int tokenID, int numeroLinea) {
         EntradaTabla entrada = new EntradaTabla(lexema, tokenID, numeroLinea);
         entrada.puntero = porPuntero.size();
@@ -47,6 +57,17 @@ public class TablaSimbolos {
     private EntradaTabla alta(String lexema, int tokenID, int numeroLinea) {
         EntradaTabla entrada = crear(lexema, tokenID, numeroLinea);
         tabla.put(lexema, entrada);
+        return entrada;
+    }
+
+    /*
+      Da de alta con una clave interna distinta del lexema visible. Se usa para
+      constantes y cadenas: el lexema que muestran la TS y el codegen es el
+      original, mientras que la clave evita colisiones con otros espacios.
+     */
+    private EntradaTabla altaConClave(String clave, String lexema, int tokenID, int numeroLinea) {
+        EntradaTabla entrada = crear(lexema, tokenID, numeroLinea);
+        tabla.put(clave, entrada);
         return entrada;
     }
 
@@ -192,22 +213,12 @@ public class TablaSimbolos {
         return tokenID >= 400;
     }
 
-    // Inserta el lexema; el tipo y el rango los asigna la semantica. 
-    public EntradaTabla buscarOInsertarConstante(String lexema, int tokenID) {
-        EntradaTabla entrada = tabla.get(lexema);
-        if (entrada == null) {
-            entrada = alta(lexema, tokenID, Globals.numeroLinea);
-        }
-        entrada.uso = EntradaTabla.Uso.CONSTANTE;
-        entrada.declarado = true;
-        return entrada;
-    }
-
     // Cadenas reconocidas por el lexico (tema 9). El tipo se fija porque coincide con el token.
     public EntradaTabla buscarOInsertarCadena(String cadena) {
-        EntradaTabla entrada = tabla.get(cadena);
+        String clave = PREFIJO_CADENA + cadena;
+        EntradaTabla entrada = tabla.get(clave);
         if (entrada == null) {
-            entrada = alta(cadena, Globals.CADENA, Globals.numeroLinea);
+            entrada = altaConClave(clave, cadena, Globals.CADENA, Globals.numeroLinea);
         }
         entrada.tipoDato = Tipos.CADENA;
         entrada.uso = EntradaTabla.Uso.CADENA;
@@ -215,11 +226,16 @@ public class TablaSimbolos {
         return entrada;
     }
 
-     // Inserta o actualiza una constante. La usa el Analisis Sintactico al detectar constantes negativas
+    /*
+      Unico punto de alta de constantes numericas. El tipo se recibe siempre
+      explicito: lo fija el lexico para las constantes positivas y el sintactico
+      para las negativas (con el tipo ya registrado por el lexico).
+     */
     public EntradaTabla insertarConstante(String lexema, String tipoDato, int numeroLinea) {
-        EntradaTabla entrada = tabla.get(lexema);
+        String clave = PREFIJO_CONSTANTE + lexema;
+        EntradaTabla entrada = tabla.get(clave);
         if (entrada == null) {
-            entrada = alta(lexema, Globals.CONSTANTE_NUMERICA, numeroLinea);
+            entrada = altaConClave(clave, lexema, Globals.CONSTANTE_NUMERICA, numeroLinea);
         }
         entrada.tipoDato = tipoDato;
         entrada.uso = EntradaTabla.Uso.CONSTANTE;

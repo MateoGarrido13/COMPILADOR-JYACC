@@ -1,0 +1,18 @@
+{{ Salida ideal esperada (tercetos y tabla de simbolos, sin palabras clave):
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (:=, z:main, -1.5)
+3. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- z:main -> doublef, variable
+Constantes de la tabla de simbolos:
+- 1.5 -> doublef, constante
+- -1.5 -> doublef, constante
+Sin errores: el signo no saca a la constante del rango doublef.
+}}
+
+prog
+doublef z;
+begin
+    z := -1.5;
+end

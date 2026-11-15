@@ -108,13 +108,21 @@ public class AccionesExpresiones {
             return ExpresionDiferida.deOperando(declaracion);
         });
 
-        tabla.registrar(Reglas.FACTOR_CONSTANTE, ctx ->
-                ExpresionDiferida.deOperando(entorno.tiparConstante(ctx.entrada(0))));
+        tabla.registrar(Reglas.FACTOR_CONSTANTE, ctx -> {
+            Object valor = ctx.valor(0);
+            if (valor instanceof ExpresionDiferida) {
+                return valor;
+            }
+            return ExpresionDiferida.deOperando(entorno.tiparConstante(ctx.entrada(0)));
+        });
 
         tabla.registrar(Reglas.FACTOR_CONSTANTE_NEGATIVA, ctx -> {
             EntradaTabla constante = entorno.aplicarSignoNegativo(ctx.entrada(0), ctx.getLinea());
-            v.verificarRangoConstante(constante, ctx.getLinea());
-            return ExpresionDiferida.deOperando(constante);
+            ExpresionDiferida expresion = ExpresionDiferida.deOperando(constante);
+            if (!v.verificarRangoConstante(constante, ctx.getLinea())) {
+                expresion.marcarInvalida();
+            }
+            return expresion;
         });
 
         tabla.registrar(Reglas.FACTOR_CADENA, ctx ->

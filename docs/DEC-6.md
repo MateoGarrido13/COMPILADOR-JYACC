@@ -18,8 +18,8 @@ El enunciado de TP3 exige que **el tipo de cada constante numerica (`ulongint` o
 
 - `Tipos.rangoValido()`: rangos y formatos se mantienen sin cambios.
 - `Tipos.tipoDeConstante()`: queda como fallback, pero la fuente principal es el tipo asignado en el lexico.
-- `Entorno.aplicarSignoNegativo()`: ya usaba `insertarConstante` con el tipo deducido del lexema.
-- `TablaSimbolos.insertarConstante()`: ya existía con la firma `(String lexema, String tipoDato, int numeroLinea)`.
+- `Entorno.aplicarSignoNegativo()`: ya usaba `insertarConstante` con el tipo deducido del lexema; en la revisión conserva el tipo ya registrado y usa el fallback sólo si falta.
+- `TablaSimbolos.insertarConstante()`: ya existía con la firma `(String lexema, String tipoDato, int numeroLinea)`; en la revisión se aisló su clave interna y se eliminó el alta sin tipo.
 
 ### Verificacion con tests
 
@@ -42,3 +42,14 @@ Se utilizaron los tests existentes de **tp1** y **tp2** para verificar que el ti
 - `test/tp2/generales/00_programa_valido.txt`: programa valido con constantes de ambos tipos.
 
 No se detectaron regresiones: los tipos se muestran correctamente en la Tabla de Símbolos y los tercetos siguen usando el lexema de la constante como operando directo (sin generar tercetos intermedios por cada constante).
+
+## Revisión posterior (iteración 3.1)
+
+En la revisión de las iteraciones 3.1 y 3.2 se agregaron los casos de
+`test/TP3_SEMANTICAS/prompt-3-1-constantes/` y se ajustó `TablaSimbolos`:
+
+- se eliminó el alta de constantes sin tipo (`buscarOInsertarConstante(String, int)`);
+- constantes y cadenas usan claves internas con prefijo para no pisar reservadas,
+  variables ni otras constantes cuando comparten el lexema visible.
+
+El detalle está en `docs/REVISION-3-1-3-2.md`.

@@ -1,0 +1,24 @@
+{{ Salida ideal esperada (tercetos y tabla de simbolos, sin palabras clave):
+Una cadena y una constante pueden compartir el texto "1$ul". Cada una
+conserva su propia entrada: la cadena con token 303 y tipo cadena, la
+constante con token 302 y tipo ulongint.
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (pout, 1$ul, --)
+3. (:=, x:main, 1$ul)
+4. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- x:main -> ulongint, variable
+Constantes de la tabla de simbolos:
+- 1$ul -> ulongint, constante
+Cadenas de la tabla de simbolos:
+- 1$ul -> cadena, cadena
+Sin errores.
+}}
+
+prog
+ulongint x;
+begin
+    pout({1$ul});
+    x := 1$ul;
+end

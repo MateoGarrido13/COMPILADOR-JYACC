@@ -1,0 +1,27 @@
+{{ Salida ideal esperada (tercetos y tabla de simbolos, sin palabras clave):
+Se usan los extremos validos de cada tipo. El tipo no se infiere al
+usar la constante como factor: ya quedo registrado por el lexico.
+Tercetos:
+1. (PROGRAMA, --, --)
+2. (:=, maxentero:main, 4294967295$ul)
+3. (:=, maxreal:main, 1.7976931348623157d+308)
+4. (:=, minreal:main, 2.2250738585072014d-308)
+5. (FIN_PROGRAMA, --, --)
+Variables de la tabla de simbolos (declaradas, sin palabras clave):
+- maxentero:main -> ulongint, variable
+- maxreal:main -> doublef, variable
+- minreal:main -> doublef, variable
+Constantes de la tabla de simbolos:
+- 4294967295$ul -> ulongint, constante
+- 1.7976931348623157d+308 -> doublef, constante
+- 2.2250738585072014d-308 -> doublef, constante
+}}
+
+prog
+ulongint maxentero;
+doublef maxreal, minreal;
+begin
+    maxentero := 4294967295$ul;
+    maxreal := 1.7976931348623157d+308;
+    minreal := 2.2250738585072014d-308;
+end

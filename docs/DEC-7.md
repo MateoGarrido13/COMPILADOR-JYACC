@@ -7,9 +7,9 @@ No se encontro defecto: el comportamiento requerido ya funciona correctamente en
 
 ### Archivos revisados (sin cambios)
 
-- `acciones semanticas/AccionCadena.java`: descarta comentarios `{{ ... }}` (retorna `-1`), rechaza cadenas sin cerrar (`Cadena no cerrada`) y con salto de linea (`Cadena de una linea con salto de linea`), e inserta el contenido con `buscarOInsertarCadena` (token `CADENA` = 303, `tipoDato = cadena`, `uso = CADENA`, `declarado = true`).
+- `acciones semanticas/AccionCadena.java`: descarta comentarios `{{ ... }}` (retorna `-1`), rechaza cadenas sin cerrar (`Cadena no cerrada`) y corta las cadenas con salto de linea (el mensaje observable es `Cadena no cerrada`), e inserta el contenido con `buscarOInsertarCadena` (token `CADENA` = 303, `tipoDato = cadena`, `uso = CADENA`, `declarado = true`).
 - `MatrizTransiciones.java`: estados 5/6 (cadena) y 7/8 (comentario `{{`) con cierres `}` correctos; `semCierre` cierra estados 5 y 6 con accion 15 al fin de archivo.
-- `TablaSimbolos.java`: `buscarOInsertarCadena()` asigna `tipoDato = Tipos.CADENA`, `uso = Uso.CADENA`, `declarado = true`.
+- `TablaSimbolos.java`: `buscarOInsertarCadena()` asigna `tipoDato = Tipos.CADENA`, `uso = Uso.CADENA`, `declarado = true`. En la revisión se cambió su clave interna para que no colisione con reservadas, variables ni constantes.
 - `AnalizadorLexico.java`: enruta los estados de cadena/comentario a `AccionCadena` (casos 12-18) y registra los tokens en `RegistroTokens`.
 
 ### Casos verificados con tests
@@ -43,12 +43,12 @@ No se encontro defecto: el comportamiento requerido ya funciona correctamente en
 
 ### Modificaciones sobre `.java`
 
-Ninguna. El código fuente ya cumple con lo requerido; no hubo defecto que corregir.
+Ninguna en `AccionCadena`, `AnalizadorLexico` ni `MatrizTransiciones`. En la revisión posterior de 3.2 se corrigió `TablaSimbolos` para que una cadena no reutilice la entrada de otro símbolo con el mismo texto: ahora usa una clave interna con prefijo y conserva su propio token, tipo y uso.
 
 ### Se crearon test
 
-Sí. Se crearon 7 casos de regresión en `test/TP3 _y_TP4/CADENAS_COMENTARIOS/` (listados arriba).
+Sí. Se crearon 7 casos de regresión en `test/TP3 _y_TP4/CADENAS_COMENTARIOS/` (listados arriba). La revisión posterior agregó el caso 08 para la colisión cadena/reservada/constante.
 
 ### Conclusión
 
-La fila "9 y 16: cadenas y comentarios" se considera validada. No hay cambios de código que commitear; solo los nuevos tests de regresión y este registro de decision.
+La fila "9 y 16: cadenas y comentarios" se considera validada. El único defecto detectado en la revisión fue la colisión de claves en la Tabla de Símbolos, corregido con pruebas de regresión. El detalle está en `docs/REVISION-3-1-3-2.md`.
