@@ -207,8 +207,9 @@ inválido. Después de la corrección no queda ningún diagnóstico nuevo.
 
 - Prompt 3.5: restringir `todf` a `ulongint` o enum con base `ulongint`, y rechazar
   conversiones vacías, de `doublef` o de objetos.
-- Prompt 19: chequear los tipos de los parámetros reales contra los formales. La
-  cantidad, el orden y la ubicación del formal ya se verifican.
+- Prompt 3.6 (Tema 19): parámetros reales, orden obligatorio, tipos, resolución
+  de funciones y métodos, generación de `PAR`/`CALL` y propagación del retorno.
+  Implementado y documentado en `docs/PROMPT-3.6.md`.
 - Temas 23, 25, 28 y 31: enumeraciones, asignación de objetos, atributos y herencia.
   El generador ya tiene los delimitadores de clase y acepta `ReferenciaAtributo`, pero
   las reglas semánticas completas siguen pendientes.

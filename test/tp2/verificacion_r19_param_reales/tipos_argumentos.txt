@@ -1,0 +1,14 @@
+{{ r19: exige igualdad exacta entre el tipo de cada real y su formal.
+   La primera llamada es valida; las otras informan incompatibilidad de tipos.
+}}
+prog
+ulongint x;
+ulongint function f(ulongint entero, doublef real)
+begin
+    ret(entero);
+end;
+begin
+    x := f(1$ul, 2.0)[1$ul, 2$ul];
+    x := f(1.0, 2$ul)[1$ul, 2$ul];
+    x := f(entero = 1.0, real = 2.0)[2$ul, 1$ul];
+end

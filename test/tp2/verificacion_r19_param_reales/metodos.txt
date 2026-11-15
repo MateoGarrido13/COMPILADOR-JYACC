@@ -1,0 +1,18 @@
+{{ r19: los metodos usan las mismas validaciones de tipos y orden; un metodo
+   inexistente se informa y no emite CALLMET.
+}}
+prog
+class ca
+begin
+    ulongint m(ulongint p)
+    begin
+        ret(p);
+    end;
+end;
+ca objeto;
+ulongint x;
+begin
+    x := objeto.m(1$ul)[1$ul];
+    x := objeto.m(1.0)[1$ul];
+    x := objeto.inexistente(1$ul)[1$ul];
+end

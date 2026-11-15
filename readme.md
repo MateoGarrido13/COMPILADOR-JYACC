@@ -44,7 +44,7 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 13 | `repeat while` — condiciones booleanas y tipo | ✅ **Ejecutado y revisado** | `docs/PROMPT-13.md` | `test/TP3 _y_TP4/ITERACION/` |
 | **17** | **Asignación dentro de expresiones** | ✅ **Ejecutado y revisado** | `docs/PROMPT-17.md` | `test/tp2/verificacion_r17_asig_expresiones/` |
 | 33 | Conversión `todf` — restricción de origen | ✅ **Ejecutado** | `docs/PROMPT-33.md` | `test/tp2/verificacion_r33_conversion/` |
-| 19 | Parámetros reales y orden | ❌ Pendiente | `docs/PROMPT-19.md` (por crear) | `test/tp2/verificacion_r19_param_reales/` |
+| 19 | Parámetros reales y orden | ✅ **Ejecutado** | `docs/PROMPT-3.6.md` | `test/tp2/verificacion_r19_param_reales/` |
 | 23 | Enumeraciones | ❌ Pendiente | `docs/PROMPT-23.md` (por crear) | `test/tp2/verificacion_r23_enums/` |
 | 25 | Objetos y asignación estructural | ❌ Pendiente | `docs/PROMPT-25.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
 | 28 | Acceso tradicional a atributos | ❌ Pendiente | `docs/PROMPT-28.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
@@ -52,9 +52,8 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 
 ### Próximos a implementar (orden del plan)
 
-1. **Prompt 19 — Parámetros reales y orden** (siguiente inmediato): chequear tipos de parámetros reales contra formales.
-2. **Prompt 23 — Enumeraciones**: verificar que el tipo exista al declarar variables.
-3. **Prompt 25 — Objetos y asignación estructural**.
+1. **Prompt 23 — Enumeraciones**: verificar que el tipo exista al declarar variables.
+2. **Prompt 25 — Objetos y asignación estructural**.
 
 ---
 
@@ -69,7 +68,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Condiciones booleanas en `repeat while` | 13 | Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con todas las sentencias ejecutables. Los casos válidos de ITERACION pasan y el 11 informa el error de tipos esperado. Revisado en `docs/REVISION-3-3-3-4.md`. | Media (completado) |
 | Asignación interna en expresiones | 17 | `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento (sin contar asignaciones en parámetros reales, Tema 19). Anidamiento, destino no asignable y tipos incompatibles ya no emiten tercetos. Revisado en `docs/REVISION-3-3-3-4.md`. | Media (completado) |
 | Restricción de origen en `todf` | 33 | `CONVERSION_TODF` valida el tipo del operando: acepta `ulongint` o enum con base `ulongint`, y reporta `todf solo convierte enteros a doublef` para `doublef` o cualquier otro origen. El codegen `(todf, valor, --)` y el tipo `doublef` ya venían del Prompt 2B. Documentado en `docs/PROMPT-33.md`. | Media (completado) |
-| Tipos de parámetros reales | 19 | Se verifica cantidad, orden y ubicación del formal, pero falta chequear que los tipos de los parámetros reales coincidan con los formales. | Media |
+| Tipos de parámetros reales | 19 | Resuelto: se verifican cantidad, orden, formal y tipos de argumentos; se propaga el tipo de retorno. Ver `docs/PROMPT-3.6.md`. | Completado |
 | Existen tipos al declarar variables | 23 | Falta verificar que el tipo exista al declarar variables y que la constante asignada pertenezca al enumerado. | Media |
 | Asignación estructural de objetos | 25 | Falta verificar que la clase exista y que dos objetos sean estructuralmente compatibles; generar copia estructural, no asignación simple. | Media |
 | Acceso a atributos con punto | 28 | Falta verificar existencia, visibilidad y tipo del atributo en la clase del objeto; generar terceto con la referencia. | Media |

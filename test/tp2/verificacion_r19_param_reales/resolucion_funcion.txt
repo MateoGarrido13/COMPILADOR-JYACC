@@ -1,0 +1,14 @@
+{{ r19: invocar un nombre no declarado o una variable informa error y no
+   genera tercetos de llamada.
+}}
+prog
+ulongint x;
+ulongint function f(ulongint p)
+begin
+    ret(p);
+end;
+begin
+    x := ausente(1$ul)[1$ul];
+    x := f(1$ul)[1$ul];
+    x := x(1$ul)[1$ul];
+end

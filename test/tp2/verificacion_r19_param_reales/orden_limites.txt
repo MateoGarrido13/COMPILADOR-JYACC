@@ -1,0 +1,13 @@
+{{ r19: comprueba orden incompleto y evita desbordar posiciones enteras
+   grandes al validar el rango.
+}}
+prog
+ulongint x;
+ulongint function f(ulongint p, ulongint q)
+begin
+    ret(p);
+end;
+begin
+    x := f(1$ul, 2$ul)[4294967295$ul, 2$ul];
+    x := f(1$ul, 2$ul)[1$ul];
+end

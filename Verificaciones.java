@@ -1,5 +1,4 @@
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,6 +70,35 @@ public class Verificaciones {
         reporte.error(linea, "'" + TablaSimbolos.nombreDe(declaracion.lexema)
                 + "' no es un valor utilizable como factor");
         return null;
+    }
+
+    /*
+      Resuelve el nombre de una funcion invocada como ID(...). Si no existe o
+      no es visible informa error; si el nombre existe pero no es una funcion
+      (por ejemplo una variable) informa uso incorrecto. Devuelve null cuando
+      no se puede invocar.
+     */
+    public EntradaTabla resolverFuncion(EntradaTabla id, int linea) {
+        if (id == null) {
+            return null;
+        }
+        String nombre = TablaSimbolos.nombreDe(id.lexema);
+        EntradaTabla declaracion = entorno.resolver(nombre, Globals.AMBITO_ACTUAL);
+        if (declaracion == null) {
+            reporte.error(linea, "Funcion no declarada '" + nombre + "'");
+            return null;
+        }
+        if (declaracion.uso != EntradaTabla.Uso.FUNCION) {
+            reporte.error(linea, "Uso incorrecto de '" + nombre
+                    + "': no es una funcion");
+            return null;
+        }
+        return declaracion;
+    }
+
+    public void errorMetodoNoDeclarado(String nombre, int linea) {
+        reporte.error(linea, "Metodo no declarado o no visible '"
+                + (nombre == null ? "?" : nombre) + "'");
     }
 
     public void reportar(Reglas regla, int linea) {
@@ -161,53 +189,49 @@ public class Verificaciones {
             return false;
         }
 
-        List<Integer> posiciones = extraerPosiciones(constantes, linea);
-        if (posiciones == null) {
-            return false;
-        }
-
         boolean valido = true;
-        Set<Integer> vistos = new HashSet<>();
-        for (Integer pos : posiciones) {
-            if (pos < 1 || pos > cantidadParametros) {
-                reporte.error(linea, "Posicion de orden de evaluacion fuera de rango: " + pos);
+        Set<BigInteger> vistos = new HashSet<>();
+        Set<BigInteger> posicionesValidas = new HashSet<>();
+        for (Object constante : constantes) {
+            EntradaTabla entrada = ContextoRegla.comoEntrada(constante);
+            if (entrada == null) {
+                reporte.error(linea, "Posicion de orden de evaluacion invalida");
                 valido = false;
                 continue;
             }
-            if (!vistos.add(pos)) {
-                reporte.error(linea, "Posicion de orden de evaluacion duplicada: " + pos);
+            BigInteger posicion = Tipos.valorEntero(entrada.lexema);
+            if (posicion == null) {
+                reporte.error(linea, "Posicion de orden de evaluacion no es un entero: "
+                        + entrada.lexema);
                 valido = false;
+                continue;
+            }
+            if (!vistos.add(posicion)) {
+                reporte.error(linea, "Posicion de orden de evaluacion duplicada: " + posicion);
+                valido = false;
+            }
+            if (posicion.compareTo(BigInteger.ONE) < 0
+                    || posicion.compareTo(BigInteger.valueOf(cantidadParametros)) > 0) {
+                reporte.error(linea, "Posicion de orden de evaluacion fuera de rango: " + posicion);
+                valido = false;
+            } else {
+                posicionesValidas.add(posicion);
             }
         }
 
-        if (vistos.size() != cantidadParametros) {
-            reporte.error(linea, "Cantidad de posiciones de orden de evaluacion (" + vistos.size()
+        if (constantes.size() != cantidadParametros) {
+            reporte.error(linea, "Cantidad de posiciones de orden de evaluacion ("
+                    + constantes.size()
                     + ") no coincide con la cantidad de parametros (" + cantidadParametros + ")");
             valido = false;
         }
-        return valido;
-    }
-
-    /*
-      Extrae los valores enteros de una lista de constantes (EntradaTabla) del orden
-      de evaluacion. Devuelve null si hubo un error de conversion.
-     */
-    private List<Integer> extraerPosiciones(List<Object> constantes, int linea) {
-        List<Integer> posiciones = new ArrayList<>();
-        for (Object c : constantes) {
-            EntradaTabla entrada = ContextoRegla.comoEntrada(c);
-            if (entrada == null) {
-                reporte.error(linea, "Posicion de orden de evaluacion invalida");
-                return null;
-            }
-            BigInteger bi = Tipos.valorEntero(entrada.lexema);
-            if (bi == null) {
-                reporte.error(linea, "Posicion de orden de evaluacion no es un entero: " + entrada.lexema);
-                return null;
-            }
-            posiciones.add(bi.intValue());
+        if (posicionesValidas.size() != cantidadParametros) {
+            reporte.error(linea, "Cantidad de posiciones validas y distintas ("
+                    + posicionesValidas.size() + ") no coincide con la cantidad de parametros ("
+                    + cantidadParametros + ")");
+            valido = false;
         }
-        return posiciones;
+        return valido;
     }
 
     // Verifica que la cantidad de parametros reales coincida con los formales declarados.
@@ -266,19 +290,99 @@ public class Verificaciones {
         return firma.parametros.get(posicion).entrada;
     }
 
-    // el signo unario puede sacar la constante de rango. 
-    public boolean verificarRangoConstante(EntradaTabla constante, int linea) {
-        if (constante == null || constante.lexema == null) {
+    /*
+      Chequeos completos de una invocacion (Tema 19). Recibe los parametros
+      reales ya resueltos con su formal. Verifica cantidad, orden de evaluacion,
+      formales nombrados no repetidos y el tipo de cada real contra su formal.
+      Informa todos los errores con la linea de la invocacion.
+     */
+    public boolean verificarInvocacion(Entorno.FuncionDeclarada firma,
+            List<ParametroReal> parametros, List<Object> ordenRaw, int linea) {
+        boolean cantidadOk = verificarCantidadParametros(firma, parametros, linea);
+        int cantidad = firma != null ? firma.parametros.size()
+                : (parametros == null ? 0 : parametros.size());
+        boolean ordenOk = verificarOrdenEvaluacion(ordenRaw, cantidad, linea);
+        boolean repetidosOk = verificarFormalesRepetidos(parametros, linea);
+        boolean tiposOk = verificarTiposParametros(firma, parametros, linea);
+        return cantidadOk && ordenOk && repetidosOk && tiposOk
+                && formalesCompletos(parametros);
+    }
+
+    // Dos reales no pueden quedar asociados al mismo formal.
+    public boolean verificarFormalesRepetidos(List<ParametroReal> parametros, int linea) {
+        if (parametros == null) {
             return true;
+        }
+        Set<String> vistos = new HashSet<>();
+        boolean valido = true;
+        for (ParametroReal parametro : parametros) {
+            if (parametro.formal == null) {
+                continue;
+            }
+            String claveFormal = parametro.formal.lexema;
+            if (!vistos.add(claveFormal)) {
+                String nombre = TablaSimbolos.nombreDe(claveFormal);
+                reporte.error(linea, "Parametro formal '" + nombre
+                        + "' repetido en la invocacion");
+                valido = false;
+            }
+        }
+        return valido;
+    }
+
+    // El tipo de cada real debe ser exactamente el del formal, sin conversiones.
+    public boolean verificarTiposParametros(Entorno.FuncionDeclarada firma,
+            List<ParametroReal> parametros, int linea) {
+        if (firma == null || parametros == null) {
+            return false;
+        }
+        boolean valido = true;
+        for (ParametroReal parametro : parametros) {
+            if (parametro.formal == null) {
+                valido = false;
+                continue;
+            }
+            String tipoFormal = entorno.tipoEfectivo(parametro.formal.tipoDato);
+            String tipoReal = entorno.tipoEfectivo(parametro.tipoReal);
+            // Sin tipo no se sigue chequeando para no cascadear errores.
+            if (Tipos.INDEFINIDO.equals(tipoFormal) || Tipos.INDEFINIDO.equals(tipoReal)) {
+                continue;
+            }
+            if (!Tipos.mismoTipo(tipoFormal, tipoReal)) {
+                String nombre = parametro.nombreFormal != null
+                        ? "'" + parametro.nombreFormal + "'"
+                        : "'" + TablaSimbolos.nombreDe(parametro.formal.lexema) + "'";
+                errorTipos(linea, "el parametro real " + nombre
+                        + " de '" + firma.nombre + "'", tipoFormal, tipoReal);
+                valido = false;
+            }
+        }
+        return valido;
+    }
+
+    private static boolean formalesCompletos(List<ParametroReal> parametros) {
+        if (parametros == null) {
+            return false;
+        }
+        for (ParametroReal parametro : parametros) {
+            if (parametro.formal == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // el signo unario puede sacar la constante de rango. 
+    public void verificarRangoConstante(EntradaTabla constante, int linea) {
+        if (constante == null || constante.lexema == null) {
+            return;
         }
         String tipo = constante.tipoDato != null
                 ? constante.tipoDato
                 : Tipos.tipoDeConstante(constante.lexema);
         if (tipo != null && !Tipos.rangoValido(constante.lexema, tipo)) {
             reporte.error(linea, "Constante fuera de rango '" + constante.lexema + "'");
-            return false;
         }
-        return true;
     }
 
     // Tema 23: typedef sin valores. 

@@ -1,0 +1,17 @@
+{{ r19: valida cantidad de reales, nombres formales y ausencia de destinos
+   repetidos, incluso cuando se mezcla un real nombrado con uno posicional.
+}}
+prog
+ulongint x;
+ulongint function f(ulongint p, doublef q)
+begin
+    ret(p);
+end;
+begin
+    x := f(1$ul, 2.0)[1$ul, 2$ul];
+    x := f(1$ul)[1$ul];
+    x := f(1$ul, 2.0, 3$ul)[1$ul, 2$ul, 3$ul];
+    x := f(desconocido = 1$ul, 2.0)[1$ul, 2$ul];
+    x := f(p = 1$ul, p = 2$ul)[1$ul, 2$ul];
+    x := f(q = 2.0, 2$ul)[1$ul, 2$ul];
+end

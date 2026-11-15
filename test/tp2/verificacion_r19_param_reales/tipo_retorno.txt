@@ -1,0 +1,22 @@
+{{ r19: el tipo de retorno de la llamada participa en asignaciones y
+   operaciones; asignaciones incompatibles y operaciones entre tipos distintos
+   informan error, las compatibles no.
+}}
+prog
+ulongint x;
+doublef y;
+ulongint function entero(ulongint p)
+begin
+    ret(p);
+end;
+doublef function real(doublef p)
+begin
+    ret(p);
+end;
+begin
+    x := real(1.0)[1$ul];
+    y := entero(1$ul)[1$ul];
+    x := entero(1$ul)[1$ul] + 1$ul;
+    x := real(1.0)[1$ul] + 1$ul;
+    y := real(1.0)[1$ul] + 1.0;
+end
