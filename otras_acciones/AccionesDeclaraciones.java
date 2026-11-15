@@ -79,7 +79,7 @@ public class AccionesDeclaraciones {
 
         tabla.registrar(Reglas.SENTENCIA_EXTENDS, ctx -> {
             List<Object> padres = ctx.lista(0);
-            entorno.registrarHerencia(padres);
+            v.registrarHerencia(padres, ctx.getLinea());
             return padres;
         });
 

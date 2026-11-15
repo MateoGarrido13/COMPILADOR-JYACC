@@ -1,5 +1,5 @@
-{{ r31+r19: metodo heredado de un parametro, prefijado y tradicional, en condicion y expresion }}
-{{ con un solo real el orden es [1]; la forma tradicional objeto.metodo(reales)[orden] aplica el tema 19 igual que la prefijada }}
+{{ r31+r19: a1.padre.m(...) es valido y emite PAR y CALLMET. }}
+{{ a1.m(...) es error: falta de prefijo para 'm' en la clase 'hija'. Esas llamadas no emiten CALLMET. }}
 prog
 class padre
 begin

@@ -20,8 +20,8 @@ reportar errores nuevos.
   `'x' no es un objeto`.
 - Si la clase no declara ese atributo:
   `atributo 'x' no existe en la clase 'ca'`.
-- Un atributo que solo existe en un ancestro no se ve sin prefijo y usa ese
-  mismo error. El Tema 31 puede reemplazarlo por el error de falta de prefijo.
+- Un atributo que solo existe en un ancestro no se ve sin prefijo. Desde el
+  Tema 31 el error es `falta de prefijo para 'y' en la clase 'hija'`.
 
 La clave del atributo declarado sigue siendo `x:main:ca`, con su tipo y uso
 `atributo` (DEC-5). El uso `a1.x` ocurre después de cerrar la clase, con ámbito
@@ -52,7 +52,7 @@ Casos en `test/tp2/verificacion_r28_r31_atributos/`.
 | `no_es_objeto.txt` | `'x' no es un objeto`. Sin `:=`. |
 | `asignacion_tipo_distinto.txt` | Tipos incompatibles (`ulongint` contra `doublef`). Sin `:=`. |
 | `operacion_atributo.txt` | `(+, a1.x, 1$ul)` y `(pout, [5], --)`. La suma con `1.0` es error de tipos. |
-| `atributo_heredado_sin_prefijo.txt` | `y` heredado: `atributo 'y' no existe en la clase 'hija'`. |
+| `atributo_heredado_sin_prefijo.txt` | `y` heredado: desde el Tema 31, `falta de prefijo para 'y' en la clase 'hija'`. |
 | `receptor_parametro.txt` | `(:=, p.x, 4$ul)` y `(ret, p.x, --)`. |
 | `receptor_atributo.txt` | Dentro del método, `(:=, c.n, 2$ul)`. |
 

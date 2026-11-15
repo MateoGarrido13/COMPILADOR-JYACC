@@ -1,6 +1,6 @@
-{{ r28: objeto.atributo solo ve atributos propios. El heredado no se usa sin prefijo.
-   Error esperado: atributo 'y' no existe en la clase 'hija'
-   Sin terceto de asignacion. El acceso prefijado queda para el tema 31.
+{{ r31: objeto.atributo solo ve atributos propios. y esta en padre.
+   Error esperado: falta de prefijo para 'y' en la clase 'hija'
+   Sin terceto de asignacion.
 }}
 prog
 class padre

@@ -9,7 +9,7 @@ de función y de método; `todf`; y asignación dentro de expresiones.
 Quedan fuera de esta etapa las enumeraciones, los objetos, los atributos y la herencia
 como validaciones completas. El generador ya acepta `ReferenciaAtributo` y los
 delimitadores de clase para no romper la salida existente. Los temas 23, 25 y 28
-se cerraron después; el 31 sigue pendiente.
+se cerraron después; el 31 quedó resuelto en `docs/PROMPT-31.md`.
 
 ## Cambios realizados
 
@@ -191,13 +191,6 @@ inválido. Después de la corrección no queda ningún diagnóstico nuevo.
 
 `git diff --check` no reporta problemas.
 
-## Pendiente
-
-- Prompt 3.5: restringir `todf` a `ulongint` o enum con base `ulongint`, y rechazar
-  conversiones vacías, de `doublef` o de objetos.
-- Prompt 3.6 (Tema 19): parámetros reales, orden obligatorio, tipos, resolución
-  de funciones y métodos, generación de `PAR`/`CALL` y propagación del retorno.
-  Implementado y documentado en `docs/PROMPT-3.6.md`.
-- Temas 23, 25 y 28: resueltos en los prompts 3.7, 3.8 y 3.9. La asignación entre
-  objetos compatibles emite `(COPY, destino, origen)`. El acceso `objeto.atributo`
-  emite `(:=, objeto.atributo, valor)`. Sigue pendiente el 31 (herencia).
+Los temas que quedaban fuera de 2B se documentan en `docs/PROMPT-33.md` (3.5),
+`docs/PROMPT-19.md` (3.6 / tema 19), `docs/PROMPT-23.md` (3.7), `docs/PROMPT-25.md`
+(3.8), `docs/PROMPT-28.md` (3.9) y `docs/PROMPT-31.md` (3.10 / tema 31).

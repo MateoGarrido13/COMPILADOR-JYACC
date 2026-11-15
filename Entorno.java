@@ -67,7 +67,11 @@ public class Entorno {
         public final String ambitoPropio;
         public final Map<String, String> atributos = new LinkedHashMap<>();
         public final Map<String, FuncionDeclarada> metodos = new LinkedHashMap<>();
+        // Claves resueltas (nombre:ambito) de las bases directas, en orden de fuente.
         public final List<String> heredaDe = new ArrayList<>();
+        // Nombres de bases que no estaban declaradas al leer el extends.
+        // Sirve para cerrar un ciclo cuando la otra clase aparece despues.
+        public final List<String> basesPendientes = new ArrayList<>();
 
         public ClaseDeclarada(String nombre, int linea, EntradaTabla entrada,
                 String ambitoDeclaracion) {
@@ -282,20 +286,81 @@ public class Entorno {
         clase.atributos.put(nombre, tipo);
     }
 
-    public void registrarHerencia(List<Object> clasesPadre) {
-        ClaseDeclarada clase = pilaClases.peek();
-        if (clase == null || clasesPadre == null) {
-            return;
+    /*
+      Agrega una base ya resuelta. Devuelve false si esa clase ya estaba
+      en la lista: el llamador informa la base repetida y no la vuelve a guardar.
+     */
+    public boolean agregarBase(ClaseDeclarada clase, ClaseDeclarada base) {
+        if (clase == null || base == null) {
+            return false;
         }
-        for (Object elemento : clasesPadre) {
-            EntradaTabla padre = ContextoRegla.comoEntrada(elemento);
-            if (padre == null) {
-                continue;
-            }
-            if (!clase.heredaDe.contains(padre.lexema)) {
-                clase.heredaDe.add(padre.lexema);
+        String clave = base.clave();
+        if (clase.heredaDe.contains(clave)) {
+            return false;
+        }
+        clase.heredaDe.add(clave);
+        return true;
+    }
+
+    /*
+      Anota una base que todavia no existe. Devuelve false si el mismo nombre
+      ya estaba pendiente, para que el llamador informe la repeticion.
+     */
+    public boolean anotarBasePendiente(ClaseDeclarada clase, String nombre) {
+        if (clase == null || nombre == null || nombre.isEmpty()) {
+            return false;
+        }
+        if (clase.basesPendientes.contains(nombre)) {
+            return false;
+        }
+        clase.basesPendientes.add(nombre);
+        return true;
+    }
+
+    /*
+      True si `buscada` es `desde` o se alcanza siguiendo heredaDe.
+      No recorre basesPendientes: un nombre no declarado no es una clase.
+     */
+    public boolean alcanzaClase(ClaseDeclarada desde, ClaseDeclarada buscada) {
+        if (desde == null || buscada == null) {
+            return false;
+        }
+        return alcanza(desde, buscada.clave(), new HashSet<String>());
+    }
+
+    private boolean alcanza(ClaseDeclarada desde, String clave, Set<String> visitadas) {
+        if (desde == null || !visitadas.add(desde.clave())) {
+            return false;
+        }
+        if (desde.clave().equals(clave)) {
+            return true;
+        }
+        for (String base : desde.heredaDe) {
+            if (alcanza(clasePorNombre(base), clave, visitadas)) {
+                return true;
             }
         }
+        return false;
+    }
+
+    /*
+      El prefijo de objeto.clase.miembro puede ser la clase del objeto o una
+      base directa o transitiva. Otra clase, aunque exista, no sirve.
+     */
+    public boolean esPrefijoValido(ClaseDeclarada objeto, ClaseDeclarada prefijo) {
+        if (objeto == null || prefijo == null) {
+            return false;
+        }
+        if (objeto.clave().equals(prefijo.clave())) {
+            return true;
+        }
+        Set<String> visitadas = new HashSet<>();
+        for (String base : objeto.heredaDe) {
+            if (alcanza(clasePorNombre(base), prefijo.clave(), visitadas)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void declararObjetos(List<Object> identificadores, String nombreClase, int linea) {
@@ -538,8 +603,8 @@ public class Entorno {
 
     /*
       Atributo declarado en la propia clase, sin recorrer ancestros.
-      D3/DEC-5: el acceso objeto.atributo solo ve miembros propios. El
-      heredado exige prefijo y se resuelve en el tema 31.
+      D3/DEC-5: objeto.atributo solo ve miembros propios. El heredado
+      exige el prefijo objeto.clase.atributo.
      */
     public EntradaTabla atributoPropio(ClaseDeclarada clase, String nombreAtributo) {
         if (clase == null || nombreAtributo == null || nombreAtributo.isEmpty()) {
@@ -556,32 +621,67 @@ public class Entorno {
         return null;
     }
 
+    // Atributo declarado en alguna base, directa o transitiva. No mira los propios.
+    public EntradaTabla atributoHeredado(ClaseDeclarada clase, String nombreAtributo) {
+        if (clase == null || nombreAtributo == null || nombreAtributo.isEmpty()) {
+            return null;
+        }
+        String nombre = TablaSimbolos.nombreDe(nombreAtributo);
+        Set<String> visitadas = new HashSet<>();
+        for (String base : clase.heredaDe) {
+            EntradaTabla hallado = buscarAtributo(clasePorNombre(base), nombre, visitadas);
+            if (hallado != null) {
+                return hallado;
+            }
+        }
+        return null;
+    }
+
+    public FuncionDeclarada metodoPropio(ClaseDeclarada clase, String nombreMetodo) {
+        if (clase == null || nombreMetodo == null || nombreMetodo.isEmpty()) {
+            return null;
+        }
+        return clase.metodos.get(TablaSimbolos.nombreDe(nombreMetodo));
+    }
+
+    // Metodo declarado en alguna base, directa o transitiva. No mira los propios.
+    public FuncionDeclarada metodoHeredado(ClaseDeclarada clase, String nombreMetodo) {
+        if (clase == null || nombreMetodo == null || nombreMetodo.isEmpty()) {
+            return null;
+        }
+        String nombre = TablaSimbolos.nombreDe(nombreMetodo);
+        Set<String> visitadas = new HashSet<>();
+        for (String base : clase.heredaDe) {
+            FuncionDeclarada hallado = buscarMetodo(clasePorNombre(base), nombre, visitadas);
+            if (hallado != null) {
+                return hallado;
+            }
+        }
+        return null;
+    }
+
     /*
-      Devuelve el atributo declarado en la clase indicada por el prefijo o, si
-      no hay prefijo, en la clase del objeto; en ambos casos busca tambien en las
-      bases. No reporta errores. Lo usa el acceso prefijado, que valida el
-      tema 31. Devuelve null si no se puede resolver.
+      Atributo declarado en la clase del prefijo, o en la clase del objeto si
+      no hay prefijo. No sube a las bases: el miembro heredado no se acepta
+      por estar en un ancestro de la clase nombrada.
      */
     public EntradaTabla resolverAtributo(EntradaTabla objeto, String nombreClase, String nombreAtributo) {
         if (nombreAtributo == null) {
             return null;
         }
-        // Con prefijo explicito (objeto.Clase.atributo) manda la clase prefijada:
-        // asi `a1.padre.y` busca en `padre` y no en la clase del objeto. Sin
-        // prefijo se parte de la clase del objeto.
         ClaseDeclarada clase = nombreClase == null || nombreClase.isEmpty()
                 ? claseDeObjeto(objeto)
                 : clasePorNombre(nombreClase);
         if (clase == null) {
             return null;
         }
-        return buscarAtributo(clase, TablaSimbolos.nombreDe(nombreAtributo), new HashSet<>());
+        return atributoPropio(clase, nombreAtributo);
     }
 
     /*
-      Busca un metodo en la clase del objeto o en la clase prefijada, y en sus
-      bases. La convencion de codigo intermedio para una invocacion de metodo es
-      (CALLMET, objeto, metodo); esta busqueda solo resuelve la firma.
+      Metodo declarado en la clase del objeto o en la clase prefijada.
+      No recorre ancestros: la llamada heredada tiene que nombrar la clase
+      que declara el metodo. La firma que devuelve alimenta el CALLMET.
      */
     public FuncionDeclarada buscarMetodo(EntradaTabla objeto, String nombreClase, String nombreMetodo) {
         if (nombreMetodo == null) {
@@ -593,7 +693,7 @@ public class Entorno {
         if (clase == null) {
             return null;
         }
-        return buscarMetodo(clase, TablaSimbolos.nombreDe(nombreMetodo), new HashSet<>());
+        return metodoPropio(clase, nombreMetodo);
     }
 
     private FuncionDeclarada buscarMetodo(ClaseDeclarada clase, String nombre, Set<String> visitadas) {

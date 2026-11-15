@@ -56,7 +56,7 @@ solo lectura; no duplica el estado del ambito.
 - `declararObjetos` resuelve la clase, verifica `Uso.CLASE` y guarda la clave resuelta
   (`ca:main`) como tipo del objeto.
 - `registrarTipoEnumerado` ahora declara con `Uso.TIPO_ENUMERADO`; ver
-  `docs/PROMPT-3.7.md`.
+  `docs/PROMPT-23.md`.
 - `abrirClase` declara el nombre en el ambito actual y crea la clase con
   `ambitoPropio = ambitoDeclaracion + ":" + nombre`.
 - `getFuncion` y `getClase` buscan por clave completa; los mapas de variables, funciones,
@@ -151,8 +151,5 @@ salida con ese comentario. `ejecutar.sh` no los puntúa.
   porque el generador usaba el placeholder del destino. Ahora la asignacion usa la
   entrada resuelta y el error desaparece. No hay nuevos errores en el resto.
 
-## Pendiente
-
-- Prompt 2: tipos y prohibicion de conversiones implicitas.
-- Prompt 3.10: resolucion de herencia con prefijo obligatorio (DEC-5).
-- La redeclaracion en el mismo ambito todavia no emite error.
+Los prompts posteriores al 1B están documentados en `docs/PROMPT-PLAN.md` y en cada
+`docs/PROMPT-*.md` correspondiente.

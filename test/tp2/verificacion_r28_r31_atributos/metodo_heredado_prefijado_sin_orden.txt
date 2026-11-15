@@ -1,5 +1,7 @@
 {{ r31+r19: debe fallar: invocacion a metodo (prefijada o tradicional) sin el orden obligatorio del tema 19 }}
-{{ se esperan 3 errores Falta del orden de evaluacion y asignacion de parametros }}
+{{ se esperan 3 errores "Falta del orden de evaluacion y asignacion de parametros" }}
+{{ a1.m(...) ademas informa: falta de prefijo para 'm' en la clase 'ca' }}
+{{ Sin CALLMET. }}
 prog
 class cb
 begin

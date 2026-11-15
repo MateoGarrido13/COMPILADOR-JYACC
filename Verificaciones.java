@@ -136,10 +136,87 @@ public class Verificaciones {
         reporte.error(linea, "'" + (nombre == null ? "?" : nombre) + "' no es un objeto");
     }
 
-    // Tema 28: el atributo no esta declarado en la propia clase del objeto.
+    // Tema 28: el atributo no esta declarado en la clase que se nombro.
     public void errorAtributoInexistente(String atributo, String clase, int linea) {
         reporte.error(linea, "atributo '" + (atributo == null ? "?" : atributo)
                 + "' no existe en la clase '" + (clase == null ? "?" : clase) + "'");
+    }
+
+    // Tema 31: el metodo no esta declarado en la clase prefijada.
+    public void errorMetodoInexistente(String metodo, String clase, int linea) {
+        reporte.error(linea, "metodo '" + (metodo == null ? "?" : metodo)
+                + "' no existe en la clase '" + (clase == null ? "?" : clase) + "'");
+    }
+
+    // D3: el miembro existe solo en una base y el acceso no trajo el prefijo.
+    public void errorFaltaPrefijo(String miembro, String clase, int linea) {
+        reporte.error(linea, "falta de prefijo para '" + (miembro == null ? "?" : miembro)
+                + "' en la clase '" + (clase == null ? "?" : clase) + "'");
+    }
+
+    // El prefijo no es la clase del objeto ni una base de su cadena.
+    public void errorPrefijoNoHeredado(String prefijo, String clase, int linea) {
+        reporte.error(linea, "el prefijo '" + (prefijo == null ? "?" : prefijo)
+                + "' no es una clase heredada de '" + (clase == null ? "?" : clase) + "'");
+    }
+
+    public void errorClaseBaseNoDeclarada(String nombre, int linea) {
+        reporte.error(linea, "clase base no declarada '" + (nombre == null ? "?" : nombre) + "'");
+    }
+
+    public void errorNoEsClase(String nombre, int linea) {
+        reporte.error(linea, "'" + (nombre == null ? "?" : nombre) + "' no es una clase");
+    }
+
+    public void errorHerenciaCircular(String clase, String base, int linea) {
+        reporte.error(linea, "herencia circular entre '" + (clase == null ? "?" : clase)
+                + "' y '" + (base == null ? "?" : base) + "'");
+    }
+
+    public void errorBaseRepetida(String nombre, int linea) {
+        reporte.error(linea, "clase base repetida '" + (nombre == null ? "?" : nombre) + "'");
+    }
+
+    /*
+      Tema 31: cada base se resuelve con Name Mangling, tiene que existir y
+      ser una clase, no puede ser la misma clase ni cerrar un ciclo, y no
+      puede repetirse. Las bases validas quedan en heredaDe, en orden.
+     */
+    public void registrarHerencia(List<Object> padres, int linea) {
+        Entorno.ClaseDeclarada clase = entorno.getClaseActual();
+        if (clase == null || padres == null) {
+            return;
+        }
+        for (Object elemento : padres) {
+            EntradaTabla token = ContextoRegla.comoEntrada(elemento);
+            if (token == null) {
+                continue;
+            }
+            String nombre = TablaSimbolos.nombreDe(token.lexema);
+            EntradaTabla declaracion = entorno.resolver(nombre, Globals.AMBITO_ACTUAL);
+            if (declaracion == null || declaracion.uso != EntradaTabla.Uso.CLASE) {
+                if (declaracion != null) {
+                    errorNoEsClase(nombre, linea);
+                } else if (!entorno.anotarBasePendiente(clase, nombre)) {
+                    errorBaseRepetida(nombre, linea);
+                } else {
+                    errorClaseBaseNoDeclarada(nombre, linea);
+                }
+                continue;
+            }
+            Entorno.ClaseDeclarada base = entorno.getClase(declaracion.lexema);
+            if (base == null) {
+                errorClaseBaseNoDeclarada(nombre, linea);
+                continue;
+            }
+            if (entorno.alcanzaClase(base, clase) || base.basesPendientes.contains(clase.nombre)) {
+                errorHerenciaCircular(clase.nombre, base.nombre, linea);
+                continue;
+            }
+            if (!entorno.agregarBase(clase, base)) {
+                errorBaseRepetida(base.nombre, linea);
+            }
+        }
     }
 
     // D4: las clases no coinciden en atributos efectivos o en firmas.

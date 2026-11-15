@@ -6,6 +6,31 @@ El programa lee un archivo fuente del lenguaje definido en los trabajos práctic
 
 Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef`, las cadenas de una línea, los comentarios multilínea, la sentencia `repeat`/`while`, la asignación de expresiones dentro de expresiones, el orden de evaluación de los parámetros, las enumeraciones, las clases, el acceso a atributos con punto, la herencia múltiple con prefijo y la conversión explícita `todf`.
 
+### Convención de nombres (plan vs reglas del grupo)
+
+En la documentación conviven dos numeraciones a propósito:
+
+| Tipo | Ejemplos | Significado |
+|------|----------|-------------|
+| **Tema / regla del grupo** | 6, 8, 13, **17**, **19**, **23**, **25**, **28**, **31**, **33** | Ítems de la consigna del compilador del grupo. Aparecen en commits, carpetas `test/tp2/verificacion_rNN_*` y en archivos `docs/PROMPT-NN.md` cuando el número es el del tema. |
+| **Paso del plan de prompts** | 0, 1A, 1B, 2, 2B, **3.1** … **3.10** | Orden de trabajo definido en `docs/Promt.md` y resumido en `docs/PROMPT-PLAN.md`. Los `docs/PROMPT-*.md` de la base (0, 1A, 2, 6-8, …) siguen el plan; la iteración **3.x** no coincide siempre con el dígito del nombre del archivo. |
+| **Decisión de diseño** | `docs/PROMPT-3.10.md` | Excepción: archivo con forma **3.10** pero contenido de la decisión **D3** (prefijo en herencia), no el registro de implementación. La implementación del tema 31 está en `docs/PROMPT-31.md`. |
+
+Correspondencia entre iteración **3.x** del plan y tema del grupo:
+
+| Plan (`Promt.md`) | Tema(s) grupo | Documento principal |
+|-------------------|---------------|---------------------|
+| 3.1 | 6 y 8 | `docs/PROMPT-6-8.md` |
+| 3.2 | 9 y 16 | `docs/PROMPT-9-16.md` |
+| 3.3 | 13 | `docs/PROMPT-13.md` |
+| 3.4 | 17 | `docs/PROMPT-17.md` |
+| 3.5 | 33 | `docs/PROMPT-33.md` |
+| 3.6 | 19 | `docs/PROMPT-19.md` |
+| 3.7 | 23 | `docs/PROMPT-23.md` |
+| 3.8 | 25 | `docs/PROMPT-25.md` |
+| 3.9 | 28 | `docs/PROMPT-28.md` |
+| 3.10 | 31 | `docs/PROMPT-31.md` (+ decisión D3 en `docs/PROMPT-3.10.md`) |
+
 ---
 
 ## Estado actual del proyecto
@@ -13,9 +38,10 @@ Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef
 | Campo | Valor |
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
-| Último commit | Prompt 3.9 — acceso tradicional a atributos |
-| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28 |
-| Prompt en curso / siguiente | **31 — Herencia múltiple con prefijo** |
+| Último commit en `HEAD` | `alineando_documentacion_y_pruebas` |
+| Último commit de código del plan | Prompt 3.9 — acceso tradicional a atributos |
+| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 |
+| Prompt en curso / siguiente | Ninguno. Falta el commit del Prompt 3.10 (tema 31). |
 | Commits del plan completados | 14 de 15 |
 
 ### Reglas de granularidad para commits
@@ -48,11 +74,11 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 23 | Enumeraciones | ✅ **Ejecutado** | `docs/PROMPT-23.md` | `test/tp2/verificacion_r23_enums/` |
 | 25 | Objetos y asignación estructural | ✅ **Ejecutado** | `docs/PROMPT-25.md` | `test/tp2/verificacion_r25_objetos/` |
 | 28 | Acceso tradicional a atributos | ✅ **Ejecutado** | `docs/PROMPT-28.md` | `test/tp2/verificacion_r28_r31_atributos/` |
-| 31 | Herencia múltiple con prefijo (D3 revisada) | ❌ Pendiente | `docs/PROMPT-31.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
+| 31 | Herencia múltiple con prefijo (D3 revisada) | ✅ **Ejecutado** | `docs/PROMPT-31.md` | `test/tp2/verificacion_r28_r31_atributos/` |
 
-### Próximos a implementar (orden del plan)
+### Plan
 
-1. Prompt 31 — herencia múltiple con prefijo.
+El plan de prompts quedó completo con el 31. Falta el commit de ese paso.
 
 ## Prompt 25 — ejecutado
 
@@ -60,7 +86,11 @@ La regla D4 y la forma de copia `(COPY, destino, origen)` están en `docs/PROMPT
 
 ## Prompt 28 — ejecutado
 
-`objeto.atributo` solo ve atributos propios de la clase del objeto. La asignación emite `(:=, objeto.atributo, valor)` y el tipo del atributo entra en operadores y en `pout`. El detalle está en `docs/PROMPT-28.md`. Los casos están en `test/tp2/verificacion_r28_r31_atributos/`. La forma `objeto.clase.atributo` y la herencia siguen en el 31.
+`objeto.atributo` solo ve atributos propios de la clase del objeto. La asignación emite `(:=, objeto.atributo, valor)` y el tipo del atributo entra en operadores y en `pout`. El detalle está en `docs/PROMPT-28.md`. Los casos están en `test/tp2/verificacion_r28_r31_atributos/`.
+
+## Prompt 31 — ejecutado
+
+El miembro heredado exige `objeto.clase.miembro`. La base se valida antes de entrar en `heredaDe`, y la llamada aceptada emite `(PAR, formal, real)` y `(CALLMET, objeto, metodo)`. El detalle está en `docs/PROMPT-31.md`.
 
 ---
 
@@ -79,7 +109,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Enumeraciones | 23 | Resuelto: valida declaración, ámbito, base homogénea, tipos de variables y pertenencia de constantes. Ver `docs/PROMPT-23.md`. | Completado |
 | Asignación estructural de objetos | 25 | Resuelto: D4 compara atributos y firmas efectivas; la asignación entre objetos emite `(COPY, destino, origen)`. Ver `docs/PROMPT-25.md`. | Completado |
 | Acceso a atributos con punto | 28 | Resuelto: el receptor tiene que ser de tipo clase y el atributo, propio. La asignación emite `(:=, objeto.atributo, valor)`. Ver `docs/PROMPT-28.md`. | Completado |
-| Herencia múltiple con prefijo | 31 | Falta validar clases base, que el prefijo corresponda a una clase heredada, y que el atributo o método exista y sea accesible. | Media |
+| Herencia múltiple con prefijo | 31 | Resuelto: la base se valida, el miembro heredado exige prefijo y la llamada aceptada emite `CALLMET`. Ver `docs/PROMPT-31.md`. | Completado |
 
 ---
 
@@ -142,6 +172,7 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
  - `docs/PROMPT-23.md` — enumeraciones
  - `docs/PROMPT-33.md` — conversión `todf`
 - `docs/PROMPT-28.md` — acceso tradicional a atributos
+- `docs/PROMPT-31.md` — herencia múltiple con prefijo
  - `docs/DEC-6.md` — registro de tipos de constantes en el analisis lexico
  - `docs/DEC-7.md` — cadenas y comentarios (prompt 3.2)
  - `docs/DEC-8.md` — condicion booleana y tipo en repeat while (prompt 3.3)

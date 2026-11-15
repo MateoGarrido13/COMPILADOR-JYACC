@@ -1,5 +1,10 @@
 # PROMPT-3.10: decision D3 revisada (acceso a miembros heredados)
 
+> **Nomenclatura:** el nombre del archivo sigue la iteración **3.10** del plan en
+> `docs/Promt.md`, pero este documento solo registra la **decisión D3**. La
+> implementación del **tema 31** del grupo está en `docs/PROMPT-31.md`. Ver tabla en
+> `readme.md`.
+
 ## Contexto
 
 La decision D3 original proponia desambiguar atributos y metodos heredados aceptando
@@ -45,17 +50,16 @@ Sea `C` la clase declarada del objeto y `B` una clase base de `C`.
 | `metodo_heredado_prefijado_un_parametro.txt` | Mixto: las formas `a1.padre.m(...)` son validas; `a1.m(...)` debe pasar a error. |
 | `desambiguado_tradicional_y.txt` | Valido: usa `a1.padre.y` y `a1.hija.y`, ambos prefijados. |
 
-Los casos con `a1.m(...)` deberan actualizarse cuando se implemente el tema 31 o, si se
-prefiere conservarlos como regresion, mantener el error esperado.
+Los casos con `a1.m(...)` sobre un miembro solo heredado informan falta de prefijo; el
+detalle de pruebas y tercetos esta en `docs/PROMPT-31.md`.
 
-## Implementacion prevista
+## Implementacion
 
-- En `Entorno`, separar los miembros propios de los heredados.
-- En la resolucion de `ACCESO_ATRIBUTO` e `INVOCACION_METODO` sin prefijo, buscar solo en
-  los miembros propios de la clase del objeto.
-- En las variantes prefijadas, validar que el prefijo sea una base de la clase y que el
-  miembro exista en esa base.
-- Reportar un error claro cuando el miembro exista solo en una base y falte el prefijo.
+Registro de implementacion del Tema 31 (Prompt 3.10): `docs/PROMPT-31.md`. Cambios en
+`Entorno`, `ReferenciaAtributo`, `Verificaciones`, `AccionesDeclaraciones` y
+`AccionesExpresiones`: miembros propios sin prefijo, heredados con
+`objeto.clase.miembro`, validacion de bases en `heredaDe` y mensajes de prefijo,
+herencia circular y base repetida.
 
 ## Relacion con otras decisiones
 

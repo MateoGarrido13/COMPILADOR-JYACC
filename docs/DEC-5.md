@@ -21,17 +21,19 @@ mismo atributo `x` sin colision: `x:main:ca` y `x:main:cb`.
 
 ### Herencia y prefijo (D3 revisada)
 
-La herencia se registra en `ClaseDeclarada.heredaDe`. La resolucion de miembros heredados
-todavia queda para el Prompt 3.10, pero la regla de visibilidad ya es la acordada:
+La herencia se registra en `ClaseDeclarada.heredaDe`. La resolucion de miembros
+heredados quedo implementada en el Prompt 3.10 (`docs/PROMPT-31.md`). La regla
+de visibilidad es:
 
 - un miembro propio se puede usar sin prefijo;
 - un miembro heredado exige el prefijo explicito `objeto.clase.miembro`;
 - el uso sin prefijo de un miembro heredado es error por falta de prefijo;
 - si dos clases base definen el mismo miembro, el prefijo desambigua.
 
-Esta decision es deliberadamente estricta y puede relajarse mas adelante. Los casos
-actuales con llamadas del tipo `a1.m(...)` deben quedar como error esperado o migrarse a
-`a1.clase.m(...)` cuando se implemente el Prompt 3.10.
+Esta decision es deliberadamente estricta y puede relajarse mas adelante. La
+implementacion y los casos de regresion estan en `docs/PROMPT-31.md`: las llamadas
+`a1.m(...)` sobre un metodo solo heredado informan falta de prefijo; la forma valida es
+`a1.clase.m(...)`.
 
 ### Experimento realizado
 

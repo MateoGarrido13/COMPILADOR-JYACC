@@ -1,0 +1,24 @@
+{{ r31: abuelo esta en la cadena de hija. y se declaro en abuelo, no en padre.
+   a1.abuelo.y es valido. a1.padre.y no existe en padre.
+   a1.y informa falta de prefijo para 'y' en la clase 'hija'.
+   Solo se emite (:=, a1.abuelo.y, 1$ul).
+}}
+prog
+class abuelo
+begin
+    ulongint y;
+end;
+class padre
+begin
+    extends abuelo;
+end;
+class hija
+begin
+    extends padre;
+end;
+hija a1;
+begin
+    a1.abuelo.y := 1$ul;
+    a1.padre.y := 2$ul;
+    a1.y := 3$ul;
+end

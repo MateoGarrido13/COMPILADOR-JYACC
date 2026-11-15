@@ -57,17 +57,17 @@ public class AccionesExpresiones {
     /*
       Arma una invocacion de metodo. La convencion de codigo intermedio es
       (CALLMET, objeto, metodo), precedida por los PAR de los parametros.
+      Sin prefijo solo se acepta un metodo propio. Con prefijo, la clase tiene
+      que estar en la cadena del objeto y el metodo tiene que estar declarado
+      en esa clase. Los parametros se chequean como en el tema 19.
      */
     private static LlamadaFuncion llamadaMetodo(Entorno entorno, Verificaciones v,
             EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla metodo,
             List<Object> parametrosReales, List<Object> ordenRaw, int linea) {
         EntradaTabla objetoResuelto = objeto == null ? null : v.verificarAlcance(objeto);
-        String nombreClase = clasePrefijo == null ? null : clasePrefijo.lexema;
         String nombreMetodo = metodo == null ? null : TablaSimbolos.nombreDe(metodo.lexema);
-        Entorno.FuncionDeclarada firma = entorno.buscarMetodo(objetoResuelto, nombreClase, nombreMetodo);
-        if (objetoResuelto != null && firma == null) {
-            v.errorMetodoNoDeclarado(nombreMetodo, linea);
-        }
+        Entorno.FuncionDeclarada firma = resolverMetodo(
+                entorno, v, objetoResuelto, clasePrefijo, nombreMetodo, linea);
 
         List<ParametroReal> parametros = envolverParametros(parametrosReales, linea);
         List<ParametroReal> conFormales = asignarFormales(v, firma, parametros, linea);
@@ -81,6 +81,52 @@ public class AccionesExpresiones {
             llamada.marcarInvalida();
         }
         return llamada;
+    }
+
+    /*
+      Resuelve la firma que puede invocarse. Informa falta de prefijo, prefijo
+      ajeno a la cadena o metodo ausente en la clase nombrada. Devuelve null
+      cuando la llamada no se acepta; el llamador no emite CALLMET.
+     */
+    private static Entorno.FuncionDeclarada resolverMetodo(Entorno entorno, Verificaciones v,
+            EntradaTabla objetoResuelto, EntradaTabla clasePrefijo, String nombreMetodo, int linea) {
+        if (objetoResuelto == null) {
+            return null;
+        }
+        String nombreObjeto = nombreVisible(objetoResuelto);
+        if (!esReceptorDeAtributo(objetoResuelto)) {
+            v.errorNoEsObjeto(nombreObjeto, linea);
+            return null;
+        }
+        Entorno.ClaseDeclarada clase = entorno.claseDe(objetoResuelto.tipoDato);
+        if (clase == null) {
+            v.errorNoEsObjeto(nombreObjeto, linea);
+            return null;
+        }
+        if (clasePrefijo == null) {
+            Entorno.FuncionDeclarada propia = entorno.metodoPropio(clase, nombreMetodo);
+            if (propia != null) {
+                return propia;
+            }
+            if (entorno.metodoHeredado(clase, nombreMetodo) != null) {
+                v.errorFaltaPrefijo(nombreMetodo, clase.nombre, linea);
+            } else {
+                v.errorMetodoNoDeclarado(nombreMetodo, linea);
+            }
+            return null;
+        }
+        String nombrePrefijo = TablaSimbolos.nombreDe(clasePrefijo.lexema);
+        Entorno.ClaseDeclarada prefijo = entorno.claseDe(nombrePrefijo);
+        if (prefijo == null || !entorno.esPrefijoValido(clase, prefijo)) {
+            v.errorPrefijoNoHeredado(nombrePrefijo, clase.nombre, linea);
+            return null;
+        }
+        Entorno.FuncionDeclarada declarado = entorno.metodoPropio(prefijo, nombreMetodo);
+        if (declarado == null) {
+            v.errorMetodoInexistente(nombreMetodo, prefijo.nombre, linea);
+            return null;
+        }
+        return declarado;
     }
 
     public static void registrar(TablaAcciones tabla, Entorno entorno, Verificaciones v) {
@@ -232,10 +278,39 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.ACCESO_ATRIBUTO, ctx ->
                 accesoAtributoPropio(entorno, v, ctx.entrada(0), ctx.entrada(1), ctx.getLinea()));
 
-        // objeto.clase.atributo queda para el tema 31. Esta accion solo arma
-        // la referencia; no valida el prefijo ni la herencia.
         tabla.registrar(Reglas.ACCESO_ATRIBUTO_PREFIJADO, ctx ->
-                referenciaAtributo(entorno, v, ctx.entrada(0), ctx.entrada(1), ctx.entrada(2), ctx.getLinea()));
+                accesoAtributoPrefijado(entorno, v, ctx.entrada(0), ctx.entrada(1),
+                        ctx.entrada(2), ctx.getLinea()));
+
+        tabla.registrar(Reglas.ERR_FALTA_ORDEN_EVALUACION, ctx -> {
+            v.reportar(Reglas.ERR_FALTA_ORDEN_EVALUACION, ctx.getLinea());
+            // objeto.metodo(...) y objeto.clase.metodo(...) sin orden. La
+            // llamada tradicional heredada suma el error de falta de prefijo.
+            if (ctx.cantidad() >= 3) {
+                EntradaTabla objeto = ctx.entrada(0);
+                EntradaTabla prefijo = ctx.cantidad() >= 4 ? ctx.entrada(1) : null;
+                EntradaTabla metodo = ctx.cantidad() >= 4 ? ctx.entrada(2) : ctx.entrada(1);
+                EntradaTabla objetoResuelto = objeto == null ? null : v.verificarAlcance(objeto);
+                String nombreMetodo = metodo == null ? "?" : TablaSimbolos.nombreDe(metodo.lexema);
+                resolverMetodo(entorno, v, objetoResuelto, prefijo, nombreMetodo, ctx.getLinea());
+            }
+            Object resultado = ctx.cantidad() > 0 ? ctx.valor(0) : null;
+            if (ctx.cantidad() >= 3) {
+                // La llamada de metodo ya es invalida: no se usa el objeto
+                // recuperado como si fuera el valor de la invocacion.
+                if (resultado instanceof ExpresionDiferida) {
+                    return ((ExpresionDiferida) resultado).conTipo(Tipos.INDEFINIDO).marcarInvalida();
+                }
+                return ExpresionDiferida.deOperando(resultado, Tipos.INDEFINIDO).marcarInvalida();
+            }
+            if (resultado instanceof ExpresionDiferida) {
+                return ((ExpresionDiferida) resultado).conTipo(Tipos.INDEFINIDO);
+            }
+            if (resultado instanceof EntradaTabla) {
+                return ExpresionDiferida.deOperando(resultado, Tipos.INDEFINIDO);
+            }
+            return resultado;
+        });
 
         tabla.registrar(Reglas.INVOCACION_METODO, ctx -> {
             List<Object> ordenRaw = ctx.valor(3) == null ? null : ctx.lista(3);
@@ -251,11 +326,10 @@ public class AccionesExpresiones {
     }
 
     /*
-      Tema 28: objeto.atributo. El objeto tiene que ser variable, parametro o
-      atributo de tipo clase. El atributo se busca solo entre los propios de
-      esa clase (D3/DEC-5): un miembro heredado no se ve sin prefijo. Si no
-      esta, el error es "atributo 'x' no existe en la clase 'ca'".
-      Devuelve una expresion con la ReferenciaAtributo y el tipo del atributo.
+      Tema 28 y 31: objeto.atributo. El objeto tiene que ser variable, parametro
+      o atributo de tipo clase. El atributo se busca solo entre los propios de
+      esa clase (D3/DEC-5). Si el nombre existe solo en una base, el error es
+      falta de prefijo. Si no existe en la cadena, no existe en la clase.
      */
     private static ExpresionDiferida accesoAtributoPropio(Entorno entorno, Verificaciones v,
             EntradaTabla objeto, EntradaTabla atributo, int linea) {
@@ -267,23 +341,71 @@ public class AccionesExpresiones {
         if (objetoResuelto == null) {
             return accesoInvalido(objeto, atributo, texto);
         }
-        if (!esReceptorDeAtributo(objetoResuelto)) {
-            v.errorNoEsObjeto(nombreObjeto, linea);
-            return accesoInvalido(objetoResuelto, atributo, texto);
-        }
-        Entorno.ClaseDeclarada clase = entorno.claseDe(objetoResuelto.tipoDato);
+        Entorno.ClaseDeclarada clase = claseDelReceptor(entorno, v, objetoResuelto, nombreObjeto, linea);
         if (clase == null) {
-            v.errorNoEsObjeto(nombreObjeto, linea);
             return accesoInvalido(objetoResuelto, atributo, texto);
         }
         EntradaTabla declaracion = entorno.atributoPropio(clase, nombreAtributo);
         if (declaracion == null) {
-            v.errorAtributoInexistente(nombreAtributo, clase.nombre, linea);
+            if (entorno.atributoHeredado(clase, nombreAtributo) != null) {
+                v.errorFaltaPrefijo(nombreAtributo, clase.nombre, linea);
+            } else {
+                v.errorAtributoInexistente(nombreAtributo, clase.nombre, linea);
+            }
             return accesoInvalido(objetoResuelto, atributo, texto);
         }
         ReferenciaAtributo referencia = new ReferenciaAtributo(
                 objetoResuelto, declaracion, texto, declaracion.tipoDato);
         return ExpresionDiferida.deOperando(referencia, declaracion.tipoDato);
+    }
+
+    /*
+      Tema 31: objeto.clase.atributo. La clase prefijada tiene que ser la del
+      objeto o una base, y el atributo tiene que estar declarado ahi.
+      Devuelve el tipo de ese atributo.
+     */
+    private static ExpresionDiferida accesoAtributoPrefijado(Entorno entorno, Verificaciones v,
+            EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla atributo, int linea) {
+        String nombreAtributo = atributo == null ? "?" : TablaSimbolos.nombreDe(atributo.lexema);
+        String nombrePrefijo = clasePrefijo == null ? "?" : TablaSimbolos.nombreDe(clasePrefijo.lexema);
+        EntradaTabla objetoResuelto = objeto == null ? null : v.verificarAlcance(objeto);
+        String nombreObjeto = nombreVisible(objetoResuelto != null ? objetoResuelto : objeto);
+        String texto = nombreObjeto + "." + nombrePrefijo + "." + nombreAtributo;
+
+        if (objetoResuelto == null) {
+            return accesoInvalido(objeto, atributo, texto);
+        }
+        Entorno.ClaseDeclarada clase = claseDelReceptor(entorno, v, objetoResuelto, nombreObjeto, linea);
+        if (clase == null) {
+            return accesoInvalido(objetoResuelto, atributo, texto);
+        }
+        Entorno.ClaseDeclarada prefijo = entorno.claseDe(nombrePrefijo);
+        if (prefijo == null || !entorno.esPrefijoValido(clase, prefijo)) {
+            v.errorPrefijoNoHeredado(nombrePrefijo, clase.nombre, linea);
+            return accesoInvalido(objetoResuelto, atributo, texto);
+        }
+        EntradaTabla declaracion = entorno.atributoPropio(prefijo, nombreAtributo);
+        if (declaracion == null) {
+            v.errorAtributoInexistente(nombreAtributo, prefijo.nombre, linea);
+            return accesoInvalido(objetoResuelto, atributo, texto);
+        }
+        ReferenciaAtributo referencia = new ReferenciaAtributo(
+                objetoResuelto, declaracion, texto, declaracion.tipoDato);
+        return ExpresionDiferida.deOperando(referencia, declaracion.tipoDato);
+    }
+
+    private static Entorno.ClaseDeclarada claseDelReceptor(Entorno entorno, Verificaciones v,
+            EntradaTabla objeto, String nombreObjeto, int linea) {
+        if (!esReceptorDeAtributo(objeto)) {
+            v.errorNoEsObjeto(nombreObjeto, linea);
+            return null;
+        }
+        Entorno.ClaseDeclarada clase = entorno.claseDe(objeto.tipoDato);
+        if (clase == null) {
+            v.errorNoEsObjeto(nombreObjeto, linea);
+            return null;
+        }
+        return clase;
     }
 
     private static boolean esReceptorDeAtributo(EntradaTabla objeto) {
@@ -303,36 +425,6 @@ public class AccionesExpresiones {
             EntradaTabla atributo, String texto) {
         ReferenciaAtributo referencia = new ReferenciaAtributo(objeto, atributo, texto, null);
         return ExpresionDiferida.deOperando(referencia, Tipos.INDEFINIDO).marcarInvalida();
-    }
-
-    /*
-      objeto.clase.atributo (tema 31). Resuelve el atributo en la clase
-      prefijada y, si no puede, deja el tipo indefinido sin reportar: la
-      validacion del prefijo y de la herencia no es de este tema.
-     */
-    private static ReferenciaAtributo referenciaAtributo(Entorno entorno, Verificaciones v,
-            EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla atributo, int linea) {
-        EntradaTabla objetoResuelto = objeto;
-        if (objeto != null) {
-            EntradaTabla resuelto = v.verificarAlcance(objeto);
-            if (resuelto != null) {
-                objetoResuelto = resuelto;
-            }
-        }
-        String nombreClase = clasePrefijo == null ? null : clasePrefijo.lexema;
-        String nombreAtributo = atributo == null ? null : TablaSimbolos.nombreDe(atributo.lexema);
-        EntradaTabla declaracion = entorno.resolverAtributo(objetoResuelto, nombreClase, nombreAtributo);
-
-        String nombreObjeto = objetoResuelto == null ? "?" : TablaSimbolos.nombreDe(objetoResuelto.lexema);
-        StringBuilder texto = new StringBuilder(nombreObjeto);
-        if (clasePrefijo != null) {
-            texto.append(".").append(TablaSimbolos.nombreDe(clasePrefijo.lexema));
-        }
-        texto.append(".").append(nombreAtributo == null ? "?" : nombreAtributo);
-
-        String tipo = declaracion == null ? null : declaracion.tipoDato;
-        return new ReferenciaAtributo(objetoResuelto,
-                declaracion != null ? declaracion : atributo, texto.toString(), tipo);
     }
 
     /*

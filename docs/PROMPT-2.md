@@ -237,14 +237,5 @@ No aparecen diagnósticos nuevos. El detalle está en `docs/PROMPT-2B.md`.
   `{{ ... }}` de cada `.txt`. `ejecutar.sh` no las evalúa: ningún caso trae la
   marca `--- ESPERADO ---`.
 
-## Pendiente
-
-- Prompt 3.5 (Tema 33): resuelto en `docs/PROMPT-33.md`. `todf` solo acepta `ulongint`
-  o un enumerado con esa base.
-- Tema 19: resuelto en `docs/PROMPT-19.md`. Se comparan los tipos de los parámetros
-  reales con los formales.
-- Tema 28: resuelto en `docs/PROMPT-28.md`. `objeto.atributo` valida el receptor y el
-  atributo propio. El atributo declarado es `x:main:ca`; el uso dentro de `main`
-  deja el placeholder `x:main` (DEC-4 y DEC-5).
-- Tema 31: sigue pendiente. El acceso prefijado y `resolverAtributo` no validan
-  herencia ni exigen el prefijo de un miembro heredado.
+Los temas que extendían el chequeo de tipos de este prompt están en
+`docs/PROMPT-19.md`, `docs/PROMPT-28.md`, `docs/PROMPT-31.md` y `docs/PROMPT-33.md`.

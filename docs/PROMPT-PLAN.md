@@ -12,6 +12,19 @@ Este plan reemplaza la secuencia anterior. Los cambios respecto de la version pr
 
 Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 
+### Convencion de nombres
+
+- Los numeros **de tema** (17, 19, 23, 25, 28, 31, 33, etc.) son las reglas de la
+  consigna del grupo. Las pruebas usan `verificacion_rNN_*`; el registro de
+  implementacion suele ser `docs/PROMPT-NN.md`.
+- Las etiquetas **0, 1A, 1B, 2, 2B** y las iteraciones **3.1–3.10** son pasos del plan
+  en `docs/Promt.md`. En el plan, 3.6 no es el archivo `PROMPT-3.6.md`: el tema 19 se
+  documenta en `docs/PROMPT-19.md` (misma logica para 3.7 → tema 23 → `PROMPT-23.md`).
+- `docs/PROMPT-3.10.md` guarda la decision D3 sobre prefijo; la implementacion del tema
+  31 esta en `docs/PROMPT-31.md`.
+
+La tabla completa plan 3.x ↔ tema ↔ archivo esta en `readme.md`.
+
 ---
 
 ## Prompt 0 - Baseline reproducible (ejecutado)
@@ -140,7 +153,7 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Generar terceto con la referencia al atributo.
 - Documentar en `docs/PROMPT-28.md`. Casos en `test/tp2/verificacion_r28_r31_atributos/`.
 
-## Prompt 31 - Herencia multiple con prefijo (D3 revisada)
+## Prompt 31 - Herencia multiple con prefijo (D3 revisada, ejecutado)
 
 - Validar clases base y jerarquia.
 - `objeto.clase.miembro` solo si `clase` es base y el miembro esta declarado en ella.

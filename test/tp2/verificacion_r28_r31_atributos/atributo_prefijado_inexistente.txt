@@ -1,0 +1,17 @@
+{{ r31: el prefijo es una base, pero el atributo no esta declarado en esa clase.
+   Error esperado: atributo 'noexiste' no existe en la clase 'padre'
+   Sin terceto de asignacion.
+}}
+prog
+class padre
+begin
+    ulongint x;
+end;
+class hija
+begin
+    extends padre;
+end;
+hija a1;
+begin
+    a1.padre.noexiste := 1$ul;
+end

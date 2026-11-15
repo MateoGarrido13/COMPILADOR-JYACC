@@ -1,0 +1,15 @@
+{{ r31: a nombra a b antes de que b exista, y b despues nombra a a.
+   Errores esperados: clase base no declarada 'b'
+   y herencia circular entre 'b' y 'a'
+}}
+prog
+class a
+begin
+    extends b;
+end;
+class b
+begin
+    extends a;
+end;
+begin
+end

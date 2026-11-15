@@ -1,0 +1,14 @@
+{{ r31: la misma base no puede aparecer dos veces.
+   Error esperado: clase base repetida 'padre'
+}}
+prog
+class padre
+begin
+    ulongint x;
+end;
+class hija
+begin
+    extends padre, padre;
+end;
+begin
+end

@@ -1,10 +1,22 @@
+## Convencion de nombres
+
+Este archivo define el **plan de prompts** (pasos 0, 1A, 1B, 2, 2B y 3.1–3.10). Esa
+numeracion es independiente de los **temas del grupo** (6, 8, 13, 17, 19, 23, 25, 28,
+31, 33, …), que son las reglas de la consigna y suelen nombrar carpetas de prueba
+`verificacion_rNN_*` y documentos `docs/PROMPT-NN.md`.
+
+Ejemplo: el **Prompt 3.6** del plan implementa el **tema 19** (parametros reales); el
+registro no es `PROMPT-3.6.md`, sino `docs/PROMPT-19.md`. El **Prompt 3.10** implementa
+el **tema 31** en `docs/PROMPT-31.md`; la decision D3 previa esta en
+`docs/PROMPT-3.10.md`. Tabla completa en `readme.md`.
+
 ## Prompts listos para usar
 
 Estado actual:
 
 - Prompts 0, 1A, 1B, 2 y 2B: ejecutados. Resultado en `docs/PROMPT-0.md`, `PROMPT-1A.md`, `PROMPT-1B.md`, `PROMPT-2.md` y `PROMPT-2B.md`.
 - Prompts 3.1 a 3.9: ejecutados. Resultado en `docs/PROMPT-6-8.md`, `PROMPT-9-16.md`, `PROMPT-13.md`, `PROMPT-17.md`, `PROMPT-33.md`, `PROMPT-19.md`, `PROMPT-23.md`, `PROMPT-25.md` y `PROMPT-28.md`.
-- Siguiente: Prompt 3.10 (tema 31, herencia múltiple con prefijo). El tablero está en `readme.md`.
+- Prompt 3.10 (tema 31, herencia múltiple con prefijo): ejecutado. Resultado en `docs/PROMPT-31.md`. El tablero está en `readme.md`.
 
 ### Prompt 0 — Baseline (ejecutado)
 Estás trabajando en /home/rafael/Documents/Compiladores/COMPILADOR/TP3.

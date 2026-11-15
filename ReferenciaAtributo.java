@@ -5,8 +5,8 @@
   El tipo del atributo queda en 'tipo'. 'texto' es lo que imprime el terceto
   (objeto.atributo, o objeto.clase.atributo en el acceso prefijado). Si el
   atributo no se pudo resolver, el tipo queda indefinido para no cascadear
-  errores. El acceso sin prefijo valida existencia en el tema 28; el prefijo
-  y la herencia quedan en el tema 31.
+  errores. El acceso sin prefijo solo ve miembros propios; el heredado exige
+  el prefijo de la clase que lo declara.
  */
 public class ReferenciaAtributo {
 
