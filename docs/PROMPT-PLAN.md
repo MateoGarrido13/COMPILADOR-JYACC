@@ -101,12 +101,16 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Resultado: `docs/PROMPT-17.md`. `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento.
 - Revision 3.4: `docs/REVISION-3-3-3-4.md`. El anidamiento y el destino no asignable invalidan la expresion (sin tercetos). La deteccion de anidamiento se acota al plegado aritmetico y las conversiones: una asignacion en un parametro real (Tema 19) no es anidamiento.
 
-## Prompt 33 - Conversion `todf`
+## Prompt 33 - Conversion `todf` (ejecutado)
 
 - Solo `ulongint` a `doublef`.
 - Emitir terceto `todf`.
 - Rechazar conversion vacia, de `doublef` o de objetos.
 - Documentar en `docs/PROMPT-33.md`.
+- Resultado: `docs/PROMPT-33.md`. `CONVERSION_TODF` valida el tipo del operando
+  (`ulongint` o enum con base `ulongint`) y reporta
+  `todf solo convierte enteros a doublef` en caso contrario; el codegen
+  (`(todf, valor, --)`) y el tipo `doublef` ya venian del Prompt 2B.
 
 ## Prompt 19 - Parametros reales y orden
 

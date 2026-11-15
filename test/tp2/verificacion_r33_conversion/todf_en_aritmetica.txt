@@ -1,0 +1,12 @@
+{{ r33: todf combinada con doublef en una operacion aritmetica.
+   z := todf(x) + z es valido porque todf aporta tipo doublef y z es
+   doublef. }}
+prog
+ulongint x;
+doublef z;
+begin
+    x := 1$ul;
+    z := 2.0;
+    z := todf(x) + z;
+    z := todf(x) + 1.0;
+end

@@ -90,6 +90,15 @@ public class Verificaciones {
                 + ": se esperaba " + texto(esperado) + " y se encontró " + texto(obtenido));
     }
 
+    /*
+      Tema 33: la unica conversion del lenguaje es todf, de un entero
+      (ulongint o un enumerado con base ulongint) a doublef. Un operando
+      doublef, una cadena o cualquier otro tipo no es convertible.
+     */
+    public void errorConversionTodf(int linea) {
+        reporte.error(linea, "todf solo convierte enteros a doublef");
+    }
+
     public void errorTipoNoDeclarado(String tipo, int linea) {
         reporte.error(linea, "tipo no declarado '" + tipo + "'");
     }

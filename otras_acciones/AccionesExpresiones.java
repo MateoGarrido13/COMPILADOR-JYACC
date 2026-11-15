@@ -168,12 +168,26 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.CONVERSION_TODF, ctx -> {
             ExpresionDiferida expresion = ctx.expresion(0);
             if (expresion == null) {
+                // todf sin operando: el error sintactico ya se reporto.
                 return new ExpresionDiferida().conTipo(Tipos.DOUBLEF).marcarInvalida();
             }
             ExpresionDiferida resultado = ExpresionDiferida.deOperando(
                     new Conversion(expresion, Tipos.DOUBLEF), Tipos.DOUBLEF);
             if (!expresion.esValida()) {
-                resultado.marcarInvalida();
+                // El operando ya reporto un error; no se cascada.
+                return resultado.marcarInvalida();
+            }
+            // El enumerado vale por su tipo base (Entorno.tipoEfectivo).
+            String tipoOperando = entorno.tipoEfectivo(expresion.getTipo());
+            if (Tipos.INDEFINIDO.equals(tipoOperando)) {
+                // Tipo desconocido: ya se reporto el error que lo origino.
+                return resultado.marcarInvalida();
+            }
+            // La unica conversion del lenguaje es entero -> doublef. Un
+            // operando que ya es doublef tampoco se convierte a si mismo.
+            if (!Tipos.esEntero(tipoOperando)) {
+                v.errorConversionTodf(ctx.getLinea());
+                return resultado.marcarInvalida();
             }
             return resultado;
         });

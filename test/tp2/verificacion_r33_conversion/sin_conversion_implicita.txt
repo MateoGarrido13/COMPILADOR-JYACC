@@ -1,0 +1,13 @@
+{{ r33: no hay conversion implicita en asignaciones ni en operadores.
+   z := x + 1$ul (z doublef, x ulongint) informa error: la suma es
+   ulongint y no se promueve a doublef.
+   x := z (x ulongint, z doublef) informa error.
+   Solo todf convierte. }}
+prog
+ulongint x;
+doublef z;
+begin
+    x := 1$ul;
+    z := x + 1$ul;
+    x := z;
+end
