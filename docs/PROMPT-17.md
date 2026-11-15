@@ -27,7 +27,7 @@
 
 - `marcarAsignacion()` / `contieneAsignacion()` permiten detectar si una expresión ya contiene una asignación.
 - La marca viaja por el plegado aritmético (`absorber`) y por las conversiones, no por los argumentos de una invocación: el Tema 19 admite asignaciones en los parámetros reales.
-- `verificarAsignacionAnidada` reporta `ERR_ASIGNACION_ANIDADA` si se intenta anidar.
+- `verificarAsignacionAnidada` reporta `Anidamiento de asignacion en expresion` (`Reglas.ERR_ASIGNACION_ANIDADA`) si se intenta anidar.
 
 ## Verificación con tests existentes
 
@@ -68,7 +68,7 @@ Detalle completo en `docs/REVISION-3-3-3-4.md`.
 | Requisito | Verificación |
 |---|---|
 | `estructura_respetada.txt` emite asignaciones a `y` y `x` | ✅ |
-| `anidamiento.txt` y `anidamiento_indirecto.txt` reportan `ERR_ASIGNACION_ANIDADA` | ✅ y sin tercetos |
+| `anidamiento.txt` y `anidamiento_indirecto.txt` reportan `Anidamiento de asignacion en expresion` | ✅ y sin tercetos |
 | `en_invocacion.txt` emite la asignación a `y` antes del `PAR` | ✅ |
 | Tipo incompatible en la asignación interna informa error | ✅ |
 

@@ -37,7 +37,7 @@ Los siguientes tests de `test/tp1/verificaciones_comentarios_cadenas/` se ejecut
 
 ## Tests de regresión
 
-### `test/TP3 _y_TP4/CADENAS_COMENTARIOS/`
+### `test/TP3_y_TP4/CADENAS_COMENTARIOS/`
 
 | Archivo | Qué verifica | Resultado |
 |---|---|---|
@@ -87,7 +87,7 @@ El caso `06_cadena_y_constante_mismo_lexema.txt` cubre la misma colisión desde 
 
 - **Defecto de colisión corregido** (descrito arriba). Es el único cambio de código de 3.2.
 - **No se detectaron defectos en `AccionCadena`, `AnalizadorLexico` ni `MatrizTransiciones`.**
-- Se mantuvieron los siete tests originales de `test/TP3 _y_TP4/CADENAS_COMENTARIOS/` y se agregó el caso 08.
+- Se mantuvieron los siete tests originales de `test/TP3_y_TP4/CADENAS_COMENTARIOS/` y se agregó el caso 08.
 - Se corrigió la documentación de `PROMPT-9-16.md`: el error observable para un salto de línea es `Cadena no cerrada`, no `Cadena de una linea con salto de linea`.
 
 ## Verificación ejecutada
@@ -105,7 +105,7 @@ Casos ejecutados manualmente:
 - `test/tp1/verificacion_constantes_doublef/*`
 - `test/tp1/verificaciones_comentarios_cadenas/*`
 - `test/tp2/generales/00_programa_valido.txt`
-- `test/TP3 _y_TP4/CADENAS_COMENTARIOS/01..08`
+- `test/TP3_y_TP4/CADENAS_COMENTARIOS/01..08`
 - `test/TP3_SEMANTICAS/prompt-3-1-constantes/01..06`
 
 Todos los casos válidos terminan sin `Error:` y muestran los tipos esperados. Los casos inválidos reportan el error léxico correspondiente y no generan tercetos de `pout`.

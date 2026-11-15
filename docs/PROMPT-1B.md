@@ -128,16 +128,9 @@ Se creo `test/TP3_SEMANTICAS/` con un ejecutor propio y dos subdirectorios:
   globales, clases).
 - `prompt-1b-name-mangling/`: 7 casos de name mangling y apertura/cierre de ambitos.
 
-Resultado:
-
-```bash
-bash test/TP3_SEMANTICAS/ejecutar.sh
-# 13/13 casos OK
-```
-
-Cada `.txt` incluye sus propias expectativas dentro de un comentario `{{ ... }}`
-que empieza con `--- ESPERADO ---`, con reglas `SIN ERRORES`, `ERROR`,
-`SIMBOLO`, `NO_SIMBOLO`, `DECLARADO_SI`, `DECLARADO_NO` y `TERCETO`.
+Cada `.txt` abre con un comentario `{{ ... }}` que describe tercetos y símbolos.
+No incluye un bloque `--- ESPERADO ---`. Esos 13 casos se revisan comparando la
+salida con ese comentario. `ejecutar.sh` no los puntúa.
 
 ## Regresion
 

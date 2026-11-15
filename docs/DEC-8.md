@@ -29,7 +29,7 @@ Sin embargo, faltaba el **chequeo de tipos en la condicion** y la verificacion e
 
 ### Verificacion con tests
 
-Se ejecutaron los 11 tests existentes de `test/TP3 _y_TP4/ITERACION/` y se crearon 2 tests nuevos para cubrir criterios de aceptación que no estaban verificados:
+Se ejecutaron los 11 tests existentes de `test/TP3_y_TP4/ITERACION/` y se crearon 2 tests nuevos para cubrir criterios de aceptación que no estaban verificados:
 
 **Tests existentes (11):** todos pasan sin errores.
 
@@ -37,12 +37,12 @@ Se ejecutaron los 11 tests existentes de `test/TP3 _y_TP4/ITERACION/` y se crear
 
 | Archivo | Propósito | Resultado |
 |---------|-----------|-----------|
-| `test/TP3 _y_TP4/ITERACION/10_repeat_con_pout_y_invocacion.txt` | Verifica que `pout` y una invocacion de funcion dentro del cuerpo de un `repeat` generen `PAR`, `CALL`, `(:=)`, `pout` y los saltos del ciclo correctamente. | ✅ Pasa |
-| `test/TP3 _y_TP4/ITERACION/11_repeat_condicion_tipos_distintos.txt` | Verifica que `repeat ... while (x > 1.0)` con `x ulongint` informe `Tipos incompatibles en la condicion: se esperaba ulongint y se encontro doublef`. | ✅ Pasa |
+| `test/TP3_y_TP4/ITERACION/10_repeat_con_pout_y_invocacion.txt` | Verifica que `pout` y una invocacion de funcion dentro del cuerpo de un `repeat` generen `PAR`, `CALL`, `(:=)`, `pout` y los saltos del ciclo correctamente. | ✅ Pasa |
+| `test/TP3_y_TP4/ITERACION/11_repeat_condicion_tipos_distintos.txt` | Verifica que `repeat ... while (x > 1.0)` con `x ulongint` informe `Tipos incompatibles en la condición: se esperaba ulongint y se encontró doublef`. | ✅ Pasa |
 
 ### Criterios de aceptación cumplidos
 
-- `test/TP3 _y_TP4/ITERACION/*` sigue generando los mismos tercetos, salvo los cambios de nombre de ambito (D1, D2). ✅
+- `test/TP3_y_TP4/ITERACION/*` sigue generando los mismos tercetos, salvo los cambios de nombre de ambito (D1, D2). ✅
 - Un `repeat` con `pout` y una invocacion dentro del cuerpo genera el codigo de ambos (`PAR`, `CALL`, `(:=)`, `pout`). ✅
 - `repeat ... while (x > 1.0)` con `x ulongint` informa error de tipos. ✅
 - `repeat ... while (x > 1$ul)` no informa error. ✅

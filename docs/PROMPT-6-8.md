@@ -27,13 +27,13 @@ Tipar cada constante en el momento del análisis léxico, para que el tipo quede
 
 - `Tipos.rangoValido()`: los rangos y formatos se mantienen sin cambios.
 - `Tipos.tipoDeConstante()`: queda como fallback, pero la fuente principal es el tipo asignado en el léxico.
-- `Entorno.aplicarSignoNegativo()`: crea `-lexema` con el tipo ya registrado por el léxico y cae a `Tipos.tipoDeConstante` sólo si la entrada no tiene tipo. El rango se verifica después del signo en `AccionesExpresiones`.
+- `Entorno.aplicarSignoNegativo()`: arma el lexema con signo a partir de una constante ya reconocida y le pone el tipo que devuelve `Tipos.tipoDeConstante`. No es el camino de `-1$ul`: ese lexema lo rechaza el léxico antes de insertar.
 
 ## Criterios de aceptación
 
 - Al compilar `1$ul`, la TS muestra Tipo de dato: `ulongint`, Uso: `constante`. ✅
 - Al compilar `2.5d+3`, la TS muestra Tipo de dato: `doublef`, Uso: `constante`. ✅
-- Al compilar `-1$ul`, la TS muestra la constante negativa con tipo `ulongint`; además reporta que queda fuera de rango por ser sin signo. ✅
+- Al compilar `-1$ul`, no hay entrada en la TS. El error es `Constante entera fuera de rango '-1$ul'`. ✅
 - Los tests `test/tp1/verificacion_constantes_ulongint/*` y `test/tp1/verificacion_constantes_doublef/*` siguen pasando. ✅
 - Un uso posterior de la constante conserva el tipo sin depender de `tiparConstante`. ✅
 
@@ -45,8 +45,8 @@ Se agregó `test/TP3_SEMANTICAS/prompt-3-1-constantes/` con el formato descripti
 |---|---|
 | `01_ulongint_tipada_en_lexico.txt` | `1$ul` queda como `ulongint`, uso constante, y llega al terceto. |
 | `02_doublef_tipada_en_lexico.txt` | `2.5d+3` queda como `doublef`, uso constante. |
-| `03_negativa_ulongint_conserva_tipo.txt` | `-1$ul` conserva `ulongint` y reporta fuera de rango. |
-| `04_negativa_doublef_valida.txt` | `-1.5` conserva `doublef` y no reporta error. |
+| `03_negativa_ulongint_fuera_de_rango.txt` | `-1$ul` no se inserta. Error: `Constante entera fuera de rango '-1$ul'`. |
+| `04_negativa_doublef_valida.txt` | El lexema `-1.5` queda como `doublef`. No se crea además `1.5`. Sin error. |
 | `05_limites_validos_de_ambos_tipos.txt` | Extremos válidos de ambos tipos, tipados en el léxico. |
 | `06_cadena_y_constante_mismo_lexema.txt` | `{1$ul}` y `1$ul` conviven sin pisarse: cadena 303 y constante 302 con sus tipos. |
 
@@ -57,7 +57,7 @@ Compilación limpia con `javac -encoding UTF-8 -d /tmp/opencode/tp3build *.java 
 Salidas comprobadas:
 - `1$ul -> 302`, `Tipo de dato: ulongint`, `Uso: constante`.
 - `2.5d+3 -> 302`, `Tipo de dato: doublef`, `Uso: constante`.
-- `-1$ul -> 302`, `Tipo de dato: ulongint`, `Uso: constante`, más `Error: Constante fuera de rango '-1$ul'`.
+- `-1$ul` no aparece en la TS. `Error: Constante entera fuera de rango '-1$ul'`. La asignación que lo usa queda `Asignacion mal formada`.
 - `{1$ul}` genera `1$ul -> 303`, `Tipo de dato: cadena`, y no altera la constante `1$ul -> 302`.
 
 Tests existentes ejecutados sin regresiones:
@@ -97,8 +97,8 @@ También se tuvo en cuenta el estado del árbol de trabajo al momento de la revi
 | `AccionConstanteFloat` inserta con `Tipos.DOUBLEF` después de validar formato y rango | ✅ `insertarConstante(lexema, Tipos.DOUBLEF, ...)` |
 | El lexema `"."` sigue devolviendo el token `'.'` sin insertar | ✅ |
 | Marcar uso `CONSTANTE` | ✅ `insertarConstante` fija `Uso.CONSTANTE` y `declarado = true` |
-| Constantes negativas con el tipo correcto | ✅ `Entorno.aplicarSignoNegativo` conserva `tipoDato` y cae al fallback sólo si falta |
-| Rango verificado después del signo | ✅ `Verificaciones.verificarRangoConstante` sobre `-lexema` |
+| `-1$ul` fuera de rango, sin entrada en la TS | ✅ `AccionConstanteEntera` informa `Constante entera fuera de rango '-1$ul'` y vuelve sin `insertarConstante` |
+| `-1.5` válido, una sola entrada | ✅ el lexema insertado es `-1.5`, tipo `doublef` |
 | `Tipos.tipoDeConstante` queda como fallback | ✅ |
 | No cambiar rangos ni formatos | ✅ `Tipos.rangoValido` sin cambios |
 
@@ -124,6 +124,6 @@ También se tuvo en cuenta el estado del árbol de trabajo al momento de la revi
 
 - `1$ul -> 302`, `Tipo de dato: ulongint`, `Uso: constante`.
 - `2.5d+3 -> 302`, `Tipo de dato: doublef`, `Uso: constante`.
-- `-1$ul -> 302`, `Tipo de dato: ulongint`, `Uso: constante`, más `Error: Constante fuera de rango '-1$ul'` (correcto: `ulongint` no admite negativos).
-- `-1.5 -> 302`, `Tipo de dato: doublef`, sin error.
+- `-1$ul` no está en la TS. El error es `Constante entera fuera de rango '-1$ul'` (`ulongint` no admite negativos).
+- `-1.5 -> 302`, `Tipo de dato: doublef`, `Uso: constante`, sin error. No hay una entrada aparte `1.5`.
 - Los tests de `test/tp1/verificacion_constantes_ulongint/` y `test/tp1/verificacion_constantes_doublef/` siguen pasando.

@@ -15,7 +15,7 @@ están sin commitear al momento de escribir este documento.
 
 | Requisito | Verificación |
 |---|---|
-| `test/TP3 _y_TP4/ITERACION/*` con los mismos tercetos (salvo nombres de ámbito) | ✅ 00..09 y 11 sin cambios; el caso 10 se corrigió (ver 1.2) |
+| `test/TP3_y_TP4/ITERACION/*` con los mismos tercetos (salvo nombres de ámbito) | ✅ 00..09 y 11 sin cambios; el caso 10 se corrigió (ver 1.2) |
 | `repeat` con `pout` e invocación emite el código de ambos | ✅ el caso 10, corregido, emite `PAR`/`CALL`, `(:=, r, [..])` y `pout` |
 | `repeat ... while (x > 1.0)` con `x ulongint` informa error de tipos | ✅ `Tipos incompatibles en la condición: se esperaba ulongint y se encontró doublef` |
 | `repeat ... while (x > 1$ul)` no informa error | ✅ sin error |
@@ -73,7 +73,7 @@ revisión y no se modificó para no ampliar el alcance.
 | Requisito | Verificación |
 |---|---|
 | `estructura_respetada.txt` emite las asignaciones a `y` y a `x` | ✅ |
-| `anidamiento.txt` y `anidamiento_indirecto.txt` reportan `ERR_ASIGNACION_ANIDADA` | ✅ y ya no emiten tercetos de asignación |
+| `anidamiento.txt` y `anidamiento_indirecto.txt` reportan `Anidamiento de asignacion en expresion` | ✅ y ya no emiten tercetos de asignación |
 | `en_invocacion.txt` emite la asignación a `y` antes del `PAR` | ✅ |
 | Tipo incompatible en la asignación interna informa error | ✅ `Tipos incompatibles en la asignación a 'y'` |
 
@@ -106,7 +106,7 @@ expresión, que viaja por el plegado aritmético (`absorber`) pero no por los
 argumentos de una invocación. Así:
 
 - `x := y = (z = (1$ul))` y `x := y = (w + z = (1$ul))` siguen siendo
-  `ERR_ASIGNACION_ANIDADA`;
+  `Anidamiento de asignacion en expresion`;
 - `x := y = (f(z = (1$ul))[1$ul])` es válido: el valor de `y` es el retorno de
   `f` y `z=(1$ul)` es un efecto de lado del argumento.
 
@@ -144,7 +144,7 @@ interpreta como parámetro nombrado y no se modificó la gramática.
 
 | Archivo | Cambio |
 |---|---|
-| `test/TP3 _y_TP4/ITERACION/10_repeat_con_pout_y_invocacion.txt` | reescrito con `begin`/`end` y comentario corregido |
+| `test/TP3_y_TP4/ITERACION/10_repeat_con_pout_y_invocacion.txt` | reescrito con `begin`/`end` y comentario corregido |
 | `test/tp2/verificacion_r17_asig_expresiones/tipo_incompatible.txt` | nuevo: tipo incompatible en la asignación interna |
 | `test/tp2/verificacion_r17_asig_expresiones/destino_no_asignable.txt` | nuevo: destino no asignable (`f` función) |
 | `test/tp2/verificacion_r17_asig_expresiones/asignacion_en_parametro_valida.txt` | nuevo: asignación en parámetro real no es anidamiento |
@@ -156,7 +156,7 @@ interpreta como parámetro nombrado y no se modificó la gramática.
 
 Suites ejecutadas:
 
-- `test/TP3 _y_TP4/ITERACION/*`: 00..10 sin errores; 11 sólo el error de tipos
+- `test/TP3_y_TP4/ITERACION/*`: 00..10 sin errores; 11 sólo el error de tipos
   esperado.
 - `test/tp2/verificacion_r17_asig_expresiones/*`: sólo reportan error los casos
   que deben hacerlo (`anidamiento`, `anidamiento_indirecto`,

@@ -98,7 +98,7 @@ Se compilaron las fuentes Java y se ejecutaron los archivos de
 | `asignacion_en_expresion.txt` | Rechaza una constante no listada también en una asignación dentro de una expresión. |
 | `enums_distintos.txt` | Rechaza asignación directa entre enums distintos con igual tipo base. |
 | `tipos_base_mezclados.txt` | Informa valores de distinto tipo base y no registra el typedef. |
-| `enum_vacio.txt` | Informa `ERR_FALTA_VALORES_ENUMERADO`. |
+| `enum_vacio.txt` | Informa `Ausencia de valores para la enumeracion`. |
 | `tipo_no_declarado.txt` | Informa tipo no declarado y no declara la variable. |
 | `typedef_redeclarado.txt` | Rechaza el segundo typedef en el mismo ámbito. |
 | `ambitos_tipedef.txt` | Acepta el mismo nombre de typedef en `main` y en una función; cada variable conserva la clave de su enum. |

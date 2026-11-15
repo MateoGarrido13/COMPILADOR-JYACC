@@ -2,12 +2,9 @@
 
 Estado actual:
 
-- Prompt 0: ejecutado. Resultado en `docs/PROMPT-0.md`.
-- Prompt 1A: ejecutado. Resultado en `docs/PROMPT-1A.md`.
-- Prompt 1B: ejecutado. Resultado en `docs/PROMPT-1B.md`.
-- Prompt 2: ejecutado. Resultado en `docs/PROMPT-2.md`.
-- Prompt 2B: ejecutado. Resultado en `docs/PROMPT-2B.md`.
-- Siguiente: Prompt 3.1 (temas 6 y 8).
+- Prompts 0, 1A, 1B, 2 y 2B: ejecutados. Resultado en `docs/PROMPT-0.md`, `PROMPT-1A.md`, `PROMPT-1B.md`, `PROMPT-2.md` y `PROMPT-2B.md`.
+- Prompts 3.1 a 3.9: ejecutados. Resultado en `docs/PROMPT-6-8.md`, `PROMPT-9-16.md`, `PROMPT-13.md`, `PROMPT-17.md`, `PROMPT-33.md`, `PROMPT-19.md`, `PROMPT-23.md`, `PROMPT-25.md` y `PROMPT-28.md`.
+- Siguiente: Prompt 3.10 (tema 31, herencia múltiple con prefijo). El tablero está en `readme.md`.
 
 ### Prompt 0 — Baseline (ejecutado)
 Estás trabajando en /home/rafael/Documents/Compiladores/COMPILADOR/TP3.
@@ -16,10 +13,10 @@ No modifiques código de producción en esta tarea. Solo relevá el estado actua
 1. Compilá con:
    javac -encoding UTF-8 -d /tmp/opencode/tp3build *.java "acciones semanticas"/*.java otras_acciones/*.java
 2. Ejecutá el compilador sobre todos los archivos de:
-   - test/TP3 _y_TP4/AMBITO
-   - test/TP3 _y_TP4/ASIGNACIONES
-   - test/TP3 _y_TP4/ITERACION
-   - test/TP3 _y_TP4/SELECCION
+   - test/TP3_y_TP4/AMBITO
+   - test/TP3_y_TP4/ASIGNACIONES
+   - test/TP3_y_TP4/ITERACION
+   - test/TP3_y_TP4/SELECCION
    - test/tp2/verificacion_r17_asig_expresiones
    - test/tp2/verificacion_r19_param_reales
    - test/tp2/verificacion_r23_enums
@@ -151,13 +148,13 @@ docs/DEC-2.md, docs/DEC-3.md, docs/DEC-4.md, docs/DEC-5.md.
    - DEC-5: ámbitos de clase y regla de herencia/prefijo.
 
 Criterio de aceptación:
-- test/TP3 _y_TP4/AMBITO/prueba_funcion_anidada.txt:
+- test/TP3_y_TP4/AMBITO/prueba_funcion_anidada.txt:
   a:main, n:main:a, b:main:a, m:main:a:b.
 - Un x local de g se ve como x:main:f:g.
-- test/TP3 _y_TP4/AMBITO/prueba_funciones_iguales.txt:
+- test/TP3_y_TP4/AMBITO/prueba_funciones_iguales.txt:
   var_1:main:a:b:fun_c existe declarada; var_1:main:a:fun_c queda como
   placeholder no declarado y el uso sigue siendo error.
-- test/TP3 _y_TP4/AMBITO/prueba_variable_en_main.txt:
+- test/TP3_y_TP4/AMBITO/prueba_variable_en_main.txt:
   la función ve global:main.
 - Las clases ya no comparten atributos en main.
 
@@ -332,11 +329,14 @@ Entorno.java, Tipos.java.
    - Mantener el caso especial lexema "." que devuelve el token '.' para el acceso
      a atributos; en ese caso no insertar nada.
 
-3. Revisar constantes negativas:
-   - El léxico ve el '-' como símbolo y la constante sin signo.
-   - Entorno.aplicarSignoNegativo debe crear la entrada "-lexema" con el tipo correcto
-     y marcarla CONSTANTE.
-   - Verificar rango después del signo.
+3. El signo pegado al número forma parte del lexema (`-1$ul`, `-1.5`).
+   - Si ese lexema no pasa el rango, la acción léxica informa el error y no inserta nada.
+   - `-1$ul` no es un `ulongint` válido: el error es
+     `Constante entera fuera de rango '-1$ul'` y no hay entrada en la TS.
+   - `-1.5` sí es un `doublef` válido: una sola entrada, con lexema `-1.5`.
+     No se crea además la entrada `1.5`.
+   - `Entorno.aplicarSignoNegativo` queda para un menos separado del lexema
+     (`FACTOR_CONSTANTE_NEGATIVA`). No es el camino de `-1$ul`.
 
 4. Dejar Tipos.tipoDeConstante como fallback, pero la fuente principal debe ser
    el tipo asignado en el léxico.
@@ -346,7 +346,8 @@ Entorno.java, Tipos.java.
 Criterio de aceptación:
 - Al compilar 1$ul, la TS muestra Tipo de dato: ulongint.
 - Al compilar 2.5d+3, la TS muestra Tipo de dato: doublef.
-- Al compilar -1$ul, la TS muestra la constante negativa con tipo ulongint.
+- Al compilar -1$ul, no hay entrada en la TS. El error es
+  `Constante entera fuera de rango '-1$ul'`.
 - Los tests test/tp1/verificacion_constantes_ulongint/* y
   test/tp1/verificacion_constantes_doublef/* siguen pasando.
 - Un uso posterior de la constante conserva el tipo sin depender de tiparConstante.
@@ -372,7 +373,7 @@ Archivos a revisar: acciones semanticas/AccionCadena.java,
 AnalizadorLexico.java, MatrizTransiciones.java, TablaSimbolos.java.
 
 Si todo funciona, no modifiques código: agregá casos de regresión en
-test/TP3 _y_TP4/CADENAS_COMENTARIOS/ y documentá el resultado.
+test/TP3_y_TP4/CADENAS_COMENTARIOS/ y documentá el resultado.
 
 Criterio de aceptación:
 - Los casos válidos no generan errores.
@@ -405,7 +406,7 @@ otras_acciones/AccionesDeclaraciones.java, otras_acciones/AccionesExpresiones.ja
 5. Mantener el comportamiento actual para repeat anidados y secuenciales.
 
 Criterio de aceptación:
-- test/TP3 _y_TP4/ITERACION/* sigue generando los mismos tercetos, salvo los
+- test/TP3_y_TP4/ITERACION/* sigue generando los mismos tercetos, salvo los
   cambios de nombre de ámbito.
 - Un repeat con pout y una invocación dentro del cuerpo genera el código de ambos.
 - repeat ... while (x > 1.0) con x ulongint informa error de tipos.
@@ -430,7 +431,8 @@ Verificaciones.java, GeneradorTercetos.java.
 2. En ASIGNACION_EN_EXPRESION:
    - resolver el ID destino con uso variable/parámetro/atributo;
    - chequear tipo destino == tipo del RHS;
-   - si el RHS contiene otra asignación, informar ERR_ASIGNACION_ANIDADA;
+   - si el RHS contiene otra asignación, informar
+     `Anidamiento de asignacion en expresion` (`Reglas.ERR_ASIGNACION_ANIDADA`);
    - devolver una ExpresionDiferida que contenga la AsignacionEnExpresion y
      cuyo tipo sea el tipo del destino.
    - Mantener marcarAsignacion() para que el anidamiento se detecte hacia afuera.
@@ -451,7 +453,8 @@ Verificaciones.java, GeneradorTercetos.java.
 Criterio de aceptación:
 - test/tp2/verificacion_r17_asig_expresiones/estructura_respetada.txt genera
   la asignación a y y la asignación a x.
-- anidamiento.txt y anidamiento_indirecto.txt informan ERR_ASIGNACION_ANIDADA.
+- anidamiento.txt y anidamiento_indirecto.txt informan
+  `Anidamiento de asignacion en expresion`.
 - en_invocacion.txt genera la asignación a y antes del PAR.
 - Un tipo incompatible en la asignación interna informa error.
 
@@ -564,7 +567,8 @@ otras_acciones/AccionesDeclaraciones.java, Tipos.java, TablaSimbolos.java.
    - guardar en TipoEnumerado: nombre, tipoBase, valores y entrada;
    - todos los valores deben ser constantes del mismo tipo base; si hay mezcla,
      informar error;
-   - rechazar enumeración vacía (ya existe ERR_FALTA_VALORES_ENUMERADO).
+   - rechazar enumeración vacía. El mensaje es
+     `Ausencia de valores para la enumeracion` (`Reglas.ERR_FALTA_VALORES_ENUMERADO`).
 
 2. En DECL_VARIABLES y DECL_OBJETOS:
    - si el tipo es un ID de usuario, resolverlo con Name Mangling;
@@ -609,7 +613,8 @@ ExpresionDiferida.java, Terceto.java.
    - comparar atributos efectivos: nombre y tipo, incluyendo heredados;
    - comparar métodos: nombre, tipo de retorno y tipos de parámetros;
    - dos variables del mismo tipo de clase son siempre compatibles;
-   - documentar la regla en DEC-6.
+   - documentar la regla en `docs/PROMPT-25.md` y `docs/DEC-9.md`.
+     `docs/DEC-6.md` registra el tipado de constantes y no se reescribe.
    Para esta fila podés comparar solo atributos; si ya existe la lista de métodos,
    incluila.
 
@@ -680,7 +685,8 @@ Criterio de aceptación:
 
 ### Prompt 3.10 — Tema 31: herencia múltiple con prefijo
 Implementá únicamente la fila "31: herencia múltiple con desambiguado por prefijado".
-Usá la decisión D3/DEC-5 sobre prefijo obligatorio o búsqueda sin prefijo.
+Usá la decisión D3 ya cerrada en `docs/DEC-5.md` y `docs/PROMPT-3.10.md`:
+el miembro heredado exige prefijo. Sin prefijo solo se ven los miembros propios.
 
 Archivos: Entorno.java, Verificaciones.java,
 otras_acciones/AccionesDeclaraciones.java,
@@ -695,8 +701,9 @@ LlamadaFuncion.java, ParametroReal.java.
    - detectar bases repetidas.
 
 2. Búsqueda de atributos:
-   - ACCESO_ATRIBUTO sin prefijo: buscar en la clase propia y luego en ancestros
-     según DEC-5; si hay más de un candidato, error de ambigüedad;
+   - ACCESO_ATRIBUTO sin prefijo: buscar solo entre los miembros propios de la
+     clase del objeto. Si el atributo no está ahí y sí en un ancestro, el error
+     es falta de prefijo. No recorrer ancestros para aceptar el acceso.
    - ACCESO_ATRIBUTO_PREFIJADO (objeto.clase.atributo):
        * verificar que "clase" esté en la cadena de herencia del objeto;
        * verificar que el atributo exista en esa clase;
@@ -717,16 +724,20 @@ LlamadaFuncion.java, ParametroReal.java.
    - atributo/método que no existe en la clase prefijada;
    - herencia circular;
    - clase base no declarada;
-   - ambigüedad sin prefijo.
+   - miembro heredado usado sin prefijo.
 
 Criterio de aceptación:
 - test/tp2/verificacion_r28_r31_atributos/desambiguado_tradicional_y.txt:
   a1.padre.y y a1.hija.y son válidos.
-- metodo_heredado_prefijado_con_orden.txt y
-  metodo_heredado_prefijado_un_parametro.txt generan llamadas y no tienen errores.
+- metodo_heredado_prefijado_con_orden.txt es válido: las llamadas ya van prefijadas.
+- metodo_heredado_prefijado_un_parametro.txt es mixto: `a1.padre.m(...)` es
+  válido y `a1.m(...)` es error por falta de prefijo.
+- metodo_heredado_prefijado_sin_orden.txt sigue siendo inválido por falta de
+  orden; `a1.m(...)` además informa falta de prefijo.
 - a1.nohereda.x -> error.
 - a1.padre.noexiste -> error.
-- Si dos bases definen el mismo atributo y se usa sin prefijo, error de ambigüedad.
+- Dos bases con el mismo miembro no se aceptan sin prefijo: el error es falta
+  de prefijo, y el prefijo elige la base.
 - Una herencia circular informa error.
 - D3 revisada: un miembro heredado usado sin prefijo (`a1.m(...)`) es error por
   falta de prefijo. El prefijo explícito `objeto.clase.miembro` es obligatorio

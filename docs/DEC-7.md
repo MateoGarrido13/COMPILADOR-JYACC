@@ -23,7 +23,7 @@ No se encontro defecto: el comportamiento requerido ya funciona correctamente en
 - `test/tp1/verificaciones_comentarios_cadenas/cadena_con_guion_bajo.txt`: `{cadena_con_guion}` insertado con Tipo de dato: `cadena`.
 - `test/tp1/verificaciones_comentarios_cadenas/guion_bajo_en_comentario_y_cadena.txt`: comentario con guion bajo descartado, cadena valida.
 
-**Tests nuevos de regresión (creados en test/TP3 _y_TP4/CADENAS_COMENTARIOS/):**
+**Tests nuevos de regresión (creados en test/TP3_y_TP4/CADENAS_COMENTARIOS/):**
 
 | Archivo | Qué verifica | Resultado |
 |---|---|---|
@@ -47,7 +47,7 @@ Ninguna en `AccionCadena`, `AnalizadorLexico` ni `MatrizTransiciones`. En la rev
 
 ### Se crearon test
 
-Sí. Se crearon 7 casos de regresión en `test/TP3 _y_TP4/CADENAS_COMENTARIOS/` (listados arriba). La revisión posterior agregó el caso 08 para la colisión cadena/reservada/constante.
+Sí. Se crearon 7 casos de regresión en `test/TP3_y_TP4/CADENAS_COMENTARIOS/` (listados arriba). La revisión posterior agregó el caso 08 para la colisión cadena/reservada/constante.
 
 ### Conclusión
 

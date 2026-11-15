@@ -82,7 +82,7 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Verificar el estado actual contra TP1/TP3.
 - Completar solo si falta validacion o tipo.
 - Documentar en `docs/PROMPT-9-16.md`.
-- Resultado: `docs/PROMPT-9-16.md`. Validado por el lexico en `AccionCadena.java`: cadenas con tipo `cadena`, comentarios `{{...}}` descartados, sin saltos de línea en cadenas. En la revisión se corrigió la colisión de claves en `TablaSimbolos.java`. Casos en `test/TP3 _y_TP4/CADENAS_COMENTARIOS/`.
+- Resultado: `docs/PROMPT-9-16.md`. Validado por el lexico en `AccionCadena.java`: cadenas con tipo `cadena`, comentarios `{{...}}` descartados, sin saltos de línea en cadenas. En la revisión se corrigió la colisión de claves en `TablaSimbolos.java`. Casos en `test/TP3_y_TP4/CADENAS_COMENTARIOS/`.
 
 ## Prompt 13 - `repeat while` (ejecutado, revisado)
 
@@ -112,17 +112,19 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
   `todf solo convierte enteros a doublef` en caso contrario; el codegen
   (`(todf, valor, --)`) y el tipo `doublef` ya venian del Prompt 2B.
 
-## Prompt 19 - Parametros reales y orden
+## Prompt 19 - Parametros reales y orden (ejecutado)
 
 - Cantidad, tipos y orden `[ ... ]`.
-- Copias `(PAR, formal, real)` y `(CALL, funcion, --)`.
+- Copias `(PAR, formal, real)` y `(CALL, funcion, cantidad)`.
 - Documentar en `docs/PROMPT-19.md`.
+- Resultado: `docs/PROMPT-19.md`. Casos en `test/tp2/verificacion_r19_param_reales/`.
 
-## Prompt 23 - Enumeraciones
+## Prompt 23 - Enumeraciones (ejecutado)
 
 - Verificar que el tipo exista al declarar variables.
 - Verificar que la constante asignada pertenezca al enumerado.
 - Documentar en `docs/PROMPT-23.md`.
+- Resultado: `docs/PROMPT-23.md`. Casos en `test/tp2/verificacion_r23_enums/`.
 
 ## Prompt 25 - Objetos y asignacion estructural (ejecutado)
 

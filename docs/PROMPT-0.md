@@ -23,10 +23,10 @@ para poder comparar cada cambio contra una referencia estable.
   ```
 
 - Se recorrieron todos los `.txt` de:
-  - `test/TP3 _y_TP4/AMBITO`
-  - `test/TP3 _y_TP4/ASIGNACIONES`
-  - `test/TP3 _y_TP4/ITERACION`
-  - `test/TP3 _y_TP4/SELECCION`
+  - `test/TP3_y_TP4/AMBITO`
+  - `test/TP3_y_TP4/ASIGNACIONES`
+  - `test/TP3_y_TP4/ITERACION`
+  - `test/TP3_y_TP4/SELECCION`
   - `test/tp2/verificacion_r17_asig_expresiones`
   - `test/tp2/verificacion_r19_param_reales`
   - `test/tp2/verificacion_r23_enums`
@@ -51,10 +51,10 @@ completar las semanticas de TP3, no necesariamente el comportamiento actual.
 
 | Directorio | Casos | Validos | Invalidos | Mixtos |
 |---|---:|---:|---:|---:|
-| `test/TP3 _y_TP4/ITERACION` | 11 | 11 | 0 | 0 |
-| `test/TP3 _y_TP4/ASIGNACIONES` | 9 | 4 | 3 | 2 |
-| `test/TP3 _y_TP4/SELECCION` | 10 | 10 | 0 | 0 |
-| `test/TP3 _y_TP4/AMBITO` | 6 | 3 | 2 | 1 |
+| `test/TP3_y_TP4/ITERACION` | 11 | 11 | 0 | 0 |
+| `test/TP3_y_TP4/ASIGNACIONES` | 9 | 4 | 3 | 2 |
+| `test/TP3_y_TP4/SELECCION` | 10 | 10 | 0 | 0 |
+| `test/TP3_y_TP4/AMBITO` | 6 | 3 | 2 | 1 |
 | `test/tp2/verificacion_r17_asig_expresiones` | 8 | 2 | 6 | 0 |
 | `test/tp2/verificacion_r19_param_reales` | 5 | 1 | 4 | 0 |
 | `test/tp2/verificacion_r23_enums` | 5 | 2 | 3 | 0 |
@@ -164,10 +164,10 @@ javac -encoding UTF-8 -d /tmp/opencode/tp3build *.java "acciones semanticas"/*.j
 
 BASE=/tmp/opencode/tp3-baseline
 for dir in \
-  "test/TP3 _y_TP4/AMBITO" \
-  "test/TP3 _y_TP4/ASIGNACIONES" \
-  "test/TP3 _y_TP4/ITERACION" \
-  "test/TP3 _y_TP4/SELECCION" \
+  "test/TP3_y_TP4/AMBITO" \
+  "test/TP3_y_TP4/ASIGNACIONES" \
+  "test/TP3_y_TP4/ITERACION" \
+  "test/TP3_y_TP4/SELECCION" \
   "test/tp2/verificacion_r17_asig_expresiones" \
   "test/tp2/verificacion_r19_param_reales" \
   "test/tp2/verificacion_r23_enums" \

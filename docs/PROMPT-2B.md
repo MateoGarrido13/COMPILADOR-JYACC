@@ -149,11 +149,11 @@ Se creó `test/TP3_SEMANTICAS/prompt-2b-codegen-base/` con 12 casos:
 
 Cada archivo conserva el formato del proyecto:
 
-- un bloque superior `{{ Salida ideal esperada ... }}` con los tercetos completos y las
+- un bloque superior `{{ Salida ideal esperada ... }}` con los tercetos y las
   variables declaradas de la tabla de símbolos;
-- el programa;
-- un bloque inferior `{{ --- ESPERADO --- ... }}` con las reglas que verifica
-  `ejecutar.sh`.
+- el programa.
+
+No hay un bloque inferior `--- ESPERADO ---`. `ejecutar.sh` no puntúa estos casos.
 
 También se reestructuraron los 16 casos de
 `test/TP3_SEMANTICAS/prompt-2-tipos-estrictos/` para que el bloque superior muestre la
@@ -161,20 +161,8 @@ salida real, incluidos los delimitadores estructurales y las entradas declaradas
 tabla. El caso `todf_pendiente_tema33` se renombró a
 `todf_convierte_ulongint_a_doublef` porque ahora la conversión es válida.
 
-El runner `test/TP3_SEMANTICAS/ejecutar.sh` mantiene las reglas anteriores y ajusta
-`SIN TERCETOS`:
-
-```text
-SIN TERCETOS  la salida no debe tener tercetos ejecutables
-              (se ignoran los delimitadores estructurales)
-```
-
-Resultado:
-
-```bash
-bash test/TP3_SEMANTICAS/ejecutar.sh
-# 41/41 casos OK
-```
+El comentario inicial es la referencia de cada caso. `ejecutar.sh` sigue
+esperando reglas `--- ESPERADO ---`, que estos archivos no tienen.
 
 ## Regresión
 

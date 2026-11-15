@@ -157,19 +157,12 @@ Se creó `test/TP3_SEMANTICAS/prompt-2-tipos-estrictos/` con 16 casos:
 - `clase_como_factor`
 - `atributo_heredado_prefijado`
 
-Cada `.txt` incluye el programa y, dentro de un comentario `{{ ... }}` que
-empieza con `--- ESPERADO ---`, sus propias expectativas. Ya no hay archivos
-`.esperado` separados y compilar el `.txt` directamente no incorpora las reglas
-a la tabla de símbolos. Los casos inválidos sin tercetos ejecutables usan además la
-regla `SIN TERCETOS`; los que conservan sentencias válidas no relacionadas con el
-error usan `TERCETO:`.
-
-Resultado:
-
-```bash
-bash test/TP3_SEMANTICAS/ejecutar.sh
-# 41/41 casos OK (incluye los casos de Prompt 2B)
-```
+Cada `.txt` abre con un comentario `{{ ... }}` que describe la salida esperada
+(tercetos, variables declaradas y, si corresponde, el error). No usa reglas
+`--- ESPERADO ---`. `test/TP3_SEMANTICAS/ejecutar.sh` sigue esperando ese formato
+viejo, así que no puntúa estos casos: se comparan la salida del compilador y el
+comentario. Compilar el `.txt` directo no mete el comentario en la tabla de
+símbolos, porque es un comentario del lenguaje.
 
 ## Regresión
 
@@ -229,10 +222,10 @@ No aparecen diagnósticos nuevos. El detalle está en `docs/PROMPT-2B.md`.
   - Una condición con tipos incompatibles devuelve `null` desde `CONDICION`; no se
     emite comparación, `BF`, `BI` ni etiquetas. Un salto centinela mantiene balanceada
     la pila de `if` anidados.
-- Los casos inválidos que deben quedar sin código intermedio usan la regla
-  `SIN TERCETOS`, agregada al runner y aplicada a los tests de asignación incompatible,
-  operador incompatible, condición incompatible, retorno incompatible, `ret` fuera de
-  función, tipo no declarado, función como factor y clase como factor.
+- Los casos inválidos no emiten el terceto de la operación rechazada: asignación
+  incompatible, operador, condición, retorno, `ret` fuera de función, tipo no
+  declarado, función como factor y clase como factor. El comentario de cada caso
+  lista los tercetos que sí quedan.
 - El acceso con prefijo (`objeto.Clase.atributo`) resuelve el atributo en la clase
   prefijada. Antes se ignoraba el prefijo y se usaba la clase del objeto, lo que daba un
   tipo incorrecto cuando base y derivada declaraban el mismo nombre con tipos distintos.
@@ -240,13 +233,9 @@ No aparecen diagnósticos nuevos. El detalle está en `docs/PROMPT-2B.md`.
   `ExpresionDiferida`; en Prompt 2 el generador la aceptaba y emitía el valor del lado
   derecho. Prompt 2B agrega el `(:=, destino, valor)` propio de la asignación interna.
 - Los tests se renombraron a `prompt-1a-ambitos/`, `prompt-1b-name-mangling/` y
-  `prompt-2-tipos-estrictos/`. Las expectativas ahora viven dentro de cada `.txt`, en
-  un comentario multilínea `{{ ... }}` que empieza con `--- ESPERADO ---`; así el
-  archivo se puede compilar directamente sin que las reglas entren a la tabla de
-  símbolos.
-- Resultado de la iteración: `bash test/TP3_SEMANTICAS/ejecutar.sh` pasa
-  `29/29 casos OK`. Con los 12 casos de Prompt 2B el conjunto completo pasa
-  `41/41 casos OK`.
+  `prompt-2-tipos-estrictos/`. Las expectativas viven en el comentario inicial
+  `{{ ... }}` de cada `.txt`. `ejecutar.sh` no las evalúa: ningún caso trae la
+  marca `--- ESPERADO ---`.
 
 ## Pendiente
 

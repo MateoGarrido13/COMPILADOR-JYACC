@@ -18,7 +18,7 @@ El enunciado de TP3 exige que **el tipo de cada constante numerica (`ulongint` o
 
 - `Tipos.rangoValido()`: rangos y formatos se mantienen sin cambios.
 - `Tipos.tipoDeConstante()`: queda como fallback, pero la fuente principal es el tipo asignado en el lexico.
-- `Entorno.aplicarSignoNegativo()`: ya usaba `insertarConstante` con el tipo deducido del lexema; en la revisión conserva el tipo ya registrado y usa el fallback sólo si falta.
+- `Entorno.aplicarSignoNegativo()`: si el menos llega como token aparte, crea la entrada con signo usando `Tipos.tipoDeConstante` sobre el lexema sin signo. El lexema pegado `-1$ul` no pasa por ahí.
 - `TablaSimbolos.insertarConstante()`: ya existía con la firma `(String lexema, String tipoDato, int numeroLinea)`; en la revisión se aisló su clave interna y se eliminó el alta sin tipo.
 
 ### Verificacion con tests
@@ -28,7 +28,7 @@ Se utilizaron los tests existentes de **tp1** y **tp2** para verificar que el ti
 **tp1 (analizador lexico):**
 
 - `test/tp1/verificacion_constantes_ulongint/limites_validos.txt`: `0$ul` y `4294967295$ul` registran `Tipo de dato: ulongint`, `Uso: constante`.
-- `test/tp1/verificacion_constantes_ulongint/fuera_de_rango.txt`: `4294967296$ul` y `-1$ul` reportan error de rango (comportamiento esperado).
+- `test/tp1/verificacion_constantes_ulongint/fuera_de_rango.txt`: `4294967296$ul` y `-1$ul` informan `Constante entera fuera de rango` y no se insertan.
 - `test/tp1/verificacion_constantes_doublef/limites_validos.txt`: `0.0`, `2.2250738585072014d-308`, `1.7976931348623157d+308` y sus negativos registran `Tipo de dato: doublef`, `Uso: constante`.
 - `test/tp1/verificacion_constantes_doublef/fuera_de_rango.txt`: valores fuera de rango IEEE-754 reportan error (comportamiento esperado).
 - `test/tp1/verificacion_constantes_doublef/chequeo_formatos.txt`: formatos invalidos como `12.` y `+2` reportan error (comportamiento esperado).

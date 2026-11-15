@@ -20,7 +20,7 @@
 
 ## Verificación
 
-Los casos válidos de `test/TP3 _y_TP4/ITERACION/` pasan sin errores; el caso 11
+Los casos válidos de `test/TP3_y_TP4/ITERACION/` pasan sin errores; el caso 11
 informa el error de tipos esperado a propósito:
 
 | Caso | Resultado |
@@ -41,7 +41,7 @@ informa el error de tipos esperado a propósito:
 
 ## Criterios de aceptación cumplidos
 
-- `test/TP3 _y_TP4/ITERACION/*` sigue generando los mismos tercetos (salvo cambios de nombre de ámbito por D1/D2). ✅
+- `test/TP3_y_TP4/ITERACION/*` sigue generando los mismos tercetos (salvo cambios de nombre de ámbito por D1/D2). ✅
 - Un `repeat` con `pout` y una invocación dentro del cuerpo genera el código de ambos. ✅
 - `repeat ... while (x > 1.0)` con `x ulongint` informa error de tipos. ✅
 - `repeat ... while (x > 1$ul)` no informa error. ✅

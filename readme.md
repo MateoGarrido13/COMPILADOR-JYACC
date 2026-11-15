@@ -13,10 +13,10 @@ Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef
 | Campo | Valor |
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
-| Último commit | Prompt 3.8 — asignación estructural de objetos |
+| Último commit | Prompt 3.9 — acceso tradicional a atributos |
 | Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28 |
 | Prompt en curso / siguiente | **31 — Herencia múltiple con prefijo** |
-| Commits del plan completados | 13 de 15 |
+| Commits del plan completados | 14 de 15 |
 
 ### Reglas de granularidad para commits
 
@@ -40,8 +40,8 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 2 | Igualdad estricta de tipos | ✅ Ejecutado | `docs/PROMPT-2.md` | `prompt-2-tipos-estrictos/` |
 | 2B | Codegen base (tercetos, `pout`, `ret`, `todf`, `PAR`/`CALL`/`CALLMET`) | ✅ Ejecutado | `docs/PROMPT-2B.md` | `prompt-2b-codegen-base/` |
 | **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ✅ Ejecutado | `docs/PROMPT-6-8.md` | `test/tp1/verificacion_constantes_*` + `prompt-3-1-constantes/` |
-| 9 y 16 | Cadenas y comentarios | ✅ **Ejecutado (validado por lexico)** | `docs/PROMPT-9-16.md` | `test/tp1/verificaciones_comentarios_cadenas/` + `test/TP3 _y_TP4/CADENAS_COMENTARIOS/` |
-| 13 | `repeat while` — condiciones booleanas y tipo | ✅ **Ejecutado y revisado** | `docs/PROMPT-13.md` | `test/TP3 _y_TP4/ITERACION/` |
+| 9 y 16 | Cadenas y comentarios | ✅ **Ejecutado (validado por lexico)** | `docs/PROMPT-9-16.md` | `test/tp1/verificaciones_comentarios_cadenas/` + `test/TP3_y_TP4/CADENAS_COMENTARIOS/` |
+| 13 | `repeat while` — condiciones booleanas y tipo | ✅ **Ejecutado y revisado** | `docs/PROMPT-13.md` | `test/TP3_y_TP4/ITERACION/` |
 | **17** | **Asignación dentro de expresiones** | ✅ **Ejecutado y revisado** | `docs/PROMPT-17.md` | `test/tp2/verificacion_r17_asig_expresiones/` |
 | 33 | Conversión `todf` — restricción de origen | ✅ **Ejecutado** | `docs/PROMPT-33.md` | `test/tp2/verificacion_r33_conversion/` |
 | 19 | Parámetros reales y orden | ✅ **Ejecutado** | `docs/PROMPT-19.md` | `test/tp2/verificacion_r19_param_reales/` |
