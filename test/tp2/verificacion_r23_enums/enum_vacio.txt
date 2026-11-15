@@ -1,4 +1,13 @@
-{{ r23: enumeracion sin valores }}
+{{ r23: enumeracion sin valores 
+RESULTADO A REVISAR, se genera en la tabla de simbolos el tipo vacio:
+color:main -> 300
+Puntero: 18
+Numero de linea: 3
+Tipo de dato: indefinido
+Uso: indefinido
+Declarado: no
+Direccion de memoria: 0
+}}
 prog
 typedef color = [];
 begin

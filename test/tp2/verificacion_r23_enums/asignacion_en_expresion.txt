@@ -1,0 +1,9 @@
+{{ r23: tambien verifica la pertenencia cuando la asignacion enumerada aparece
+   dentro de una expresion.
+}}
+prog
+typedef pares = [2$ul, 4$ul, 6$ul];
+pares p;
+begin
+    p := p = (3$ul);
+end

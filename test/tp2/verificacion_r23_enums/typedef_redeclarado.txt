@@ -1,0 +1,7 @@
+{{ r23: no permite redeclarar un typedef dentro del mismo ambito. }}
+prog
+typedef estado = [1$ul];
+typedef estado = [2$ul];
+begin
+    pout({invalido});
+end

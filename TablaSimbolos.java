@@ -251,6 +251,9 @@ public class TablaSimbolos {
             texto.append("Numero de linea: ").append(entrada.numeroLinea).append("\n");
             texto.append("Tipo de dato: ").append(entrada.tipoDato).append("\n");
             texto.append("Uso: ").append(entrada.uso.getDescripcion()).append("\n");
+            if (entrada.uso == EntradaTabla.Uso.TIPO_ENUMERADO) {
+                texto.append("Ambito: ").append(entrada.ambito).append("\n");
+            }
             texto.append("Declarado: ").append(entrada.declarado ? "si" : "no").append("\n");
             texto.append("Direccion de memoria: ").append(entrada.direccionMemoria).append("\n");
             texto.append("--------------------------------\n");

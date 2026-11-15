@@ -1,0 +1,10 @@
+{{ r23: admite enumeraciones doublef y compara valores constantes doublef
+   para comprobar pertenencia.
+}}
+prog
+typedef fracciones = [1.5, 2.5];
+fracciones f;
+begin
+    f := 1.5;
+    f := 3.5;
+end

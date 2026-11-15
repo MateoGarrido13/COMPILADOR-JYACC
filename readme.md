@@ -45,15 +45,14 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | **17** | **Asignación dentro de expresiones** | ✅ **Ejecutado y revisado** | `docs/PROMPT-17.md` | `test/tp2/verificacion_r17_asig_expresiones/` |
 | 33 | Conversión `todf` — restricción de origen | ✅ **Ejecutado** | `docs/PROMPT-33.md` | `test/tp2/verificacion_r33_conversion/` |
 | 19 | Parámetros reales y orden | ✅ **Ejecutado** | `docs/PROMPT-3.6.md` | `test/tp2/verificacion_r19_param_reales/` |
-| 23 | Enumeraciones | ❌ Pendiente | `docs/PROMPT-23.md` (por crear) | `test/tp2/verificacion_r23_enums/` |
+| 23 | Enumeraciones | ✅ **Ejecutado** | `docs/PROMPT-3.7.md` | `test/tp2/verificacion_r23_enums/` |
 | 25 | Objetos y asignación estructural | ❌ Pendiente | `docs/PROMPT-25.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
 | 28 | Acceso tradicional a atributos | ❌ Pendiente | `docs/PROMPT-28.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
 | 31 | Herencia múltiple con prefijo (D3 revisada) | ❌ Pendiente | `docs/PROMPT-31.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
 
 ### Próximos a implementar (orden del plan)
 
-1. **Prompt 23 — Enumeraciones**: verificar que el tipo exista al declarar variables.
-2. **Prompt 25 — Objetos y asignación estructural**.
+1. **Prompt 25 — Objetos y asignación estructural**.
 
 ---
 
@@ -69,7 +68,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Asignación interna en expresiones | 17 | `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento (sin contar asignaciones en parámetros reales, Tema 19). Anidamiento, destino no asignable y tipos incompatibles ya no emiten tercetos. Revisado en `docs/REVISION-3-3-3-4.md`. | Media (completado) |
 | Restricción de origen en `todf` | 33 | `CONVERSION_TODF` valida el tipo del operando: acepta `ulongint` o enum con base `ulongint`, y reporta `todf solo convierte enteros a doublef` para `doublef` o cualquier otro origen. El codegen `(todf, valor, --)` y el tipo `doublef` ya venían del Prompt 2B. Documentado en `docs/PROMPT-33.md`. | Media (completado) |
 | Tipos de parámetros reales | 19 | Resuelto: se verifican cantidad, orden, formal y tipos de argumentos; se propaga el tipo de retorno. Ver `docs/PROMPT-3.6.md`. | Completado |
-| Existen tipos al declarar variables | 23 | Falta verificar que el tipo exista al declarar variables y que la constante asignada pertenezca al enumerado. | Media |
+| Enumeraciones | 23 | Resuelto: valida declaración, ámbito, base homogénea, tipos de variables y pertenencia de constantes. Ver `docs/PROMPT-3.7.md`. | Completado |
 | Asignación estructural de objetos | 25 | Falta verificar que la clase exista y que dos objetos sean estructuralmente compatibles; generar copia estructural, no asignación simple. | Media |
 | Acceso a atributos con punto | 28 | Falta verificar existencia, visibilidad y tipo del atributo en la clase del objeto; generar terceto con la referencia. | Media |
 | Herencia múltiple con prefijo | 31 | Falta validar clases base, que el prefijo corresponda a una clase heredada, y que el atributo o método exista y sea accesible. | Media |

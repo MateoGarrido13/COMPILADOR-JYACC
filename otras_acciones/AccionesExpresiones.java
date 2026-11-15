@@ -143,10 +143,13 @@ public class AccionesExpresiones {
                         "la asignación a '" + TablaSimbolos.nombreDe(destino.lexema) + "'",
                         tipoDestino, tipoValor);
             }
+            boolean enumeracionCompatible = v.verificarAsignacionEnumerada(
+                    destino, expresion, ctx.getLinea());
             ExpresionDiferida resultado = ExpresionDiferida.deOperando(
                     new AsignacionEnExpresion(destino, expresion, tipoDestino));
             resultado.marcarAsignacion();
-            if (!asignable || anidada || !expresion.esValida() || !tiposCompatibles) {
+            if (!asignable || anidada || !expresion.esValida()
+                    || !tiposCompatibles || !enumeracionCompatible) {
                 resultado.marcarInvalida();
             }
             return resultado;

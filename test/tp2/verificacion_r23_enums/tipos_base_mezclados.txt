@@ -1,0 +1,6 @@
+{{ r23: todos los valores de un typedef deben tener el mismo tipo base. }}
+prog
+typedef mezclado = [1$ul, 2.0];
+begin
+    pout({invalido});
+end

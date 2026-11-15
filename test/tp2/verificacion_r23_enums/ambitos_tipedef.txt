@@ -1,0 +1,18 @@
+{{ r23: typedefs con el mismo nombre conviven en ambitos distintos y cada
+   variable se liga al tipo mas cercano.
+}}
+prog
+typedef estado = [1$ul];
+ulongint function probar(ulongint n)
+typedef estado = [2$ul];
+estado local;
+begin
+    local := 2$ul;
+    ret(n);
+end;
+estado global;
+ulongint resultado;
+begin
+    global := 1$ul;
+    resultado := probar(1$ul)[1$ul];
+end

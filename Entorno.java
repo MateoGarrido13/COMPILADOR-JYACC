@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -301,51 +302,54 @@ public class Entorno {
         if (identificadores == null) {
             return;
         }
-        String nombre = TablaSimbolos.nombreDe(nombreClase);
-        EntradaTabla declaracion = resolver(nombre, Globals.AMBITO_ACTUAL);
-        String tipo = nombreClase;
-        if (declaracion != null && declaracion.uso == EntradaTabla.Uso.CLASE) {
-            tipo = declaracion.lexema;
+        EntradaTabla declaracion = resolverTipo(nombreClase);
+        if (declaracion == null
+                || (declaracion.uso != EntradaTabla.Uso.CLASE
+                && declaracion.uso != EntradaTabla.Uso.TIPO_ENUMERADO)) {
+            return;
         }
         for (Object elemento : identificadores) {
-            declararVariable(ContextoRegla.comoEntrada(elemento), tipo, linea);
+            declararVariable(ContextoRegla.comoEntrada(elemento), declaracion.lexema, linea);
         }
     }
 
-    public void registrarTipoEnumerado(EntradaTabla id, List<Object> valores, int linea) {
+    public boolean nombreTipoDisponible(EntradaTabla id) {
         if (id == null) {
-            return;
+            return false;
+        }
+        String nombre = TablaSimbolos.nombreDe(id.lexema);
+        EntradaTabla existente = tablaSimbolos.buscarIdentificador(nombre, Globals.AMBITO_ACTUAL);
+        return existente == null || !existente.declarado;
+    }
+
+    public boolean registrarTipoEnumerado(EntradaTabla id, List<Object> valores,
+            String tipoBase, int linea) {
+        if (id == null || !nombreTipoDisponible(id)) {
+            return false;
         }
         String ambito = Globals.AMBITO_ACTUAL;
         String nombre = TablaSimbolos.nombreDe(id.lexema);
-        EntradaTabla entrada = tablaSimbolos.declarar(id, nombre, ambito, EntradaTabla.Uso.TIPO);
+        EntradaTabla entrada = tablaSimbolos.declarar(id, nombre, ambito,
+                EntradaTabla.Uso.TIPO_ENUMERADO);
         if (entrada == null) {
-            return;
+            return false;
         }
-        entrada.tipoDato = "tipo enumerado";
-        if (valores == null || valores.isEmpty()) {
-            enumerados.put(nombre + ":" + ambito,
-                    new TipoEnumerado(nombre, null, linea, entrada, ambito));
-            return;
-        }
-
-        String tipoBase = null;
+        entrada.tipoDato = tipoBase;
         List<String> valoresEnumerado = new ArrayList<>();
-        for (Object elemento : valores) {
-            EntradaTabla valor = ContextoRegla.comoEntrada(elemento);
-            if (valor == null) {
-                continue;
+        if (valores != null) {
+            for (Object elemento : valores) {
+                EntradaTabla valor = ContextoRegla.comoEntrada(elemento);
+                if (valor != null) {
+                    tiparConstante(valor);
+                    valoresEnumerado.add(valor.lexema);
+                }
             }
-            tiparConstante(valor);
-            if (tipoBase == null) {
-                tipoBase = Tipos.tipoDeConstante(valor.lexema);
-            }
-            valoresEnumerado.add(valor.lexema);
         }
 
         TipoEnumerado definitivo = new TipoEnumerado(nombre, tipoBase, linea, entrada, ambito);
         definitivo.valores.addAll(valoresEnumerado);
         enumerados.put(definitivo.clave(), definitivo);
+        return true;
     }
 
     public boolean esTipoConocido(String nombre) {
@@ -357,7 +361,55 @@ public class Entorno {
         }
         EntradaTabla entrada = resolverTipo(nombre);
         return entrada != null
-                && (entrada.uso == EntradaTabla.Uso.CLASE || entrada.uso == EntradaTabla.Uso.TIPO);
+                && (entrada.uso == EntradaTabla.Uso.CLASE
+                || entrada.uso == EntradaTabla.Uso.TIPO_ENUMERADO);
+    }
+
+    public EntradaTabla resolverTipoDeclarado(String nombre) {
+        if (nombre == null || nombre.isEmpty()) {
+            return null;
+        }
+        String base = TablaSimbolos.nombreDe(nombre);
+        EntradaTabla entrada = resolver(base, Globals.AMBITO_ACTUAL);
+        if (entrada == null
+                || (entrada.uso != EntradaTabla.Uso.CLASE
+                && entrada.uso != EntradaTabla.Uso.TIPO_ENUMERADO)) {
+            return null;
+        }
+        return entrada;
+    }
+
+    public TipoEnumerado getTipoEnumerado(String tipo) {
+        EntradaTabla entrada = resolverTipo(tipo);
+        if (entrada == null || entrada.uso != EntradaTabla.Uso.TIPO_ENUMERADO) {
+            return null;
+        }
+        return enumerados.get(entrada.lexema);
+    }
+
+    public boolean contieneValorEnumerado(String tipo, EntradaTabla constante) {
+        TipoEnumerado enumerado = getTipoEnumerado(tipo);
+        if (enumerado == null || enumerado.tipoBase == null || constante == null
+                || !enumerado.tipoBase.equals(Tipos.tipoDeConstante(constante.lexema))) {
+            return false;
+        }
+        for (String valor : enumerado.valores) {
+            if (Tipos.ULONGINT.equals(enumerado.tipoBase)) {
+                BigInteger valorEnumerado = Tipos.valorEntero(valor);
+                BigInteger valorConstante = Tipos.valorEntero(constante.lexema);
+                if (valorEnumerado != null && valorEnumerado.equals(valorConstante)) {
+                    return true;
+                }
+            } else if (Tipos.DOUBLEF.equals(enumerado.tipoBase)) {
+                Double valorEnumerado = Tipos.valorDoublef(valor);
+                Double valorConstante = Tipos.valorDoublef(constante.lexema);
+                if (valorEnumerado != null && valorConstante != null
+                        && valorEnumerado.doubleValue() == valorConstante.doubleValue()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean esClase(String nombre) {
@@ -376,7 +428,7 @@ public class Entorno {
         }
         EntradaTabla entrada = resolverTipo(tipo);
         if (entrada != null) {
-            if (entrada.uso == EntradaTabla.Uso.TIPO) {
+            if (entrada.uso == EntradaTabla.Uso.TIPO_ENUMERADO) {
                 TipoEnumerado enumerado = enumerados.get(entrada.lexema);
                 if (enumerado != null && enumerado.tipoBase != null) {
                     return enumerado.tipoBase;
@@ -501,14 +553,18 @@ public class Entorno {
 
     // Acepta un nombre pelado o una clave ya resuelta nombre:ambito.
     private EntradaTabla resolverTipo(String nombre) {
-        String base = TablaSimbolos.nombreDe(nombre);
-        String ambito = nombre.indexOf(':') >= 0
-                ? TablaSimbolos.ambitoDe(nombre)
-                : Globals.AMBITO_ACTUAL;
-        if (nombre.indexOf(':') >= 0) {
-            return tablaSimbolos.buscarIdentificador(base, ambito);
+        if (nombre == null) {
+            return null;
         }
-        return tablaSimbolos.resolver(base, ambito);
+        String base = TablaSimbolos.nombreDe(nombre);
+        if (nombre.indexOf(':') >= 0) {
+            EntradaTabla exacta = tablaSimbolos.buscarIdentificador(
+                    base, TablaSimbolos.ambitoDe(nombre));
+            if (exacta != null && exacta.declarado) {
+                return exacta;
+            }
+        }
+        return tablaSimbolos.resolver(base, Globals.AMBITO_ACTUAL);
     }
 
     public String contenidoDeclaraciones() {
@@ -535,7 +591,7 @@ public class Entorno {
         }
         texto.append("\nTipos enumerados (").append(enumerados.size()).append("):\n");
         for (TipoEnumerado enumerado : enumerados.values()) {
-            texto.append("  ").append(enumerado.nombre).append(" [").append(enumerado.tipoBase)
+            texto.append("  ").append(enumerado.clave()).append(" [").append(enumerado.tipoBase)
                  .append("] = ").append(enumerado.valores).append("\n");
         }
         return texto.toString();

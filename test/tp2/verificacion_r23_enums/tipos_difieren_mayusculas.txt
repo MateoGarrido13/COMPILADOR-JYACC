@@ -1,4 +1,9 @@
-{{ r23: dos typedef que solo difieren en mayusculas/minusculas }}
+{{ r23: dos typedef que solo difieren en mayusculas/minusculas 
+REVISAR. Devuelve:
+Línea 3: Error: Identificador invalido 'nuevo_Tipo'
+Línea 7: Error: Falta de delimitador BEGIN de sentencias ejecutables
+Línea 7: Error: Falta de nombre de programa
+}}
 prog
 typedef nuevo_Tipo = [1$ul, 2$ul];
 typedef nuevo_tipo = [1$ul, 2$ul];

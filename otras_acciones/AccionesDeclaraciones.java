@@ -11,11 +11,12 @@ public class AccionesDeclaraciones {
         tabla.registrar(Reglas.LISTA_SENTENCIAS, AccionesSemanticas::concatenarLista);
 
         tabla.registrar(Reglas.DECL_VARIABLES, ctx -> {
-            String tipo = ctx.texto(0);
-            validarTipoDeclarado(entorno, v, tipo, ctx.getLinea());
+            String tipo = validarTipoDeclarado(entorno, v, ctx.texto(0), ctx.getLinea());
             List<Object> identificadores = ctx.lista(1);
-            for (Object elemento : identificadores) {
-                entorno.declararVariable(ContextoRegla.comoEntrada(elemento), tipo, ctx.getLinea());
+            if (tipo != null) {
+                for (Object elemento : identificadores) {
+                    entorno.declararVariable(ContextoRegla.comoEntrada(elemento), tipo, ctx.getLinea());
+                }
             }
             return identificadores;
         });
@@ -23,10 +24,11 @@ public class AccionesDeclaraciones {
         tabla.registrar(Reglas.LISTA_VARIABLES, AccionesSemanticas::concatenarLista);
 
         tabla.registrar(Reglas.DECL_OBJETOS, ctx -> {
-            String tipo = ctx.texto(0);
-            validarTipoDeclarado(entorno, v, tipo, ctx.getLinea());
+            String tipo = validarTipoDeclarado(entorno, v, ctx.texto(0), ctx.getLinea());
             List<Object> identificadores = ctx.lista(1);
-            entorno.declararObjetos(identificadores, tipo, ctx.getLinea());
+            if (tipo != null) {
+                entorno.declararObjetos(identificadores, tipo, ctx.getLinea());
+            }
             return identificadores;
         });
 
@@ -65,11 +67,12 @@ public class AccionesDeclaraciones {
         });
 
         tabla.registrar(Reglas.DECL_ATRIBUTO, ctx -> {
-            String tipo = ctx.texto(0);
-            validarTipoDeclarado(entorno, v, tipo, ctx.getLinea());
+            String tipo = validarTipoDeclarado(entorno, v, ctx.texto(0), ctx.getLinea());
             List<Object> identificadores = ctx.lista(1);
-            for (Object elemento : identificadores) {
-                entorno.declararAtributo(ContextoRegla.comoEntrada(elemento), tipo, ctx.getLinea());
+            if (tipo != null) {
+                for (Object elemento : identificadores) {
+                    entorno.declararAtributo(ContextoRegla.comoEntrada(elemento), tipo, ctx.getLinea());
+                }
             }
             return identificadores;
         });
@@ -85,8 +88,13 @@ public class AccionesDeclaraciones {
         tabla.registrar(Reglas.DECL_TYPEDEF, ctx -> {
             EntradaTabla id = ctx.entrada(0);
             List<Object> valores = ctx.lista(1);
-            v.verificarValoresEnumerado(valores, ctx.getLinea());
-            entorno.registrarTipoEnumerado(id, valores, ctx.getLinea());
+            String tipoBase = v.verificarValoresEnumerado(valores, ctx.getLinea());
+            boolean nombreDisponible = v.verificarTipoEnumeradoDisponible(id, ctx.getLinea());
+            if (tipoBase != null && nombreDisponible) {
+                if (!entorno.registrarTipoEnumerado(id, valores, tipoBase, ctx.getLinea())) {
+                    v.reportarErrorTipoEnumerado(id, ctx.getLinea());
+                }
+            }
             return id;
         });
 
@@ -124,6 +132,9 @@ public class AccionesDeclaraciones {
                 v.errorTipos(ctx.getLinea(),
                         "la asignación a '" + TablaSimbolos.nombreDe(destino.lexema) + "'",
                         tipoDestino, tipoOrigen);
+                return null;
+            }
+            if (!v.verificarAsignacionEnumerada(destino, origen, ctx.getLinea())) {
                 return null;
             }
 
@@ -185,13 +196,19 @@ public class AccionesDeclaraciones {
         return null;
     }
 
-    private static void validarTipoDeclarado(Entorno entorno, Verificaciones v,
+    private static String validarTipoDeclarado(Entorno entorno, Verificaciones v,
             String tipo, int linea) {
-        if (tipo == null || tipo.isEmpty() || Tipos.esTipoBasico(tipo)) {
-            return;
+        if (tipo == null || tipo.isEmpty()) {
+            return null;
         }
-        if (!entorno.esTipoConocido(tipo)) {
-            v.errorTipoNoDeclarado(tipo, linea);
+        if (Tipos.esTipoBasico(tipo)) {
+            return tipo;
         }
+        EntradaTabla declarado = entorno.resolverTipoDeclarado(tipo);
+        if (declarado == null) {
+            v.errorTipoNoDeclarado(TablaSimbolos.nombreDe(tipo), linea);
+            return null;
+        }
+        return declarado.lexema;
     }
 }

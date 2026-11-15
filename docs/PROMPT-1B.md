@@ -55,7 +55,8 @@ solo lectura; no duplica el estado del ambito.
 - `declararAtributo` declara con `Uso.ATRIBUTO` en `clase.ambitoPropio`.
 - `declararObjetos` resuelve la clase, verifica `Uso.CLASE` y guarda la clave resuelta
   (`ca:main`) como tipo del objeto.
-- `registrarTipoEnumerado` declara con `Uso.TIPO` en el ambito actual.
+- `registrarTipoEnumerado` ahora declara con `Uso.TIPO_ENUMERADO`; ver
+  `docs/PROMPT-3.7.md`.
 - `abrirClase` declara el nombre en el ambito actual y crea la clase con
   `ambitoPropio = ambitoDeclaracion + ":" + nombre`.
 - `getFuncion` y `getClase` buscan por clave completa; los mapas de variables, funciones,

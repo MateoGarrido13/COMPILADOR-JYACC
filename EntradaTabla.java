@@ -14,6 +14,7 @@ public class EntradaTabla {
         CLASE("clase"),
         ATRIBUTO("atributo"),
         TIPO("tipo"),
+        TIPO_ENUMERADO("tipo enumerado"),
         CONSTANTE("constante"),
         CADENA("cadena"),
         RESERVADA("reservada");

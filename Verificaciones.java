@@ -385,10 +385,83 @@ public class Verificaciones {
         }
     }
 
-    // Tema 23: typedef sin valores. 
-    public void verificarValoresEnumerado(List<Object> valores, int linea) {
+    public String verificarValoresEnumerado(List<Object> valores, int linea) {
         if (valores == null || valores.isEmpty()) {
             reportar(Reglas.ERR_FALTA_VALORES_ENUMERADO, linea);
+            return null;
         }
+        String tipoBase = null;
+        boolean valido = true;
+        for (Object elemento : valores) {
+            EntradaTabla valor = ContextoRegla.comoEntrada(elemento);
+            if (valor == null || valor.uso != EntradaTabla.Uso.CONSTANTE) {
+                reporte.error(linea, "El valor de una enumeracion debe ser una constante numerica");
+                valido = false;
+                continue;
+            }
+            String tipo = Tipos.tipoDeConstante(valor.lexema);
+            if (tipo == null) {
+                reporte.error(linea, "Tipo de constante invalido en la enumeracion");
+                valido = false;
+                continue;
+            }
+            if (tipoBase == null) {
+                tipoBase = tipo;
+            } else if (!Tipos.mismoTipo(tipoBase, tipo)) {
+                reporte.error(linea, "Todos los valores de la enumeracion deben tener el mismo tipo base");
+                valido = false;
+            }
+        }
+        return valido ? tipoBase : null;
+    }
+
+    public boolean verificarTipoEnumeradoDisponible(EntradaTabla id, int linea) {
+        if (entorno.nombreTipoDisponible(id)) {
+            return true;
+        }
+        String nombre = id == null ? "?" : TablaSimbolos.nombreDe(id.lexema);
+        reporte.error(linea, "Tipo enumerado redeclarado en el mismo ambito '" + nombre + "'");
+        return false;
+    }
+
+    public void reportarErrorTipoEnumerado(EntradaTabla id, int linea) {
+        String nombre = id == null ? "?" : TablaSimbolos.nombreDe(id.lexema);
+        reporte.error(linea, "No se pudo registrar el tipo enumerado '" + nombre + "'");
+    }
+
+    public boolean verificarAsignacionEnumerada(EntradaTabla destino,
+            ExpresionDiferida origen, int linea) {
+        if (destino == null || origen == null) {
+            return true;
+        }
+        Entorno.TipoEnumerado tipoDestino = entorno.getTipoEnumerado(destino.tipoDato);
+        if (tipoDestino == null) {
+            return true;
+        }
+
+        EntradaTabla operando = origen.operandoUnico();
+        if (operando == null) {
+            return true;
+        }
+        if (operando.uso == EntradaTabla.Uso.CONSTANTE) {
+            String tipoConstante = Tipos.tipoDeConstante(operando.lexema);
+            if (!Tipos.mismoTipo(tipoDestino.tipoBase, tipoConstante)) {
+                return true;
+            }
+            if (entorno.contieneValorEnumerado(destino.tipoDato, operando)) {
+                return true;
+            }
+            reporte.error(linea, "La constante '" + operando.lexema
+                    + "' no pertenece al tipo enumerado '" + tipoDestino.clave() + "'");
+            return false;
+        }
+
+        Entorno.TipoEnumerado tipoOrigen = entorno.getTipoEnumerado(operando.tipoDato);
+        if (tipoOrigen != null && !tipoDestino.clave().equals(tipoOrigen.clave())) {
+            errorTipos(linea, "la asignacion a '" + TablaSimbolos.nombreDe(destino.lexema) + "'",
+                    tipoDestino.clave(), tipoOrigen.clave());
+            return false;
+        }
+        return true;
     }
 }
