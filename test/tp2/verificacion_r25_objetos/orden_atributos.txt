@@ -1,0 +1,19 @@
+{{ r25: el conjunto de atributos se compara por nombre y tipo, no por orden
+   de declaracion. Genera (COPY, a1:main, b1:main). Sin errores.
+}}
+prog
+class ca
+begin
+    ulongint x;
+    ulongint y;
+end;
+class cb
+begin
+    ulongint y;
+    ulongint x;
+end;
+ca a1;
+cb b1;
+begin
+    a1 := b1;
+end

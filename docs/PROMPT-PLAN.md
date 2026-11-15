@@ -124,12 +124,12 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Verificar que la constante asignada pertenezca al enumerado.
 - Documentar en `docs/PROMPT-23.md`.
 
-## Prompt 25 - Objetos y asignacion estructural
+## Prompt 25 - Objetos y asignacion estructural (ejecutado)
 
 - Verificar que la clase exista.
 - Compatibilidad estructural por atributos y firmas efectivas (D4).
-- Generar copia estructural, no asignacion simple.
-- Documentar en `docs/PROMPT-25.md`.
+- Generar copia estructural `(COPY, destino, origen)`, no asignacion simple.
+- Documentar en `docs/PROMPT-25.md`. Casos en `test/tp2/verificacion_r25_objetos/`.
 
 ## Prompt 28 - Acceso tradicional a atributos
 

@@ -1,0 +1,14 @@
+{{ r25: una variable ulongint no recibe un objeto.
+   Error esperado: Tipos incompatibles
+   Sin COPY ni :=.
+}}
+prog
+class ca
+begin
+    ulongint x;
+end;
+ca a1;
+ulongint z;
+begin
+    z := a1;
+end

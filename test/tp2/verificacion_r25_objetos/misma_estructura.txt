@@ -1,0 +1,26 @@
+{{ r25: mismo conjunto de atributos y de firmas, distinto nombre de clase.
+   La asignacion es valida y genera (COPY, a1:main, b1:main).
+   Sin errores.
+}}
+prog
+class ca
+begin
+    ulongint x;
+    ulongint m(ulongint n)
+    begin
+        ret(n);
+    end;
+end;
+class cb
+begin
+    ulongint x;
+    ulongint m(ulongint n)
+    begin
+        ret(n);
+    end;
+end;
+ca a1;
+cb b1;
+begin
+    a1 := b1;
+end

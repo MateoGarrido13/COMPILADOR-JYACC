@@ -1,0 +1,25 @@
+{{ r25: dos clases ca en ambitos distintos se resuelven por Name Mangling.
+   La tabla debe mostrar ca:main y ca:main:probar.
+   global1 queda con tipo ca:main y local1 con tipo ca:main:probar.
+   Cada asignacion, dentro de su ambito, genera COPY.
+   Sin errores.
+}}
+prog
+class ca
+begin
+    ulongint x;
+end;
+ulongint function probar(ulongint n)
+    class ca
+    begin
+        ulongint y;
+    end;
+    ca local1, local2;
+begin
+    local1 := local2;
+    ret(n);
+end;
+ca global1, global2;
+begin
+    global1 := global2;
+end

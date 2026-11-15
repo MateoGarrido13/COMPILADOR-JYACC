@@ -127,6 +127,20 @@ public class AccionesDeclaraciones {
 
             String tipoDestino = entorno.tipoEfectivo(destino.tipoDato);
             String tipoOrigen = entorno.tipoEfectivo(origen.getTipo());
+            // Un atributo como destino queda para el tema 28. Acá la copia
+            // estructural es entre variables de clase.
+            Entorno.ClaseDeclarada claseDestino = entorno.claseDe(tipoDestino);
+            Entorno.ClaseDeclarada claseOrigen = entorno.claseDe(tipoOrigen);
+            if (claseDestino != null && claseOrigen != null
+                    && !(destinoValor instanceof ReferenciaAtributo)) {
+                if (!entorno.clasesCompatibles(claseDestino, claseOrigen)) {
+                    v.errorEstructuraIncompatible(ctx.getLinea(),
+                            TablaSimbolos.nombreDe(destino.lexema),
+                            claseDestino.clave(), claseOrigen.clave());
+                    return null;
+                }
+                return new Asignacion(destino, tipoDestino, tipoOrigen);
+            }
             if (!Tipos.INDEFINIDO.equals(tipoDestino) && !Tipos.INDEFINIDO.equals(tipoOrigen)
                     && !Tipos.mismoTipo(tipoDestino, tipoOrigen)) {
                 v.errorTipos(ctx.getLinea(),

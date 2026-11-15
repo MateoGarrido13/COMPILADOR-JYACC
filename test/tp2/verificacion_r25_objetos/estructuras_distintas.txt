@@ -1,0 +1,18 @@
+{{ r25: ca y cb no comparten atributos. La asignacion es un error
+   estructural y no genera COPY ni :=.
+   Error esperado: Incompatibilidad estructural
+}}
+prog
+class ca
+begin
+    ulongint x;
+end;
+class cb
+begin
+    ulongint y;
+end;
+ca a1;
+cb b1;
+begin
+    a1 := b1;
+end

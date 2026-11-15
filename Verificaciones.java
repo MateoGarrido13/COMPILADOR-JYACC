@@ -131,6 +131,14 @@ public class Verificaciones {
         reporte.error(linea, "tipo no declarado '" + tipo + "'");
     }
 
+    // D4: las clases no coinciden en atributos efectivos o en firmas.
+    public void errorEstructuraIncompatible(int linea, String destino,
+            String claseDestino, String claseOrigen) {
+        reporte.error(linea, "Incompatibilidad estructural en la asignación a '"
+                + destino + "': '" + claseDestino + "' y '" + claseOrigen
+                + "' no tienen la misma estructura");
+    }
+
     public void errorRetornoFueraDeFuncion(int linea) {
         reporte.error(linea, "Sentencia ret fuera de una funcion");
     }

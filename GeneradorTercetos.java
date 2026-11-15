@@ -156,12 +156,17 @@ public class GeneradorTercetos {
     }
 
     private void generarAsignacion(Reduccion reduccion) {
-        Object destino = reduccion.resultado();
+        Object resultado = reduccion.resultado();
         // La accion semantica devuelve null cuando la asignacion ya reporto un
         // error (destino no asignable, tipos incompatibles o expresion invalida).
-        if (destino == null) {
+        if (resultado == null) {
             return;
         }
+        // Entre objetos compatibles el resultado es una Asignacion y el terceto
+        // es (COPY, destino, origen). No se expande por atributo: eso pide
+        // ReferenciaAtributo, que es el tema 28.
+        boolean copiaEstructural = resultado instanceof Asignacion;
+        Object destino = copiaEstructural ? ((Asignacion) resultado).destino : resultado;
         if (!(destino instanceof EntradaTabla) && !(destino instanceof ReferenciaAtributo)) {
             destino = reduccion.operando(0);
         }
@@ -180,7 +185,7 @@ public class GeneradorTercetos {
             }
             return;
         }
-        lista.crear(":=", destino, origen);
+        lista.crear(copiaEstructural ? "COPY" : ":=", destino, origen);
     }
 
     private void generarPout(Reduccion reduccion) {

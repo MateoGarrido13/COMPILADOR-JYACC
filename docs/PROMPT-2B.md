@@ -210,6 +210,6 @@ inválido. Después de la corrección no queda ningún diagnóstico nuevo.
 - Prompt 3.6 (Tema 19): parámetros reales, orden obligatorio, tipos, resolución
   de funciones y métodos, generación de `PAR`/`CALL` y propagación del retorno.
   Implementado y documentado en `docs/PROMPT-3.6.md`.
-- Temas 23, 25, 28 y 31: enumeraciones, asignación de objetos, atributos y herencia.
-  El generador ya tiene los delimitadores de clase y acepta `ReferenciaAtributo`, pero
-  las reglas semánticas completas siguen pendientes.
+- Temas 23 y 25: resueltos en los prompts 3.7 y 3.8. La asignación entre objetos
+  compatibles emite `(COPY, destino, origen)`. Siguen pendientes el 28 (atributos)
+  y el 31 (herencia). El generador ya acepta `ReferenciaAtributo`.

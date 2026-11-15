@@ -417,6 +417,101 @@ public class Entorno {
         return entrada != null && entrada.uso == EntradaTabla.Uso.CLASE;
     }
 
+    // Clase ya resuelta por su clave mangled. Un tipo basico o un enumerado no es clase.
+    public ClaseDeclarada claseDe(String tipo) {
+        if (tipo == null || tipo.isEmpty()) {
+            return null;
+        }
+        EntradaTabla entrada = resolverTipo(tipo);
+        if (entrada == null || entrada.uso != EntradaTabla.Uso.CLASE) {
+            return null;
+        }
+        return getClase(entrada.lexema);
+    }
+
+    /*
+      D4: dos clases son compatibles si son la misma clase o si su conjunto
+      efectivo coincide. El conjunto es el de atributos (nombre y tipo) y el de
+      metodos (nombre, tipo de retorno y tipos de los parametros, sin el nombre
+      del parametro). Incluye lo heredado; un miembro propio pisa al heredado
+      del mismo nombre. El tipo de un miembro clase o enumerado se compara por
+      su clave, no por el tipo base.
+     */
+    public boolean clasesCompatibles(ClaseDeclarada a, ClaseDeclarada b) {
+        if (a == null || b == null) {
+            return false;
+        }
+        if (a.clave().equals(b.clave())) {
+            return true;
+        }
+        return atributosEfectivos(a).equals(atributosEfectivos(b))
+                && firmasEfectivas(a).equals(firmasEfectivas(b));
+    }
+
+    private Map<String, String> atributosEfectivos(ClaseDeclarada clase) {
+        Map<String, String> atributos = new LinkedHashMap<>();
+        recolectarAtributos(clase, atributos, new HashSet<String>());
+        return atributos;
+    }
+
+    private void recolectarAtributos(ClaseDeclarada clase, Map<String, String> destino,
+            Set<String> visitadas) {
+        if (clase == null || !visitadas.add(clase.clave())) {
+            return;
+        }
+        for (String base : clase.heredaDe) {
+            recolectarAtributos(clasePorNombre(base), destino, visitadas);
+        }
+        for (Map.Entry<String, String> atributo : clase.atributos.entrySet()) {
+            destino.put(atributo.getKey(), tipoDeMiembro(atributo.getValue()));
+        }
+    }
+
+    private Map<String, String> firmasEfectivas(ClaseDeclarada clase) {
+        Map<String, String> firmas = new LinkedHashMap<>();
+        recolectarFirmas(clase, firmas, new HashSet<String>());
+        return firmas;
+    }
+
+    private void recolectarFirmas(ClaseDeclarada clase, Map<String, String> destino,
+            Set<String> visitadas) {
+        if (clase == null || !visitadas.add(clase.clave())) {
+            return;
+        }
+        for (String base : clase.heredaDe) {
+            recolectarFirmas(clasePorNombre(base), destino, visitadas);
+        }
+        for (FuncionDeclarada metodo : clase.metodos.values()) {
+            destino.put(metodo.nombre, firmaDe(metodo));
+        }
+    }
+
+    private String firmaDe(FuncionDeclarada metodo) {
+        StringBuilder texto = new StringBuilder();
+        texto.append(tipoDeMiembro(metodo.tipoRetorno)).append('(');
+        for (int i = 0; i < metodo.parametros.size(); i++) {
+            if (i > 0) {
+                texto.append(',');
+            }
+            texto.append(tipoDeMiembro(metodo.parametros.get(i).tipo));
+        }
+        texto.append(')');
+        return texto.toString();
+    }
+
+    private String tipoDeMiembro(String tipo) {
+        if (tipo == null || tipo.isEmpty()) {
+            return Tipos.INDEFINIDO;
+        }
+        EntradaTabla entrada = resolverTipo(tipo);
+        if (entrada != null
+                && (entrada.uso == EntradaTabla.Uso.CLASE
+                || entrada.uso == EntradaTabla.Uso.TIPO_ENUMERADO)) {
+            return entrada.lexema;
+        }
+        return Tipos.tipoEfectivo(tipo);
+    }
+
     /*
       Tipo que participa en una operacion. Un enumerado vale por su tipo base;
       una clase conserva su clave completa para que dos clases distintas no se

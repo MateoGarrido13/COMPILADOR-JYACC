@@ -1,0 +1,13 @@
+{{ r25: un objeto no se asigna desde una constante ulongint.
+   Error esperado: Tipos incompatibles
+   Sin COPY ni :=.
+}}
+prog
+class ca
+begin
+    ulongint x;
+end;
+ca a1;
+begin
+    a1 := 1$ul;
+end
