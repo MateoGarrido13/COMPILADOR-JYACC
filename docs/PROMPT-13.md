@@ -20,7 +20,8 @@
 
 ## Verificación
 
-Todos los 11 casos de `test/TP3 _y_TP4/ITERACION/` pasan sin errores:
+Los casos válidos de `test/TP3 _y_TP4/ITERACION/` pasan sin errores; el caso 11
+informa el error de tipos esperado a propósito:
 
 | Caso | Resultado |
 |------|-----------|
@@ -35,6 +36,8 @@ Todos los 11 casos de `test/TP3 _y_TP4/ITERACION/` pasan sin errores:
 | 07_repeat_dentro_de_if_sin_else | Sin errores |
 | 08_if_sin_else_y_sentencia_en_repeat | Sin errores |
 | 09_repeats_secuenciales | Sin errores |
+| 10_repeat_con_pout_y_invocacion | Sin errores (cuerpo con `begin`/`end`) |
+| 11_repeat_condicion_tipos_distintos | Error de tipos esperado |
 
 ## Criterios de aceptación cumplidos
 
@@ -46,3 +49,38 @@ Todos los 11 casos de `test/TP3 _y_TP4/ITERACION/` pasan sin errores:
 ## Riesgo
 
 Futuras modificaciones sobre el core del compilador (generador de tercetos, verificaciones de tipos o acciones semánticas de condición) llevarán a una revisión de estas reglas antes de la entrega final.
+
+---
+
+## Prompt 3.3 — Revisión
+
+Detalle completo en `docs/REVISION-3-3-3-4.md`.
+
+### Requisitos
+
+| Requisito | Verificación |
+|---|---|
+| `ITERACION/*` con los mismos tercetos (salvo ámbitos) | ✅ 00..09 y 11 sin cambios; 10 corregido |
+| `repeat` con `pout` e invocación emite ambos | ✅ |
+| `x > 1.0` con `x ulongint` informa error | ✅ |
+| `x > 1$ul` no informa error | ✅ |
+| Condición `cadena` rechazada | ✅ rechazo sintáctico (`FACTOR_CADENA` fuera de `factor`) |
+
+### Hallazgos y cambios
+
+- **Caso 10 mal escrito:** un cuerpo de `repeat` con varias sentencias exige
+  `begin`/`end`. Se reescribió el test; el comportamiento del parser es
+  intencional.
+- **Condición inválida dejaba tercetos huérfanos.** `GeneradorTercetos` ahora
+  guarda en la pila `marcasRepeat` la cantidad de tercetos previos al `repeat`
+  y, si la condición falla, recorta con el nuevo
+  `ListaTercetos.descartarDesde(int)` (`Terceto.java`). El caso 11 ya no emite
+  etiqueta de inicio ni cuerpo.
+- **Nota:** el chequeo de `cadena` en la acción `CONDICION` es defensivo/código
+  muerto, porque la gramática no admite una cadena como `factor`.
+
+### Riesgo residual
+
+`test/tp2/generales/14_falta_cuerpo_iter.txt` y `16_falta_while.txt` dejan
+etiquetas de inicio sin recortar (error sintáctico, no llega a `generarRepeat`).
+Es comportamiento previo a la revisión y no se modificó.

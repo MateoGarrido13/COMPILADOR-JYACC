@@ -34,6 +34,7 @@ public class GeneradorTercetos {
     private final Reporte reporte;
     private final Deque<Pendiente> pila = new ArrayDeque<>(); // pila de saltos pendientes
     private final Deque<String> iniciosRepeat = new ArrayDeque<>(); // pila de etiquetas de inicio de repeat
+    private final Deque<Integer> marcasRepeat = new ArrayDeque<>(); // tercetos previos al inicio de cada repeat
     // Numero centinela para un salto que no debe emitirse porque la condicion ya
     // reporto un error. Mantiene balanceada la pila de saltos en ifs anidados.
     private static final int SALTO_INVALIDO = -1;
@@ -276,6 +277,7 @@ public class GeneradorTercetos {
 
     /* Se reduce al leer repeat, antes de generar el cuerpo. */
     private void abrirRepeat() {
+        marcasRepeat.push(lista.cantidad());
         String etiqueta = lista.reservarEtiqueta();
         lista.crearEtiqueta(etiqueta);
         iniciosRepeat.push(etiqueta);
@@ -284,6 +286,9 @@ public class GeneradorTercetos {
     private void descartarRepeat() {
         if (!iniciosRepeat.isEmpty()) {
             iniciosRepeat.pop();
+        }
+        if (!marcasRepeat.isEmpty()) {
+            marcasRepeat.pop();
         }
     }
 
@@ -294,8 +299,12 @@ public class GeneradorTercetos {
             return;
         }
         String inicio = iniciosRepeat.pop();
+        int marca = marcasRepeat.isEmpty() ? lista.cantidad() : marcasRepeat.pop();
         Integer comparacion = emitirComparacion(reduccion.operando(1), reduccion.getLinea());
         if (comparacion == null) {
+            // La condicion ya reporto un error: se retira la etiqueta de inicio
+            // y el cuerpo del ciclo para no dejar codigo intermedio incompleto.
+            lista.descartarDesde(marca);
             return;
         }
         String salida = lista.reservarEtiqueta();

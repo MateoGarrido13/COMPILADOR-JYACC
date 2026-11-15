@@ -84,20 +84,22 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Documentar en `docs/PROMPT-9-16.md`.
 - Resultado: `docs/PROMPT-9-16.md`. Validado por el lexico en `AccionCadena.java`: cadenas con tipo `cadena`, comentarios `{{...}}` descartados, sin saltos de línea en cadenas. En la revisión se corrigió la colisión de claves en `TablaSimbolos.java`. Casos en `test/TP3 _y_TP4/CADENAS_COMENTARIOS/`.
 
-## Prompt 13 - `repeat while` (ejecutado)
+## Prompt 13 - `repeat while` (ejecutado, revisado)
 
 - Condicion obligatoria y booleana por comparacion de tipos.
 - Integrar todas las sentencias ejecutables.
 - Documentar en `docs/PROMPT-13.md`.
-- Resultado: `docs/PROMPT-13.md`. Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con asignaciones, pout, if/else, repeat anidado, invocaciones y ret. Todos los 11 casos de ITERACION pasan.
+- Resultado: `docs/PROMPT-13.md`. Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con asignaciones, pout, if/else, repeat anidado, invocaciones y ret. Los casos válidos de ITERACION pasan y el 11 informa el error de tipos esperado.
+- Revision 3.3: `docs/REVISION-3-3-3-4.md`. Corregido el caso 10 (cuerpo con `begin`/`end`) y el recorte de etiqueta y cuerpo cuando la condicion es invalida (`marcasRepeat` + `ListaTercetos.descartarDesde`).
 
-## Prompt 17 - Asignación dentro de expresiones (ejecutado)
+## Prompt 17 - Asignación dentro de expresiones (ejecutado, revisado)
 
 - `ID = (expr)` genera asignacion interna y devuelve el valor asignado.
 - Prohibir anidamiento.
 - Verificar tipos del destino y de la expresion.
 - Documentar en `docs/PROMPT-17.md`.
-- Resultado: `docs/PROMPT-17.md`. `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento. Todos los tests de r17 pasan.
+- Resultado: `docs/PROMPT-17.md`. `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento.
+- Revision 3.4: `docs/REVISION-3-3-3-4.md`. El anidamiento y el destino no asignable invalidan la expresion (sin tercetos). La deteccion de anidamiento se acota al plegado aritmetico y las conversiones: una asignacion en un parametro real (Tema 19) no es anidamiento.
 
 ## Prompt 33 - Conversion `todf`
 

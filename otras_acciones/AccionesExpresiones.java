@@ -134,13 +134,18 @@ public class AccionesExpresiones {
             if (expresion == null) {
                 expresion = new ExpresionDiferida();
             }
+            // El anidamiento se detecta antes de envolver el resultado: una vez
+            // envuelto, la marca de esta asignacion taparia la del RHS.
+            boolean anidada = expresion != null && expresion.contieneAsignacion();
             v.verificarAsignacionAnidada(expresion, ctx.getLinea());
             if (destino == null) {
                 expresion.conTipo(Tipos.INDEFINIDO);
                 expresion.marcarAsignacion();
+                expresion.marcarInvalida();
                 return expresion;
             }
             v.verificarAsignable(destino, ctx.getLinea());
+            boolean asignable = v.esAsignable(destino);
             String tipoDestino = entorno.tipoEfectivo(destino.tipoDato);
             String tipoValor = entorno.tipoEfectivo(expresion.getTipo());
             boolean tiposCompatibles = Tipos.INDEFINIDO.equals(tipoDestino)
@@ -154,7 +159,7 @@ public class AccionesExpresiones {
             ExpresionDiferida resultado = ExpresionDiferida.deOperando(
                     new AsignacionEnExpresion(destino, expresion, tipoDestino));
             resultado.marcarAsignacion();
-            if (!expresion.esValida() || !tiposCompatibles) {
+            if (!asignable || anidada || !expresion.esValida() || !tiposCompatibles) {
                 resultado.marcarInvalida();
             }
             return resultado;

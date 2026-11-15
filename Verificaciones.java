@@ -120,6 +120,9 @@ public class Verificaciones {
     }
 
     // Tema 17: ID = (expr) no puede contener otra asignacion. 
+    // La marca viaja por el plegado aritmetico (absorber), pero no por los
+    // argumentos de una invocacion: el Tema 19 admite asignaciones en los
+    // parametros reales (f(a, b=(4), a+b)) y no deben contarse como anidamiento.
     public void verificarAsignacionAnidada(ExpresionDiferida expresion, int linea) {
         if (expresion != null && expresion.contieneAsignacion()) {
             reportar(Reglas.ERR_ASIGNACION_ANIDADA, linea);

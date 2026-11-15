@@ -1,0 +1,11 @@
+{{ r17: tipo incompatible en la asignacion interna.
+   El destino y es ulongint y el RHS de la asignacion interna es doublef.
+   Se informa el error de tipos y no se genera ningun terceto.
+   Esperado:
+   Error: Tipos incompatibles en la asignacion a 'y': se esperaba ulongint
+   y se encontro doublef. }}
+prog
+ulongint x, y;
+begin
+    x := y = (1.5);
+end

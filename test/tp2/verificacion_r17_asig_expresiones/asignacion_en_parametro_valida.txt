@@ -1,0 +1,21 @@
+{{ r17/r19: una asignacion en un parametro real no es anidamiento.
+   El Tema 19 admite asignaciones en los parametros reales, por lo que
+   'y = (f(z = (1$ul))[1$ul])' es valido: el valor de y es el retorno de f,
+   y z=(1$ul) es un efecto de lado del argumento. Se emite la asignacion a z,
+   el PAR/CALL y las asignaciones a y y a x.
+   Esperado:
+   1. (:=, z, 1$ul)
+   2. (PAR, p, [1])
+   3. (CALL, f, 1)
+   4. (:=, y, [3])
+   5. (:=, x, [4])
+   Sin errores. }}
+prog
+ulongint x, y, z;
+ulongint function f(ulongint p)
+begin
+    ret(p);
+end;
+begin
+    x := y = (f(z = (1$ul))[1$ul]);
+end

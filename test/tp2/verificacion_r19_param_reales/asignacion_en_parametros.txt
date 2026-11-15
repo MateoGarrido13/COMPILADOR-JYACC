@@ -1,0 +1,19 @@
+{{ r19: asignaciones en expresiones como parametros reales.
+   Adaptacion del ejemplo del Tema 19 del enunciado
+   (c := f(a,b=4,a+b)[1,2,3]) a la forma con parentesis del Tema 17.
+   b=(4$ul) asigna 4 a b y pasa ese valor; a+b se evalua con el valor
+   que tenga b segun el orden. No hay error de anidamiento: la asignacion
+   es un parametro real, no el valor de otra asignacion.
+   Sin errores. }}
+prog
+ulongint a, b, c;
+ulongint function f(ulongint p1, ulongint p2, ulongint p3)
+begin
+    ret(p1 + p2 + p3);
+end;
+begin
+    a := 1$ul;
+    b := 2$ul;
+    c := f(a, b = (4$ul), a + b)[1$ul, 2$ul, 3$ul];
+    c := f(a, b = (4$ul), a + b)[1$ul, 3$ul, 2$ul];
+end

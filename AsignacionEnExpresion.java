@@ -3,8 +3,8 @@
   destino, porque el valor que entrega la expresion es el valor asignado.
 
   La accion ASIGNACION_EN_EXPRESION la devuelve envuelta en una
-  ExpresionDiferida. El terceto propio de la asignacion interna queda para el
-  Tema 17; por ahora el generador emite el valor del lado derecho.
+  ExpresionDiferida. El generador emite el valor del lado derecho y despues
+  el terceto (:=, destino, valor) antes de usar el resultado.
  */
 public class AsignacionEnExpresion {
 

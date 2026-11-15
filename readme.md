@@ -41,8 +41,8 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 2B | Codegen base (tercetos, `pout`, `ret`, `todf`, `PAR`/`CALL`/`CALLMET`) | ✅ Ejecutado | `docs/PROMPT-2B.md` | `prompt-2b-codegen-base/` |
 | **6 y 8** | **Constantes `ulongint` y `doublef` — tipado en el léxico** | ✅ Ejecutado | `docs/PROMPT-6-8.md` | `test/tp1/verificacion_constantes_*` + `prompt-3-1-constantes/` |
 | 9 y 16 | Cadenas y comentarios | ✅ **Ejecutado (validado por lexico)** | `docs/PROMPT-9-16.md` | `test/tp1/verificaciones_comentarios_cadenas/` + `test/TP3 _y_TP4/CADENAS_COMENTARIOS/` |
-| 13 | `repeat while` — condiciones booleanas y tipo | ✅ **Ejecutado** | `docs/PROMPT-13.md` | `test/TP3 _y_TP4/ITERACION/` |
-| **17** | **Asignación dentro de expresiones** | ✅ **Ejecutado** | `docs/PROMPT-17.md` | `test/tp2/verificacion_r17_asig_expresiones/` |
+| 13 | `repeat while` — condiciones booleanas y tipo | ✅ **Ejecutado y revisado** | `docs/PROMPT-13.md` | `test/TP3 _y_TP4/ITERACION/` |
+| **17** | **Asignación dentro de expresiones** | ✅ **Ejecutado y revisado** | `docs/PROMPT-17.md` | `test/tp2/verificacion_r17_asig_expresiones/` |
 | 33 | Conversión `todf` — restricción de origen | ⏳ **Siguiente** | `docs/PROMPT-33.md` (por crear) | `test/tp2/verificacion_r33_conversion/` |
 | 19 | Parámetros reales y orden | ❌ Pendiente | `docs/PROMPT-19.md` (por crear) | `test/tp2/verificacion_r19_param_reales/` |
 | 23 | Enumeraciones | ❌ Pendiente | `docs/PROMPT-23.md` (por crear) | `test/tp2/verificacion_r23_enums/` |
@@ -66,8 +66,8 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 |-------|--------|-------------|-----------|
 | Tipado de constantes en el léxico | 6 y 8 | `AccionConstanteEntera` y `AccionConstanteFloat` ahora insertan las constantes con `tipoDato` (`ulongint` o `doublef`) y `uso = CONSTANTE` durante el análisis léxico, usando `insertarConstante`. Resuelto. | Alta (completado) |
 | Validación de cadenas y comentarios | 9 y 16 | `AccionCadena.java` ya inserta cadenas con tipo `cadena`, no permite saltos de línea y descarta comentarios `{{...}}`. Validado por el lexico. | Media (completado) |
-| Condiciones booleanas en `repeat while` | 13 | Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con todas las sentencias ejecutables. Todos los 11 casos de ITERACION pasan. | Media (completado) |
-| Asignación interna en expresiones | 17 | `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento. Todos los tests de r17 pasan. | Media (completado) |
+| Condiciones booleanas en `repeat while` | 13 | Condicion con chequeo de mismo tipo y rechazo de cadena en `AccionesDeclaraciones.java`. Cuerpo de repeat con todas las sentencias ejecutables. Los casos válidos de ITERACION pasan y el 11 informa el error de tipos esperado. Revisado en `docs/REVISION-3-3-3-4.md`. | Media (completado) |
+| Asignación interna en expresiones | 17 | `AsignacionEnExpresion` se crea en `AccionesExpresiones.java`, el generador emite `(:=, destino, derecho)` en `emitir()`, y se detecta el anidamiento (sin contar asignaciones en parámetros reales, Tema 19). Anidamiento, destino no asignable y tipos incompatibles ya no emiten tercetos. Revisado en `docs/REVISION-3-3-3-4.md`. | Media (completado) |
 | Restricción de origen en `todf` | 33 | `todf` ya emite terceto y devuelve `doublef`, pero falta restringir el origen a `ulongint` o enum con base `ulongint`, y rechazar conversiones vacías, de `doublef` o de objetos. | Media |
 | Tipos de parámetros reales | 19 | Se verifica cantidad, orden y ubicación del formal, pero falta chequear que los tipos de los parámetros reales coincidan con los formales. | Media |
 | Existen tipos al declarar variables | 23 | Falta verificar que el tipo exista al declarar variables y que la constante asignada pertenezca al enumerado. | Media |
@@ -135,4 +135,5 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
  - `docs/DEC-6.md` — registro de tipos de constantes en el analisis lexico
  - `docs/DEC-7.md` — cadenas y comentarios (prompt 3.2)
  - `docs/DEC-8.md` — condicion booleana y tipo en repeat while (prompt 3.3)
- - `docs/REVISION-3-1-3-2.md` — revisión y correcciones de las iteraciones 3.1 y 3.2
+ - `docs/REVISION-3-1-3-2.md` — revisión y correcciones de las iteraciones 3.1 y 3.2 (contenido en la sección "Revisión de las iteraciones 3.1 y 3.2" de `docs/PROMPT-6-8.md`)
+ - `docs/REVISION-3-3-3-4.md` — revisión y correcciones de las iteraciones 3.3 y 3.4

@@ -78,6 +78,18 @@ class ListaTercetos {
         return nombre;
     }
 
+    /*
+      Descarta los tercetos desde la posicion indicada hasta el final. Se usa
+      para retirar el codigo de una construccion que resulto invalida despues
+      de haber emitido parte de sus tercetos, como el cuerpo de un repeat cuya
+      condicion reporto un error de tipos.
+     */
+    public void descartarDesde(int cantidadConservada) {
+        while (tercetos.size() > cantidadConservada && !tercetos.isEmpty()) {
+            tercetos.remove(tercetos.size() - 1);
+        }
+    }
+
     public void crearEtiqueta(String nombre) {
         crear(nombre, null, null);
     }

@@ -1,0 +1,14 @@
+{{ r17: destino no asignable en la asignacion interna.
+   'f' es una funcion, no una variable, parametro ni atributo. Se informa
+   el error y no se genera ningun terceto de asignacion.
+   Esperado:
+   Error: 'f' no es asignable. }}
+prog
+ulongint x;
+ulongint function f(ulongint p)
+begin
+    ret(p);
+end;
+begin
+    x := f = (1$ul);
+end
