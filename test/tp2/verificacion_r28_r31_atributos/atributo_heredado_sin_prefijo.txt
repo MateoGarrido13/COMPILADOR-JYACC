@@ -1,0 +1,17 @@
+{{ r28: objeto.atributo solo ve atributos propios. El heredado no se usa sin prefijo.
+   Error esperado: atributo 'y' no existe en la clase 'hija'
+   Sin terceto de asignacion. El acceso prefijado queda para el tema 31.
+}}
+prog
+class padre
+begin
+    ulongint y;
+end;
+class hija
+begin
+    extends padre;
+end;
+hija a1;
+begin
+    a1.y := 1$ul;
+end

@@ -2,8 +2,9 @@
 
 ## Alcance
 
-Se implementó el Tema 25: asignación por estructura entre objetos, sin acceso
-a atributos y sin validar herencia. Esos dos quedan en los temas 28 y 31.
+Se implementó el Tema 25: asignación por estructura entre objetos. Este prompt
+no cubrió el acceso a atributos ni la herencia. El acceso `objeto.atributo`
+quedó resuelto en el Prompt 3.9 (`docs/PROMPT-28.md`). La herencia sigue en el 31.
 
 La regla de compatibilidad es la D4 del plan. El enunciado del prompt la llama
 DEC-6. En este repositorio `docs/DEC-6.md` ya documenta el tipado de constantes
@@ -27,8 +28,10 @@ El inventario de métodos agregados está en `docs/DEC-9.md`.
   es error y no genera terceto.
 
 La copia no recorre los atributos. `GeneradorTercetos.generarAsignacion` emite
-un solo terceto `(COPY, destino, origen)`. Expandir un `(:=)` por atributo
-pediría `ReferenciaAtributo`, que es el tema 28. `Terceto` ya imprime cualquier
+un solo terceto `(COPY, destino, origen)` cuando el destino de la `Asignacion`
+es una variable de clase. Desde el Prompt 3.9, si ese destino es una
+`ReferenciaAtributo`, el mismo método emite `(:=, objeto.atributo, valor)` y no
+expande la copia en un `(:=)` por atributo. `Terceto` ya imprime cualquier
 operador, y `ExpresionDiferida` no necesita marcar la copia: la acción devuelve
 una `Asignacion` con el destino y los dos tipos.
 

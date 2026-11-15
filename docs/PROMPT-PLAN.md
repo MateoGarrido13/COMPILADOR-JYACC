@@ -131,12 +131,12 @@ Cada prompt ejecutado debe dejar su archivo de decisiones en `docs/`.
 - Generar copia estructural `(COPY, destino, origen)`, no asignacion simple.
 - Documentar en `docs/PROMPT-25.md`. Casos en `test/tp2/verificacion_r25_objetos/`.
 
-## Prompt 28 - Acceso tradicional a atributos
+## Prompt 28 - Acceso tradicional a atributos (ejecutado)
 
 - `objeto.atributo` solo para atributos propios de la clase del objeto.
 - Verificar existencia, visibilidad y tipo.
 - Generar terceto con la referencia al atributo.
-- Documentar en `docs/PROMPT-28.md`.
+- Documentar en `docs/PROMPT-28.md`. Casos en `test/tp2/verificacion_r28_r31_atributos/`.
 
 ## Prompt 31 - Herencia multiple con prefijo (D3 revisada)
 

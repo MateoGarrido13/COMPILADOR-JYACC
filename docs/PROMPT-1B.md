@@ -116,6 +116,8 @@ funcion: `n:main:a` y `m:main:a:b`.
 ### Clases
 
 - `x` de `ca` se declara como `x:main:ca`; `x:main` queda como placeholder de uso.
+  Desde el Prompt 3.9 el terceto de `a1.x := 3$ul` es `(:=, a1.x, 3$ul)`, no
+  `(:=, x:main, 3$ul)`.
 - Dos clases hermanas no comparten atributos: `x:main:ca` y `x:main:cb`.
 
 ## Pruebas agregadas

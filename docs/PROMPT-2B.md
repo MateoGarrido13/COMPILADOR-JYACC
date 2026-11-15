@@ -8,8 +8,8 @@ de función y de método; `todf`; y asignación dentro de expresiones.
 
 Quedan fuera de esta etapa las enumeraciones, los objetos, los atributos y la herencia
 como validaciones completas. El generador ya acepta `ReferenciaAtributo` y los
-delimitadores de clase para no romper la salida existente, pero las reglas de los temas
-23, 25, 28 y 31 siguen pendientes.
+delimitadores de clase para no romper la salida existente. Los temas 23, 25 y 28
+se cerraron después; el 31 sigue pendiente.
 
 ## Cambios realizados
 
@@ -210,6 +210,6 @@ inválido. Después de la corrección no queda ningún diagnóstico nuevo.
 - Prompt 3.6 (Tema 19): parámetros reales, orden obligatorio, tipos, resolución
   de funciones y métodos, generación de `PAR`/`CALL` y propagación del retorno.
   Implementado y documentado en `docs/PROMPT-3.6.md`.
-- Temas 23 y 25: resueltos en los prompts 3.7 y 3.8. La asignación entre objetos
-  compatibles emite `(COPY, destino, origen)`. Siguen pendientes el 28 (atributos)
-  y el 31 (herencia). El generador ya acepta `ReferenciaAtributo`.
+- Temas 23, 25 y 28: resueltos en los prompts 3.7, 3.8 y 3.9. La asignación entre
+  objetos compatibles emite `(COPY, destino, origen)`. El acceso `objeto.atributo`
+  emite `(:=, objeto.atributo, valor)`. Sigue pendiente el 31 (herencia).

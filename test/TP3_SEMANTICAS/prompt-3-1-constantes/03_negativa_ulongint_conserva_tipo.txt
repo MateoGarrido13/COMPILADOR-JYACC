@@ -15,7 +15,7 @@ Error esperado:
 }}
 
 prog
-ulongint x;
+doublef x;
 begin
     x := -1$ul;
 end

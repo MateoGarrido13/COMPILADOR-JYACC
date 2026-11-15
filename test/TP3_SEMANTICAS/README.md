@@ -66,7 +66,7 @@ Las claves de la tabla incluyen el ambito: `nombre:ambito`. Una entrada con
   al cerrar ambito.
 - `prompt-2-tipos-estrictos/`: igualdad exacta de tipos y prohibicion de
   conversiones implicitas. Cubre asignaciones, operadores, condiciones,
-  retorno, enumerados, tipos no declarados y `todf` pendiente del Tema 33.
+  retorno, enumerados, tipos no declarados y `todf` restringido a enteros.
   Tambien verifica que funciones y clases no puedan usarse como factores y que
   el prefijo de clase mande al resolver un atributo heredado.
 - `prompt-3-1-constantes/`: constantes `ulongint` y `doublef` tipadas en el

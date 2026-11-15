@@ -1,0 +1,17 @@
+{{ r28: la operacion y el pout usan el tipo del atributo.
+   (:=, a1.x, 1$ul)
+   (+, a1.x, 1$ul)
+   (pout, [n], --)
+   La suma con 1.0 informa tipos incompatibles en '+' y no emite ese pout.
+}}
+prog
+class ca
+begin
+    ulongint x;
+end;
+ca a1;
+begin
+    a1.x := 1$ul;
+    pout(a1.x + 1$ul);
+    pout(a1.x + 1.0);
+end

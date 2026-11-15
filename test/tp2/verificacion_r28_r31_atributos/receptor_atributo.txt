@@ -1,0 +1,20 @@
+{{ r28: un atributo de tipo clase, usado dentro del metodo, es un receptor valido.
+   Terceto esperado: (:=, c.n, 2$ul)
+   Sin errores.
+}}
+prog
+class caja
+begin
+    ulongint n;
+end;
+class ca
+begin
+    caja c;
+    ulongint leer(ulongint k)
+    begin
+        c.n := 2$ul;
+        ret(c.n);
+    end;
+end;
+begin
+end

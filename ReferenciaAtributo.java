@@ -2,9 +2,11 @@
   Referencia a un atributo de un objeto. La usa el motor de tipos para conocer
   el tipo del atributo y el generador para mostrar la referencia completa.
 
-  El tipo del atributo queda en 'tipo'. Si el atributo no se pudo resolver, la
-  referencia conserva el nombre y el tipo queda indefinido para no cascadear
-  errores; la validacion completa de atributos y herencia es del Tema 28/31.
+  El tipo del atributo queda en 'tipo'. 'texto' es lo que imprime el terceto
+  (objeto.atributo, o objeto.clase.atributo en el acceso prefijado). Si el
+  atributo no se pudo resolver, el tipo queda indefinido para no cascadear
+  errores. El acceso sin prefijo valida existencia en el tema 28; el prefijo
+  y la herencia quedan en el tema 31.
  */
 public class ReferenciaAtributo {
 

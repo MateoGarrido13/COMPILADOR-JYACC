@@ -104,6 +104,30 @@ public class AccionesDeclaraciones {
             Object destinoValor = ctx.valor(0);
             ExpresionDiferida origen = ctx.expresion(1);
 
+            ReferenciaAtributo atributoPropio = referenciaPropia(destinoValor);
+            if (atributoPropio != null) {
+                ExpresionDiferida acceso = (ExpresionDiferida) destinoValor;
+                if (!acceso.esValida() || origen == null || !origen.esValida()) {
+                    return null;
+                }
+                String tipoDestino = entorno.tipoEfectivo(atributoPropio.getTipo());
+                String tipoOrigen = entorno.tipoEfectivo(origen.getTipo());
+                if (!Tipos.INDEFINIDO.equals(tipoDestino) && !Tipos.INDEFINIDO.equals(tipoOrigen)
+                        && !Tipos.mismoTipo(tipoDestino, tipoOrigen)) {
+                    String nombre = atributoPropio.atributo == null
+                            ? atributoPropio.toString()
+                            : TablaSimbolos.nombreDe(atributoPropio.atributo.lexema);
+                    v.errorTipos(ctx.getLinea(),
+                            "la asignación a '" + nombre + "'",
+                            tipoDestino, tipoOrigen);
+                    return null;
+                }
+                if (!v.verificarAsignacionEnumerada(atributoPropio.atributo, origen, ctx.getLinea())) {
+                    return null;
+                }
+                return new Asignacion(atributoPropio, tipoDestino, tipoOrigen);
+            }
+
             EntradaTabla destino = destinoDe(destinoValor);
             if (destinoValor instanceof EntradaTabla) {
                 destino = v.verificarAlcance((EntradaTabla) destinoValor);
@@ -127,8 +151,8 @@ public class AccionesDeclaraciones {
 
             String tipoDestino = entorno.tipoEfectivo(destino.tipoDato);
             String tipoOrigen = entorno.tipoEfectivo(origen.getTipo());
-            // Un atributo como destino queda para el tema 28. Acá la copia
-            // estructural es entre variables de clase.
+            // La copia estructural es entre variables de clase. Un destino
+            // ReferenciaAtributo ya se resolvio arriba y no entra aca.
             Entorno.ClaseDeclarada claseDestino = entorno.claseDe(tipoDestino);
             Entorno.ClaseDeclarada claseOrigen = entorno.claseDe(tipoOrigen);
             if (claseDestino != null && claseOrigen != null
@@ -197,6 +221,22 @@ public class AccionesDeclaraciones {
             }
             return valor;
         });
+    }
+
+    // Expresion de un solo operando producida por objeto.atributo (tema 28).
+    private static ReferenciaAtributo referenciaPropia(Object destinoValor) {
+        if (!(destinoValor instanceof ExpresionDiferida)) {
+            return null;
+        }
+        ExpresionDiferida expresion = (ExpresionDiferida) destinoValor;
+        if (!expresion.getOperadores().isEmpty()) {
+            return null;
+        }
+        List<Object> operandos = expresion.getOperandos();
+        if (operandos.size() == 1 && operandos.get(0) instanceof ReferenciaAtributo) {
+            return (ReferenciaAtributo) operandos.get(0);
+        }
+        return null;
     }
 
     private static EntradaTabla destinoDe(Object valor) {

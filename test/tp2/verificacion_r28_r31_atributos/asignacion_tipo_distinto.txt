@@ -1,0 +1,13 @@
+{{ r28: el tipo del atributo se compara con el lado derecho.
+   Error esperado: Tipos incompatibles en la asignación a 'x'
+   Sin terceto de asignacion.
+}}
+prog
+class ca
+begin
+    ulongint x;
+end;
+ca a1;
+begin
+    a1.x := 1.0;
+end

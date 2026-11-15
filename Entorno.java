@@ -537,11 +537,30 @@ public class Entorno {
     }
 
     /*
+      Atributo declarado en la propia clase, sin recorrer ancestros.
+      D3/DEC-5: el acceso objeto.atributo solo ve miembros propios. El
+      heredado exige prefijo y se resuelve en el tema 31.
+     */
+    public EntradaTabla atributoPropio(ClaseDeclarada clase, String nombreAtributo) {
+        if (clase == null || nombreAtributo == null || nombreAtributo.isEmpty()) {
+            return null;
+        }
+        String nombre = TablaSimbolos.nombreDe(nombreAtributo);
+        if (!clase.atributos.containsKey(nombre)) {
+            return null;
+        }
+        EntradaTabla entrada = tablaSimbolos.buscarIdentificador(nombre, clase.ambitoPropio);
+        if (entrada != null && entrada.declarado && entrada.uso == EntradaTabla.Uso.ATRIBUTO) {
+            return entrada;
+        }
+        return null;
+    }
+
+    /*
       Devuelve el atributo declarado en la clase indicada por el prefijo o, si
       no hay prefijo, en la clase del objeto; en ambos casos busca tambien en las
-      bases. No reporta errores: el motor de tipos solo necesita el tipo y la
-      validacion completa de miembros es de los temas 28/31. Devuelve null si no
-      se puede resolver.
+      bases. No reporta errores. Lo usa el acceso prefijado, que valida el
+      tema 31. Devuelve null si no se puede resolver.
      */
     public EntradaTabla resolverAtributo(EntradaTabla objeto, String nombreClase, String nombreAtributo) {
         if (nombreAtributo == null) {

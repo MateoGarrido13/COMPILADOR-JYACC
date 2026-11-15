@@ -230,8 +230,10 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.LISTA_ORDEN_EVALUACION, AccionesSemanticas::concatenarLista);
 
         tabla.registrar(Reglas.ACCESO_ATRIBUTO, ctx ->
-                referenciaAtributo(entorno, v, ctx.entrada(0), null, ctx.entrada(1), ctx.getLinea()));
+                accesoAtributoPropio(entorno, v, ctx.entrada(0), ctx.entrada(1), ctx.getLinea()));
 
+        // objeto.clase.atributo queda para el tema 31. Esta accion solo arma
+        // la referencia; no valida el prefijo ni la herencia.
         tabla.registrar(Reglas.ACCESO_ATRIBUTO_PREFIJADO, ctx ->
                 referenciaAtributo(entorno, v, ctx.entrada(0), ctx.entrada(1), ctx.entrada(2), ctx.getLinea()));
 
@@ -249,10 +251,64 @@ public class AccionesExpresiones {
     }
 
     /*
-      Resuelve el atributo en la clase del objeto (o en la clase prefijada) y
-      devuelve una referencia con su tipo. Si no se puede resolver, la
-      referencia queda con tipo indefinido; la validacion completa de miembros
-      pertenece al Tema 28/31.
+      Tema 28: objeto.atributo. El objeto tiene que ser variable, parametro o
+      atributo de tipo clase. El atributo se busca solo entre los propios de
+      esa clase (D3/DEC-5): un miembro heredado no se ve sin prefijo. Si no
+      esta, el error es "atributo 'x' no existe en la clase 'ca'".
+      Devuelve una expresion con la ReferenciaAtributo y el tipo del atributo.
+     */
+    private static ExpresionDiferida accesoAtributoPropio(Entorno entorno, Verificaciones v,
+            EntradaTabla objeto, EntradaTabla atributo, int linea) {
+        String nombreAtributo = atributo == null ? "?" : TablaSimbolos.nombreDe(atributo.lexema);
+        EntradaTabla objetoResuelto = objeto == null ? null : v.verificarAlcance(objeto);
+        String nombreObjeto = nombreVisible(objetoResuelto != null ? objetoResuelto : objeto);
+        String texto = nombreObjeto + "." + nombreAtributo;
+
+        if (objetoResuelto == null) {
+            return accesoInvalido(objeto, atributo, texto);
+        }
+        if (!esReceptorDeAtributo(objetoResuelto)) {
+            v.errorNoEsObjeto(nombreObjeto, linea);
+            return accesoInvalido(objetoResuelto, atributo, texto);
+        }
+        Entorno.ClaseDeclarada clase = entorno.claseDe(objetoResuelto.tipoDato);
+        if (clase == null) {
+            v.errorNoEsObjeto(nombreObjeto, linea);
+            return accesoInvalido(objetoResuelto, atributo, texto);
+        }
+        EntradaTabla declaracion = entorno.atributoPropio(clase, nombreAtributo);
+        if (declaracion == null) {
+            v.errorAtributoInexistente(nombreAtributo, clase.nombre, linea);
+            return accesoInvalido(objetoResuelto, atributo, texto);
+        }
+        ReferenciaAtributo referencia = new ReferenciaAtributo(
+                objetoResuelto, declaracion, texto, declaracion.tipoDato);
+        return ExpresionDiferida.deOperando(referencia, declaracion.tipoDato);
+    }
+
+    private static boolean esReceptorDeAtributo(EntradaTabla objeto) {
+        return objeto.uso == EntradaTabla.Uso.VARIABLE
+                || objeto.uso == EntradaTabla.Uso.PARAMETRO
+                || objeto.uso == EntradaTabla.Uso.ATRIBUTO;
+    }
+
+    private static String nombreVisible(EntradaTabla entrada) {
+        if (entrada == null || entrada.lexema == null) {
+            return "?";
+        }
+        return TablaSimbolos.nombreDe(entrada.lexema);
+    }
+
+    private static ExpresionDiferida accesoInvalido(EntradaTabla objeto,
+            EntradaTabla atributo, String texto) {
+        ReferenciaAtributo referencia = new ReferenciaAtributo(objeto, atributo, texto, null);
+        return ExpresionDiferida.deOperando(referencia, Tipos.INDEFINIDO).marcarInvalida();
+    }
+
+    /*
+      objeto.clase.atributo (tema 31). Resuelve el atributo en la clase
+      prefijada y, si no puede, deja el tipo indefinido sin reportar: la
+      validacion del prefijo y de la herencia no es de este tema.
      */
     private static ReferenciaAtributo referenciaAtributo(Entorno entorno, Verificaciones v,
             EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla atributo, int linea) {

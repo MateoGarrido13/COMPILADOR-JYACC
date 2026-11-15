@@ -162,11 +162,16 @@ public class GeneradorTercetos {
         if (resultado == null) {
             return;
         }
-        // Entre objetos compatibles el resultado es una Asignacion y el terceto
-        // es (COPY, destino, origen). No se expande por atributo: eso pide
-        // ReferenciaAtributo, que es el tema 28.
-        boolean copiaEstructural = resultado instanceof Asignacion;
-        Object destino = copiaEstructural ? ((Asignacion) resultado).destino : resultado;
+        // Entre objetos compatibles el resultado es una Asignacion con destino
+        // EntradaTabla y el terceto es (COPY, destino, origen). Una asignacion
+        // a objeto.atributo tambien es una Asignacion, pero el destino es una
+        // ReferenciaAtributo y el terceto es (:=, objeto.atributo, valor).
+        boolean copiaEstructural = false;
+        Object destino = resultado;
+        if (resultado instanceof Asignacion) {
+            destino = ((Asignacion) resultado).destino;
+            copiaEstructural = !(destino instanceof ReferenciaAtributo);
+        }
         if (!(destino instanceof EntradaTabla) && !(destino instanceof ReferenciaAtributo)) {
             destino = reduccion.operando(0);
         }

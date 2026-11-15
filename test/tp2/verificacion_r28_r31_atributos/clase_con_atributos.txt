@@ -1,4 +1,11 @@
-{{ r28: clase con atributos y acceso tradicional objeto.atributo }}
+{{ r28: clase con atributos y acceso tradicional objeto.atributo.
+   Valido. Tercetos de acceso:
+   (:=, a1.x, 3$ul)
+   (:=, a1.z, 3$ul)
+   (pout, a1.x, --)
+   La TS declara x:main:ca y z:main:ca como atributos (ambito main:ca).
+   Sin errores.
+}}
 prog
 class ca
 begin

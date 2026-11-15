@@ -14,8 +14,8 @@ Los temas particulares del grupo son los enteros `ulongint`, los reales `doublef
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
 | Último commit | Prompt 3.8 — asignación estructural de objetos |
-| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25 |
-| Prompt en curso / siguiente | **28 — Acceso tradicional a atributos** |
+| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28 |
+| Prompt en curso / siguiente | **31 — Herencia múltiple con prefijo** |
 | Commits del plan completados | 13 de 15 |
 
 ### Reglas de granularidad para commits
@@ -47,17 +47,20 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 | 19 | Parámetros reales y orden | ✅ **Ejecutado** | `docs/PROMPT-19.md` | `test/tp2/verificacion_r19_param_reales/` |
 | 23 | Enumeraciones | ✅ **Ejecutado** | `docs/PROMPT-23.md` | `test/tp2/verificacion_r23_enums/` |
 | 25 | Objetos y asignación estructural | ✅ **Ejecutado** | `docs/PROMPT-25.md` | `test/tp2/verificacion_r25_objetos/` |
-| 28 | Acceso tradicional a atributos | ❌ Pendiente | `docs/PROMPT-28.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
+| 28 | Acceso tradicional a atributos | ✅ **Ejecutado** | `docs/PROMPT-28.md` | `test/tp2/verificacion_r28_r31_atributos/` |
 | 31 | Herencia múltiple con prefijo (D3 revisada) | ❌ Pendiente | `docs/PROMPT-31.md` (por crear) | `test/tp2/verificacion_r28_r31_atributos/` |
 
 ### Próximos a implementar (orden del plan)
 
-1. Prompt 28 — acceso `objeto.atributo`.
-2. Prompt 31 — herencia múltiple con prefijo.
+1. Prompt 31 — herencia múltiple con prefijo.
 
 ## Prompt 25 — ejecutado
 
-La regla D4 y la forma de copia `(COPY, destino, origen)` están en `docs/PROMPT-25.md`. Los métodos agregados están en `docs/DEC-9.md`. Los casos están en `test/tp2/verificacion_r25_objetos/`. El acceso a atributos y la herencia siguen en 28 y 31. `docs/DEC-6.md` no se tocó: sigue siendo el registro de constantes.
+La regla D4 y la forma de copia `(COPY, destino, origen)` están en `docs/PROMPT-25.md`. Los métodos agregados están en `docs/DEC-9.md`. Los casos están en `test/tp2/verificacion_r25_objetos/`. `docs/DEC-6.md` no se tocó: sigue siendo el registro de constantes.
+
+## Prompt 28 — ejecutado
+
+`objeto.atributo` solo ve atributos propios de la clase del objeto. La asignación emite `(:=, objeto.atributo, valor)` y el tipo del atributo entra en operadores y en `pout`. El detalle está en `docs/PROMPT-28.md`. Los casos están en `test/tp2/verificacion_r28_r31_atributos/`. La forma `objeto.clase.atributo` y la herencia siguen en el 31.
 
 ---
 
@@ -75,7 +78,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Tipos de parámetros reales | 19 | Resuelto: se verifican cantidad, orden, formal y tipos de argumentos; se propaga el tipo de retorno. Ver `docs/PROMPT-19.md`. | Completado |
 | Enumeraciones | 23 | Resuelto: valida declaración, ámbito, base homogénea, tipos de variables y pertenencia de constantes. Ver `docs/PROMPT-23.md`. | Completado |
 | Asignación estructural de objetos | 25 | Resuelto: D4 compara atributos y firmas efectivas; la asignación entre objetos emite `(COPY, destino, origen)`. Ver `docs/PROMPT-25.md`. | Completado |
-| Acceso a atributos con punto | 28 | Falta verificar existencia, visibilidad y tipo del atributo en la clase del objeto; generar terceto con la referencia. | Media |
+| Acceso a atributos con punto | 28 | Resuelto: el receptor tiene que ser de tipo clase y el atributo, propio. La asignación emite `(:=, objeto.atributo, valor)`. Ver `docs/PROMPT-28.md`. | Completado |
 | Herencia múltiple con prefijo | 31 | Falta validar clases base, que el prefijo corresponda a una clase heredada, y que el atributo o método exista y sea accesible. | Media |
 
 ---
@@ -138,6 +141,7 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
  - `docs/PROMPT-19.md` — parámetros reales y orden
  - `docs/PROMPT-23.md` — enumeraciones
  - `docs/PROMPT-33.md` — conversión `todf`
+- `docs/PROMPT-28.md` — acceso tradicional a atributos
  - `docs/DEC-6.md` — registro de tipos de constantes en el analisis lexico
  - `docs/DEC-7.md` — cadenas y comentarios (prompt 3.2)
  - `docs/DEC-8.md` — condicion booleana y tipo en repeat while (prompt 3.3)

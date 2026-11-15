@@ -131,6 +131,17 @@ public class Verificaciones {
         reporte.error(linea, "tipo no declarado '" + tipo + "'");
     }
 
+    // Tema 28: el receptor de objeto.atributo no es variable, parametro o atributo de clase.
+    public void errorNoEsObjeto(String nombre, int linea) {
+        reporte.error(linea, "'" + (nombre == null ? "?" : nombre) + "' no es un objeto");
+    }
+
+    // Tema 28: el atributo no esta declarado en la propia clase del objeto.
+    public void errorAtributoInexistente(String atributo, String clase, int linea) {
+        reporte.error(linea, "atributo '" + (atributo == null ? "?" : atributo)
+                + "' no existe en la clase '" + (clase == null ? "?" : clase) + "'");
+    }
+
     // D4: las clases no coinciden en atributos efectivos o en firmas.
     public void errorEstructuraIncompatible(int linea, String destino,
             String claseDestino, String claseOrigen) {

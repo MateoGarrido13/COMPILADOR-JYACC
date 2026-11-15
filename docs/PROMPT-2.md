@@ -53,9 +53,13 @@ origen queda para el Prompt 3.5.
   envuelve una `AsignacionEnExpresion` con el tipo destino.
 - `INVOCACION_FUNCION` guarda la firma resuelta en `LlamadaFuncion` para conocer el tipo
   de retorno.
-- `ACCESO_ATRIBUTO` y `ACCESO_ATRIBUTO_PREFIJADO` devuelven una `ReferenciaAtributo` con
-  el tipo del atributo resuelto. Los métodos quedan sin tipar hasta el Tema 31 para no
-  confundir un método con el objeto que lo contiene.
+- En este prompt, `ACCESO_ATRIBUTO` y `ACCESO_ATRIBUTO_PREFIJADO` devolvían una
+  `ReferenciaAtributo` con el tipo del atributo resuelto, sin informar si faltaba.
+  Desde el Prompt 3.9, `ACCESO_ATRIBUTO` devuelve una `ExpresionDiferida` y valida
+  el atributo propio (`docs/PROMPT-28.md`). `ACCESO_ATRIBUTO_PREFIJADO` sigue
+  devolviendo la referencia sin reportar errores; eso queda en el Tema 31.
+  Los métodos quedan sin tipar hasta el Tema 31 para no confundir un método con
+  el objeto que lo contiene.
 - `CONVERSION_TODF` construye una `Conversion` con tipo destino `doublef`. El generador
   emite `(todf, valor, --)` a partir del Prompt 2B.
 
@@ -91,10 +95,12 @@ origen queda para el Prompt 3.5.
   - una clase conserva su clave completa (`ca:main`), así dos clases distintas no se
     confunden;
   - los tipos básicos pasan por `Tipos.tipoEfectivo`.
-- `resolverAtributo(objeto, clasePrefijada, atributo)` busca el atributo en la clase del
-  objeto y en sus bases. Si hay prefijo explícito (`objeto.Clase.atributo`), la búsqueda
-  empieza en la clase prefijada, no en la clase del objeto. No reporta errores: la
-  validación completa de miembros es de los temas 28/31.
+- `resolverAtributo(objeto, clasePrefijada, atributo)` busca el atributo en la clase
+  indicada y en sus bases. Si hay prefijo explícito (`objeto.Clase.atributo`), la
+  búsqueda empieza en la clase prefijada, no en la clase del objeto. No reporta
+  errores. Desde el Prompt 3.9 el acceso sin prefijo no lo usa: busca solo en la
+  clase propia con `atributoPropio` y valida en el Tema 28. `resolverAtributo` queda
+  para el acceso prefijado, que valida el Tema 31.
 
 ### Clases auxiliares nuevas
 
@@ -244,10 +250,12 @@ No aparecen diagnósticos nuevos. El detalle está en `docs/PROMPT-2B.md`.
 
 ## Pendiente
 
-- Prompt 3.5: restringir `todf` a `ulongint` o enum con base `ulongint`; rechazar
-  conversiones vacías, de `doublef` o de objetos.
-- Tema 19: chequear tipos de parámetros reales contra los formales. La cantidad y el orden
-  ya se verifican; la ubicación del formal también se resuelve desde Prompt 2B.
-- Temas 28/31: validar existencia, visibilidad y herencia de atributos y métodos. El motor
-  de tipos ya obtiene el tipo cuando la referencia es resoluble, incluido el prefijo
-  explícito.
+- Prompt 3.5 (Tema 33): resuelto en `docs/PROMPT-33.md`. `todf` solo acepta `ulongint`
+  o un enumerado con esa base.
+- Tema 19: resuelto en `docs/PROMPT-19.md`. Se comparan los tipos de los parámetros
+  reales con los formales.
+- Tema 28: resuelto en `docs/PROMPT-28.md`. `objeto.atributo` valida el receptor y el
+  atributo propio. El atributo declarado es `x:main:ca`; el uso dentro de `main`
+  deja el placeholder `x:main` (DEC-4 y DEC-5).
+- Tema 31: sigue pendiente. El acceso prefijado y `resolverAtributo` no validan
+  herencia ni exigen el prefijo de un miembro heredado.
