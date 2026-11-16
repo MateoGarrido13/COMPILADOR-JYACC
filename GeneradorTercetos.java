@@ -1,7 +1,10 @@
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
   Recorre las reducciones y emite tercetos.
@@ -36,6 +39,8 @@ public class GeneradorTercetos {
     private final Deque<String> iniciosRepeat = new ArrayDeque<>(); // pila de etiquetas de inicio de repeat
     private final Deque<Integer> marcasRepeat = new ArrayDeque<>(); // tercetos previos al inicio de cada repeat
     private final Deque<Integer> marcasClase = new ArrayDeque<>(); // terceto CLASE de cada clase abierta
+    // Metadata de resultado por terceto (TP4/ASM): tipo y si produce valor [n].
+    private final Map<Integer, ResultadoTerceto> resultados = new LinkedHashMap<>();
     // Numero centinela para un salto que no debe emitirse porque la condicion ya
     // reporto un error. Mantiene balanceada la pila de saltos en ifs anidados.
     private static final int SALTO_INVALIDO = -1;
@@ -44,11 +49,70 @@ public class GeneradorTercetos {
         this.reporte = reporte;
     }
 
+    public ListaTercetos getLista() {
+        return lista;
+    }
+
+    public List<Terceto> getTercetos() {
+        return lista.elementos();
+    }
+
+    public Map<Integer, ResultadoTerceto> getResultados() {
+        return Collections.unmodifiableMap(resultados);
+    }
+
+    public ResultadoTerceto getResultado(int indice) {
+        return resultados.get(indice);
+    }
+
+    private int crearTerceto(String operador, Object op1, Object op2, String tipoResultado, boolean produceValor) {
+        int n = lista.crear(operador, op1, op2);
+        resultados.put(n, new ResultadoTerceto(n, operador, tipoResultado, produceValor));
+        return n;
+    }
+
+    private int crearNoProductor(String operador, Object op1, Object op2) {
+        return crearTerceto(operador, op1, op2, null, false);
+    }
+
+    private int crearEtiquetaConResultado(String nombre) {
+        return crearTerceto(nombre, null, null, null, false);
+    }
+
+    private String tipoDeOperando(Object operando) {
+        if (operando == null) {
+            return Tipos.INDEFINIDO;
+        }
+        if (operando instanceof Integer) {
+            ResultadoTerceto r = resultados.get((Integer) operando);
+            return r == null ? Tipos.INDEFINIDO : r.getTipo();
+        }
+        if (operando instanceof ReferenciaAtributo) {
+            return ((ReferenciaAtributo) operando).getTipo();
+        }
+        if (operando instanceof EntradaTabla) {
+            return ExpresionDiferida.tipoDe(operando);
+        }
+        if (operando instanceof LlamadaFuncion) {
+            return ((LlamadaFuncion) operando).getTipoRetorno();
+        }
+        return ExpresionDiferida.tipoDe(operando);
+    }
+
+    private String tipoAritmetico(Object izq, Object der) {
+        String t = tipoDeOperando(izq);
+        if (!Tipos.INDEFINIDO.equals(t)) {
+            return t;
+        }
+        return tipoDeOperando(der);
+    }
+
     public void generar(List<Reduccion> reducciones) {
         if (reducciones == null) {
             return;
         }
-        lista.crear("PROGRAMA", null, null);
+        resultados.clear();
+        crearTerceto("PROGRAMA", null, null, null, false);
         for (Reduccion reduccion : reducciones) {
             switch (reduccion.getRegla()) {
                 case INICIO_FUNCION:
@@ -102,7 +166,7 @@ public class GeneradorTercetos {
                     break;
             }
         }
-        lista.crear("FIN_PROGRAMA", null, null);
+        crearNoProductor("FIN_PROGRAMA", null, null);
     }
 
     public String contenido() {
@@ -119,7 +183,7 @@ public class GeneradorTercetos {
         if (funcion.nombre == null) {
             return;
         }
-        lista.crear(funcion.esMetodo ? "METODO" : "FUNCION", funcion.nombre, null);
+        crearNoProductor(funcion.esMetodo ? "METODO" : "FUNCION", funcion.nombre, null);
     }
 
     private void cerrarFuncion(Reduccion reduccion) {
@@ -131,7 +195,7 @@ public class GeneradorTercetos {
         if (funcion.nombre == null) {
             return;
         }
-        lista.crear(funcion.esMetodo ? "FIN_METODO" : "FIN_FUNCION", funcion.nombre, null);
+        crearNoProductor(funcion.esMetodo ? "FIN_METODO" : "FIN_FUNCION", funcion.nombre, null);
     }
 
     private void abrirClase(Reduccion reduccion) {
@@ -141,7 +205,7 @@ public class GeneradorTercetos {
         }
         Entorno.ClaseDeclarada clase = (Entorno.ClaseDeclarada) valor;
         if (clase.nombre != null) {
-            marcasClase.push(lista.crear("CLASE", clase.nombre, null));
+            marcasClase.push(crearNoProductor("CLASE", clase.nombre, null));
         } else {
             marcasClase.push(0);
         }
@@ -162,7 +226,7 @@ public class GeneradorTercetos {
             return;
         }
         if (clase.nombre != null) {
-            lista.crear("FIN_CLASE", clase.nombre, null);
+            crearNoProductor("FIN_CLASE", clase.nombre, null);
         }
     }
 
@@ -201,7 +265,7 @@ public class GeneradorTercetos {
             }
             return;
         }
-        lista.crear(copiaEstructural ? "COPY" : ":=", destino, origen);
+        crearNoProductor(copiaEstructural ? "COPY" : ":=", destino, origen);
     }
 
     private void generarPout(Reduccion reduccion) {
@@ -211,7 +275,7 @@ public class GeneradorTercetos {
         }
         Object operando = emitir(valor, reduccion.getLinea());
         if (operando != null) {
-            lista.crear("pout", operando, null);
+            crearNoProductor("pout", operando, null);
         }
     }
 
@@ -222,7 +286,7 @@ public class GeneradorTercetos {
         }
         Object operando = emitir(valor, reduccion.getLinea());
         if (operando != null) {
-            lista.crear("ret", operando, null);
+            crearNoProductor("ret", operando, null);
         }
     }
 
@@ -270,16 +334,17 @@ public class GeneradorTercetos {
             if (valorParam == null) {
                 return;
             }
-            lista.crear("PAR", param.formal, valorParam);
+            crearNoProductor("PAR", param.formal, valorParam);
         }
 
         // Emite el CALL/CALLMET y guarda su numero para que emitir(LlamadaFuncion) lo devuelva.
         int numeroCall;
+        String tipoRet = llamada.getTipoRetorno();
         if (llamada.esMetodo) {
-            numeroCall = lista.crear("CALLMET", llamada.objeto, llamada.funcion);
+            numeroCall = crearTerceto("CALLMET", llamada.objeto, llamada.funcion, tipoRet, true);
         } else {
-            numeroCall = lista.crear("CALL", llamada.funcion,
-                    String.valueOf(parametros.size()));
+            numeroCall = crearTerceto("CALL", llamada.funcion,
+                    String.valueOf(parametros.size()), tipoRet, true);
         }
         llamada.setNumeroCall(numeroCall);
     }
@@ -292,7 +357,7 @@ public class GeneradorTercetos {
             pila.push(new Pendiente(SALTO_INVALIDO, false));
             return;
         }
-        int bf = lista.crear("BF", comparacion, null);
+        int bf = crearNoProductor("BF", comparacion, null);
         pila.push(new Pendiente(bf, false));
     }
 
@@ -300,7 +365,7 @@ public class GeneradorTercetos {
     private void abrirRepeat() {
         marcasRepeat.push(lista.cantidad());
         String etiqueta = lista.reservarEtiqueta();
-        lista.crearEtiqueta(etiqueta);
+        crearEtiquetaConResultado(etiqueta);
         iniciosRepeat.push(etiqueta);
     }
 
@@ -329,9 +394,9 @@ public class GeneradorTercetos {
             return;
         }
         String salida = lista.reservarEtiqueta();
-        lista.crear("BF", comparacion, salida);
-        lista.crear("BI", inicio, null);
-        lista.crearEtiqueta(salida);
+        crearNoProductor("BF", comparacion, salida);
+        crearNoProductor("BI", inicio, null);
+        crearEtiquetaConResultado(salida);
     }
 
     private Integer emitirComparacion(Object valor, int linea) {
@@ -350,7 +415,7 @@ public class GeneradorTercetos {
             reporte.error(linea, "Condicion sin operando");
             return null;
         }
-        return lista.crear((String) partes[1], izquierdo, derecho);
+        return crearTerceto((String) partes[1], izquierdo, derecho, Tipos.ULONGINT, true);
     }
 
     /* Completa el BF con la etiqueta del else, abre el BI y deja esa
@@ -368,9 +433,9 @@ public class GeneradorTercetos {
         }
         String etiquetaElse = lista.reservarEtiqueta();
         lista.completar(bf.numero, 2, etiquetaElse);
-        int bi = lista.crear("BI", null, null);
+        int bi = crearNoProductor("BI", null, null);
         pila.push(new Pendiente(bi, true));
-        lista.crearEtiqueta(etiquetaElse);
+        crearEtiquetaConResultado(etiquetaElse);
     }
 
     /* If sin else, o el cierre del else: el salto pendiente apunta a una
@@ -391,7 +456,7 @@ public class GeneradorTercetos {
             posicion = 2;
         }
         lista.completar(pendiente.numero, posicion, etiqueta);
-        lista.crearEtiqueta(etiqueta);
+        crearEtiquetaConResultado(etiqueta);
     }
 
     private Pendiente desapilar(int linea) {
@@ -414,7 +479,7 @@ public class GeneradorTercetos {
             if (convertido == null) {
                 return null;
             }
-            return lista.crear("todf", convertido, null);
+            return crearTerceto("todf", convertido, null, Tipos.DOUBLEF, true);
         }
         if (valor instanceof AsignacionEnExpresion) {
             AsignacionEnExpresion asignacion = (AsignacionEnExpresion) valor;
@@ -425,7 +490,14 @@ public class GeneradorTercetos {
             if (derecho == null) {
                 return null;
             }
-            return lista.crear(":=", asignacion.destino, derecho);
+            String tipoDest = Tipos.INDEFINIDO;
+            Object dest = asignacion.destino;
+            if (dest instanceof EntradaTabla) {
+                tipoDest = ((EntradaTabla) dest).tipoDato;
+            } else if (dest instanceof ReferenciaAtributo) {
+                tipoDest = ((ReferenciaAtributo) dest).getTipo();
+            }
+            return crearTerceto(":=", asignacion.destino, derecho, tipoDest, true);
         }
         if (valor instanceof LlamadaFuncion) {
             LlamadaFuncion llamada = (LlamadaFuncion) valor;
@@ -465,7 +537,8 @@ public class GeneradorTercetos {
             if (derecho == null) {
                 return null;
             }
-            acumulado = lista.crear(String.valueOf(operadores.get(i)), acumulado, derecho);
+            String tipoOp = tipoAritmetico(acumulado, derecho);
+            acumulado = crearTerceto(String.valueOf(operadores.get(i)), acumulado, derecho, tipoOp, true);
         }
         return acumulado;
     }

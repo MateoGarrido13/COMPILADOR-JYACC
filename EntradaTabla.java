@@ -45,6 +45,16 @@ public class EntradaTabla {
     Uso uso = Uso.INDEFINIDO;
     // Diferencia una declaracion de un simple uso que creo un placeholder.
     boolean declarado;
+    // Nombre ensamblable MASM32 unico para .DATA/.CODE (TP4). No altera lexema ni clave TS.
+    private String nombreAsm;
+
+    public String getNombreAsm() {
+        return nombreAsm;
+    }
+
+    void setNombreAsm(String nombreAsm) {
+        this.nombreAsm = nombreAsm;
+    }
 
     public EntradaTabla(String lexema, int tokenID) {
         this(lexema, tokenID, 0);

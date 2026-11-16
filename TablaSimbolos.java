@@ -1,9 +1,39 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class TablaSimbolos {
+
+    /*
+      Descriptor de simbolo/dato para emision .DATA (TP4 ASM). No modifica
+      contenido ni claves de la TS; conserva trazabilidad al origen.
+     */
+    public static class SimboloDataAsm {
+        public final EntradaTabla entrada;
+        public final String categoria;
+        public final String tipoDato;
+        public final String tipoAsm;
+        public final String nombreAsm;
+        public final String valorInicial;
+        public final String origen;
+
+        public SimboloDataAsm(EntradaTabla entrada, String categoria, String tipoDato,
+                String tipoAsm, String nombreAsm, String valorInicial, String origen) {
+            this.entrada = entrada;
+            this.categoria = categoria;
+            this.tipoDato = tipoDato;
+            this.tipoAsm = tipoAsm;
+            this.nombreAsm = nombreAsm;
+            this.valorInicial = valorInicial;
+            this.origen = origen;
+        }
+    }
     /*
       Constantes y cadenas comparten la tabla con identificadores y palabras
       reservadas, pero no pueden compartir clave: el contenido de una cadena
@@ -17,6 +47,22 @@ public class TablaSimbolos {
     private final Map<String, EntradaTabla> tabla;
     // Índice 0 vacío: el puntero de una entrada es su posición y empieza en 1.
     private final List<EntradaTabla> porPuntero;
+
+    // Nombres ASM ya asignados (en minusculas) para unicidad global case-insensitive.
+    private final Set<String> nombresAsmUsados = new HashSet<>();
+    private final Map<String, String> nombreAsmPorClave = new LinkedHashMap<>();
+
+    private static final Set<String> RESERVADAS_ASM = new HashSet<>(Arrays.asList(
+            "ax","bx","cx","dx","eax","ebx","ecx","edx","esi","edi","ebp","esp",
+            "al","ah","bl","bh","cl","ch","dl","dh",
+            "cs","ds","es","ss","fs","gs",
+            "st","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7",
+            "mov","add","sub","mul","imul","div","idiv","cmp","jmp","je","jne","jg","jl","jge","jle","ja","jb","jae","jbe",
+            "push","pop","call","ret","proc","endp","end","db","dw","dd","dq","byte","word","dword","qword","ptr",
+            "offset","addr","invoke","include","data","code","assume","segment","ends","equ","dup",
+            "fld","fstp","fst","fild","fistp","fadd","fsub","fmul","fdiv","fcom","fcomp","ftst","fxam","fstsw","sahf",
+            "and","or","xor","not","neg","inc","dec","lea","nop","test",
+            "if","else","endif","while","endw","repeat","until",".data",".code",".386",".model","flat","stdcall","option","casemap","none"));
 
     // inicializo tabla y ya cargo palabras reservadas, por convencion de nombres, las keys son en minusculas
     public TablaSimbolos() {
@@ -76,6 +122,190 @@ public class TablaSimbolos {
             return null;
         }
         return porPuntero.get(puntero);
+    }
+
+    public Collection<EntradaTabla> entradas() {
+        return tabla.values();
+    }
+
+    public String nombreAsmDe(EntradaTabla entrada) {
+        if (entrada == null) {
+            return null;
+        }
+        if (entrada.getNombreAsm() != null) {
+            return entrada.getNombreAsm();
+        }
+        String clave = entrada.lexema != null ? entrada.lexema : ("ptr" + entrada.puntero);
+        String existente = nombreAsmPorClave.get(clave);
+        if (existente != null) {
+            entrada.setNombreAsm(existente);
+            return existente;
+        }
+        String base = sanitizarBaseAsm(entrada);
+        String candidato = base;
+        int sufijo = 1;
+        while (!nombreAsmDisponible(candidato)) {
+            candidato = base + "_" + sufijo;
+            sufijo++;
+        }
+        nombresAsmUsados.add(candidato.toLowerCase(Locale.ROOT));
+        nombreAsmPorClave.put(clave, candidato);
+        entrada.setNombreAsm(candidato);
+        return candidato;
+    }
+
+    private boolean nombreAsmDisponible(String nombre) {
+        if (nombre == null || nombre.isEmpty()) {
+            return false;
+        }
+        String n = nombre.toLowerCase(Locale.ROOT);
+        return !nombresAsmUsados.contains(n) && !RESERVADAS_ASM.contains(n);
+    }
+
+    private String sanitizarBaseAsm(EntradaTabla entrada) {
+        String origen = entrada.lexema == null ? "sym" : entrada.lexema;
+        String prefijo = "v_";
+        if (entrada.uso == EntradaTabla.Uso.CONSTANTE) {
+            prefijo = "c_";
+        } else if (entrada.uso == EntradaTabla.Uso.CADENA) {
+            prefijo = "s_";
+        } else if (entrada.uso == EntradaTabla.Uso.FUNCION || entrada.uso == EntradaTabla.Uso.METODO) {
+            prefijo = "fn_";
+        } else if (entrada.uso == EntradaTabla.Uso.CLASE || entrada.uso == EntradaTabla.Uso.TIPO
+                || entrada.uso == EntradaTabla.Uso.TIPO_ENUMERADO) {
+            prefijo = "t_";
+        }
+        String s = origen;
+        // quitar prefijos internos de clave TS
+        if (s.startsWith(PREFIJO_CONSTANTE)) {
+            s = s.substring(PREFIJO_CONSTANTE.length());
+        } else if (s.startsWith(PREFIJO_CADENA)) {
+            s = s.substring(PREFIJO_CADENA.length());
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (Character.isLetterOrDigit(ch) || ch == '_') {
+                sb.append(ch);
+            } else {
+                switch (ch) {
+                    case ':': sb.append("_"); break;
+                    case '.': sb.append("_"); break;
+                    case '$': sb.append("_ul_"); break;
+                    case '+': sb.append("_pos_"); break;
+                    case '-': sb.append("_neg_"); break;
+                    case '{': case '}': case ' ': case '"': case '\'': sb.append('_'); break;
+                    default: sb.append('_');
+                }
+            }
+        }
+        String limpio = sb.toString();
+        while (limpio.contains("__")) {
+            limpio = limpio.replace("__", "_");
+        }
+        limpio = limpio.replaceAll("^_+|_+$", "");
+        if (limpio.isEmpty()) {
+            limpio = "sym" + entrada.puntero;
+        }
+        if (Character.isDigit(limpio.charAt(0))) {
+            limpio = prefijo + limpio;
+        } else if (RESERVADAS_ASM.contains(limpio.toLowerCase(Locale.ROOT))) {
+            limpio = prefijo + limpio;
+        }
+        if (limpio.length() > 120) {
+            limpio = limpio.substring(0, 100) + "_" + Math.abs(origen.hashCode());
+        }
+        return limpio;
+    }
+
+    public boolean esConstante(EntradaTabla e) {
+        return e != null && e.uso == EntradaTabla.Uso.CONSTANTE;
+    }
+
+    public boolean esCadena(EntradaTabla e) {
+        return e != null && e.uso == EntradaTabla.Uso.CADENA;
+    }
+
+    public boolean esSimboloDatoUsuario(EntradaTabla e) {
+        if (e == null || !e.declarado) {
+            return false;
+        }
+        return e.uso == EntradaTabla.Uso.VARIABLE
+                || e.uso == EntradaTabla.Uso.PARAMETRO
+                || e.uso == EntradaTabla.Uso.ATRIBUTO;
+    }
+
+    /*
+      Colecta simbolos candidatos para .DATA: variables/parametros/atributos
+      declarados, constantes y cadenas. Orden estable por insercion en TS.
+      Los temporales @auxN no viven en TS; se derivan de metadata de tercetos.
+     */
+    public List<SimboloDataAsm> colectarSimbolosData(Entorno entorno) {
+        List<SimboloDataAsm> lista = new ArrayList<>();
+        for (EntradaTabla e : tabla.values()) {
+            if (e == null) continue;
+            if (esConstante(e)) {
+                String t = tipoEfectivoDato(e, entorno);
+                lista.add(new SimboloDataAsm(e, "constante", t, tipoAsmDe(t, e),
+                        nombreAsmDe(e), valorInicialConstante(e, t), e.lexema));
+            } else if (esCadena(e)) {
+                lista.add(new SimboloDataAsm(e, "cadena", Tipos.CADENA, "DB",
+                        nombreAsmDe(e), null, e.lexema));
+            } else if (esSimboloDatoUsuario(e)) {
+                String t = tipoEfectivoDato(e, entorno);
+                String tipoAsm = tipoAsmDe(t, e);
+                if (tipoAsm != null) {
+                    lista.add(new SimboloDataAsm(e, "dato", t, tipoAsm,
+                            nombreAsmDe(e), "?", e.lexema));
+                }
+            }
+        }
+        return lista;
+    }
+
+    private String tipoEfectivoDato(EntradaTabla e, Entorno entorno) {
+        if (e == null) return Tipos.INDEFINIDO;
+        String t = e.tipoDato;
+        if (entorno != null && t != null) {
+            return entorno.tipoEfectivo(t);
+        }
+        if (e.uso == EntradaTabla.Uso.CONSTANTE) {
+            String inf = Tipos.tipoDeConstante(e.lexema);
+            return inf == null ? t : inf;
+        }
+        return t == null ? Tipos.INDEFINIDO : t;
+    }
+
+    private String tipoAsmDe(String tipoEfectivo, EntradaTabla e) {
+        if (Tipos.DOUBLEF.equals(tipoEfectivo)) return "DQ";
+        if (Tipos.ULONGINT.equals(tipoEfectivo)) return "DD";
+        if (e != null && e.uso == EntradaTabla.Uso.CADENA) return "DB";
+        // Clases/objetos: layout pendiente (Prompt 4). Se exponen como DD placeholder
+        // solo si ya se requiere; por ahora null salvo tipos basicos/enums efectivos.
+        return null;
+    }
+
+    private String valorInicialConstante(EntradaTabla e, String tipoEfectivo) {
+        if (e == null) return "?";
+        if (Tipos.ULONGINT.equals(tipoEfectivo)) {
+            java.math.BigInteger v = Tipos.valorEntero(e.lexema);
+            return v == null ? "0" : v.toString();
+        }
+        if (Tipos.DOUBLEF.equals(tipoEfectivo)) {
+            // mantener literal fuente compatible lo mas posible; backend puede normalizar
+            String s = e.lexema;
+            if (s == null) return "0.0";
+            return s.replace(Tipos.SUFIJO_ULONGINT, "");
+        }
+        return "?";
+    }
+
+    public void limpiarCacheNombresAsm() {
+        nombresAsmUsados.clear();
+        nombreAsmPorClave.clear();
+        for (EntradaTabla e : tabla.values()) {
+            if (e != null) e.setNombreAsm(null);
+        }
     }
 
     public EntradaTabla buscarIdentificador(String nombre, String ambito) {
@@ -219,6 +449,11 @@ public class TablaSimbolos {
         tabla.remove(entrada.lexema);
         if (entrada.puntero > 0 && entrada.puntero < porPuntero.size()) {
             porPuntero.set(entrada.puntero, null);
+        }
+        if (entrada.getNombreAsm() != null) {
+            nombresAsmUsados.remove(entrada.getNombreAsm().toLowerCase(Locale.ROOT));
+            nombreAsmPorClave.remove(entrada.lexema);
+            entrada.setNombreAsm(null);
         }
     }
 
