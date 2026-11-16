@@ -141,6 +141,29 @@ public class TablaSimbolos {
         return entrada;
     }
 
+    /*
+      Declara una entrada de atributo concreta de un objeto. El nombre ya viene
+      calificado por el objeto, por ejemplo `a1.x` o `a1.padre.y`, y el ambito
+      es el de la declaracion del objeto. Asi cada objeto tiene sus propias
+      entradas y no comparte la de otro objeto del mismo tipo.
+     */
+    public EntradaTabla declararAtributoDeObjeto(String nombreCalificado, String ambito,
+            String tipoDato, int numeroLinea) {
+        if (nombreCalificado == null || ambito == null) {
+            return null;
+        }
+        String clave = nombreCalificado + ":" + ambito;
+        EntradaTabla entrada = tabla.get(clave);
+        if (entrada == null) {
+            entrada = alta(clave, Globals.IDENTIFICADOR, numeroLinea);
+        }
+        entrada.ambito = ambito;
+        entrada.tipoDato = tipoDato;
+        entrada.uso = EntradaTabla.Uso.ATRIBUTO;
+        entrada.declarado = true;
+        return entrada;
+    }
+
     public EntradaTabla buscarPalabraReservada(String lexema) {
         EntradaTabla entrada = tabla.get(lexema.toLowerCase());
         if (entrada != null && esPalabraReservada(entrada.tokenID)) {

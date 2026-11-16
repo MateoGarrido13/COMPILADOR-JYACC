@@ -39,7 +39,9 @@ implementacion y los casos de regresion estan en `docs/PROMPT-31.md`: las llamad
 
 Comprobado con `test/TP3_SEMANTICAS/prompt-1b-name-mangling/`:
 
-- `atributo_en_ambito_de_clase`: `x:main:ca` declarado, `x:main` solo placeholder.
+- `atributo_en_ambito_de_clase`: `x:main:ca` declarado y, al crear `a1`, la
+  entrada por objeto `a1.x:main` con el tipo del atributo (ver `docs/DEC-10.md`).
+  El placeholder `x:main` se descarta al acceder.
 - `metodo_abre_ambito_propio`: `m:main:ca` y `p:main:ca:m`.
 - `clase_dentro_funcion_ambitos`: `ca:main:a`, `x:main:a:ca`, `m:main:a:ca`,
   `p:main:a:ca:m`.

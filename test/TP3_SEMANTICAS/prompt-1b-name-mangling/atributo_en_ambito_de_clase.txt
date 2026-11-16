@@ -5,6 +5,7 @@ Variables de la tabla de simbolos (declaradas, sin palabras clave):
 - ca:main -> ca, clase
 - x:main:ca -> ulongint, atributo
 - a1:main -> ca:main, variable
+- a1.x:main -> ulongint, atributo
 }}
 
 prog

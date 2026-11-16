@@ -1,0 +1,20 @@
+{{ r28: objeto declarado dentro de una funcion.
+   La TS materializa a1.x:main:leer y a1.y:main:leer al declarar a1,
+   con los tipos de los atributos de ca y uso atributo.
+   Sin entradas indefinidas x:main:leer ni y:main:leer.
+   Tercetos: (:=, a1.x, 1$ul) y (ret, a1.y, --). Sin errores.
+}}
+prog
+class ca
+begin
+    ulongint x;
+    ulongint y;
+end;
+ulongint function leer(ulongint n)
+    ca a1;
+begin
+    a1.x := 1$ul;
+    ret(a1.y);
+end;
+begin
+end

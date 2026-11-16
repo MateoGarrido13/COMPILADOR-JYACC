@@ -86,11 +86,11 @@ La regla D4 (misma cantidad de atributos y mismo orden de tipos) y la forma de c
 
 ## Prompt 28 — ejecutado
 
-`objeto.atributo` solo ve atributos propios de la clase del objeto. La asignación emite `(:=, objeto.atributo, valor)` y el tipo del atributo entra en operadores y en `pout`. El detalle está en `docs/PROMPT-28.md`. Los casos están en `test/tp2/verificacion_r28_r31_atributos/`.
+`objeto.atributo` solo ve atributos propios de la clase del objeto. La asignación emite `(:=, objeto.atributo, valor)` y el tipo del atributo entra en operadores y en `pout`. Al declarar el objeto se materializan sus atributos en la Tabla de Símbolos como `objeto.atributo:ambito`, con tipo y uso `atributo`; cada objeto tiene entradas independientes. El detalle está en `docs/PROMPT-28.md` y `docs/DEC-10.md`. Los casos están en `test/tp2/verificacion_r28_r31_atributos/`.
 
 ## Prompt 31 — ejecutado
 
-El miembro heredado exige `objeto.clase.miembro`. La base se valida antes de entrar en `heredaDe`, y la llamada aceptada emite `(PAR, formal, real)` y `(CALLMET, objeto, metodo)`. El detalle está en `docs/PROMPT-31.md`.
+El miembro heredado exige `objeto.clase.miembro`. La base se valida antes de entrar en `heredaDe`, y la llamada aceptada emite `(PAR, formal, real)` y `(CALLMET, objeto, metodo)`. Los atributos heredados también se materializan por objeto con el prefijo de la clase que los declara (`a1.padre.y:main`). El detalle está en `docs/PROMPT-31.md` y `docs/DEC-10.md`.
 
 ---
 
@@ -108,7 +108,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Tipos de parámetros reales | 19 | Resuelto: se verifican cantidad, orden, formal y tipos de argumentos; se propaga el tipo de retorno. Ver `docs/PROMPT-19.md`. | Completado |
 | Enumeraciones | 23 | Resuelto: valida declaración, ámbito, base homogénea, tipos de variables y pertenencia de constantes. Ver `docs/PROMPT-23.md`. | Completado |
 | Asignación estructural de objetos | 25 | Resuelto: D4 exige la misma cantidad de atributos y el mismo orden de tipos; la asignación entre objetos emite `(COPY, destino, origen)`. Ver `docs/PROMPT-25.md`. | Completado |
-| Acceso a atributos con punto | 28 | Resuelto: el receptor tiene que ser de tipo clase y el atributo, propio. La asignación emite `(:=, objeto.atributo, valor)`. Ver `docs/PROMPT-28.md`. | Completado |
+| Acceso a atributos con punto | 28 | Resuelto: el receptor tiene que ser de tipo clase y el atributo, propio. La asignación emite `(:=, objeto.atributo, valor)` y cada objeto tiene entradas de atributo propias en la TS. Ver `docs/PROMPT-28.md` y `docs/DEC-10.md`. | Completado |
 | Herencia múltiple con prefijo | 31 | Resuelto: la base se valida, el miembro heredado exige prefijo y la llamada aceptada emite `CALLMET`. Ver `docs/PROMPT-31.md`. | Completado |
 
 ---
@@ -177,5 +177,6 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
  - `docs/DEC-7.md` — cadenas y comentarios (prompt 3.2)
  - `docs/DEC-8.md` — condicion booleana y tipo en repeat while (prompt 3.3)
  - `docs/DEC-9.md` — metodos de la asignacion estructural de objetos (prompt 3.8)
+ - `docs/DEC-10.md` — entradas de atributos por objeto en la tabla de simbolos
  - `docs/REVISION-3-1-3-2.md` — revisión y correcciones de las iteraciones 3.1 y 3.2 (contenido en la sección "Revisión de las iteraciones 3.1 y 3.2" de `docs/PROMPT-6-8.md`)
  - `docs/REVISION-3-3-3-4.md` — revisión y correcciones de las iteraciones 3.3 y 3.4

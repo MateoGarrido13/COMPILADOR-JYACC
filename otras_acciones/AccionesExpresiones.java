@@ -333,6 +333,7 @@ public class AccionesExpresiones {
      */
     private static ExpresionDiferida accesoAtributoPropio(Entorno entorno, Verificaciones v,
             EntradaTabla objeto, EntradaTabla atributo, int linea) {
+        entorno.descartarPlaceholder(atributo);
         String nombreAtributo = atributo == null ? "?" : TablaSimbolos.nombreDe(atributo.lexema);
         EntradaTabla objetoResuelto = objeto == null ? null : v.verificarAlcance(objeto);
         String nombreObjeto = nombreVisible(objetoResuelto != null ? objetoResuelto : objeto);
@@ -366,6 +367,7 @@ public class AccionesExpresiones {
      */
     private static ExpresionDiferida accesoAtributoPrefijado(Entorno entorno, Verificaciones v,
             EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla atributo, int linea) {
+        entorno.descartarPlaceholder(atributo);
         String nombreAtributo = atributo == null ? "?" : TablaSimbolos.nombreDe(atributo.lexema);
         String nombrePrefijo = clasePrefijo == null ? "?" : TablaSimbolos.nombreDe(clasePrefijo.lexema);
         EntradaTabla objetoResuelto = objeto == null ? null : v.verificarAlcance(objeto);

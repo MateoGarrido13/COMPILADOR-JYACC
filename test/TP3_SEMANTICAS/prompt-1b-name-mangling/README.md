@@ -12,7 +12,8 @@ Casos:
 - `variable_global_desde_funcion`: la funcion resuelve `global:main` y el
   terceto usa la clave resuelta.
 - `atributo_en_ambito_de_clase`: el atributo se declara en `main:ca`, no en
-  `main`.
+  `main`; al crear `a1` se agrega `a1.x:main`, y el placeholder `x:main` se
+  descarta al acceder (DEC-10).
 - `metodo_abre_ambito_propio`: metodo `m:main:ca`, parametro `p:main:ca:m`.
 - `clase_dentro_funcion_ambitos`: clase `ca:main:a`, atributo en `main:a:ca` y
   metodo en `main:a:ca`.

@@ -14,6 +14,8 @@ Variables de la tabla de simbolos (declaradas, sin palabras clave):
 - hija:main -> hija, clase
 - y:main:hija -> ulongint, atributo
 - a1:main -> hija:main, variable
+- a1.padre.y:main -> doublef, atributo
+- a1.y:main -> ulongint, atributo
 }}
 
 prog

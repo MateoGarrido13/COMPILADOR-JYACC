@@ -155,22 +155,23 @@ public class Entorno {
         return clases.get(clave);
     }
 
-    public void declararVariable(EntradaTabla id, String tipo, int linea) {
+    public EntradaTabla declararVariable(EntradaTabla id, String tipo, int linea) {
         if (id == null) {
-            return;
+            return null;
         }
         if (pilaFunciones.isEmpty() && !pilaClases.isEmpty()) {
-            declararAtributo(id, tipo, linea);
-            return;
+            return declararAtributo(id, tipo, linea);
         }
         String ambito = Globals.AMBITO_ACTUAL;
         String nombre = TablaSimbolos.nombreDe(id.lexema);
         EntradaTabla entrada = tablaSimbolos.declarar(id, nombre, ambito, EntradaTabla.Uso.VARIABLE);
         if (entrada == null) {
-            return;
+            return null;
         }
         entrada.tipoDato = tipo;
         variables.put(nombre + ":" + ambito, tipo);
+        materializarAtributosDeObjeto(entrada, tipo, linea);
+        return entrada;
     }
 
     public String tipoDeVariable(String clave) {
@@ -229,6 +230,7 @@ public class Entorno {
             entrada = tablaSimbolos.declarar(id, nombre, ambito, EntradaTabla.Uso.PARAMETRO);
             if (entrada != null) {
                 entrada.tipoDato = tipo;
+                materializarAtributosDeObjeto(entrada, tipo, entrada.numeroLinea);
             }
         }
         funcion.parametros.add(new Parametro(nombre, tipo, entrada));
@@ -271,19 +273,21 @@ public class Entorno {
         pilaClases.poll();
     }
 
-    public void declararAtributo(EntradaTabla id, String tipo, int linea) {
+    public EntradaTabla declararAtributo(EntradaTabla id, String tipo, int linea) {
         ClaseDeclarada clase = pilaClases.peek();
         if (id == null || clase == null) {
-            return;
+            return null;
         }
         String nombre = TablaSimbolos.nombreDe(id.lexema);
         EntradaTabla entrada = tablaSimbolos.declarar(id, nombre, clase.ambitoPropio,
                 EntradaTabla.Uso.ATRIBUTO);
         if (entrada == null) {
-            return;
+            return null;
         }
         entrada.tipoDato = tipo;
         clase.atributos.put(nombre, tipo);
+        materializarAtributosDeObjeto(entrada, tipo, linea);
+        return entrada;
     }
 
     /*
@@ -376,6 +380,58 @@ public class Entorno {
         for (Object elemento : identificadores) {
             declararVariable(ContextoRegla.comoEntrada(elemento), declaracion.lexema, linea);
         }
+    }
+
+    /*
+      Materializa en la tabla una entrada por cada atributo del objeto. Los
+      propios quedan como `objeto.atributo`; los heredados agregan la clase que
+      los declara: `objeto.base.atributo`. Se crean al declarar el objeto (o el
+      parametro/atributo de tipo clase), no al usarlo, y cada objeto tiene sus
+      propias claves.
+     */
+    private void materializarAtributosDeObjeto(EntradaTabla objeto, String tipo, int linea) {
+        if (objeto == null) {
+            return;
+        }
+        ClaseDeclarada clase = claseDe(tipo);
+        if (clase == null) {
+            return;
+        }
+        String nombreObjeto = TablaSimbolos.nombreDe(objeto.lexema);
+        String ambito = TablaSimbolos.ambitoDe(objeto.lexema);
+        if (nombreObjeto == null || nombreObjeto.isEmpty() || ambito.isEmpty()) {
+            return;
+        }
+        List<ClaseDeclarada> declarantes = new ArrayList<>();
+        recolectarDeclarantes(clase, declarantes, new HashSet<String>());
+        for (ClaseDeclarada declarante : declarantes) {
+            String prefijo = declarante.clave().equals(clase.clave())
+                    ? nombreObjeto
+                    : nombreObjeto + "." + declarante.nombre;
+            for (Map.Entry<String, String> atributo : declarante.atributos.entrySet()) {
+                tablaSimbolos.declararAtributoDeObjeto(
+                        prefijo + "." + atributo.getKey(), ambito,
+                        atributo.getValue(), linea);
+            }
+        }
+    }
+
+    private void recolectarDeclarantes(ClaseDeclarada clase, List<ClaseDeclarada> destino,
+            Set<String> visitadas) {
+        if (clase == null || !visitadas.add(clase.clave())) {
+            return;
+        }
+        for (String base : clase.heredaDe) {
+            recolectarDeclarantes(clasePorNombre(base), destino, visitadas);
+        }
+        destino.add(clase);
+    }
+
+    public void descartarPlaceholder(EntradaTabla entrada) {
+        if (entrada == null || entrada.declarado) {
+            return;
+        }
+        tablaSimbolos.eliminar(entrada);
     }
 
     public boolean nombreTipoDisponible(EntradaTabla id) {

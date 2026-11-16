@@ -23,13 +23,17 @@ reportar errores nuevos.
 - Un atributo que solo existe en un ancestro no se ve sin prefijo. Desde el
   Tema 31 el error es `falta de prefijo para 'y' en la clase 'hija'`.
 
-La clave del atributo declarado sigue siendo `x:main:ca`, con su tipo y uso
-`atributo` (DEC-5). El uso `a1.x` ocurre después de cerrar la clase, con ámbito
-`main`, así que el léxico deja además el placeholder `x:main`. DEC-4 lo imprime
-con uso indefinido y `Declarado: no`. No recibe el tipo del atributo: la
-declaración y el uso son claves distintas, y el Prompt 1A solo copia el tipo
-cuando reutiliza el placeholder del mismo ámbito. El chequeo y el terceto usan
-la entrada declarada, no ese placeholder.
+La declaración de la clase deja la clave del atributo `x:main:ca`, con su tipo
+y uso `atributo` (DEC-5). Al crear un objeto de esa clase se materializan
+entradas propias por objeto: `a1.x:main`, con el tipo del atributo, uso
+`atributo` y `Declarado: si`. En el acceso `a1.x` el léxico crea un placeholder
+`x:main`; la acción de acceso lo descarta para que no quede una entrada
+indefinida. La regla completa está en `docs/DEC-10.md`.
+
+Para un atributo heredado, la entrada del objeto lleva el prefijo de la clase
+que lo declara: `a1.padre.y:main`. Dos bases con el mismo miembro producen
+entradas separadas (`a1.b1.y:main` y `a1.b2.y:main`). El chequeo semántico y el
+terceto siguen usando la declaración de la clase y el texto `objeto.atributo`.
 
 ## Asignación y tercetos
 
@@ -50,7 +54,7 @@ Casos en `test/tp2/verificacion_r28_r31_atributos/`.
 
 | Caso | Resultado |
 |---|---|
-| `clase_con_atributos.txt` | Válido. `(:=, a1.x, 3$ul)`, `(:=, a1.z, 3$ul)`, `(pout, a1.x, --)`. `x:main:ca` y `z:main:ca` declarados como `ulongint`. `x:main` y `z:main` quedan placeholder, uso indefinido, `Declarado: no`. |
+| `clase_con_atributos.txt` | Válido. `(:=, a1.x, 3$ul)`, `(:=, a1.z, 3$ul)`, `(:=, a2.x, 3$ul)`, `(:=, a2.z, 3$ul)`, `(pout, a1.x, --)`. `x:main:ca` y `z:main:ca` declarados como `ulongint`; al crear cada objeto se agregan `a1.x:main`, `a1.z:main`, `a2.x:main` y `a2.z:main`, tipadas y uso `atributo`. Los placeholders `x:main` y `z:main` se descartan. |
 | `atributo_inexistente.txt` | `atributo 'noexiste' no existe en la clase 'ca'`. Sin `:=`. |
 | `no_es_objeto.txt` | `'x' no es un objeto`. Sin `:=`. |
 | `asignacion_tipo_distinto.txt` | Tipos incompatibles (`ulongint` contra `doublef`). Sin `:=`. |

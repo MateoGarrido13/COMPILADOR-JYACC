@@ -50,6 +50,14 @@ con el mismo miembro no se aceptan sin prefijo: el error es falta de prefijo,
 y el prefijo elige la base. Un miembro propio gana sobre uno heredado del
 mismo nombre y sigue usándose sin prefijo.
 
+Al declarar un objeto se materializan sus atributos en la Tabla de Símbolos.
+El atributo propio queda como `objeto.atributo:ambito`; el heredado agrega la
+clase que lo declara: `objeto.clase.atributo:ambito`. Así `hija a1` con un
+atributo propio `x` y una base `padre` con `y` produce `a1.x:main` y
+`a1.padre.y:main`, ambos con su tipo y uso `atributo`. Dos bases con el mismo
+miembro generan entradas separadas (`a1.b1.y:main` y `a1.b2.y:main`). El
+detalle está en `docs/DEC-10.md`.
+
 ## Llamadas
 
 Una invocación aceptada chequea cantidad, orden y tipos como el Tema 19, y
@@ -77,7 +85,9 @@ Casos en `test/tp2/verificacion_r28_r31_atributos/`.
 | `atributo_prefijado_inexistente.txt` | `atributo 'noexiste' no existe en la clase 'padre'`. |
 | `dos_bases_mismo_miembro.txt` | `a1.y` es falta de prefijo. `(:=, a1.b1.y, 2$ul)` y `(:=, a1.b2.y, 3$ul)`. |
 | `herencia_transitiva.txt` | `(:=, a1.abuelo.y, 1$ul)`. `a1.padre.y` no existe en `padre`. `a1.y` es falta de prefijo. |
-| `miembro_propio_con_herencia.txt` | `(:=, a1.x, 1$ul)`, `(:=, a1.padre.y, 2$ul)`, `(pout, a1.x, --)`. |
+| `miembro_propio_con_herencia.txt` | `(:=, a1.x, 1$ul)`, `(:=, a1.padre.y, 2$ul)`, `(pout, a1.x, --)`. TS con `a1.x:main` y `a1.padre.y:main`. |
+| `atributos_heredados_en_tabla.txt` | Dos objetos de `hija`: `a1.x:main`, `a1.padre.y:main`, `a1.padre.z:main` y las mismas entradas para `a2`, todas tipadas. |
+| `atributos_objeto_ambito_funcion.txt` | Objeto local: `a1.x:main:leer` y `a1.y:main:leer`, con el tipo de cada atributo. |
 | `herencia_circular.txt` | `herencia circular entre 'a' y 'a'`. |
 | `herencia_circular_mutua.txt` | `clase base no declarada 'b'` y `herencia circular entre 'b' y 'a'`. |
 | `clase_base_no_declarada.txt` | `clase base no declarada 'noexiste'` y `'x' no es una clase`. |
