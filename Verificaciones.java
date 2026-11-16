@@ -197,24 +197,26 @@ public class Verificaciones {
             if (declaracion == null || declaracion.uso != EntradaTabla.Uso.CLASE) {
                 if (declaracion != null) {
                     errorNoEsClase(nombre, linea);
-                } else if (!entorno.anotarBasePendiente(clase, nombre)) {
-                    errorBaseRepetida(nombre, linea);
                 } else {
                     errorClaseBaseNoDeclarada(nombre, linea);
                 }
+                entorno.invalidarClase(clase);
                 continue;
             }
             Entorno.ClaseDeclarada base = entorno.getClase(declaracion.lexema);
             if (base == null) {
                 errorClaseBaseNoDeclarada(nombre, linea);
+                entorno.invalidarClase(clase);
                 continue;
             }
-            if (entorno.alcanzaClase(base, clase) || base.basesPendientes.contains(clase.nombre)) {
+            if (entorno.alcanzaClase(base, clase)) {
                 errorHerenciaCircular(clase.nombre, base.nombre, linea);
+                entorno.invalidarClase(clase);
                 continue;
             }
             if (!entorno.agregarBase(clase, base)) {
                 errorBaseRepetida(base.nombre, linea);
+                entorno.invalidarClase(clase);
             }
         }
     }

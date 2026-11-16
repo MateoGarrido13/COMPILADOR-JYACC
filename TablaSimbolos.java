@@ -222,6 +222,34 @@ public class TablaSimbolos {
         }
     }
 
+    /*
+      Elimina las entradas declaradas o usadas dentro de un ambito y sus
+      subambitos. Se usa al rechazar una clase con herencia invalida para no
+      dejar atributos, metodos ni parametros a medio declarar.
+     */
+    public void eliminarAmbito(String ambito) {
+        if (ambito == null) {
+            return;
+        }
+        List<EntradaTabla> aEliminar = new ArrayList<>();
+        for (EntradaTabla entrada : tabla.values()) {
+            if (entrada.uso == EntradaTabla.Uso.CONSTANTE
+                    || entrada.uso == EntradaTabla.Uso.CADENA
+                    || entrada.uso == EntradaTabla.Uso.RESERVADA) {
+                continue;
+            }
+            String ambitoEntrada = entrada.ambito != null
+                    ? entrada.ambito
+                    : ambitoDe(entrada.lexema);
+            if (ambitoEntrada.equals(ambito) || ambitoEntrada.startsWith(ambito + ":")) {
+                aEliminar.add(entrada);
+            }
+        }
+        for (EntradaTabla entrada : aEliminar) {
+            eliminar(entrada);
+        }
+    }
+
     public List<EntradaTabla> conAmbito() {
         List<EntradaTabla> copia = new ArrayList<>();
         for (EntradaTabla entrada : tabla.values()) {

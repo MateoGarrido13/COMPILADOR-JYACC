@@ -1,6 +1,8 @@
-{{ r31: a nombra a b antes de que b exista, y b despues nombra a a.
+{{ r31: a nombra a b antes de que b exista.
+   La base se resuelve al leer extends, sin esperar definiciones posteriores:
+   a queda invalida y no se declara.
    Errores esperados: clase base no declarada 'b'
-   y herencia circular entre 'b' y 'a'
+   y, al heredar b de la clase a inexistente, clase base no declarada 'a'.
 }}
 prog
 class a

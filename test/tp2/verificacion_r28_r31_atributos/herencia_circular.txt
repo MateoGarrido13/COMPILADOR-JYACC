@@ -1,5 +1,6 @@
 {{ r31: una clase no puede heredar de si misma.
-   Error esperado: herencia circular entre 'a' y 'a'
+   Error esperado: herencia circular entre 'a' y 'a'.
+   Con extends invalido, a no queda declarada.
 }}
 prog
 class a

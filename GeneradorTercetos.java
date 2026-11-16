@@ -35,6 +35,7 @@ public class GeneradorTercetos {
     private final Deque<Pendiente> pila = new ArrayDeque<>(); // pila de saltos pendientes
     private final Deque<String> iniciosRepeat = new ArrayDeque<>(); // pila de etiquetas de inicio de repeat
     private final Deque<Integer> marcasRepeat = new ArrayDeque<>(); // tercetos previos al inicio de cada repeat
+    private final Deque<Integer> marcasClase = new ArrayDeque<>(); // terceto CLASE de cada clase abierta
     // Numero centinela para un salto que no debe emitirse porque la condicion ya
     // reporto un error. Mantiene balanceada la pila de saltos en ifs anidados.
     private static final int SALTO_INVALIDO = -1;
@@ -140,7 +141,9 @@ public class GeneradorTercetos {
         }
         Entorno.ClaseDeclarada clase = (Entorno.ClaseDeclarada) valor;
         if (clase.nombre != null) {
-            lista.crear("CLASE", clase.nombre, null);
+            marcasClase.push(lista.crear("CLASE", clase.nombre, null));
+        } else {
+            marcasClase.push(0);
         }
     }
 
@@ -150,6 +153,14 @@ public class GeneradorTercetos {
             return;
         }
         Entorno.ClaseDeclarada clase = (Entorno.ClaseDeclarada) valor;
+        int marca = marcasClase.isEmpty() ? 0 : marcasClase.pop();
+        if (!clase.valida) {
+            // La clase no quedo declarada: tambien se descarta su codigo.
+            if (marca > 0) {
+                lista.descartarDesde(marca - 1);
+            }
+            return;
+        }
         if (clase.nombre != null) {
             lista.crear("FIN_CLASE", clase.nombre, null);
         }

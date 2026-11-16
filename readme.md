@@ -178,5 +178,6 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
  - `docs/DEC-8.md` — condicion booleana y tipo en repeat while (prompt 3.3)
  - `docs/DEC-9.md` — metodos de la asignacion estructural de objetos (prompt 3.8)
  - `docs/DEC-10.md` — entradas de atributos por objeto en la tabla de simbolos
+ - `docs/DEC-11.md` — herencia invalida sin espera de la clase base
  - `docs/REVISION-3-1-3-2.md` — revisión y correcciones de las iteraciones 3.1 y 3.2 (contenido en la sección "Revisión de las iteraciones 3.1 y 3.2" de `docs/PROMPT-6-8.md`)
  - `docs/REVISION-3-3-3-4.md` — revisión y correcciones de las iteraciones 3.3 y 3.4

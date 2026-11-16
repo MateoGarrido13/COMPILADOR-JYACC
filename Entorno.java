@@ -69,9 +69,8 @@ public class Entorno {
         public final Map<String, FuncionDeclarada> metodos = new LinkedHashMap<>();
         // Claves resueltas (nombre:ambito) de las bases directas, en orden de fuente.
         public final List<String> heredaDe = new ArrayList<>();
-        // Nombres de bases que no estaban declaradas al leer el extends.
-        // Sirve para cerrar un ciclo cuando la otra clase aparece despues.
-        public final List<String> basesPendientes = new ArrayList<>();
+        // Una clase con herencia invalida no queda declarada al cerrarse.
+        public boolean valida = true;
 
         public ClaseDeclarada(String nombre, int linea, EntradaTabla entrada,
                 String ambitoDeclaracion) {
@@ -270,7 +269,55 @@ public class Entorno {
     }
 
     public void cerrarClase() {
-        pilaClases.poll();
+        ClaseDeclarada clase = pilaClases.poll();
+        if (clase != null && !clase.valida) {
+            descartarClase(clase);
+        }
+    }
+
+    /*
+      Una clase con extends invalido no se declara. Se quita del registro y se
+      eliminan sus entradas y las de sus miembros (atributos, metodos, parametros
+      y variables locales) para que no queden declaraciones a medias.
+     */
+    private void descartarClase(ClaseDeclarada clase) {
+        if (clase == null) {
+            return;
+        }
+        List<String> clasesAnidadas = new ArrayList<>();
+        for (ClaseDeclarada otra : clases.values()) {
+            if (esAmbitoDentroDe(otra.ambitoDeclaracion, clase.ambitoPropio)) {
+                clasesAnidadas.add(otra.clave());
+            }
+        }
+        for (String clave : clasesAnidadas) {
+            clases.remove(clave);
+        }
+        clases.remove(clase.clave());
+
+        tablaSimbolos.eliminarAmbito(clase.ambitoPropio);
+        if (clase.entrada != null) {
+            tablaSimbolos.eliminar(clase.entrada);
+        }
+        descartarClavesDeAmbito(clase.ambitoPropio, variables);
+        descartarClavesDeAmbito(clase.ambitoPropio, funciones);
+    }
+
+    private void descartarClavesDeAmbito(String ambito, Map<String, ?> mapa) {
+        List<String> claves = new ArrayList<>();
+        for (String clave : mapa.keySet()) {
+            if (esAmbitoDentroDe(TablaSimbolos.ambitoDe(clave), ambito)) {
+                claves.add(clave);
+            }
+        }
+        for (String clave : claves) {
+            mapa.remove(clave);
+        }
+    }
+
+    private boolean esAmbitoDentroDe(String ambito, String contenedor) {
+        return ambito != null && contenedor != null
+                && (ambito.equals(contenedor) || ambito.startsWith(contenedor + ":"));
     }
 
     public EntradaTabla declararAtributo(EntradaTabla id, String tipo, int linea) {
@@ -307,23 +354,16 @@ public class Entorno {
     }
 
     /*
-      Anota una base que todavia no existe. Devuelve false si el mismo nombre
-      ya estaba pendiente, para que el llamador informe la repeticion.
+      Marca la clase abierta como invalida. Al cerrarse no quedara declarada.
      */
-    public boolean anotarBasePendiente(ClaseDeclarada clase, String nombre) {
-        if (clase == null || nombre == null || nombre.isEmpty()) {
-            return false;
+    public void invalidarClase(ClaseDeclarada clase) {
+        if (clase != null) {
+            clase.valida = false;
         }
-        if (clase.basesPendientes.contains(nombre)) {
-            return false;
-        }
-        clase.basesPendientes.add(nombre);
-        return true;
     }
 
     /*
       True si `buscada` es `desde` o se alcanza siguiendo heredaDe.
-      No recorre basesPendientes: un nombre no declarado no es una clase.
      */
     public boolean alcanzaClase(ClaseDeclarada desde, ClaseDeclarada buscada) {
         if (desde == null || buscada == null) {

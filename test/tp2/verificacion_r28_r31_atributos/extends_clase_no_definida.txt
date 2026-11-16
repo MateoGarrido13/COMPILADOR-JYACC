@@ -1,0 +1,23 @@
+{{ r31: extends de una clase que todavia no fue declarada.
+   La base se resuelve al leer extends; si no existe, se informa
+   clase base no declarada 'padre' y la clase hija no se declara.
+   No se espera una definicion posterior de padre: aunque se declare despues,
+   hija ya fue rechazada. El uso posterior hija a1; informa
+   tipo no declarado 'hija' y el acceso a1.x informa que a1 no es alcanzable.
+   Tercetos: solo (CLASE, padre, --) y (FIN_CLASE, padre, --);
+   no se emiten los de hija.
+}}
+prog
+class hija
+begin
+    ulongint x;
+    extends padre;
+end;
+class padre
+begin
+    ulongint a;
+end;
+hija a1;
+begin
+    a1.x := 3$ul;
+end

@@ -26,9 +26,16 @@ Mensajes:
 - `herencia circular entre 'a' y 'a'`
 - `clase base repetida 'padre'`
 
-Si `a` nombra a `b` antes de que `b` exista, se informa la base no declarada y
-se recuerda el nombre. Cuando `b` después hereda de `a`, el error es
-`herencia circular entre 'b' y 'a'`.
+La base se resuelve en el momento de leer `extends`; no se espera una
+definición posterior. Si la clase base todavía no existe, se informa
+`clase base no declarada` y la clase que hereda no queda declarada: se quitan
+su entrada de clase, sus atributos, métodos y variables locales, y tampoco se
+emiten sus tercetos `CLASE`/`FIN_CLASE`.
+
+Por eso, en una cadena donde `a` nombra a `b` antes de que `b` exista, `a`
+queda inválida y tampoco se registra. Cuando después `b` hereda de `a`, el
+error vuelve a ser `clase base no declarada 'a'`, no una herencia circular.
+El detalle de la decisión y de la limpieza está en `docs/DEC-11.md`.
 
 ## Atributos y métodos
 
@@ -89,8 +96,9 @@ Casos en `test/tp2/verificacion_r28_r31_atributos/`.
 | `atributos_heredados_en_tabla.txt` | Dos objetos de `hija`: `a1.x:main`, `a1.padre.y:main`, `a1.padre.z:main` y las mismas entradas para `a2`, todas tipadas. |
 | `atributos_objeto_ambito_funcion.txt` | Objeto local: `a1.x:main:leer` y `a1.y:main:leer`, con el tipo de cada atributo. |
 | `herencia_circular.txt` | `herencia circular entre 'a' y 'a'`. |
-| `herencia_circular_mutua.txt` | `clase base no declarada 'b'` y `herencia circular entre 'b' y 'a'`. |
-| `clase_base_no_declarada.txt` | `clase base no declarada 'noexiste'` y `'x' no es una clase`. |
+| `herencia_circular_mutua.txt` | `clase base no declarada 'b'` y `clase base no declarada 'a'`: la primera clase no queda declarada y no se espera a que `b` aparezca. |
+| `clase_base_no_declarada.txt` | `clase base no declarada 'noexiste'` y `'x' no es una clase`. `hija` no queda declarada. |
+| `extends_clase_no_definida.txt` | `clase base no declarada 'padre'` en el `extends`; `hija` no se declara. El uso posterior `hija a1;` informa `tipo no declarado 'hija'`. |
 | `base_repetida.txt` | `clase base repetida 'padre'`. |
 
 `atributo_heredado_prefijado.txt` sigue emitiendo `(:=, a1.padre.y, 1.0)` y

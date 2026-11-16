@@ -1,6 +1,7 @@
 {{ r31: la base tiene que estar declarada y ser una clase.
    Errores esperados: clase base no declarada 'noexiste'
-   y 'x' no es una clase
+   y 'x' no es una clase.
+   Con extends invalido, hija no queda declarada.
 }}
 prog
 ulongint x;

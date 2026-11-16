@@ -1,5 +1,6 @@
 {{ r31: la misma base no puede aparecer dos veces.
-   Error esperado: clase base repetida 'padre'
+   Error esperado: clase base repetida 'padre'.
+   Con extends invalido, hija no queda declarada.
 }}
 prog
 class padre
