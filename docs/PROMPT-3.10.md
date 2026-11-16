@@ -64,7 +64,7 @@ herencia circular y base repetida.
 ## Relacion con otras decisiones
 
 - D2: las clases abren su propio ambito; los metodos abren un ambito hijo.
-- D4: la compatibilidad estructural de objetos usa el conjunto efectivo de atributos y
-  firmas, incluyendo heredados.
+- D4: la compatibilidad estructural de objetos exige la misma cantidad de atributos y el
+  mismo orden de tipos, incluyendo heredados.
 - D5: las entradas de ambitos cerrados se conservan; la visibilidad se resuelve por la
   cadena de ambitos.

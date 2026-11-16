@@ -2,7 +2,7 @@
    Error esperado: falta de prefijo para 'y' en la clase 'hija'
    Sin terceto de asignacion.
 }}
-prog
+
 class padre
 begin
     ulongint y;

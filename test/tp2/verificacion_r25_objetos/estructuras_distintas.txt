@@ -1,15 +1,17 @@
-{{ r25: ca y cb no comparten atributos. La asignacion es un error
-   estructural y no genera COPY ni :=.
+{{ r25: ca y cb no tienen la misma cantidad ni el mismo orden de tipos.
+   ca declara ulongint, doublef; cb declara un unico doublef.
+   La asignacion es un error estructural y no genera COPY ni :=.
    Error esperado: Incompatibilidad estructural
 }}
 prog
 class ca
 begin
     ulongint x;
+    doublef y;
 end;
 class cb
 begin
-    ulongint y;
+    doublef y;
 end;
 ca a1;
 cb b1;

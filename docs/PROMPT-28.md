@@ -36,7 +36,10 @@ la entrada declarada, no ese placeholder.
 La asignación a un atributo propio compara el tipo del atributo con el lado
 derecho y devuelve una `Asignacion` cuyo destino es la `ReferenciaAtributo`.
 `GeneradorTercetos` emite `(:=, objeto.atributo, valor)`. Una asignación entre
-variables de clase sigue emitiendo `(COPY, destino, origen)`.
+variables de clase sigue emitiendo `(COPY, destino, origen)`; la compatibilidad
+entre esas clases exige la misma cantidad de atributos y el mismo orden de
+tipos, según D4 (`docs/PROMPT-25.md`). Los nombres de los atributos y las firmas
+de los métodos no intervienen.
 
 El mismo tipo se usa en operadores y en `pout`. El terceto muestra
 `objeto.atributo`, por ejemplo `(pout, a1.x, --)` o `(+, a1.x, 1$ul)`.

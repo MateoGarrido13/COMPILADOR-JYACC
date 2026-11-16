@@ -82,7 +82,7 @@ El plan de prompts quedó completo con el 31. Falta el commit de ese paso.
 
 ## Prompt 25 — ejecutado
 
-La regla D4 y la forma de copia `(COPY, destino, origen)` están en `docs/PROMPT-25.md`. Los métodos agregados están en `docs/DEC-9.md`. Los casos están en `test/tp2/verificacion_r25_objetos/`. `docs/DEC-6.md` no se tocó: sigue siendo el registro de constantes.
+La regla D4 (misma cantidad de atributos y mismo orden de tipos) y la forma de copia `(COPY, destino, origen)` están en `docs/PROMPT-25.md`. Los métodos agregados están en `docs/DEC-9.md`. Los casos están en `test/tp2/verificacion_r25_objetos/`. `docs/DEC-6.md` no se tocó: sigue siendo el registro de constantes.
 
 ## Prompt 28 — ejecutado
 
@@ -107,7 +107,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Restricción de origen en `todf` | 33 | `CONVERSION_TODF` valida el tipo del operando: acepta `ulongint` o enum con base `ulongint`, y reporta `todf solo convierte enteros a doublef` para `doublef` o cualquier otro origen. El codegen `(todf, valor, --)` y el tipo `doublef` ya venían del Prompt 2B. Documentado en `docs/PROMPT-33.md`. | Media (completado) |
 | Tipos de parámetros reales | 19 | Resuelto: se verifican cantidad, orden, formal y tipos de argumentos; se propaga el tipo de retorno. Ver `docs/PROMPT-19.md`. | Completado |
 | Enumeraciones | 23 | Resuelto: valida declaración, ámbito, base homogénea, tipos de variables y pertenencia de constantes. Ver `docs/PROMPT-23.md`. | Completado |
-| Asignación estructural de objetos | 25 | Resuelto: D4 compara atributos y firmas efectivas; la asignación entre objetos emite `(COPY, destino, origen)`. Ver `docs/PROMPT-25.md`. | Completado |
+| Asignación estructural de objetos | 25 | Resuelto: D4 exige la misma cantidad de atributos y el mismo orden de tipos; la asignación entre objetos emite `(COPY, destino, origen)`. Ver `docs/PROMPT-25.md`. | Completado |
 | Acceso a atributos con punto | 28 | Resuelto: el receptor tiene que ser de tipo clase y el atributo, propio. La asignación emite `(:=, objeto.atributo, valor)`. Ver `docs/PROMPT-28.md`. | Completado |
 | Herencia múltiple con prefijo | 31 | Resuelto: la base se valida, el miembro heredado exige prefijo y la llamada aceptada emite `CALLMET`. Ver `docs/PROMPT-31.md`. | Completado |
 

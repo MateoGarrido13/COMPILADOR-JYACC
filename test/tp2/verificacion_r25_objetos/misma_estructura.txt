@@ -1,4 +1,4 @@
-{{ r25: mismo conjunto de atributos y de firmas, distinto nombre de clase.
+{{ r25: misma cantidad y orden de tipos de atributos, distinto nombre de clase.
    La asignacion es valida y genera (COPY, a1:main, b1:main).
    Sin errores.
 }}

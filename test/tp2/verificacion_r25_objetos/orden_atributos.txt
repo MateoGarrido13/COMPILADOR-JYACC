@@ -1,15 +1,17 @@
-{{ r25: el conjunto de atributos se compara por nombre y tipo, no por orden
-   de declaracion. Genera (COPY, a1:main, b1:main). Sin errores.
+{{ r25: la compatibilidad compara el orden de los tipos de atributos.
+   ca declara ulongint, doublef; cb declara doublef, ulongint.
+   Error esperado: Incompatibilidad estructural
+   Sin COPY ni :=.
 }}
 prog
 class ca
 begin
     ulongint x;
-    ulongint y;
+    doublef y;
 end;
 class cb
 begin
-    ulongint y;
+    doublef y;
     ulongint x;
 end;
 ca a1;

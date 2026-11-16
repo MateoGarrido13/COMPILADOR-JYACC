@@ -1,6 +1,7 @@
-{{ r25: mismos atributos y distinta firma de metodo.
-   Error esperado: Incompatibilidad estructural
-   Sin COPY ni :=.
+{{ r25: las firmas de los metodos no participan de la compatibilidad.
+   ca y cb tienen el mismo unico atributo ulongint, pero distinto tipo de
+   retorno en m. La asignacion es valida y genera (COPY, a1:main, b1:main).
+   Sin errores.
 }}
 prog
 class ca

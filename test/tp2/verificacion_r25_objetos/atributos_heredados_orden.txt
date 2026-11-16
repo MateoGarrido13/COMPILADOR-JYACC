@@ -1,0 +1,25 @@
+{{ r25: los atributos heredados participan en orden base primero.
+   padre aporta ulongint x; hija agrega doublef y. cb declara en ese mismo
+   orden ulongint a; doublef b. La asignacion es valida y genera
+   (COPY, h1:main, b1:main). Sin errores.
+}}
+prog
+class padre
+begin
+    ulongint x;
+end;
+class hija
+begin
+    extends padre;
+    doublef y;
+end;
+class cb
+begin
+    ulongint a;
+    doublef b;
+end;
+hija h1;
+cb b1;
+begin
+    h1 := b1;
+end

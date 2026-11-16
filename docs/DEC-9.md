@@ -11,12 +11,10 @@ Inventario de lo agregado para comparar dos clases por estructura y emitir
 | Método | Visibilidad | Para qué |
 |---|---|---|
 | `claseDe(String tipo)` | público | Devuelve la `ClaseDeclarada` de una clave ya resuelta (`ca:main`). Si el tipo es básico o enumerado, devuelve `null`, y la asignación sigue por el camino de tipos existente. |
-| `clasesCompatibles(ClaseDeclarada a, ClaseDeclarada b)` | público | D4. La misma clave de clase es compatible. Si no, exige el mismo conjunto efectivo de atributos y de firmas. |
-| `atributosEfectivos(ClaseDeclarada)` | privado | Arma el mapa nombre → tipo de los atributos, propios y heredados. |
-| `recolectarAtributos(...)` | privado | Recorre `heredaDe` y después pisa con los atributos propios del mismo nombre. |
-| `firmasEfectivas(ClaseDeclarada)` | privado | Arma el mapa nombre de método → firma. |
-| `recolectarFirmas(...)` | privado | Igual que los atributos: primero las bases, después los métodos propios. |
-| `firmaDe(FuncionDeclarada)` | privado | Firma `retorno(tipo1,tipo2)`. El nombre del parámetro no entra. El orden de los parámetros sí. |
+| `clasesCompatibles(ClaseDeclarada a, ClaseDeclarada b)` | público | D4. La misma clave de clase es compatible. Si no, exige la misma cantidad de atributos efectivos con el mismo orden de tipos. No compara nombres ni firmas de métodos. |
+| `tiposDeAtributos(ClaseDeclarada)` | privado | Devuelve la lista de tipos de los atributos efectivos, en orden base primero. Es lo que compara `clasesCompatibles`. |
+| `atributosEfectivos(ClaseDeclarada)` | privado | Arma el mapa ordenado nombre → tipo de los atributos, propios y heredados. |
+| `recolectarAtributos(...)` | privado | Recorre `heredaDe` y después pisa con los atributos propios del mismo nombre, sin moverlos de posición. |
 | `tipoDeMiembro(String)` | privado | Una clase o un enumerado se compara por su clave mangled. Un tipo básico queda como está. |
 
 ### `Verificaciones`

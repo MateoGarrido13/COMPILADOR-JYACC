@@ -219,7 +219,7 @@ public class Verificaciones {
         }
     }
 
-    // D4: las clases no coinciden en atributos efectivos o en firmas.
+    // D4: las clases no coinciden en cantidad u orden de tipos de atributos.
     public void errorEstructuraIncompatible(int linea, String destino,
             String claseDestino, String claseOrigen) {
         reporte.error(linea, "Incompatibilidad estructural en la asignación a '"

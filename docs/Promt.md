@@ -622,6 +622,10 @@ ExpresionDiferida.java, Terceto.java.
    - la variable queda con tipo = clase resuelta.
 
 2. Definir Entorno.clasesCompatibles(ClaseDeclarada a, ClaseDeclarada b):
+   > Nota de revisión: la regla vigente es la de `docs/PROMPT-25.md`: misma
+   > cantidad de atributos y mismo orden de tipos. Los nombres de atributos y
+   > las firmas de métodos no participan. El texto de abajo queda como pedido
+   > original del prompt.
    - comparar atributos efectivos: nombre y tipo, incluyendo heredados;
    - comparar métodos: nombre, tipo de retorno y tipos de parámetros;
    - dos variables del mismo tipo de clase son siempre compatibles;

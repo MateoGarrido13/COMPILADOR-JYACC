@@ -6,7 +6,7 @@ Este plan reemplaza la secuencia anterior. Los cambios respecto de la version pr
 - **D2**: clases y metodos abren ambito propio.
 - **D3 revisada**: los miembros heredados exigen prefijo explicito. El uso sin prefijo de
   un miembro heredado es error. Ver `PROMPT-3.10.md`.
-- **D4**: compatibilidad estructural por conjunto efectivo de atributos y firmas.
+- **D4**: compatibilidad estructural por misma cantidad de atributos y mismo orden de tipos.
 - **D5**: las entradas de ambitos cerrados se conservan; la visibilidad se resuelve por
   la cadena de ambitos.
 
@@ -142,7 +142,7 @@ La tabla completa plan 3.x ↔ tema ↔ archivo esta en `readme.md`.
 ## Prompt 25 - Objetos y asignacion estructural (ejecutado)
 
 - Verificar que la clase exista.
-- Compatibilidad estructural por atributos y firmas efectivas (D4).
+- Compatibilidad estructural por misma cantidad de atributos y mismo orden de tipos efectivos (D4).
 - Generar copia estructural `(COPY, destino, origen)`, no asignacion simple.
 - Documentar en `docs/PROMPT-25.md`. Casos en `test/tp2/verificacion_r25_objetos/`.
 
