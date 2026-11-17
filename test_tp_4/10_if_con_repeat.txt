@@ -1,0 +1,19 @@
+{{ TP4a: if con repeat dentro del then.
+    Verifica: labels de if y repeat anidados correctamente,
+    BF de repeat salta a salida de repeat, BI de repeat vuelve a inicio.
+}}
+prog
+ulongint flag, x, s;
+begin
+    flag := 1$ul;
+    x := 0$ul;
+    s := 0$ul;
+    if (flag > 0$ul)
+        repeat
+            s := s + x;
+            x := x + 1$ul;
+        while (x < 5$ul);
+    else
+        s := 99$ul;
+    end_if;
+end

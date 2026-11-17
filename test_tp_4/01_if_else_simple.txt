@@ -1,0 +1,15 @@
+{{ TP4a: if/else simple con ulongint.
+    Verifica: comparador >, BF con Jcc inverso (jbe), BI (jmp), etiquetas label_1/label_2,
+    SETcc (seta) y materializacion del booleano en @auxN.
+}}
+prog
+ulongint a, b, k;
+begin
+    a := 5$ul;
+    b := 3$ul;
+    if (a > b)
+        k := 1$ul;
+    else
+        k := 2$ul;
+    end_if;
+end

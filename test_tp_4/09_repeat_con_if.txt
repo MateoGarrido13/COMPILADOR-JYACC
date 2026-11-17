@@ -1,0 +1,16 @@
+{{ TP4a: repeat con if dentro del cuerpo.
+    Verifica: labels de repeat (inicio/salida) y labels de if conviven,
+    BI de if salta a etiqueta propia, BI de repeat salta a inicio.
+}}
+prog
+ulongint i, s;
+begin
+    i := 1$ul;
+    s := 0$ul;
+    repeat
+        if (i < 5$ul)
+            s := s + i;
+        end_if;
+        i := i + 1$ul;
+    while (i <= 10$ul);
+end

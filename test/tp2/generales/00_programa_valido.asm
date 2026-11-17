@@ -42,6 +42,93 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; TODO: traducir tercetos a instrucciones MASM32 (Prompt 3+)
+    ; (PROGRAMA, --, --)
+    ; (CLASE, base, --)
+    ; (METODO, m, --)
+    ; (ret, pa:main:base:m, --)
+    ; (FIN_METODO, m, --)
+    ; (FIN_CLASE, base, --)
+    ; (CLASE, hija, --)
+    ; (FIN_CLASE, hija, --)
+    ; (FUNCION, foo, --)
+    ; (ret, n:main:foo, --)
+    ; (FIN_FUNCION, foo, --)
+    mov eax, c_0_ul_ul
+    mov x_main, eax
+    mov eax, c_4294967295_ul_ul
+    mov y_main, eax
+    fld c_1_0
+    fstp z_main
+    fld c_6d_neg_1
+    fstp z_main
+    mov eax, c_2_ul_ul
+    mov y_main, eax
+    mov eax, @aux16
+    mov x_main, eax
+    mov eax, x_main
+    add eax, y_main
+    mov @aux18, eax
+    mov eax, @aux18
+    mov y_main, eax
+    mov eax, c_1_ul_ul
+    mov w_main, eax
+    mov eax, @aux19
+    imul eax, @aux20
+    mov @aux21, eax
+    mov eax, @aux21
+    mov x_main, eax
+    mov eax, c_1_ul_ul
+    mov x_main, eax
+    mov eax, @aux23
+    cmp eax, c_1_ul_ul
+    sete al
+    movzx eax, al
+    mov @aux24, eax
+    mov eax, @aux23
+    cmp eax, c_1_ul_ul
+    jne label_1
+    ; (pout, ok, --)
+label_1:
+    fild x_main
+    fstp @aux28
+    fld @aux28
+    fstp z_main
+    ; (PAR, n:main:foo, 1$ul)
+    ; (PAR, d:main:foo, 2.5)
+    ; (CALL, foo:main, 2)
+    mov eax, @aux32
+    mov x_main, eax
+    mov eax, c_2_ul_ul
+    mov p1_main, eax
+label_2:
+    mov eax, x_main
+    add eax, c_1_ul_ul
+    mov @aux36, eax
+    mov eax, @aux36
+    mov x_main, eax
+    mov eax, x_main
+    cmp eax, c_3_ul_ul
+    setb al
+    movzx eax, al
+    mov @aux38, eax
+    mov eax, x_main
+    cmp eax, c_3_ul_ul
+    jae label_3
+    jmp label_2
+label_3:
+    mov eax, x_main
+    cmp eax, c_0_ul_ul
+    seta al
+    movzx eax, al
+    mov @aux42, eax
+    mov eax, x_main
+    cmp eax, c_0_ul_ul
+    jbe label_4
+    ; (pout, hola, --)
+    jmp label_5
+label_4:
+    ; (pout, x:main, --)
+label_5:
+    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

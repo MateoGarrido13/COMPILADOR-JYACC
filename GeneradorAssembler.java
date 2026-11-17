@@ -11,16 +11,32 @@ import java.util.List;
 import java.util.Map;
 
 /*
-  Generador de archivo assembler MASM32 32-bit (TP4, Prompts 2 y 3).
+  Generador de archivo assembler MASM32 32-bit (TP4, Prompts 2, 3 y 4a).
 
   Emite un archivo .asm con:
   - encabezado .386 / .model flat, stdcall / option casemap:none /
     include masm32rt.inc
   - seccion .DATA construida desde la Tabla de Simbolos (colectarSimbolosData)
-    y los temporales @auxN con tipo conocido (ResultadoTerceto).
-  - seccion .CODE con traduccion basica de tercetos (Prompt 3):
-    asignacion :=, aritmetica + - * / (enteros via EAX, floats via FPU),
-    conversion todf. El resto de operadores se emiten como comentario.
+    y los temporales @auxN con tipo conocido (ResultadoTerceto). Ademas
+    @fpu_status DW ?, usado al comparar doublef (FSTSW/SAHF).
+  - seccion .CODE:
+    * Prompt 3: asignacion :=, aritmetica + - * / (EAX / FPU), conversion todf.
+    * Prompt 4a: comparadores (< > <= >= == !=) como booleano 0/1 en @auxN,
+      etiquetas label_N, BF (salto inverso del comparador) y BI (jmp).
+    * Resto de operadores (pout, llamadas, COPY, CLASE): comentario,
+      reservado para Prompts 4b/4c/4d.
+
+  Convenciones del Tema 13 (control de flujo, filminas 10.2 y 11.1):
+    - Los destinos de BF/BI son etiquetas IR label_N ya resueltas por
+      GeneradorTercetos; se emiten como "label_N:" en .CODE.
+    - BF sobre un comparador emite el JCC INVERSO del operador (p.ej. '>'
+      -> JBE), rehaciendo la comparacion sobre los operandos originales.
+      Es el patron de la catedra: (BF, [n],Label) -> Jcc Label.
+    - BF sobre un booleano ya materializado (no comparador) usa
+      CMP aux,0 / JE label ("BF salta si falso").
+    - Comparaciones doublef: FLD/FCOMP + FSTSW aux + MOV AX,aux + SAHF,
+      luego SETcc (booleano) o Jcc (BF). CF/ZF de la FPU se interpretan
+      como comparacion sin signo, segun la filmina 11.1.
 
   No altera la salida observable de TP3 (consola/tercetos/TS).
  */
@@ -32,6 +48,10 @@ public class GeneradorAssembler {
     private final Map<Integer, ResultadoTerceto> resultados;
     private final Map<Integer, String> auxPorTerceto = new HashMap<>();
     private final StringBuilder salida = new StringBuilder();
+
+    /* Auxiliar de 2 bytes para FSTSW en comparaciones doublef (filmina 11.1). */
+    private static final String FPU_STATUS = "@fpu_status";
+    private boolean usaFpuStatus = false;
 
     public GeneradorAssembler(List<Terceto> tercetos,
             TablaSimbolos tablaSimbolos,
@@ -58,6 +78,7 @@ public class GeneradorAssembler {
                 auxPorTerceto.put(r.getIndice(), r.nombreAuxiliar());
             }
         }
+        usaFpuStatus = calcularUsoFpuStatus();
         emitirEncabezado();
         emitirData();
         emitirCodigo();
@@ -101,6 +122,10 @@ public class GeneradorAssembler {
                 salida.append("    ").append(r.nombreAuxiliar()).append(" ")
                       .append(r.tipoAsmDato()).append(" ?\n");
             }
+        }
+        // Palabra de estado de la FPU, solo si hay comparaciones doublef.
+        if (usaFpuStatus) {
+            salida.append("    ").append(FPU_STATUS).append(" DW ?\n");
         }
         salida.append("\n");
     }
@@ -171,9 +196,27 @@ public class GeneradorAssembler {
                         emitirAsignacionSentencia(op1, op2);
                     }
                     break;
+                case "<":
+                case ">":
+                case "<=":
+                case ">=":
+                case "==":
+                case "!=":
+                    emitirComparacion(op, op1, op2, numero);
+                    break;
+                case "BF":
+                    emitirBF(op1, op2);
+                    break;
+                case "BI":
+                    emitirBI(op1);
+                    break;
                 default:
-                    // Operadores estructurales, control, IO, llamadas: comentario en Prompt 3
-                    salida.append("    ; ").append(t.visualizar()).append("\n");
+                    if (esEtiqueta(op)) {
+                        emitirEtiqueta(op);
+                    } else {
+                        // Operadores estructurales, IO y llamadas: Prompts 4b/4c/4d
+                        salida.append("    ; ").append(t.visualizar()).append("\n");
+                    }
                     break;
             }
         }
@@ -208,7 +251,18 @@ public class GeneradorAssembler {
             return "[aux" + n + "]";
         }
         if (op instanceof ReferenciaAtributo) {
-            return ((ReferenciaAtributo) op).texto;
+            ReferenciaAtributo ref = (ReferenciaAtributo) op;
+            // El atributo materializado por objeto vive en la TS con un nombre
+            // ASM unico. 'texto' es solo la vista IR (obj.atr / obj.clase.atr)
+            // y no es un identificador MASM valido. Este mapeo prepara el
+            // direccionamiento de atributos del Prompt 4d sin implementarlo.
+            if (ref.atributo != null) {
+                String nombre = tablaSimbolos.nombreAsmDe(ref.atributo);
+                if (nombre != null) {
+                    return nombre;
+                }
+            }
+            return ref.texto;
         }
         if (op instanceof String) {
             return (String) op;
@@ -322,5 +376,194 @@ public class GeneradorAssembler {
             salida.append("    mov eax, ").append(src).append("\n");
             salida.append("    mov ").append(dst).append(", eax\n");
         }
+    }
+
+    /* ---------- Control de flujo y comparaciones (Prompt 4a) ---------- */
+
+    private boolean esEtiqueta(String op) {
+        return op != null && op.startsWith("label_");
+    }
+
+    private boolean esComparador(String op) {
+        return "<".equals(op) || ">".equals(op) || "<=".equals(op)
+                || ">=".equals(op) || "==".equals(op) || "!=".equals(op);
+    }
+
+    /*
+      Tipo logico de un operando de comparacion. Se usa para decidir entre
+      CMP (ulongint) y la secuencia FPU (doublef). El tipo del terceto
+      comparador siempre es ulongint (es un booleano), por eso se consulta
+      el tipo de sus OPERANDOS, no el ResultadoTerceto del comparador.
+     */
+    private String tipoDeOperando(Object op) {
+        if (op instanceof Integer) {
+            ResultadoTerceto r = resultados.get((Integer) op);
+            return r == null ? Tipos.INDEFINIDO : r.getTipo();
+        }
+        if (op instanceof EntradaTabla) {
+            String t = ((EntradaTabla) op).tipoDato;
+            if (t == null) {
+                return Tipos.INDEFINIDO;
+            }
+            return entorno != null ? entorno.tipoEfectivo(t) : t;
+        }
+        if (op instanceof ReferenciaAtributo) {
+            String t = ((ReferenciaAtributo) op).getTipo();
+            return entorno != null ? entorno.tipoEfectivo(t) : t;
+        }
+        if (op instanceof String) {
+            String t = Tipos.tipoDeConstante((String) op);
+            return t == null ? Tipos.INDEFINIDO : t;
+        }
+        return Tipos.INDEFINIDO;
+    }
+
+    private boolean esFlotanteOperando(Object op) {
+        return Tipos.DOUBLEF.equals(tipoDeOperando(op));
+    }
+
+    private Terceto tercetoPorReferencia(Object op) {
+        if (!(op instanceof Integer)) {
+            return null;
+        }
+        int n = (Integer) op;
+        if (n < 1 || n > tercetos.size()) {
+            return null;
+        }
+        return tercetos.get(n - 1);
+    }
+
+    /*
+      @fpu_status solo se necesita cuando alguna comparacion (o su BF)
+      opera sobre doublef. Se calcula antes de emitir .DATA.
+     */
+    private boolean calcularUsoFpuStatus() {
+        for (Terceto t : tercetos) {
+            String op = t.getOperador();
+            if (esComparador(op)) {
+                if (esFlotanteOperando(t.getOp1()) || esFlotanteOperando(t.getOp2())) {
+                    return true;
+                }
+            } else if ("BF".equals(op)) {
+                Terceto cmp = tercetoPorReferencia(t.getOp1());
+                if (cmp != null && esComparador(cmp.getOperador())
+                        && (esFlotanteOperando(cmp.getOp1()) || esFlotanteOperando(cmp.getOp2()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /* SETcc que deja 1 cuando la relacion es verdadera. El mismo orden
+       sin signo sirve para la FPU tras FSTSW/SAHF (filmina 11.1). */
+    private String setccVerdadero(String comparador) {
+        switch (comparador) {
+            case "<":  return "setb";
+            case "<=": return "setbe";
+            case ">":  return "seta";
+            case ">=": return "setae";
+            case "==": return "sete";
+            case "!=": return "setne";
+            default:   return null;
+        }
+    }
+
+    /* Jcc que salta cuando la relacion es FALSA (BF = branch on false). */
+    private String jccFalso(String comparador) {
+        switch (comparador) {
+            case "<":  return "jae";   // NOT(<)  = >=
+            case "<=": return "ja";    // NOT(<=) = >
+            case ">":  return "jbe";   // NOT(>)  = <=
+            case ">=": return "jb";    // NOT(>=) = <
+            case "==": return "jne";
+            case "!=": return "je";
+            default:   return null;
+        }
+    }
+
+    /*
+      Secuencia comun de comparacion doublef segun la filmina 11.1:
+        FLD op1 / FCOMP op2 / FSTSW aux / MOV AX,aux / SAHF
+      FCOMP (en lugar de FCOM + FSTP) deja la pila FPU balanceada.
+     */
+    private void emitirComparacionFpu(String o1, String o2) {
+        salida.append("    fld ").append(o1).append("\n");
+        salida.append("    fcomp ").append(o2).append("\n");
+        salida.append("    fstsw ").append(FPU_STATUS).append("\n");
+        salida.append("    mov ax, ").append(FPU_STATUS).append("\n");
+        salida.append("    sahf\n");
+    }
+
+    /* Comparador: materializa 0/1 en el auxiliar del terceto (@auxN : DD). */
+    private void emitirComparacion(String operador, Object op1, Object op2, int numero) {
+        String destino = auxPorTerceto.get(numero);
+        String o1 = operandoAsm(op1);
+        String o2 = operandoAsm(op2);
+        String setcc = setccVerdadero(operador);
+
+        if (destino == null || setcc == null || "--".equals(o1) || "--".equals(o2)) {
+            salida.append("    ; ").append(operador)
+                  .append("  (sin auxiliar u operandos)\n");
+            return;
+        }
+
+        if (esFlotanteOperando(op1) || esFlotanteOperando(op2)) {
+            emitirComparacionFpu(o1, o2);
+        } else {
+            salida.append("    mov eax, ").append(o1).append("\n");
+            salida.append("    cmp eax, ").append(o2).append("\n");
+        }
+        salida.append("    ").append(setcc).append(" al\n");
+        salida.append("    movzx eax, al\n");
+        salida.append("    mov ").append(destino).append(", eax\n");
+    }
+
+    /*
+      BF (branch on false). Dos formas:
+      1) cond = ref a un terceto comparador: se rehace la comparacion sobre
+         los operandos originales y se salta con el JCC INVERSO. Es el patron
+         de las filminas 10.2/11.1: (BF,[n],Label) -> Jcc Label.
+      2) cond = booleano ya materializado: CMP aux,0 / JE label.
+     */
+    private void emitirBF(Object condicion, Object destino) {
+        String etiqueta = destino instanceof String ? (String) destino : null;
+        if (etiqueta == null) {
+            salida.append("    ; BF sin destino resuelto\n");
+            return;
+        }
+
+        Terceto cmp = tercetoPorReferencia(condicion);
+        if (cmp != null && esComparador(cmp.getOperador())) {
+            String o1 = operandoAsm(cmp.getOp1());
+            String o2 = operandoAsm(cmp.getOp2());
+            String jcc = jccFalso(cmp.getOperador());
+            if (jcc != null && !"--".equals(o1) && !"--".equals(o2)) {
+                if (esFlotanteOperando(cmp.getOp1()) || esFlotanteOperando(cmp.getOp2())) {
+                    emitirComparacionFpu(o1, o2);
+                } else {
+                    salida.append("    mov eax, ").append(o1).append("\n");
+                    salida.append("    cmp eax, ").append(o2).append("\n");
+                }
+                salida.append("    ").append(jcc).append(" ").append(etiqueta).append("\n");
+                return;
+            }
+        }
+
+        String cond = operandoAsm(condicion);
+        salida.append("    cmp ").append(cond).append(", 0\n");
+        salida.append("    je ").append(etiqueta).append("\n");
+    }
+
+    private void emitirBI(Object destino) {
+        if (!(destino instanceof String)) {
+            salida.append("    ; BI sin destino resuelto\n");
+            return;
+        }
+        salida.append("    jmp ").append((String) destino).append("\n");
+    }
+
+    private void emitirEtiqueta(String etiqueta) {
+        salida.append(etiqueta).append(":\n");
     }
 }

@@ -99,6 +99,7 @@ Contexto: Traduccion basica lista (Prompt 3). Completa saltos y construcciones d
 ---
 
 ### Prompt 4a — Control de flujo: etiquetas, BF, BI (Tema 13)
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_P4a.md`, `docs/TP4/TEMPLATES_ASM.md`. Archivo modificado: `GeneradorAssembler.java`; script: `test_tp_4/probar_prompt4a.sh`.
 Contexto: GeneradorAssembler emite .CODE basico. Falta traducir saltos condicionales/incondicionales.
 
 Tareas:
