@@ -11,20 +11,22 @@ import java.util.List;
 import java.util.Map;
 
 /*
-  Generador de archivo assembler MASM32 32-bit (TP4, Prompts 2, 3 y 4a).
+  Generador de archivo assembler MASM32 32-bit (TP4, Prompts 2, 3, 4a y 4b).
 
   Emite un archivo .asm con:
   - encabezado .386 / .model flat, stdcall / option casemap:none /
     include masm32rt.inc
   - seccion .DATA construida desde la Tabla de Simbolos (colectarSimbolosData)
     y los temporales @auxN con tipo conocido (ResultadoTerceto). Ademas
-    @fpu_status DW ?, usado al comparar doublef (FSTSW/SAHF).
+    @fpu_status DW ?, usado al comparar doublef (FSTSW/SAHF), y los formatos
+    fmt_ulongint / fmt_doublef / fmt_cadena, emitidos solo si se usan (4b).
   - seccion .CODE:
     * Prompt 3: asignacion :=, aritmetica + - * / (EAX / FPU), conversion todf.
     * Prompt 4a: comparadores (< > <= >= == !=) como booleano 0/1 en @auxN,
       etiquetas label_N, BF (salto inverso del comparador) y BI (jmp).
-    * Resto de operadores (pout, llamadas, COPY, CLASE): comentario,
-      reservado para Prompts 4b/4c/4d.
+    * Prompt 4b: pout -> INVOKE crt_printf con formato segun el tipo del operando.
+    * Resto de operadores (llamadas, COPY, CLASE): comentario, reservado
+      para Prompts 4c/4d.
 
   Convenciones del Tema 13 (control de flujo, filminas 10.2 y 11.1):
     - Los destinos de BF/BI son etiquetas IR label_N ya resueltas por
@@ -37,6 +39,14 @@ import java.util.Map;
     - Comparaciones doublef: FLD/FCOMP + FSTSW aux + MOV AX,aux + SAHF,
       luego SETcc (booleano) o Jcc (BF). CF/ZF de la FPU se interpretan
       como comparacion sin signo, segun la filmina 11.1.
+
+  Convencion de salida (Prompt 4b, filmina printf-variables):
+    - ulongint: INVOKE crt_printf, offset fmt_ulongint, <dword>
+    - doublef : INVOKE crt_printf, offset fmt_doublef, <qword en memoria>
+      (printf recibe el double de 64 bits directamente; no hace falta FPU)
+    - cadena  : INVOKE crt_printf, offset fmt_cadena, offset <simbolo DB>
+    No se usa buffer temporal: los operandos ya son simbolos de memoria o
+    auxiliares tipados y crt_printf los toma por valor desde la pila.
 
   No altera la salida observable de TP3 (consola/tercetos/TS).
  */
@@ -52,6 +62,14 @@ public class GeneradorAssembler {
     /* Auxiliar de 2 bytes para FSTSW en comparaciones doublef (filmina 11.1). */
     private static final String FPU_STATUS = "@fpu_status";
     private boolean usaFpuStatus = false;
+
+    /* Formatos para pout (Prompt 4b). Se emiten solo los que se usan. */
+    private static final String FMT_ULONGINT = "fmt_ulongint";
+    private static final String FMT_DOUBLEF = "fmt_doublef";
+    private static final String FMT_CADENA = "fmt_cadena";
+    private boolean usaFmtUlongint = false;
+    private boolean usaFmtDoublef = false;
+    private boolean usaFmtCadena = false;
 
     public GeneradorAssembler(List<Terceto> tercetos,
             TablaSimbolos tablaSimbolos,
@@ -79,6 +97,7 @@ public class GeneradorAssembler {
             }
         }
         usaFpuStatus = calcularUsoFpuStatus();
+        calcularFormatosPout();
         emitirEncabezado();
         emitirData();
         emitirCodigo();
@@ -126,6 +145,16 @@ public class GeneradorAssembler {
         // Palabra de estado de la FPU, solo si hay comparaciones doublef.
         if (usaFpuStatus) {
             salida.append("    ").append(FPU_STATUS).append(" DW ?\n");
+        }
+        // Formatos de impresion, solo los que necesitan los tercetos pout.
+        if (usaFmtUlongint) {
+            salida.append("    ").append(FMT_ULONGINT).append(" DB \"%u\",0\n");
+        }
+        if (usaFmtDoublef) {
+            salida.append("    ").append(FMT_DOUBLEF).append(" DB \"%f\",0\n");
+        }
+        if (usaFmtCadena) {
+            salida.append("    ").append(FMT_CADENA).append(" DB \"%s\",0\n");
         }
         salida.append("\n");
     }
@@ -210,11 +239,14 @@ public class GeneradorAssembler {
                 case "BI":
                     emitirBI(op1);
                     break;
+                case "pout":
+                    emitirPout(op1);
+                    break;
                 default:
                     if (esEtiqueta(op)) {
                         emitirEtiqueta(op);
                     } else {
-                        // Operadores estructurales, IO y llamadas: Prompts 4b/4c/4d
+                        // Operadores estructurales y llamadas: Prompts 4c/4d
                         salida.append("    ; ").append(t.visualizar()).append("\n");
                     }
                     break;
@@ -565,5 +597,65 @@ public class GeneradorAssembler {
 
     private void emitirEtiqueta(String etiqueta) {
         salida.append(etiqueta).append(":\n");
+    }
+
+    /* ---------- Salida por consola (Prompt 4b) ---------- */
+
+    /*
+      Los formatos se deciden ANTES de emitir .DATA. Se reutiliza el mismo
+      resolvedor de tipos del Prompt 4a: una referencia [n] toma el tipo del
+      ResultadoTerceto (incluye el tipo de retorno de un CALL pendiente de 4c),
+      una EntradaTabla consulta la TS/entorno y una ReferenciaAtributo su tipo.
+     */
+    private void calcularFormatosPout() {
+        usaFmtUlongint = false;
+        usaFmtDoublef = false;
+        usaFmtCadena = false;
+        for (Terceto t : tercetos) {
+            if (!"pout".equals(t.getOperador())) {
+                continue;
+            }
+            String tipo = tipoDeOperando(t.getOp1());
+            if (Tipos.CADENA.equals(tipo)) {
+                usaFmtCadena = true;
+            } else if (Tipos.DOUBLEF.equals(tipo)) {
+                usaFmtDoublef = true;
+            } else if (Tipos.ULONGINT.equals(tipo)) {
+                usaFmtUlongint = true;
+            }
+        }
+    }
+
+    /*
+      pout -> INVOKE crt_printf. La unica diferencia entre tipos es el formato
+      y el modo de pasar el operando:
+        - ulongint / doublef: valor (MASM pasa dword / qword segun el simbolo)
+        - cadena: offset del simbolo DB terminado en 0
+      No se mueve nada a EAX ni se carga la FPU: crt_printf ya recibe el valor
+      por valor en la pila, tal como muestra la filmina printf-variables.
+     */
+    private void emitirPout(Object operando) {
+        String valor = operandoAsm(operando);
+        if ("--".equals(valor) || "?".equals(valor)) {
+            salida.append("    ; pout sin operando valido\n");
+            return;
+        }
+
+        String tipo = tipoDeOperando(operando);
+        String formato;
+        if (Tipos.CADENA.equals(tipo)) {
+            formato = FMT_CADENA;
+            valor = "offset " + valor;
+        } else if (Tipos.DOUBLEF.equals(tipo)) {
+            formato = FMT_DOUBLEF;
+        } else if (Tipos.ULONGINT.equals(tipo)) {
+            formato = FMT_ULONGINT;
+        } else {
+            salida.append("    ; pout de tipo no resuelto (").append(tipo).append(")\n");
+            return;
+        }
+
+        salida.append("    invoke crt_printf, offset ").append(formato)
+              .append(", ").append(valor).append("\n");
     }
 }

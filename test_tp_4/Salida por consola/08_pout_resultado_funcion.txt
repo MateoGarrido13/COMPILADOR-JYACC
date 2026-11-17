@@ -1,0 +1,16 @@
+{{ TP4b: pout del resultado de una funcion (tema 19).
+   IR: (CALL, foo:main, 1) seguido de (pout, [n], --).
+   Verifica: se elige fmt_ulongint usando el tipo de retorno del CALL y se
+   imprime el @auxN del CALL. NOTA: el llenado de ese @auxN se implementa en
+   el Prompt 4c; aquí solo se valida la emision del pout.
+}}
+prog
+ulongint function foo(ulongint a)
+begin
+    ret(a);
+end;
+ulongint x;
+begin
+    x := 6$ul;
+    pout(foo(x)[1$ul]);
+end

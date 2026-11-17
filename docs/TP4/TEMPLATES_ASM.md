@@ -5,6 +5,7 @@ Archivo vivo: se agrega un template cada vez que un prompt del plan incorpora un
 - `11.1.Assembler_Pentium_Sintaxis.pdf` — `CMP`, `JMP`, `Jcc`, `SAHF`, `FCOM/FCOMP`, `FSTSW`; ejemplo de comparación FPU con `FLD / FCOM / FSTSW / MOV AX / SAHF / JB`.
 - `10.2.Generación de Código AS-Ass PI-Ass T-Ass.pdf` — generación de bifurcaciones desde tercetos: `(BF,[n],Label)` → `Jcc Label`, `(BI,Label,-)` → `JMP Label`, tercetos etiqueta → `Label:`.
 - `winasmtut.pdf` — estructura `.data`/`.code`, `option casemap:none`, `label:`, `end start`, `cmp`/`jz`/`jnz`/`jmp`.
+- `printf-variables.pdf` — impresión con `printf`/`StdOut`, formatos `%u`/`%f`/`%s`, `DQ` para float, y el prefijo/sufijo de pila necesario dentro de funciones.
 
 Convención general del mecanismo de **variables auxiliares** (enunciado TP4): cada terceto que produce valor se materializa como `@auxN` tipado (`DD` para `ulongint`/booleano, `DQ` para `doublef`).
 
@@ -234,6 +235,61 @@ jmp label_2
 
 ---
 
+## T-14 — Formatos de impresión en `.DATA`
+
+**Prompt**: 4b · **Caso**: programa con uno o más `pout`. Se emiten solo los usados.
+
+```asm
+.data
+    ...
+    fmt_ulongint DB "%u",0      ; si hay pout de ulongint
+    fmt_doublef DB "%f",0       ; si hay pout de doublef
+    fmt_cadena  DB "%s",0       ; si hay pout de cadena
+```
+
+**Fuente filmina**: `printf-variables.pdf` (`printf cfm$("%u\n"), ulongi`, `printf cfm$("%.20Lf\n"), floati`). Se usa `%f` en lugar de `%.20Lf` según el enunciado del Prompt 4b; se omiten CRLFs (decisión en `DECISIONES_P4b.md`). No hay buffers temporales: `crt_printf` recibe los valores por valor.
+
+---
+
+## T-15 — `pout` de `ulongint`
+
+**Prompt**: 4b · **Caso**: `(pout, x:main, --)`, `(pout, 5$ul, --)` o `(pout, [9], --)` con `@aux9 : DD`.
+
+```asm
+invoke crt_printf, offset fmt_ulongint, x_main
+invoke crt_printf, offset fmt_ulongint, c_5_ul_ul
+invoke crt_printf, offset fmt_ulongint, @aux9
+```
+
+Sin `offset` en el valor: se pasa el dword por valor. Válido para variables, constantes y auxiliares booleanos/resultado de `CALL`.
+
+---
+
+## T-16 — `pout` de `doublef`
+
+**Prompt**: 4b · **Caso**: `(pout, z:main, --)` o `(pout, [11], --)` con `@aux11 : DQ`.
+
+```asm
+invoke crt_printf, offset fmt_doublef, z_main
+invoke crt_printf, offset fmt_doublef, @aux11
+```
+
+El símbolo debe ser `DQ` (64 bits), como advierte la filmina `printf-variables.pdf`. No se carga la FPU: `INVOKE` pasa el qword directamente a `crt_printf`.
+
+---
+
+## T-17 — `pout` de cadena
+
+**Prompt**: 4b · **Caso**: `(pout, hola, --)` con `hola DB "hola",0` en `.DATA`.
+
+```asm
+invoke crt_printf, offset fmt_cadena, offset hola
+```
+
+Alternativa de la filmina: `invoke StdOut, offset hola`. Se eligió `crt_printf` para uniformidad con los tipos numéricos. El `offset` del valor es obligatorio (si no, se pasarían los primeros 4 bytes del contenido como puntero).
+
+---
+
 ## Mapa rápido: comparador → `SETcc` (verdadero) / `Jcc` de BF (falso)
 
 | Comparador | `SETcc` | `Jcc` en BF | Condición de flags |
@@ -253,7 +309,6 @@ Válido para `ulongint` (`CMP`) y para `doublef` (`FCOMP` + `FSTSW` + `SAHF`), p
 
 | Template | Prompt | Caso previsto |
 |---|---|---|
-| `pout` de ulongint / doublef / cadena | 4b | `invoke crt_printf, offset fmt_..., valor` (`printf-variables.pdf`) |
 | Prólogue/epílogue y stack frame | 4c | `push ebp / mov ebp,esp / ... / leave / ret` |
 | `CALL` / `CALLMET` / `PAR` / `ret` | 4c | `call fn_x`, `add esp, n*4`, retorno en `EAX`/`ST(0)` |
 | Layout de objetos y `COPY` | 4d | slots `DD`/`DQ`, `rep movsd` |

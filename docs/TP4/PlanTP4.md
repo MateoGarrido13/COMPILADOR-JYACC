@@ -118,6 +118,7 @@ Entrega: mapeo comparador->instrucciones MASM en DECISIONES_P4a.md, casos .asm g
 ---
 
 ### Prompt 4b — Salida por consola: pout
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_P4b.md`, `docs/TP4/TEMPLATES_ASM.md` (T-14..T-17). Archivo modificado: `GeneradorAssembler.java`; casos: `test_tp_4/Salida por consola/`; script: `test_tp_4/probar_prompt4b.sh`.
 Contexto: Terceto `pout` ya se genera. Falta emision MASM32rt para ulongint/doublef/cadena.
 
 Tareas:

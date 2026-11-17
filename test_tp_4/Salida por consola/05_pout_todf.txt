@@ -1,0 +1,10 @@
+{{ TP4b: pout del resultado de todf (tema 33).
+   Verifica: el tipo de [n] se toma del ResultadoTerceto (DQ), por lo que
+   se elige fmt_doublef aunque la variable origen sea ulongint.
+}}
+prog
+ulongint x;
+begin
+    x := 9$ul;
+    pout(todf(x));
+end
