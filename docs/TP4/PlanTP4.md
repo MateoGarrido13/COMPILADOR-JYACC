@@ -1,5 +1,5 @@
 ### Estado base
-- Rama/HEAD: tp4, commit 944e3aa — Prompt 1: adaptación de TS/Tercetos para ASM (TP4). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
+- Rama/HEAD: tp4, commit db80077 — P2: produccion de los '.asm' (TP4 Prompt 2). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
 - Pipeline actual (Compilador.java): AnalizadorLexico -> Parser+AccionesSemanticas -> Verificaciones/Entorno -> GeneradorTercetos -> salida stdout (fuente numerado, tokens, estructuras, errores, TS, tercetos). Genera archivo .asm esqueleto (encabezado, .DATA, .CODE mínimo) mediante GeneradorAssembler. Main toma [ruta] o input.txt.
 
 ### IR / Tercetos (Terceto.java, GeneradorTercetos.java)

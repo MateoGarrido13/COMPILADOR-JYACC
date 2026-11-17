@@ -38,9 +38,9 @@ Correspondencia entre iteración **3.x** del plan y tema del grupo:
 | Campo | Valor |
 |-------|-------|
 | Rama | `tp4` |
-| Último commit en `HEAD` | `944e3aa — Prompt 1: adaptación de TS/Tercetos para ASM (TP4)` |
-| Último commit de código del plan | TP3: `71cdbcd 3.10: Herencia múltiple con documentacion alineada` (rama `SEMANTICAStp03`); TP4: `944e3aa Prompt 1` (rama `tp4`) |
-| Prompts ejecutados | TP3: 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 (completado en rama `SEMANTICAStp03`); TP4: Prompt 1 (rama `tp4`) |
+| Último commit en `HEAD` | `db80077 — P2: produccion de los '.asm' (TP4 Prompt 2)` |
+| Último commit de código del plan | TP3: `71cdbcd 3.10: Herencia múltiple con documentacion alineada` (rama `SEMANTICAStp03`); TP4: `db80077 P2: produccion de los '.asm'` (rama `tp4`) |
+| Prompts ejecutados | TP3: 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 (completado en rama `SEMANTICAStp03`); TP4: Prompt 1 y Prompt 2 (rama `tp4`) |
 | Prompt en curso / siguiente | Prompt 3 de TP4 — Traducción básica a `.CODE`: aritmética, asignación y `todf` |
 | Commits del plan completados | TP3: 15 de 15; TP4: 2 de 6 |
 
