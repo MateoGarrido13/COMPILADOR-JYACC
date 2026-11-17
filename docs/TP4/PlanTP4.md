@@ -1,6 +1,6 @@
 ### Estado base
-- Rama/HEAD: SEMANTICAStp03, commit alineando_documentacion_y_pruebas. Compila sin .class versionados (.gitignore los ignora). README declara temas 13,17,19,23,25,28,31,33 ejecutados.
-- Pipeline actual (Compilador.java): AnalizadorLexico -> Parser+AccionesSemanticas -> Verificaciones/Entorno -> GeneradorTercetos -> salida stdout (fuente numerado, tokens, estructuras, errores, TS, tercetos). No genera .asm. Main toma [ruta] o input.txt.
+- Rama/HEAD: tp4, commit 944e3aa — Prompt 1: adaptación de TS/Tercetos para ASM (TP4). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
+- Pipeline actual (Compilador.java): AnalizadorLexico -> Parser+AccionesSemanticas -> Verificaciones/Entorno -> GeneradorTercetos -> salida stdout (fuente numerado, tokens, estructuras, errores, TS, tercetos). Genera archivo .asm esqueleto (encabezado, .DATA, .CODE mínimo) mediante GeneradorAssembler. Main toma [ruta] o input.txt.
 
 ### IR / Tercetos (Terceto.java, GeneradorTercetos.java)
 - Terceto(op, op1, op2) 1-based en ListaTercetos. Operandos: EntradaTabla (se imprime lexema), Integer = ref [n], String = etiqueta/literal textual (p.ej. cant params en CALL), ReferenciaAtributo (objeto.atributo/objeto.clase.atributo), null -> --.
@@ -31,6 +31,7 @@
 Nota: cada prompt asume trabajar sobre estado actual y dejar cambios chicos, compilables, con pruebas focalizadas. Ajustar nombres/rutas reales encontrados en auditoria.
 
 ### Prompt 1 — Auditoría fina y adaptación de TS/Tercetos para ASM
+Estado: ✅ Ejecutado (commit `944e3aa`). Ver `docs/TP4/PROMPT-1.md`, `docs/TP4/IR_CONTRATO.md`, `docs/TP4/DECISIONES_P1.md`.
 Contexto: TP4 Grupo 43 (MASM32 32-bit, vars auxiliares). Revisa GeneradorTercetos.java, Terceto.java, TablaSimbolos.java, EntradaTabla.java, Entorno.java, Tipos.java, ReferenciaAtributo.java, LlamadaFuncion.java.
 
 Tareas:
@@ -49,6 +50,7 @@ Tareas:
 Entrega: diff, resumen de decisiones de representacion ASM-level (nombres, temporales, tipos .DATA), y riesgos abiertos para siguientes prompts.
 
 ### Prompt 2 — Esqueleto GeneradorAssembler y sección .DATA
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_P2.md`. Archivos: `GeneradorAssembler.java` (nuevo), `Compilador.java` (modificado).
 Contexto: Partiendo del Prompt 1 (TS/IR adaptados). Grupo 43, MASM32 32-bit, variables auxiliares.
 
 Tareas:

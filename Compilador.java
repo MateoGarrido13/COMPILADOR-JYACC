@@ -49,6 +49,25 @@ public class Compilador {
         GeneradorTercetos generador = new GeneradorTercetos(reporte);
         generador.generar(tablaAcciones.getReducciones());
 
+        // TP4 Prompt 2: generar archivo .asm esqueleto (encabezado + .DATA + .CODE vacio)
+        String rutaAsm = rutaFuente;
+        int punto = rutaFuente.lastIndexOf('.');
+        if (punto >= 0) {
+            rutaAsm = rutaFuente.substring(0, punto) + ".asm";
+        } else {
+            rutaAsm = rutaFuente + ".asm";
+        }
+        try {
+            GeneradorAssembler ensamblador = new GeneradorAssembler(
+                    generador.getTercetos(),
+                    this.tablaSimbolos,
+                    this.entorno,
+                    generador.getResultados());
+            ensamblador.escribirArchivo(rutaAsm);
+        } catch (IOException e) {
+            System.err.println("No se pudo generar el archivo ASM: " + e.getMessage());
+        }
+
         String tokens = RegistroTokens.contenido();
         String estructuras = reporte.contenidoEstructuras();
         String intermedio = generador.contenido();

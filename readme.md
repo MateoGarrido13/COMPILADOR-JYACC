@@ -37,12 +37,12 @@ Correspondencia entre iteración **3.x** del plan y tema del grupo:
 
 | Campo | Valor |
 |-------|-------|
-| Rama | `SEMANTICAStp03` |
-| Último commit en `HEAD` | `alineando_documentacion_y_pruebas` |
-| Último commit de código del plan | Prompt 3.9 — acceso tradicional a atributos |
-| Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 |
-| Prompt en curso / siguiente | Ninguno. Falta el commit del Prompt 3.10 (tema 31). |
-| Commits del plan completados | 14 de 15 |
+| Rama | `tp4` |
+| Último commit en `HEAD` | `944e3aa — Prompt 1: adaptación de TS/Tercetos para ASM (TP4)` |
+| Último commit de código del plan | TP3: `71cdbcd 3.10: Herencia múltiple con documentacion alineada` (rama `SEMANTICAStp03`); TP4: `944e3aa Prompt 1` (rama `tp4`) |
+| Prompts ejecutados | TP3: 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 (completado en rama `SEMANTICAStp03`); TP4: Prompt 1 (rama `tp4`) |
+| Prompt en curso / siguiente | Prompt 3 de TP4 — Traducción básica a `.CODE`: aritmética, asignación y `todf` |
+| Commits del plan completados | TP3: 15 de 15; TP4: 2 de 6 |
 
 ### Reglas de granularidad para commits
 
@@ -78,7 +78,18 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 
 ### Plan
 
-El plan de prompts quedó completo con el 31. Falta el commit de ese paso.
+El plan de prompts de TP3 quedó completo con el 31 (rama `SEMANTICAStp03`). El proyecto continúa en la rama `tp4` con el plan de TP4 (ver `docs/TP4/PlanTP4.md`).
+
+## TP4 — Plan de prompts (rama `tp4`)
+
+| # | Prompt | Estado | Archivo de decisiones | Tests |
+|---|--------|--------|----------------------|-------|
+| 1 | Auditoría fina y adaptación de TS/Tercetos para ASM | ✅ **Ejecutado** | `docs/TP4/PROMPT-1.md`, `docs/TP4/IR_CONTRATO.md`, `docs/TP4/DECISIONES_P1.md` | `test/tp2/generales/00_programa_valido.txt`, `test/TP3_y_TP4/ITERACION/01_repeat_simple.txt`, `test/tp2/verificacion_r17_asig_expresiones/estructura_respetada.txt`, `test/tp2/verificacion_r33_conversion/todf_a_entero.txt`, `test/tp2/verificacion_r25_objetos/misma_estructura.txt`, `test/tp2/verificacion_r28_r31_atributos/metodo_heredado_prefijado_con_orden.txt` |
+| 2 | Esqueleto GeneradorAssembler y sección `.DATA` | ✅ **Ejecutado** | `docs/TP4/DECISIONES_P2.md` | `test/tp2/generales/00_programa_valido.txt` (genera `.asm` esqueleto) |
+| 3 | Traducción básica a `.CODE`: aritmética, asignación y `todf` | ⏳ Pendiente | — | — |
+| 4 | Control de flujo y temas particulares (13,19,25,28,31) en ASM | ⏳ Pendiente | — | — |
+| 5 | Errores en tiempo de ejecución Grupo 43 (b, e, f, h) | ⏳ Pendiente | — | — |
+| 6 | Integración final, contrato de salida TP4 y suite de pruebas | ⏳ Pendiente | — | — |
 
 ## Prompt 25 — ejecutado
 
@@ -181,3 +192,10 @@ Cada prompt ejecutado deja su archivo de decisiones en `docs/`:
  - `docs/DEC-11.md` — herencia invalida sin espera de la clase base
  - `docs/REVISION-3-1-3-2.md` — revisión y correcciones de las iteraciones 3.1 y 3.2 (contenido en la sección "Revisión de las iteraciones 3.1 y 3.2" de `docs/PROMPT-6-8.md`)
  - `docs/REVISION-3-3-3-4.md` — revisión y correcciones de las iteraciones 3.3 y 3.4
+
+### TP4 (rama `tp4`)
+
+- `docs/TP4/PROMPT-1.md` — auditoría fina y adaptación de TS/Tercetos para ASM
+- `docs/TP4/IR_CONTRATO.md` — contrato IR (tercetos, operandos, operadores, representaciones)
+- `docs/TP4/DECISIONES_P1.md` — decisiones y cambios del Prompt 1 TP4
+- `docs/TP4/PlanTP4.md` — plan incremental de prompts TP4
