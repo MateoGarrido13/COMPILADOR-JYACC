@@ -94,21 +94,103 @@ Entrega: mapeo operador->instrucciones en DECISIONES_P3.md, caso probado, limita
 ### Prompt 4 — Control de flujo y temas particulares (13,19,25,28,31) en ASM
 Contexto: Traduccion basica lista (Prompt 3). Completa saltos y construcciones del Grupo 43.
 
-Tareas:
-1) Control de flujo (Tema 13): traduce etiquetas, `BF` y `BI` a MASM (`cmp/test/jcc/jmp` segun tipo de condicion/comparador). Soporta `IF/ELSE/END_IF` y `REPEAT-WHILE` tal como los emite GeneradorTercetos hoy.
-2) `pout`: emite salida por consola para ulongint/doublef/cadena usando rutinas MASM32rt apropiadas (p.ej. printf/StdOut) con formatos y buffers/temporales necesarios en .DATA.
-3) Funciones/metodos e invocaciones (Tema 19 + convencion actual):
-   - traduce `PAR`, `CALL`, `CALLMET`, `ret`, `FUNCION/FIN_FUNCION`, `METODO/FIN_METODO` segun el modelo elegido (stack/stdcall-like interno o convencion propia documentada) respetando orden de evaluacion ya codificado en IR.
-   - resuelve acceso a parametros/retorno.
-   - si hay limitacion de recursion/profundidad fuera de alcance, declarala (runtime recursion es chequeo i, no asignado al grupo 43).
-4) Objetos/atributos (Temas 25,28,31):
-   - `COPY` para asignacion estructural entre objetos compatibles (copia de campos/slots segun layout definido).
-   - lectura/escritura de `ReferenciaAtributo` (`obj.atr`, `obj.clase.atr`) en asignaciones/expresiones donde aplique.
-   - define layout de objeto/atributos en .DATA o convencion de direccionamiento y documentala.
-5) Ignora/no-op controlado para marcadores estructurales no ejecutables si corresponde (`CLASE/FIN_CLASE`) siempre que no pierdas semantica necesaria.
-6) Pruebas dirigidas: if/else, repeat while, invocacion con orden, atributo propio/heredado, asignacion de objetos.
+#### Sub-prompts atomizados (ejecutar en orden 4a -> 4b -> 4c -> 4d -> 4e)
 
-Entrega: convencion de llamada y layout objetos, ejemplos .asm, casos cubiertos/no cubiertos.
+---
+
+### Prompt 4a — Control de flujo: etiquetas, BF, BI (Tema 13)
+Contexto: GeneradorAssembler emite .CODE basico. Falta traducir saltos condicionales/incondicionales.
+
+Tareas:
+1) Implementar `emitirEtiqueta(String label)` para tercetos `label_N` -> `label_N:` en .CODE.
+2) Implementar `emitirBF(Object condicion, String etiquetaSalida)`:
+   - condicion viene de terceto comparador (`<`, `>`, `<=`, `>=`, `==`, `!=`) que produce ulongint 0/1.
+   - usar `cmp`/`test` + `jz`/`jnz` (BF salta si falso = 0) para enteros.
+   - para doublef: `fcom`/`fcompp` + `fstsw`/`sahf` + `jcc` apropiado.
+   - respetar tipo de la comparacion (ver `ResultadoTerceto.tipo`).
+3) Implementar `emitirBI(String etiquetaDestino)` -> `jmp etiquetaDestino`.
+4) En `emitirCodigo()`, despachar operadores `label_*`, `BF`, `BI` a sus emisores.
+5) Pruebas: `if/else`, `repeat-while` anidados, condiciones con ulongint y doublef.
+
+Entrega: mapeo comparador->instrucciones MASM en DECISIONES_P4a.md, casos .asm generados.
+
+---
+
+### Prompt 4b — Salida por consola: pout
+Contexto: Terceto `pout` ya se genera. Falta emision MASM32rt para ulongint/doublef/cadena.
+
+Tareas:
+1) En `.DATA`: agregar buffers/format strings necesarios (`fmt_ulongint db "%u",0`, `fmt_doublef db "%f",0`, `fmt_cadena db "%s",0`, buffer temporal si hace falta).
+2) Implementar `emitirPout(Object operando)`:
+   - `EntradaTabla`/`@auxN`/`ReferenciaAtributo` -> resolver tipo (ulongint/doublef/cadena).
+   - ulongint: `invoke crt_printf, offset fmt_ulongint, valor` (valor en EAX o memoria).
+   - doublef: `invoke crt_printf, offset fmt_doublef, valor` (valor en memoria DQ, FPU no necesario para printf).
+   - cadena: `invoke crt_printf, offset fmt_cadena, offset nombreAsmCadena`.
+   - usar `invoke StdOut`/`printf` compatible con masm32rt.inc.
+3) En `emitirCodigo()`, despachar `pout`.
+4) Pruebas: pout de variable, constante, expresion, cadena literal, resultado de funcion.
+
+Entrega: convencion de formatos/buffers en DECISIONES_P4b.md, casos .asm.
+
+---
+
+### Prompt 4c — Funciones/metodos: PAR, CALL, CALLMET, ret, FUNCION/FIN_FUNCION, METODO/FIN_METODO (Tema 19)
+Contexto: Tercetos de invocacion ya existen. Falta convencion de llamada y traduccion.
+
+Tareas:
+1) Definir convencion de llamada interna (stack, stdcall-like, 32-bit):
+   - `FUNCION nombre` / `METODO nombre`: prologue (`push ebp; mov ebp,esp; sub esp, locals`), label `fn_nombre:` / `mt_nombre:`.
+   - Parametros en pila (caller limpia o callee limpia? documentar). `PAR` empuja valor real en pila en orden de evaluacion.
+   - `CALL func, cant`: `call fn_func` + `add esp, cant*4` (si caller limpia). Resultado en EAX (ulongint) o ST(0)/memoria (doublef) -> mover a `@auxN`.
+   - `CALLMET obj, metodo`: resolver direccion metodo (vtable o llamada directa segun herencia), `this` en ECX o pila. Documentar decision.
+   - `ret`: `mov eax, valor` (ulongint) o `fld valor` + dejar en ST(0) (doublef) + `leave; ret n` (callee limpia) o solo `ret` (caller limpia). Elegir y documentar.
+   - `FIN_FUNCION` / `FIN_METODO`: epilogue + label fin.
+2) Implementar emisores en GeneradorAssembler.
+3) Acceso a parametros dentro de funcion: `ebp+8`, `ebp+12`... o via nombre ASM del parametro en TS.
+4) Variables locales: espacio en stack frame, no en .DATA.
+5) Pruebas: funcion con params/retorno ulongint/doublef, llamada anidada, metodo con `this`, orden de evaluacion PAR.
+
+Entrega: convencion completa en DECISIONES_P4c.md, diagrama stack frame, casos .asm.
+
+---
+
+### Prompt 4d — Objetos/atributos: COPY, ReferenciaAtributo, layout (Temas 25,28,31)
+Contexto: Tercetos `COPY`, `:=` con `ReferenciaAtributo`, acceso `obj.atr` / `obj.clase.atr`.
+
+Tareas:
+1) Definir layout de objeto en memoria (`.DATA` o stack):
+   - Cada objeto = bloque contiguo de slots (DD para ulongint/enum, DQ para doublef, DD para ref a objeto/clase).
+   - Orden: atributos heredados (bases en orden) + atributos propios. Slot size = 4 o 8 segun tipo.
+   - Offsets fijos por clase (calculados en Entorno/TS al cerrar clase).
+2) Extender `TablaSimbolos.colectarSimbolosData` / `EntradaTabla` para emitir variables objeto como estructura (varias lineas DD/DQ con offsets o `STRUCT` MASM). Simplificacion: emitir cada atributo materializado como variable plana `obj_atr` (ya existe via `declararAtributoDeObjeto`).
+3) `COPY`: copia byte-a-byte o campo-a-campo entre objetos compatibles (mismo layout). Usar `rep movsd` / loop `mov` por slots.
+4) `ReferenciaAtributo` en asignacion/lectura:
+   - `operandoAsm` ya devuelve `texto` (ej. `a1.x` o `a1.Base.y`). Mapear a nombre ASM del atributo materializado en TS (`v_a1_x`, `v_a1_Base_y`).
+   - Lectura: `mov eax, [v_a1_x]` / `fld qword ptr [v_a1_y]`.
+   - Escritura: `mov [v_a1_x], eax` / `fstp qword ptr [v_a1_y]`.
+5) `CLASE` / `FIN_CLASE`: no-op en .CODE (solo marcadores), pero asegurar que atributos de objetos queden en .DATA.
+6) Pruebas: asignacion estructural `a1 := a2`, lectura/escritura `a1.x := 5`, `pout a1.Base.y`, herencia multiple.
+
+Entrega: layout objetos, offsets, mapeo ReferenciaAtributo->ASM en DECISIONES_P4d.md, casos .asm.
+
+---
+
+### Prompt 4e — Integracion y pruebas Prompt 4
+Contexto: Sub-prompts 4a-4d implementados. Unificar y probar.
+
+Tareas:
+1) Revisar `emitirCodigo()`: despacho completo de todos los operadores del IR (sin `default` comentado).
+2) Ajustar `.DATA` para incluir format strings pout, temporales extra si hacen falta.
+3) Casos integrales dirigidos:
+   - `if/else` con condiciones ulongint/doublef, anidados.
+   - `repeat-until` / `repeat-while`.
+   - Funcion recursiva (factorial) + llamada metodo.
+   - Objetos con herencia multiple, COPY, acceso prefijado.
+   - `pout` combinado con expresiones y llamadas.
+4) Verificar que salida TP3 (consola) no se rompe: errores, tercetos, TS.
+5) Documentar limitaciones conocidas (recursion profundidad, vtable no implementado, etc.).
+
+Entrega: diff final Prompt 4, matriz de pruebas, DECISIONES_P4.md consolidado.
 
 ### Prompt 5 — Errores en tiempo de ejecución Grupo 43 (b, e, f, h)
 Contexto: Backend ASM funcional (Prompt 4). Grupo 43 requiere chequeos runtime: b,e,f,h.
