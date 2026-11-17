@@ -5,13 +5,19 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
-  Generador de archivo assembler MASM32 32-bit (TP4, Prompts 2, 3, 4a y 4b).
+  Generador de archivo assembler MASM32 32-bit (TP4, Prompts 2, 3, 4a, 4b y 4c).
 
   Emite un archivo .asm con:
   - encabezado .386 / .model flat, stdcall / option casemap:none /
@@ -25,8 +31,9 @@ import java.util.Map;
     * Prompt 4a: comparadores (< > <= >= == !=) como booleano 0/1 en @auxN,
       etiquetas label_N, BF (salto inverso del comparador) y BI (jmp).
     * Prompt 4b: pout -> INVOKE crt_printf con formato segun el tipo del operando.
-    * Resto de operadores (llamadas, COPY, CLASE): comentario, reservado
-      para Prompts 4c/4d.
+    * Prompt 4c: funciones/metodos con stack frame (EBP), argumentos en pila,
+      retorno en EAX/ST(0), llamadas directas y 'this' implicito en [ebp+8].
+    * Resto de operadores (COPY, CLASE): comentario, reservado para Prompt 4d.
 
   Convenciones del Tema 13 (control de flujo, filminas 10.2 y 11.1):
     - Los destinos de BF/BI son etiquetas IR label_N ya resueltas por
@@ -47,6 +54,23 @@ import java.util.Map;
     - cadena  : INVOKE crt_printf, offset fmt_cadena, offset <simbolo DB>
     No se usa buffer temporal: los operandos ya son simbolos de memoria o
     auxiliares tipados y crt_printf los toma por valor desde la pila.
+
+  Convencion de llamada interna (Prompt 4c), cdecl-like de 32 bits:
+    - EL CALLER reserva y limpia el area de argumentos. No se usa PROC/ret n
+      para que la limpieza sea explicita y sirva igual para varargs.
+    - Prologue: 'push ebp / mov ebp,esp / sub esp,frame'. 'leave / ret' en
+      cada 'ret' y como sufijo de FIN_FUNCION/FIN_METODO.
+    - Argumentos por ranuras segun el ORDEN DE DECLARACION (no de evaluacion).
+      Los PAR se materializan en orden IR (orden de evaluacion) pero escriben
+      en su ranura formal; asi 'ebp+8' siempre es el primer parametro.
+    - ulongint = 4 bytes; doublef = 8 bytes (dos dwords, high primero).
+    - Metodos: 'this' es un argumento oculto en [esp] / [ebp+8]; los formales
+      arrancan en [esp+4] / [ebp+12]. El receptor se pasa como OFFSET (4d
+      definira el layout real del objeto; aqui se reserva un DD placeholder).
+    - Despacho directo: el IR ya trae el metodo resuelto (prefijo/herencia),
+      por eso no hay vtable. Etiquetas fn_<clave> y mt_<clave>.
+    - Parametros y variables locales NO se emiten en .DATA: viven en el stack
+      frame y 'operandoAsm' los resuelve como [ebp+desplazamiento].
 
   No altera la salida observable de TP3 (consola/tercetos/TS).
  */
@@ -71,6 +95,30 @@ public class GeneradorAssembler {
     private boolean usaFmtDoublef = false;
     private boolean usaFmtCadena = false;
 
+    /* ---------- Prompt 4c: funciones, metodos y stack frame ---------- */
+
+    private static class ParPendiente {
+        final EntradaTabla formal;
+        final Object real;
+
+        ParPendiente(EntradaTabla formal, Object real) {
+            this.formal = formal;
+            this.real = real;
+        }
+    }
+
+    private final Map<Integer, Entorno.FuncionDeclarada> declaracionPorTerceto = new HashMap<>();
+    private final Map<String, Entorno.FuncionDeclarada> declaracionPorClave = new HashMap<>();
+    private final Map<Entorno.FuncionDeclarada, String> etiquetaPorDeclaracion = new HashMap<>();
+    private final Map<Entorno.FuncionDeclarada, Integer> framePorDeclaracion = new HashMap<>();
+    // Simbolos TS (parametros y locales) mapeados a su direccion [ebp+/-n].
+    private final Map<EntradaTabla, String> slotStackPorSimbolo = new HashMap<>();
+    // PAR se materializa recien en el CALL, para reservar las ranuras por formal.
+    private final List<ParPendiente> parametrosPendientes = new ArrayList<>();
+    // Objetos usados como receptor: placeholder DD hasta el layout del Prompt 4d.
+    private final Set<String> objetosThis = new LinkedHashSet<>();
+    private Entorno.FuncionDeclarada funcionActual = null;
+
     public GeneradorAssembler(List<Terceto> tercetos,
             TablaSimbolos tablaSimbolos,
             Entorno entorno,
@@ -91,11 +139,22 @@ public class GeneradorAssembler {
     public String generar() {
         salida.setLength(0);
         auxPorTerceto.clear();
+        declaracionPorTerceto.clear();
+        declaracionPorClave.clear();
+        etiquetaPorDeclaracion.clear();
+        framePorDeclaracion.clear();
+        slotStackPorSimbolo.clear();
+        parametrosPendientes.clear();
+        objetosThis.clear();
+        funcionActual = null;
         for (ResultadoTerceto r : resultados.values()) {
             if (r.produceValor() && r.tipoAsmDato() != null) {
                 auxPorTerceto.put(r.getIndice(), r.nombreAuxiliar());
             }
         }
+        prepararDeclaraciones();
+        prepararStackFrames();
+        prepararObjetosThis();
         usaFpuStatus = calcularUsoFpuStatus();
         calcularFormatosPout();
         emitirEncabezado();
@@ -130,10 +189,23 @@ public class GeneradorAssembler {
     private void emitirData() {
         salida.append(".data\n");
         List<TablaSimbolos.SimboloDataAsm> simbolos = tablaSimbolos.colectarSimbolosData(entorno);
+        Set<String> nombresEnData = new HashSet<>();
         for (TablaSimbolos.SimboloDataAsm s : simbolos) {
+            // 4c: parametros y variables locales viven en el stack frame.
+            if ("dato".equals(s.categoria) && esSimboloDeStack(s.entrada)) {
+                continue;
+            }
             salida.append("    ").append(s.nombreAsm).append(" ")
                   .append(s.tipoAsm).append(" ")
                   .append(valorInicial(s)).append("\n");
+            nombresEnData.add(s.nombreAsm);
+        }
+        // Receptores de CALLMET: solo un puntero mientras 4d no defina el layout.
+        for (String nombre : objetosThis) {
+            if (!nombresEnData.contains(nombre)) {
+                salida.append("    ").append(nombre).append(" DD ?")
+                      .append(" ; this (layout en 4d)\n");
+            }
         }
         // Temporales implicitos @auxN con tipo ASM conocido (DD/DQ)
         for (ResultadoTerceto r : resultados.values()) {
@@ -242,11 +314,31 @@ public class GeneradorAssembler {
                 case "pout":
                     emitirPout(op1);
                     break;
+                case "FUNCION":
+                case "METODO":
+                    emitirPrologo(numero, op, op1);
+                    break;
+                case "FIN_FUNCION":
+                case "FIN_METODO":
+                    emitirFinFuncion(numero);
+                    break;
+                case "ret":
+                    emitirRet(op1);
+                    break;
+                case "PAR":
+                    emitirPar(op1, op2);
+                    break;
+                case "CALL":
+                    emitirLlamada(textoDeOperando(op1), op2, numero, false, null);
+                    break;
+                case "CALLMET":
+                    emitirLlamada(textoDeOperando(op2), null, numero, true, op1);
+                    break;
                 default:
                     if (esEtiqueta(op)) {
                         emitirEtiqueta(op);
                     } else {
-                        // Operadores estructurales y llamadas: Prompts 4c/4d
+                        // Operadores estructurales de objetos: Prompt 4d.
                         salida.append("    ; ").append(t.visualizar()).append("\n");
                     }
                     break;
@@ -272,7 +364,16 @@ public class GeneradorAssembler {
             return "--";
         }
         if (op instanceof EntradaTabla) {
-            return tablaSimbolos.nombreAsmDe((EntradaTabla) op);
+            EntradaTabla entrada = (EntradaTabla) op;
+            // Dentro de una funcion, parametros y locales son desplazamientos
+            // del frame; fuera de ella se mantienen como simbolos de .DATA.
+            if (funcionActual != null) {
+                String slot = slotStackPorSimbolo.get(entrada);
+                if (slot != null) {
+                    return slot;
+                }
+            }
+            return tablaSimbolos.nombreAsmDe(entrada);
         }
         if (op instanceof Integer) {
             int n = (Integer) op;
@@ -657,5 +758,400 @@ public class GeneradorAssembler {
 
         salida.append("    invoke crt_printf, offset ").append(formato)
               .append(", ").append(valor).append("\n");
+    }
+
+    /* ---------- Funciones y metodos (Prompt 4c) ---------- */
+
+    /*
+      Las declaraciones del IR traen solo el nombre corto ('foo', 'm'), mientras
+      que los CALL traen la clave completa ('foo:main', 'm:main:padre'). Se arma
+      un mapo desde la TS/Entorno y se consume en orden de aparicion para no
+      confundir metodos con el mismo nombre en clases distintas.
+    */
+    private void prepararDeclaraciones() {
+        if (tablaSimbolos == null || entorno == null) {
+            return;
+        }
+        Map<String, Deque<Entorno.FuncionDeclarada>> porNombreApertura = new HashMap<>();
+        Map<String, Deque<Entorno.FuncionDeclarada>> porNombreCierre = new HashMap<>();
+        Set<Entorno.FuncionDeclarada> vistas =
+                Collections.newSetFromMap(new HashMap<Entorno.FuncionDeclarada, Boolean>());
+
+        for (EntradaTabla e : tablaSimbolos.entradas()) {
+            if (e == null || !e.declarado || e.uso != EntradaTabla.Uso.FUNCION) {
+                continue;
+            }
+            registrarDeclaracion(entorno.getFuncion(e.lexema),
+                    porNombreApertura, porNombreCierre, vistas);
+        }
+        // Los metodos viven en la ClaseDeclarada, no en el mapa de funciones.
+        for (EntradaTabla e : tablaSimbolos.entradas()) {
+            if (e == null || !e.declarado || e.uso != EntradaTabla.Uso.CLASE) {
+                continue;
+            }
+            Entorno.ClaseDeclarada clase = entorno.getClase(e.lexema);
+            if (clase == null) {
+                continue;
+            }
+            for (Entorno.FuncionDeclarada metodo : clase.metodos.values()) {
+                registrarDeclaracion(metodo, porNombreApertura, porNombreCierre, vistas);
+            }
+        }
+
+        for (int i = 0; i < tercetos.size(); i++) {
+            Terceto t = tercetos.get(i);
+            String op = t.getOperador();
+            boolean apertura = "FUNCION".equals(op) || "METODO".equals(op);
+            boolean cierre = "FIN_FUNCION".equals(op) || "FIN_METODO".equals(op);
+            if (!apertura && !cierre) {
+                continue;
+            }
+            String nombre = textoDeOperando(t.getOp1());
+            Map<String, Deque<Entorno.FuncionDeclarada>> porNombre =
+                    apertura ? porNombreApertura : porNombreCierre;
+            Deque<Entorno.FuncionDeclarada> cola = porNombre.get(nombre);
+            Entorno.FuncionDeclarada f = cola != null && !cola.isEmpty() ? cola.pollFirst() : null;
+            declaracionPorTerceto.put(i + 1, f);
+        }
+    }
+
+    private void registrarDeclaracion(Entorno.FuncionDeclarada f,
+            Map<String, Deque<Entorno.FuncionDeclarada>> porNombreApertura,
+            Map<String, Deque<Entorno.FuncionDeclarada>> porNombreCierre,
+            Set<Entorno.FuncionDeclarada> vistas) {
+        if (f == null || !vistas.add(f)) {
+            return;
+        }
+        String clave = f.entrada != null && f.entrada.lexema != null
+                ? f.entrada.lexema : f.clave();
+        declaracionPorClave.put(clave, f);
+        declaracionPorClave.put(f.clave(), f);
+        etiquetaPorDeclaracion.put(f, nombreEtiqueta(f));
+        agregarCola(porNombreApertura, f);
+        agregarCola(porNombreCierre, f);
+    }
+
+    private void agregarCola(Map<String, Deque<Entorno.FuncionDeclarada>> mapa,
+            Entorno.FuncionDeclarada f) {
+        Deque<Entorno.FuncionDeclarada> cola = mapa.get(f.nombre);
+        if (cola == null) {
+            cola = new ArrayDeque<>();
+            mapa.put(f.nombre, cola);
+        }
+        cola.addLast(f);
+    }
+
+    private String nombreEtiqueta(Entorno.FuncionDeclarada f) {
+        String clave = f.entrada != null && f.entrada.lexema != null
+                ? f.entrada.lexema : f.clave();
+        return (f.esMetodo ? "mt_" : "fn_") + sanitizarEtiqueta(clave);
+    }
+
+    private String sanitizarEtiqueta(String texto) {
+        if (texto == null) {
+            return "anon";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < texto.length(); i++) {
+            char c = texto.charAt(i);
+            sb.append(Character.isLetterOrDigit(c) || c == '_' ? c : '_');
+        }
+        String limpio = sb.toString();
+        while (limpio.contains("__")) {
+            limpio = limpio.replace("__", "_");
+        }
+        limpio = limpio.replaceAll("^_+|_+$", "");
+        if (limpio.isEmpty()) {
+            return "anon";
+        }
+        return Character.isDigit(limpio.charAt(0)) ? "s" + limpio : limpio;
+    }
+
+    /*
+      Frame por declaracion. Los formales se numeran desde [ebp+8] (o +12 en
+      metodos, por 'this') en orden de DECLARACION; las locales crecen hacia
+      direcciones menores. doublef ocupa 8 bytes y se alinea a 8.
+    */
+    private void prepararStackFrames() {
+        framePorDeclaracion.clear();
+        Set<Entorno.FuncionDeclarada> vistas =
+                Collections.newSetFromMap(new HashMap<Entorno.FuncionDeclarada, Boolean>());
+        for (Entorno.FuncionDeclarada f : declaracionPorTerceto.values()) {
+            if (f == null || !vistas.add(f)) {
+                continue;
+            }
+            int corriente = f.esMetodo ? 12 : 8; // 'this' ocupa [ebp+8]
+            for (Entorno.Parametro p : f.parametros) {
+                boolean doble = esFlotante(tipoEfectivo(p.tipo));
+                int tamanio = doble ? 8 : 4;
+                if (p.entrada != null) {
+                    slotStackPorSimbolo.put(p.entrada,
+                            (doble ? "qword ptr " : "dword ptr ") + "[ebp+" + corriente + "]");
+                }
+                corriente += tamanio;
+            }
+
+            int locales = 0;
+            if (tablaSimbolos != null) {
+                for (EntradaTabla s : tablaSimbolos.entradas()) {
+                    if (s == null || !s.declarado || s.uso != EntradaTabla.Uso.VARIABLE) {
+                        continue;
+                    }
+                    if (f.ambitoPropio == null || !f.ambitoPropio.equals(s.ambito)) {
+                        continue;
+                    }
+                    boolean doble = esFlotante(tipoEfectivo(s.tipoDato));
+                    int tamanio = doble ? 8 : 4;
+                    if (doble && locales % 8 != 0) {
+                        locales += 4; // alineacion a 8 del doublef local
+                    }
+                    locales += tamanio;
+                    slotStackPorSimbolo.put(s,
+                            (doble ? "qword ptr " : "dword ptr ") + "[ebp-" + locales + "]");
+                }
+            }
+            framePorDeclaracion.put(f, ((locales + 7) / 8) * 8);
+        }
+    }
+
+    private void prepararObjetosThis() {
+        for (Terceto t : tercetos) {
+            if (!"CALLMET".equals(t.getOperador()) || !(t.getOp1() instanceof EntradaTabla)) {
+                continue;
+            }
+            EntradaTabla receptor = (EntradaTabla) t.getOp1();
+            if (esSimboloDeStack(receptor)) {
+                continue;
+            }
+            String nombre = tablaSimbolos.nombreAsmDe(receptor);
+            if (nombre != null) {
+                objetosThis.add(nombre);
+            }
+        }
+    }
+
+    private boolean esSimboloDeStack(EntradaTabla entrada) {
+        return entrada != null && slotStackPorSimbolo.containsKey(entrada);
+    }
+
+    private String tipoEfectivo(String tipo) {
+        if (tipo == null) {
+            return Tipos.INDEFINIDO;
+        }
+        return entorno != null ? entorno.tipoEfectivo(tipo) : tipo;
+    }
+
+    private String textoDeOperando(Object op) {
+        if (op == null) {
+            return "--";
+        }
+        if (op instanceof EntradaTabla) {
+            String lexema = ((EntradaTabla) op).lexema;
+            return lexema != null ? lexema : "--";
+        }
+        if (op instanceof Integer) {
+            return "[" + op + "]";
+        }
+        if (op instanceof ReferenciaAtributo) {
+            return ((ReferenciaAtributo) op).texto;
+        }
+        return op.toString();
+    }
+
+    private void emitirPrologo(int numero, String operador, Object nombre) {
+        Entorno.FuncionDeclarada f = declaracionPorTerceto.get(numero);
+        funcionActual = f;
+        String etiqueta = f != null ? etiquetaPorDeclaracion.get(f) : null;
+        if (etiqueta == null) {
+            etiqueta = ("METODO".equals(operador) ? "mt_" : "fn_")
+                    + sanitizarEtiqueta(textoDeOperando(nombre));
+        }
+        Integer frame = f != null ? framePorDeclaracion.get(f) : null;
+        int bytes = frame != null ? frame : 0;
+
+        salida.append(etiqueta).append(":\n");
+        salida.append("    push ebp\n");
+        salida.append("    mov ebp, esp\n");
+        if (bytes > 0) {
+            salida.append("    sub esp, ").append(bytes).append("\n");
+        }
+        if (f != null && f.esMetodo) {
+            salida.append("    ; this: dword ptr [ebp+8]\n");
+        }
+    }
+
+    private void emitirFinFuncion(int numero) {
+        Entorno.FuncionDeclarada f = declaracionPorTerceto.get(numero);
+        String etiqueta = f != null ? etiquetaPorDeclaracion.get(f) : null;
+        String sufijo = etiqueta != null && etiqueta.length() > 3
+                ? etiqueta.substring(3) : "anon";
+        salida.append("fin_").append(sufijo).append(":\n");
+        salida.append("    leave\n");
+        salida.append("    ret\n");
+        funcionActual = null;
+    }
+
+    private void emitirRet(Object valorIR) {
+        String valor = operandoAsm(valorIR);
+        String tipo = funcionActual != null
+                ? tipoEfectivo(funcionActual.tipoRetorno) : tipoDeOperando(valorIR);
+        if ("--".equals(valor) || "?".equals(valor)) {
+            salida.append("    ; ret sin valor resuelto\n");
+        } else if (esFlotante(tipo)) {
+            // doublef: se deja en ST(0); el CALL lo baja a su @aux con FSTP.
+            salida.append("    fld ").append(valor).append("\n");
+        } else {
+            salida.append("    mov eax, ").append(valor).append("\n");
+        }
+        salida.append("    leave\n");
+        salida.append("    ret\n");
+    }
+
+    private void emitirPar(Object formal, Object real) {
+        parametrosPendientes.add(new ParPendiente(
+                formal instanceof EntradaTabla ? (EntradaTabla) formal : null, real));
+        // Se materializa recien en el CALL: aqui solo se registra el orden IR.
+        salida.append("    ; ").append(new Terceto("PAR", formal, real).visualizar()).append("\n");
+    }
+
+    private void emitirLlamada(String clave, Object cantidadObj, int numero,
+            boolean esMetodo, Object receptor) {
+        int cantidad = parametrosPendientes.size();
+        String textoCantidad = textoDeOperando(cantidadObj);
+        if (!"--".equals(textoCantidad)) {
+            try {
+                cantidad = Integer.parseInt(textoCantidad.trim());
+            } catch (NumberFormatException ignorado) {
+                // Se cae al calculo por los PAR pendientes.
+            }
+        }
+        List<ParPendiente> args = extraerParametros(cantidad);
+        Entorno.FuncionDeclarada f = declaracionPorClave.get(clave);
+
+        /*
+          Ranuras por FORMAL (no por orden de evaluacion). Asi un PAR que
+          proviene de un [2,1] escribe igual en el primer parametro declarado.
+        */
+        Map<EntradaTabla, Integer> offsetsPorFormal = new HashMap<>();
+        int totalBytes = esMetodo ? 4 : 0;
+        if (f != null) {
+            int corrienteFormal = totalBytes;
+            for (Entorno.Parametro p : f.parametros) {
+                boolean doble = esFlotante(tipoEfectivo(p.tipo));
+                int tamanio = doble ? 8 : 4;
+                if (p.entrada != null) {
+                    offsetsPorFormal.put(p.entrada, corrienteFormal);
+                }
+                corrienteFormal += tamanio;
+                totalBytes += tamanio;
+            }
+        } else {
+            for (int i = 0; i < args.size(); i++) {
+                totalBytes += esParametroFlotante(args.get(i), f, i) ? 8 : 4;
+            }
+        }
+        if (totalBytes > 0) {
+            salida.append("    sub esp, ").append(totalBytes).append("\n");
+        }
+
+        if (esMetodo) {
+            String obj = operandoAsm(receptor);
+            String base = baseMemoria(obj);
+            if (base.startsWith("[") && base.contains("[ebp-")) {
+                // Objeto local: aun no hay layout (4d), se pasa la direccion del slot.
+                salida.append("    lea eax, ").append(base).append("\n");
+            } else if (base.startsWith("[")) {
+                // Parametro/'this': el slot ya guarda el offset del objeto.
+                salida.append("    mov eax, dword ptr ").append(base).append("\n");
+            } else {
+                salida.append("    mov eax, offset ").append(base).append("\n");
+            }
+            salida.append("    mov dword ptr [esp], eax\n");
+        }
+
+        int corrienteLibre = esMetodo ? 4 : 0;
+        for (int i = 0; i < args.size(); i++) {
+            ParPendiente p = args.get(i);
+            String valor = operandoAsm(p.real);
+            boolean doble = esParametroFlotante(p, f, i);
+            int tamanio = doble ? 8 : 4;
+            Integer destino = p.formal != null ? offsetsPorFormal.get(p.formal) : null;
+            if (destino == null) {
+                destino = corrienteLibre;
+                corrienteLibre += tamanio;
+            }
+            if (doble) {
+                String base = baseMemoria(valor);
+                // qword: high dword en la direccion alta, low dword en la baja.
+                salida.append("    mov eax, dword ptr ").append(conDesplazamiento4(base)).append("\n");
+                salida.append("    mov dword ptr [esp+" + (destino + 4) + "], eax\n");
+                salida.append("    mov eax, dword ptr ").append(comoMemoria(base)).append("\n");
+                salida.append("    mov dword ptr [esp+" + destino + "], eax\n");
+            } else {
+                salida.append("    mov eax, ").append(valor).append("\n");
+                salida.append("    mov dword ptr [esp+" + destino + "], eax\n");
+            }
+        }
+
+        String etiqueta = f != null ? etiquetaPorDeclaracion.get(f) : null;
+        if (etiqueta == null) {
+            etiqueta = (esMetodo ? "mt_" : "fn_") + sanitizarEtiqueta(clave);
+        }
+        salida.append("    call ").append(etiqueta).append("\n");
+        if (totalBytes > 0) {
+            salida.append("    add esp, ").append(totalBytes).append("\n");
+        }
+
+        String aux = auxPorTerceto.get(numero);
+        if (aux != null) {
+            ResultadoTerceto r = resultados.get(numero);
+            String tipo = r != null ? r.getTipo() : (f != null ? f.tipoRetorno : null);
+            if (esFlotante(tipoEfectivo(tipo))) {
+                salida.append("    fstp ").append(aux).append("\n");
+            } else {
+                salida.append("    mov ").append(aux).append(", eax\n");
+            }
+        }
+    }
+
+    private List<ParPendiente> extraerParametros(int cantidad) {
+        List<ParPendiente> args = new ArrayList<>();
+        int n = Math.max(0, Math.min(cantidad, parametrosPendientes.size()));
+        int desde = parametrosPendientes.size() - n;
+        for (int i = desde; i < parametrosPendientes.size(); i++) {
+            args.add(parametrosPendientes.get(i));
+        }
+        for (int i = parametrosPendientes.size() - 1; i >= desde; i--) {
+            parametrosPendientes.remove(i);
+        }
+        return args;
+    }
+
+    private boolean esParametroFlotante(ParPendiente p,
+            Entorno.FuncionDeclarada f, int indice) {
+        String tipo = p.formal != null ? p.formal.tipoDato : null;
+        if (tipo == null && f != null && indice < f.parametros.size()) {
+            tipo = f.parametros.get(indice).tipo;
+        }
+        return esFlotante(tipoEfectivo(tipo));
+    }
+
+    private String baseMemoria(String operando) {
+        if (operando.startsWith("qword ptr ")) {
+            return operando.substring("qword ptr ".length());
+        }
+        if (operando.startsWith("dword ptr ")) {
+            return operando.substring("dword ptr ".length());
+        }
+        return operando;
+    }
+
+    private String conDesplazamiento4(String base) {
+        String memoria = comoMemoria(base);
+        return memoria.substring(0, memoria.length() - 1) + "+4]";
+    }
+
+    private String comoMemoria(String base) {
+        return base.startsWith("[") ? base : "[" + base + "]";
     }
 }

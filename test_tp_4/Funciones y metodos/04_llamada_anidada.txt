@@ -1,0 +1,16 @@
+{{ TP4c: llamada anidada. El CALL interno limpia su area antes de materializar
+   el PAR externo que usa su @aux como valor real. }}
+prog
+ulongint function doble(ulongint n)
+begin
+    ret(n * 2$ul);
+end;
+ulongint function combinar(ulongint a, ulongint b)
+begin
+    ret(a + b);
+end;
+ulongint r;
+begin
+    r := combinar(doble(3$ul)[1$ul], 5$ul)[1$ul, 2$ul];
+    pout(r);
+end

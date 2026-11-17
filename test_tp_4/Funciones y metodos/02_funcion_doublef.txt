@@ -1,0 +1,13 @@
+{{ TP4c: parametros y retorno doublef (dos dwords por parametro, ST(0) -> @aux). }}
+prog
+doublef function escala(doublef x, doublef y)
+begin
+    ret(x * y);
+end;
+doublef a, b, r;
+begin
+    a := 1.5;
+    b := 2.0;
+    r := escala(a, b)[1$ul, 2$ul];
+    pout(r);
+end

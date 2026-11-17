@@ -1,0 +1,13 @@
+{{ TP4c: funcion con dos parametros ulongint y retorno en EAX. }}
+prog
+ulongint function suma(ulongint a, ulongint b)
+begin
+    ret(a + b);
+end;
+ulongint x, y, r;
+begin
+    x := 3$ul;
+    y := 4$ul;
+    r := suma(x, y)[1$ul, 2$ul];
+    pout(r);
+end

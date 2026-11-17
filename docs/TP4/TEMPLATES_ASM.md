@@ -290,6 +290,148 @@ Alternativa de la filmina: `invoke StdOut, offset hola`. Se eligió `crt_printf`
 
 ---
 
+## T-18 — Prólogo, frame y epílogo (funciones y métodos)
+
+**Prompt**: 4c · **Caso**: `fn_suma_main:` / `mt_m_main_calculadora:`.
+
+```asm
+fn_suma_main:
+    push ebp
+    mov ebp, esp
+    sub esp, 8          ; solo si hay locales (redondeado a 8)
+    ; ... cuerpo ...
+    leave
+    ret
+fin_suma_main:
+    leave
+    ret                 ; epílogo de seguridad para caminos sin ret explícito
+```
+
+```text
+[ebp+16] pb | [ebp+12] pa | [ebp+8] a | [ebp+0] EBP del caller
+[ebp-4]  local ulongint | [ebp-16] local doublef alineada | ESP -> frame
+```
+
+Para métodos, `this` ocupa `[ebp+8]` y los formales arrancan en `[ebp+12]`.
+
+**Fuente filmina**: `printf-variables.pdf`, caso especial "Funciones" (`push ebp / mov ebp,esp / sub esp …` y sufijo `mov esp,ebp / pop ebp / ret`). Se usa `leave` como equivalente del sufijo.
+
+---
+
+## T-19 — `PAR` + `CALL` + limpieza (`ulongint`)
+
+**Prompt**: 4c · **Caso**: `r := suma(x, y)[1$ul, 2$ul];`.
+
+```asm
+    ; (PAR, a:main:suma, x:main)     ; comentario en orden IR
+    ; (PAR, b:main:suma, y:main)
+    sub esp, 8                       ; caller reserva por FORMAL
+    mov eax, x_main
+    mov dword ptr [esp+0], eax       ; a -> primer formal
+    mov eax, y_main
+    mov dword ptr [esp+4], eax       ; b -> segundo formal
+    call fn_suma_main
+    add esp, 8                       ; caller limpia
+    mov @aux10, eax                  ; retorno ulongint
+```
+
+Con orden `[2,1]`, las cargas se emiten en ese orden pero `1$ul` sigue yendo a `[esp+0]` si es el formal `a`.
+
+---
+
+## T-20 — `PAR` de `doublef` (qword en dos dwords)
+
+**Prompt**: 4c · **Caso**: `escala(a, b)` con `a`, `b` `doublef`.
+
+```asm
+    sub esp, 16
+    mov eax, dword ptr [a_main+4]    ; high del primer qword
+    mov dword ptr [esp+4], eax
+    mov eax, dword ptr [a_main]      ; low
+    mov dword ptr [esp+0], eax
+    mov eax, dword ptr [b_main+4]    ; high del segundo qword
+    mov dword ptr [esp+12], eax
+    mov eax, dword ptr [b_main]
+    mov dword ptr [esp+8], eax
+    call fn_escala_main
+    add esp, 16
+    fstp @aux10                      ; retorno doublef desde ST(0)
+```
+
+ Dentro del callee: `fld qword ptr [ebp+8]` / `fmul qword ptr [ebp+16]`.
+
+---
+
+## T-21 — `ret` según tipo de retorno
+
+**Prompt**: 4c · **Caso**: `ret(a + b);` y `ret(x * y);`.
+
+```asm
+; ulongint
+mov eax, dword ptr [ebp+8]
+add eax, dword ptr [ebp+12]
+leave
+ret
+
+; doublef (el valor queda en ST(0))
+fld qword ptr [ebp+8]
+fmul qword ptr [ebp+16]
+fstp @aux3
+fld @aux3
+leave
+ret
+```
+
+---
+
+## T-22 — `CALLMET`: `this` + llamada directa
+
+**Prompt**: 4c · **Caso**: `c.m(10$ul, 5$ul)[1$ul, 2$ul];`.
+
+```asm
+    sub esp, 12                      ; this (4) + 2 formales (4+4)
+    mov eax, offset c_main
+    mov dword ptr [esp], eax         ; this
+    mov eax, c_10_ul_ul
+    mov dword ptr [esp+4], eax       ; base -> ebp+12
+    mov eax, c_5_ul_ul
+    mov dword ptr [esp+8], eax       ; extra -> ebp+16
+    call mt_m_main_calculadora
+    add esp, 12
+    mov @aux10, eax
+```
+
+No hay vtable: el IR trae `m:main:calculadora` ya resuelto. Si el receptor es un parámetro se usa `mov eax, dword ptr [ebp+…]`; si es local, `lea eax, [ebp-…]` en lugar de `offset`.
+
+---
+
+## T-23 — Locales en el stack frame (no en `.DATA`)
+
+**Prompt**: 4c · **Caso**: `ulongint t; doublef d;` declaradas antes del `begin`.
+
+```asm
+fn_mezcla_main:
+    push ebp
+    mov ebp, esp
+    sub esp, 16
+    mov eax, dword ptr [ebp+8]
+    add eax, c_1_ul_ul
+    mov @aux3, eax
+    mov eax, @aux3
+    mov dword ptr [ebp-4], eax      ; t
+    fild dword ptr [ebp-4]
+    fstp @aux5
+    fld @aux5
+    fstp qword ptr [ebp-16]         ; d (alineada)
+    mov eax, dword ptr [ebp-4]
+    leave
+    ret
+```
+
+`.DATA` no contiene `t_main_mezcla` ni `d_main_mezcla`. El filtro vive en `GeneradorAssembler.emitirData()`; la TS de TP3 no se modifica.
+
+---
+
 ## Mapa rápido: comparador → `SETcc` (verdadero) / `Jcc` de BF (falso)
 
 | Comparador | `SETcc` | `Jcc` en BF | Condición de flags |
@@ -309,7 +451,5 @@ Válido para `ulongint` (`CMP`) y para `doublef` (`FCOMP` + `FSTSW` + `SAHF`), p
 
 | Template | Prompt | Caso previsto |
 |---|---|---|
-| Prólogue/epílogue y stack frame | 4c | `push ebp / mov ebp,esp / ... / leave / ret` |
-| `CALL` / `CALLMET` / `PAR` / `ret` | 4c | `call fn_x`, `add esp, n*4`, retorno en `EAX`/`ST(0)` |
 | Layout de objetos y `COPY` | 4d | slots `DD`/`DQ`, `rep movsd` |
 | Guardas runtime `b/e/f/h` | 5 | mensajes + `invoke ExitProcess, codigo` |

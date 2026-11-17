@@ -1,0 +1,15 @@
+{{ TP4c: variables locales declaradas antes del begin del cuerpo.
+   't' y 'd' viven en el frame ([ebp-4] y [ebp-16]) y NO en .DATA. }}
+prog
+ulongint function mezcla(ulongint a)
+    ulongint t;
+    doublef d;
+begin
+    t := a + 1$ul;
+    d := todf(t);
+    ret(t);
+end;
+ulongint x;
+begin
+    x := mezcla(4$ul)[1$ul];
+end

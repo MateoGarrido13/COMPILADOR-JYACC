@@ -137,6 +137,7 @@ Entrega: convencion de formatos/buffers en DECISIONES_P4b.md, casos .asm.
 ---
 
 ### Prompt 4c — Funciones/metodos: PAR, CALL, CALLMET, ret, FUNCION/FIN_FUNCION, METODO/FIN_METODO (Tema 19)
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_P4c.md`, `docs/TP4/TEMPLATES_ASM.md` (T-18..T-23). Archivo modificado: `GeneradorAssembler.java`; casos: `test_tp_4/Funciones y metodos/`; script: `test_tp_4/probar_prompt4c.sh`.
 Contexto: Tercetos de invocacion ya existen. Falta convencion de llamada y traduccion.
 
 Tareas:

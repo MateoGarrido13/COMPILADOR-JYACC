@@ -4,7 +4,6 @@ option casemap:none
 include \masm32\include\masm32rt.inc
 
 .data
-    a_main_eco DD ?
     dentro DB "dentro",0
     x_main DD ?
     c_2_ul_ul DD 2
@@ -16,15 +15,26 @@ include \masm32\include\masm32rt.inc
 .code
 start:
     ; (PROGRAMA, --, --)
-    ; (FUNCION, eco, --)
+fn_eco_main:
+    push ebp
+    mov ebp, esp
     invoke crt_printf, offset fmt_cadena, offset dentro
-    invoke crt_printf, offset fmt_ulongint, a_main_eco
-    ; (ret, a:main:eco, --)
-    ; (FIN_FUNCION, eco, --)
+    invoke crt_printf, offset fmt_ulongint, dword ptr [ebp+8]
+    mov eax, dword ptr [ebp+8]
+    leave
+    ret
+fin_eco_main:
+    leave
+    ret
     mov eax, c_2_ul_ul
     mov x_main, eax
     ; (PAR, a:main:eco, x:main)
-    ; (CALL, eco:main, 1)
+    sub esp, 4
+    mov eax, x_main
+    mov dword ptr [esp+0], eax
+    call fn_eco_main
+    add esp, 4
+    mov @aux9, eax
     invoke crt_printf, offset fmt_ulongint, @aux9
     ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0

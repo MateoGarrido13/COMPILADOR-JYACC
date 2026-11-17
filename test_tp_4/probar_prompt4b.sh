@@ -119,7 +119,9 @@ verificar "$ASM" "atributo resuelto a nombre ASM" 'invoke crt_printf, offset fmt
 
 ASM="$CASOS/11_pout_dentro_de_funcion.asm"
 verificar "$ASM" "pout de cadena en funcion" 'offset fmt_cadena, offset dentro'
-verificar "$ASM" "pout de parametro en funcion" 'offset fmt_ulongint, a_main_eco'
+# Desde el Prompt 4c el parametro 'a' vive en el stack frame, no en .DATA.
+verificar "$ASM" "pout de parametro en funcion" 'offset fmt_ulongint, dword ptr [ebp+8]'
+verificar "$ASM" "prologue de la funcion antes del pout" 'fn_eco_main:'
 
 echo
 echo "[4/4] Verificando que no queden pout como comentario..."
