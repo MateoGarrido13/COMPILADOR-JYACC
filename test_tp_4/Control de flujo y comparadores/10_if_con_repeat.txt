@@ -10,8 +10,10 @@ begin
     s := 0$ul;
     if (flag > 0$ul)
         repeat
+        begin
             s := s + x;
             x := x + 1$ul;
+        end
         while (x < 5$ul);
     else
         s := 99$ul;

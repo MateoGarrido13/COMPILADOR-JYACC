@@ -9,11 +9,13 @@ begin
     x := 0$ul;
     y := 0$ul;
     repeat
+    begin
         y := 0$ul;
         repeat
             y := y + 1$ul;
         while (y < x);
         x := x + 1$ul;
+    end
     while (x < 3$ul);
     z := x + y;
 end

@@ -8,9 +8,11 @@ begin
     i := 1$ul;
     s := 0$ul;
     repeat
+    begin
         if (i < 5$ul)
             s := s + i;
         end_if;
         i := i + 1$ul;
+    end
     while (i <= 10$ul);
 end
