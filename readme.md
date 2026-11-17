@@ -38,11 +38,11 @@ Correspondencia entre iteración **3.x** del plan y tema del grupo:
 | Campo | Valor |
 |-------|-------|
 | Rama | `tp4` |
-| Último commit en `HEAD` | `db80077 — P2: produccion de los '.asm' (TP4 Prompt 2)` |
-| Último commit de código del plan | TP3: `71cdbcd 3.10: Herencia múltiple con documentacion alineada` (rama `SEMANTICAStp03`); TP4: `db80077 P2: produccion de los '.asm'` (rama `tp4`) |
-| Prompts ejecutados | TP3: 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 (completado en rama `SEMANTICAStp03`); TP4: Prompt 1 y Prompt 2 (rama `tp4`) |
-| Prompt en curso / siguiente | Prompt 3 de TP4 — Traducción básica a `.CODE`: aritmética, asignación y `todf` |
-| Commits del plan completados | TP3: 15 de 15; TP4: 2 de 6 |
+| Último commit en `HEAD` | `350eb1f — P3: traduccion basica a .CODE (TP4 Prompt 3)` |
+| Último commit de código del plan | TP3: `71cdbcd 3.10: Herencia múltiple con documentacion alineada` (rama `SEMANTICAStp03`); TP4: `350eb1f P3: traduccion basica a .CODE` (rama `tp4`) |
+| Prompts ejecutados | TP3: 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 (completado en rama `SEMANTICAStp03`); TP4: Prompt 1, 2 y 3 (rama `tp4`) |
+| Prompt en curso / siguiente | Prompt 4 de TP4 — Control de flujo y temas particulares (13,19,25,28,31) en ASM |
+| Commits del plan completados | TP3: 15 de 15; TP4: 3 de 6 |
 
 ### Reglas de granularidad para commits
 
@@ -86,7 +86,7 @@ El plan de prompts de TP3 quedó completo con el 31 (rama `SEMANTICAStp03`). El 
 |---|--------|--------|----------------------|-------|
 | 1 | Auditoría fina y adaptación de TS/Tercetos para ASM | ✅ **Ejecutado** | `docs/TP4/PROMPT-1.md`, `docs/TP4/IR_CONTRATO.md`, `docs/TP4/DECISIONES_P1.md` | `test/tp2/generales/00_programa_valido.txt`, `test/TP3_y_TP4/ITERACION/01_repeat_simple.txt`, `test/tp2/verificacion_r17_asig_expresiones/estructura_respetada.txt`, `test/tp2/verificacion_r33_conversion/todf_a_entero.txt`, `test/tp2/verificacion_r25_objetos/misma_estructura.txt`, `test/tp2/verificacion_r28_r31_atributos/metodo_heredado_prefijado_con_orden.txt` |
 | 2 | Esqueleto GeneradorAssembler y sección `.DATA` | ✅ **Ejecutado** | `docs/TP4/DECISIONES_P2.md` | `test/tp2/generales/00_programa_valido.txt` (genera `.asm` esqueleto) |
-| 3 | Traducción básica a `.CODE`: aritmética, asignación y `todf` | ⏳ Pendiente | — | — |
+| 3 | Traducción básica a `.CODE`: aritmética, asignación y `todf` | ✅ **Ejecutado** | `docs/TP4/DECISIONES_P3.md` | Caso con `ulongint`, `doublef`, `+`, `*`, `todf` y asignaciones |
 | 4 | Control de flujo y temas particulares (13,19,25,28,31) en ASM | ⏳ Pendiente | — | — |
 | 5 | Errores en tiempo de ejecución Grupo 43 (b, e, f, h) | ⏳ Pendiente | — | — |
 | 6 | Integración final, contrato de salida TP4 y suite de pruebas | ⏳ Pendiente | — | — |

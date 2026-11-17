@@ -1,5 +1,5 @@
 ### Estado base
-- Rama/HEAD: tp4, commit db80077 — P2: produccion de los '.asm' (TP4 Prompt 2). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
+- Rama/HEAD: tp4, commit 350eb1f — P3: traduccion basica a .CODE (TP4 Prompt 3). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
 - Pipeline actual (Compilador.java): AnalizadorLexico -> Parser+AccionesSemanticas -> Verificaciones/Entorno -> GeneradorTercetos -> salida stdout (fuente numerado, tokens, estructuras, errores, TS, tercetos). Genera archivo .asm esqueleto (encabezado, .DATA, .CODE mínimo) mediante GeneradorAssembler. Main toma [ruta] o input.txt.
 
 ### IR / Tercetos (Terceto.java, GeneradorTercetos.java)
@@ -75,20 +75,21 @@ Tareas:
 Entrega: archivos nuevos/modificados, ejemplo de .asm generado, convencion de nombres ASM elegida.
 
 ### Prompt 3 — Traducción básica a .CODE: aritmética, asignación y todf
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_P3.md`. Archivo modificado: `GeneradorAssembler.java`.
 Contexto: Esqueleto ASM listo (Prompt 2). Implementa traduccion de operaciones basicas usando variables auxiliares.
 
-Tareas:
-1) Implementa recorrido de tercetos PROGRAMA..FIN_PROGRAMA y emision .CODE para:
+Tareas realizadas:
+1) Recorrido de tercetos PROGRAMA..FIN_PROGRAMA y emision .CODE para:
    - asignacion escalar `:=` (ulongint via EAX/mov; doublef via FPU fld/fstp),
-   - aritmetica ulongint `+ - * /` con auxiliares/registros EAX,EBX,ECX,EDX segun convenga (sin chequeos runtime aun, pero deja puntos de extension),
-   - aritmetica doublef `+ - * /` con FPU (FLD, FADD/FSUB/FMUL/FDIV, FSTP) usando temporales/vars QWORD,
-   - comparaciones necesarias para BF (deja interfaz reutilizable; si completo, documenta).
-2) Implementa conversion explicita `todf` (Tema 33): cargar entero (ulongint/enum base ulongint) y convertir con FILD/FSTP a doublef.
-3) Define y aplica convencion de "resultado de terceto": donde se almacena (temporal @auxN tipado) y como se referencia desde otros tercetos/operandos.
-4) Soporta operandos: constantes, variables, refs a terceto, y (si ya viable) ReferenciaAtributo simple en expresiones/asignaciones escalares; si no, documenta limitacion y stub controlado.
-5) Agrega pruebas ASM-level (generacion): expresiones ulongint, doublef, mixtas con `todf`, asignaciones encadenadas de Tema 17 segun IR actual. Verifica que el Java compila y el .asm emitido es estructuralmente correcto.
+   - aritmetica ulongint `+ - * /` con registros EAX y auxiliares DD,
+   - aritmetica doublef `+ - * /` con FPU (fld, fadd/fsub/fmul/fdiv, fstp) y auxiliares DQ,
+   - comparaciones no traducidas (pendiente Prompt 4).
+2) Conversion explicita `todf` (Tema 33): fild entero + fstp doublef.
+3) Convencion de resultado de terceto: @auxN tipado (DD/DQ) materializado en .DATA y referenciado desde [n].
+4) Operandos soportados: constantes, variables (via nombreAsm de TS), refs a terceto (via @auxN), ReferenciaAtributo (texto). Cadenas y literal String soportados.
+5) Prueba ASM-level: caso con ulongint, doublef, +, *, todf y asignaciones. .asm generado con instrucciones MASM32 correctas.
 
-Entrega: mapeo operador->instrucciones, casos probados, limitaciones pendientes (control flujo, objetos/attrs, runtime checks).
+Entrega: mapeo operador->instrucciones en DECISIONES_P3.md, caso probado, limitaciones pendientes (control flujo, objetos/attrs, runtime checks).
 
 ### Prompt 4 — Control de flujo y temas particulares (13,19,25,28,31) en ASM
 Contexto: Traduccion basica lista (Prompt 3). Completa saltos y construcciones del Grupo 43.
