@@ -1,0 +1,21 @@
+{{ TP4 Prompt 4 - control de flujo: if/else anidado.
+   El generador debe emitir comparaciones (cmp/setcc), BF (je) y BI (jmp)
+   sobre las etiquetas label_N del IR. Verifica anidamiento then/else.
+   Esperado: .asm con dos comparaciones, dos je, dos jmp y salida pout(z). }}
+prog
+ulongint x, y, z;
+begin
+    x := 1$ul;
+    y := 2$ul;
+    z := 0$ul;
+    if (x < y)
+        if (z == 0$ul)
+            z := x + y;
+        else
+            z := y - x;
+        end_if;
+    else
+        z := 9$ul;
+    end_if;
+    pout(z);
+end

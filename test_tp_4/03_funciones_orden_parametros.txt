@@ -1,0 +1,17 @@
+{{ TP4 Prompt 4 - funciones y Tema 19: orden de evaluacion de parametros.
+   La invocacion foo(b = x, a = z)[1$ul, 2$ul] evalua primero el segundo
+   real (a) y despues el primero (b); el IR emite PAR en ese orden.
+   El generador copia real->formal con mov y retorna por @tp4_ret_foo_main.
+   Esperado: dos PAR en orden b,a seguidos de call foo_main. }}
+prog
+ulongint x, z;
+ulongint function foo(ulongint a, ulongint b)
+begin
+    ret(a - b);
+end;
+begin
+    x := 10$ul;
+    z := 3$ul;
+    x := foo(b = x, a = z)[1$ul, 2$ul];
+    pout(x);
+end

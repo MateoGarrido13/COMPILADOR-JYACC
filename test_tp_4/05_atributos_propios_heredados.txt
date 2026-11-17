@@ -1,0 +1,25 @@
+{{ TP4 Prompt 4 - Temas 28/31: lectura/escritura de atributos.
+   a1.y pertenece a padre (heredado, se accede con prefijo a1.padre.y).
+   a1.x es propio de hija. Los slots materializados son a1_padre_y_main y
+   a1_x_main. doublef usa fld/fstp.
+   Esperado: mov/fld sobre los slots correctos y pout uint/double. }}
+prog
+class padre
+begin
+    ulongint y;
+    doublef z;
+end;
+class hija
+begin
+    extends padre;
+    ulongint x;
+end;
+hija a1;
+begin
+    a1.x := 4$ul;
+    a1.padre.y := 7$ul;
+    a1.padre.z := 2.5;
+    pout(a1.padre.y);
+    pout(a1.padre.z);
+    pout(a1.x);
+end

@@ -1,0 +1,24 @@
+{{ TP4 Prompt 4 - parametro formal de tipo clase (Tema 28).
+   El formal p no ocupa un DD unico: sus atributos materializados son
+   p_x_main_leer y p_y_main_leer. PAR copia el objeto real a1 atributo por
+   atributo, igual que COPY. La funcion escribe p.x y retorna p.x.
+   Esperado: copia posicional de a1 a p y retorno por @tp4_ret_leer_main. }}
+prog
+class ca
+begin
+    ulongint x;
+    doublef y;
+end;
+ulongint function leer(ca p)
+begin
+    p.x := 9$ul;
+    ret(p.x);
+end;
+ca a1;
+ulongint r;
+begin
+    a1.x := 4$ul;
+    a1.y := 1.5;
+    r := leer(a1)[1$ul];
+    pout(r);
+end

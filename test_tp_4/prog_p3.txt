@@ -1,0 +1,9 @@
+prog
+ulongint x, y, z;
+doublef a;
+begin
+    x := 5$ul;
+    y := x + 3$ul;
+    z := x * y;
+    a := todf(x);
+end

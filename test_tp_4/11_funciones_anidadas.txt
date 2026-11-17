@@ -1,0 +1,30 @@
+{{ TP4 Prompt 4 - funciones anidadas homonimas y scopes.
+   a y b declaran cada una su propia funcion c. El backend resuelve por ambito
+   propio exacto (c:main:a y c:main:b), por lo que genera labels distintos
+   c_main_a / c_main_b y slots de retorno separados. Cada llamada usa la c de
+   su contenedor.
+   Esperado: definiciones y llamadas a c_main_a y c_main_b, sin duplicados. }}
+prog
+ulongint function a(ulongint n)
+    ulongint function c(ulongint x)
+    begin
+        ret(x + 1$ul);
+    end;
+begin
+    ret(c(n)[1$ul]);
+end;
+ulongint function b(ulongint n)
+    ulongint function c(ulongint x)
+    begin
+        ret(x + 2$ul);
+    end;
+begin
+    ret(c(n)[1$ul]);
+end;
+ulongint r;
+begin
+    r := a(1$ul)[1$ul];
+    pout(r);
+    r := b(1$ul)[1$ul];
+    pout(r);
+end

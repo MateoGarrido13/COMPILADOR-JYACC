@@ -1,0 +1,14 @@
+{{ TP4 Prompt 4 - retorno doublef de funcion.
+   El slot de retorno es DQ (@tp4_ret_mitad_main) y el llamador lo recupera
+   con fld/fstp hacia @auxN. La aritmetica doublef usa FPU.
+   Esperado: fdiv en la funcion, slot DQ y fld @tp4_ret_mitad_main. }}
+prog
+doublef function mitad(doublef d)
+begin
+    ret(d / 2.0);
+end;
+doublef r;
+begin
+    r := mitad(5.0)[1$ul];
+    pout(r);
+end

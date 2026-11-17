@@ -92,6 +92,7 @@ Tareas realizadas:
 Entrega: mapeo operador->instrucciones en DECISIONES_P3.md, caso probado, limitaciones pendientes (control flujo, objetos/attrs, runtime checks).
 
 ### Prompt 4 — Control de flujo y temas particulares (13,19,25,28,31) en ASM
+Estado: ✅ Ejecutado. Ver `docs/TP4/PROMPT-4.md`, `docs/TP4/DECISIONES_P4.md`. Archivos: `GeneradorAssembler.java`, `Entorno.java` (aditivo), `test_tp_4/01_*.txt`..`11_*.txt`, `test_tp_4/probar_prompt4.sh`.
 Contexto: Traduccion basica lista (Prompt 3). Completa saltos y construcciones del Grupo 43.
 
 Tareas:

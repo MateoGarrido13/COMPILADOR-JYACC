@@ -86,6 +86,23 @@ public class Entorno {
         }
     }
 
+    /*
+      Atributo efectivo de una clase para el layout de COPY (TP4). Conserva
+      el orden base-primero y la clase que lo declara, que es la que decide
+      el prefijo de la entrada materializada (objeto.atr u objeto.base.atr).
+     */
+    public static class AtributoEfectivo {
+        public final String nombre;
+        public final String tipo;
+        public final ClaseDeclarada declarante;
+
+        public AtributoEfectivo(String nombre, String tipo, ClaseDeclarada declarante) {
+            this.nombre = nombre;
+            this.tipo = tipo;
+            this.declarante = declarante;
+        }
+    }
+
     public static class TipoEnumerado {
         public final String nombre;
         public final String tipoBase;
@@ -619,6 +636,31 @@ public class Entorno {
         return atributos;
     }
 
+    /*
+      Atributos efectivos en el mismo orden que usa la compatibilidad de COPY,
+      pero conservando la clase declarante. Base primero; un atributo propio
+      con el mismo nombre reemplaza al heredado sin mover la posicion.
+     */
+    public List<AtributoEfectivo> atributosEfectivosConDeclarante(ClaseDeclarada clase) {
+        Map<String, AtributoEfectivo> atributos = new LinkedHashMap<>();
+        recolectarAtributosConDeclarante(clase, atributos, new HashSet<String>());
+        return new ArrayList<>(atributos.values());
+    }
+
+    private void recolectarAtributosConDeclarante(ClaseDeclarada clase,
+            Map<String, AtributoEfectivo> destino, Set<String> visitadas) {
+        if (clase == null || !visitadas.add(clase.clave())) {
+            return;
+        }
+        for (String base : clase.heredaDe) {
+            recolectarAtributosConDeclarante(clasePorNombre(base), destino, visitadas);
+        }
+        for (Map.Entry<String, String> atributo : clase.atributos.entrySet()) {
+            destino.put(atributo.getKey(), new AtributoEfectivo(
+                    atributo.getKey(), tipoDeMiembro(atributo.getValue()), clase));
+        }
+    }
+
     private void recolectarAtributos(ClaseDeclarada clase, Map<String, String> destino,
             Set<String> visitadas) {
         if (clase == null || !visitadas.add(clase.clave())) {
@@ -781,7 +823,7 @@ public class Entorno {
         return null;
     }
 
-    private ClaseDeclarada claseDeObjeto(EntradaTabla objeto) {
+    public ClaseDeclarada claseDeObjeto(EntradaTabla objeto) {
         if (objeto == null) {
             return null;
         }
@@ -796,7 +838,7 @@ public class Entorno {
         return clasePorNombre(objeto.tipoDato);
     }
 
-    private ClaseDeclarada clasePorNombre(String nombre) {
+    public ClaseDeclarada clasePorNombre(String nombre) {
         if (nombre == null) {
             return null;
         }

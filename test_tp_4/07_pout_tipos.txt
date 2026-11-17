@@ -1,0 +1,15 @@
+{{ TP4 Prompt 4 - pout de ulongint, doublef y cadena.
+   Formatos en .DATA: @tp4_fmt_uint "%u",10,0; @tp4_fmt_double "%.20Lf",10,0;
+   @tp4_fmt_string "%s",10,0. Se invoca printf con addr del formato y el
+   operando (addr para cadenas).
+   Esperado: tres invoke printf con el formato correcto. }}
+prog
+ulongint x;
+doublef d;
+begin
+    x := 42$ul;
+    d := 2.5;
+    pout(x);
+    pout(d);
+    pout({hola mundo});
+end

@@ -1,0 +1,31 @@
+{{ TP4 Prompt 4 - Tema 19/31: CALLMET a metodo heredado con prefijo.
+   ca hereda m de cb y de cc; el prefijo objeto.clase.metodo desambigua.
+   El orden [2,1] evalua primero pb y despues pa. Cada metodo tiene su
+   propio label ASM y su slot @tp4_ret_m_main_<clase>.
+   Esperado: PAR, PAR, call m_main_cb, CALLMET y pout del resultado. }}
+prog
+class cb
+begin
+    ulongint m(ulongint pa, ulongint pb)
+    begin
+        ret(pa);
+    end;
+end;
+class cc
+begin
+    ulongint m(ulongint pa, ulongint pb)
+    begin
+        ret(pb);
+    end;
+end;
+class ca
+begin
+    extends cb, cc;
+end;
+ca a1;
+ulongint r;
+begin
+    r := a1.cb.m(1$ul, 2$ul)[2$ul, 1$ul];
+    r := a1.cc.m(pa=3$ul, 4$ul)[1$ul, 2$ul];
+    pout(a1.cc.m(5$ul, 6$ul)[2$ul, 1$ul]);
+end

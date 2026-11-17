@@ -1,0 +1,16 @@
+{{ TP4 Prompt 4 - comparacion doublef en if/else.
+   El generador carga con fld, compara con fcomp, lleva las banderas FPU a
+   CF/PF/ZF con fstsw/sahf y usa seta (mayor) como condicion.
+   Esperado: fcomp, sahf, seta al, je de la rama else y jmp de cierre. }}
+prog
+doublef a, b, r;
+begin
+    a := 2.5;
+    b := 1.5;
+    if (a > b)
+        r := a - b;
+    else
+        r := b - a;
+    end_if;
+    pout(r);
+end

@@ -1,0 +1,29 @@
+{{ TP4 Prompt 4 - Tema 25: COPY estructural entre objetos compatibles.
+   h1 (hija: ulongint x de padre, doublef y propia) y b1 (cb: ulongint a,
+   doublef b) tienen la misma estructura. COPY copia posicionalmente en
+   orden base primero: b1.a -> h1.padre.x y b1.b -> h1.y.
+   Esperado: mov para el entero y fld/fstp para el doublef. }}
+prog
+class padre
+begin
+    ulongint x;
+end;
+class hija
+begin
+    extends padre;
+    doublef y;
+end;
+class cb
+begin
+    ulongint a;
+    doublef b;
+end;
+hija h1;
+cb b1;
+begin
+    b1.a := 11$ul;
+    b1.b := 3.25;
+    h1 := b1;
+    pout(h1.padre.x);
+    pout(h1.y);
+end

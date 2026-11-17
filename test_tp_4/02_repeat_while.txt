@@ -1,0 +1,19 @@
+{{ TP4 Prompt 4 - control de flujo: repeat-while con if/else adentro.
+   label_1 abre el ciclo, BF del while sale a label_4 y BI vuelve a label_1.
+   El if interno usa label_2 y label_3, sin saltar fuera del ciclo.
+   Esperado: .asm con jmp label_1, je label_4 y bloque de dos ramas. }}
+prog
+ulongint a, b, k;
+begin
+    a := 5$ul;
+    b := 0$ul;
+    repeat
+        if (a > 0$ul)
+            a := a - 1$ul;
+        else
+            b := b + 1$ul;
+        end_if;
+    while (b < 5$ul);
+    k := b;
+    pout(k);
+end
