@@ -38,11 +38,11 @@ Correspondencia entre iteración **3.x** del plan y tema del grupo:
 | Campo | Valor |
 |-------|-------|
 | Rama | `SEMANTICAStp03` |
-| Último commit en `HEAD` | `alineando_documentacion_y_pruebas` |
-| Último commit de código del plan | Prompt 3.9 — acceso tradicional a atributos |
+| Último commit en `HEAD` | `Eliminacion de clase si hereda de clase inexistente, DEC-11` |
+| Último commit de código del plan | Prompt 3.10 — herencia múltiple con prefijo |
 | Prompts ejecutados | 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 |
-| Prompt en curso / siguiente | Ninguno. Falta el commit del Prompt 3.10 (tema 31). |
-| Commits del plan completados | 14 de 15 |
+| Prompt en curso / siguiente | Ninguno. Plan completo. Tras el 3.10, `HEAD` suma la revisión de D4, DEC-10 y DEC-11. |
+| Commits del plan completados | 15 de 15 |
 
 ### Reglas de granularidad para commits
 
@@ -78,7 +78,7 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 
 ### Plan
 
-El plan de prompts quedó completo con el 31. Falta el commit de ese paso.
+El plan de prompts quedó completo con el 31. El commit de ese paso es `71cdbcd`.
 
 ## Prompt 25 — ejecutado
 
@@ -90,7 +90,7 @@ La regla D4 (misma cantidad de atributos y mismo orden de tipos) y la forma de c
 
 ## Prompt 31 — ejecutado
 
-El miembro heredado exige `objeto.clase.miembro`. La base se valida antes de entrar en `heredaDe`, y la llamada aceptada emite `(PAR, formal, real)` y `(CALLMET, objeto, metodo)`. Los atributos heredados también se materializan por objeto con el prefijo de la clase que los declara (`a1.padre.y:main`). El detalle está en `docs/PROMPT-31.md` y `docs/DEC-10.md`.
+El miembro heredado exige `objeto.clase.miembro`. La base se valida al leer `extends`; si la herencia es inválida, la clase no queda declarada (`docs/DEC-11.md`). La llamada aceptada emite `(PAR, formal, real)` y `(CALLMET, objeto, metodo)`. Los atributos heredados también se materializan por objeto con el prefijo de la clase que los declara (`a1.padre.y:main`). El detalle está en `docs/PROMPT-31.md` y `docs/DEC-10.md`.
 
 ---
 
@@ -109,7 +109,7 @@ Las siguientes issues se desprenden del plan de prompts y de `docs/SEMANTICAS_FA
 | Enumeraciones | 23 | Resuelto: valida declaración, ámbito, base homogénea, tipos de variables y pertenencia de constantes. Ver `docs/PROMPT-23.md`. | Completado |
 | Asignación estructural de objetos | 25 | Resuelto: D4 exige la misma cantidad de atributos y el mismo orden de tipos; la asignación entre objetos emite `(COPY, destino, origen)`. Ver `docs/PROMPT-25.md`. | Completado |
 | Acceso a atributos con punto | 28 | Resuelto: el receptor tiene que ser de tipo clase y el atributo, propio. La asignación emite `(:=, objeto.atributo, valor)` y cada objeto tiene entradas de atributo propias en la TS. Ver `docs/PROMPT-28.md` y `docs/DEC-10.md`. | Completado |
-| Herencia múltiple con prefijo | 31 | Resuelto: la base se valida, el miembro heredado exige prefijo y la llamada aceptada emite `CALLMET`. Ver `docs/PROMPT-31.md`. | Completado |
+| Herencia múltiple con prefijo | 31 | Resuelto: la base se valida al leer `extends`, una herencia inválida no deja la clase declarada, el miembro heredado exige prefijo y la llamada aceptada emite `CALLMET`. Ver `docs/PROMPT-31.md` y `docs/DEC-11.md`. | Completado |
 
 ---
 
