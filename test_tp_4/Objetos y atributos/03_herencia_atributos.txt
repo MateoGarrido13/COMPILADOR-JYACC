@@ -1,0 +1,20 @@
+{{ TP4d: herencia. Atributos heredados (padre.a) y propios (hija.b).
+   Acceso prefijado h.padre.a para el atributo heredado. }}
+prog
+class padre
+begin
+    ulongint a;
+end;
+class hija
+begin
+    extends padre;
+    ulongint b;
+end;
+hija h;
+begin
+    h.padre.a := 1$ul;
+    h.b := 2$ul;
+    h.padre.a := 10$ul;
+    pout(h.b);
+    pout(h.padre.a);
+end

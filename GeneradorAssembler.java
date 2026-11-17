@@ -334,11 +334,19 @@ public class GeneradorAssembler {
                 case "CALLMET":
                     emitirLlamada(textoDeOperando(op2), null, numero, true, op1);
                     break;
+                case "COPY":
+                    emitirCopiar(op1, op2, numero);
+                    break;
+                case "CLASE":
+                case "FIN_CLASE":
+                    // Marcadores de clase: no emiten instrucciones en .CODE.
+                    // Los atributos de los objetos se emiten en .DATA via emitirData().
+                    break;
                 default:
                     if (esEtiqueta(op)) {
                         emitirEtiqueta(op);
                     } else {
-                        // Operadores estructurales de objetos: Prompt 4d.
+                        // Operadores estructurales no implementados aun (Prompt 4d en parte).
                         salida.append("    ; ").append(t.visualizar()).append("\n");
                     }
                     break;
@@ -385,10 +393,24 @@ public class GeneradorAssembler {
         }
         if (op instanceof ReferenciaAtributo) {
             ReferenciaAtributo ref = (ReferenciaAtributo) op;
+            // Buscar primero la entrada especifica del objeto en la TS
+            // (nombre calificado "objeto.atributo" o "objeto.clase.atributo",
+            // ambito del objeto). Cada objeto tiene sus propias entradas de
+            // atributo creadas por Entorno.materializarAtributosDeObjeto.
+            if (ref.objeto != null && ref.objeto.ambito != null) {
+                EntradaTabla eObjeto = tablaSimbolos.buscarIdentificador(
+                        ref.texto, ref.objeto.ambito);
+                if (eObjeto != null) {
+                    String nombre = tablaSimbolos.nombreAsmDe(eObjeto);
+                    if (nombre != null) {
+                        return nombre;
+                    }
+                }
+            }
+            // Fallback: usar la entrada del atributo declarada en la clase.
             // El atributo materializado por objeto vive en la TS con un nombre
             // ASM unico. 'texto' es solo la vista IR (obj.atr / obj.clase.atr)
-            // y no es un identificador MASM valido. Este mapeo prepara el
-            // direccionamiento de atributos del Prompt 4d sin implementarlo.
+            // y no es un identificador MASM valido.
             if (ref.atributo != null) {
                 String nombre = tablaSimbolos.nombreAsmDe(ref.atributo);
                 if (nombre != null) {
@@ -496,10 +518,13 @@ public class GeneradorAssembler {
             return;
         }
 
-        // Determinar el tipo del destino si es una EntradaTabla de la TS
+        // Determinar el tipo del destino: EntradaTabla (variable/parametro) o
+        // ReferenciaAtributo (atributo de objeto).
         boolean flotante = false;
         if (destino instanceof EntradaTabla) {
             flotante = esFlotante(((EntradaTabla) destino).tipoDato);
+        } else if (destino instanceof ReferenciaAtributo) {
+            flotante = esFlotante(((ReferenciaAtributo) destino).getTipo());
         }
 
         if (flotante) {
@@ -1153,5 +1178,126 @@ public class GeneradorAssembler {
 
     private String comoMemoria(String base) {
         return base.startsWith("[") ? base : "[" + base + "]";
+    }
+
+    /* ---------- Prompt 4d: objetos y atributos ---------- */
+
+    /*
+      Copia estructural (COPY) entre objetos compatibles: mismo layout de
+      atributos (heredados + propios, en orden). Como los atributos de un
+      objeto se emiten en .DATA como simbolos planos y dispersos (uno por
+      atributo, no como bloque contiguo), la copia se hace campo-a-campo:
+      un mov por atributo ulongint y dos mov por atributo doublef
+      (high dword primero).
+    */
+    private void emitirCopiar(Object destino, Object origen, int numero) {
+        if (!(destino instanceof EntradaTabla) || !(origen instanceof EntradaTabla)) {
+            salida.append("    ; COPY (operandos invalidos: destino/origen no son EntradaTabla)\n");
+            return;
+        }
+        EntradaTabla objDest = (EntradaTabla) destino;
+        EntradaTabla objOrigen = (EntradaTabla) origen;
+
+        String tipoDest = objDest.tipoDato;
+        Entorno.ClaseDeclarada clase = entorno != null ? entorno.claseDe(tipoDest) : null;
+        if (clase == null) {
+            salida.append("    ; COPY (clase no resuelta para destino: ").append(tipoDest).append(")\n");
+            return;
+        }
+
+        String ambitoDest = objDest.ambito != null ? objDest.ambito : "";
+        String ambitoOrigen = objOrigen.ambito != null ? objOrigen.ambito : "";
+        String nombreObjDest = TablaSimbolos.nombreDe(objDest.lexema);
+        String nombreObjOrigen = TablaSimbolos.nombreDe(objOrigen.lexema);
+        String claveClase = clase.clave();
+
+        // Recolectar declarantes: bases primero (heredaDe), luego la clase propia.
+        List<Entorno.ClaseDeclarada> declarantes = new ArrayList<>();
+        recolectarDeclarantes(clase, declarantes, new HashSet<>());
+
+        for (Entorno.ClaseDeclarada declarante : declarantes) {
+            boolean esPropia = declarante.clave().equals(claveClase);
+            String prefijoDest = esPropia
+                    ? nombreObjDest
+                    : nombreObjDest + "." + declarante.nombre;
+            String prefijoOrigen = esPropia
+                    ? nombreObjOrigen
+                    : nombreObjOrigen + "." + declarante.nombre;
+
+            for (Map.Entry<String, String> atributo : declarante.atributos.entrySet()) {
+                String nombreAttrDest = prefijoDest + "." + atributo.getKey();
+                String nombreAttrOrigen = prefijoOrigen + "." + atributo.getKey();
+
+                EntradaTabla eDest = tablaSimbolos.buscarIdentificador(nombreAttrDest, ambitoDest);
+                EntradaTabla eOrigen = tablaSimbolos.buscarIdentificador(nombreAttrOrigen, ambitoOrigen);
+
+                if (eDest == null || eOrigen == null) {
+                    salida.append("    ; COPY (atributo no encontrado en TS: ")
+                          .append(nombreAttrDest).append(" / ").append(nombreAttrOrigen).append(")\n");
+                    continue;
+                }
+
+                String asmDest = tablaSimbolos.nombreAsmDe(eDest);
+                String asmOrigen = tablaSimbolos.nombreAsmDe(eOrigen);
+                String tipoEfectivo = entorno != null
+                        ? entorno.tipoEfectivo(atributo.getValue())
+                        : atributo.getValue();
+
+                if (esFlotante(tipoEfectivo)) {
+                    // doublef: copiar dos dwords, high primero en direccion alta.
+                    salida.append("    mov eax, dword ptr ").append(asmOrigen).append("+4\n");
+                    salida.append("    mov dword ptr ").append(asmDest).append("+4, eax\n");
+                    salida.append("    mov eax, dword ptr ").append(asmOrigen).append("\n");
+                    salida.append("    mov dword ptr ").append(asmDest).append(", eax\n");
+                } else {
+                    // ulongint / enumerado: copiar un dword.
+                    salida.append("    mov eax, ").append(asmOrigen).append("\n");
+                    salida.append("    mov ").append(asmDest).append(", eax\n");
+                }
+            }
+        }
+    }
+
+    /*
+      Recolecta las clases declarantes de atributos en orden: bases primero
+      (siguiendo heredaDe de forma recursiva), luego la clase propia.
+      Se usa para emitir atributos en el orden correcto del layout.
+    */
+    private void recolectarDeclarantes(Entorno.ClaseDeclarada clase,
+            List<Entorno.ClaseDeclarada> destino, Set<String> visitadas) {
+        if (clase == null || !visitadas.add(clase.clave())) {
+            return;
+        }
+        for (String claveBase : clase.heredaDe) {
+            if (entorno != null) {
+                recolectarDeclarantes(entorno.getClase(claveBase), destino, visitadas);
+            }
+        }
+        destino.add(clase);
+    }
+
+    /*
+      Calcula el tamaño en bytes de una instancia de la clase dada, recorriendo
+      primero las bases (heredaDe, en orden) y luego los atributos propios.
+      ulongint/enum = 4 bytes; doublef = 8 bytes.
+    */
+    private int tamanioObjeto(Entorno.ClaseDeclarada clase) {
+        if (clase == null) {
+            return 0;
+        }
+        int total = 0;
+        for (String claveBase : clase.heredaDe) {
+            if (entorno != null) {
+                Entorno.ClaseDeclarada base = entorno.getClase(claveBase);
+                total += tamanioObjeto(base);
+            }
+        }
+        for (Map.Entry<String, String> atributo : clase.atributos.entrySet()) {
+            String tipoEfectivo = entorno != null
+                    ? entorno.tipoEfectivo(atributo.getValue())
+                    : atributo.getValue();
+            total += esFlotante(tipoEfectivo) ? 8 : 4;
+        }
+        return total;
     }
 }

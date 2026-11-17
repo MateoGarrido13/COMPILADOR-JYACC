@@ -1,0 +1,14 @@
+{{ TP4d: atributo doublef en objeto. Lectura y escritura de atributo flotante. }}
+prog
+class punto
+begin
+    ulongint x;
+    doublef y;
+end;
+punto p1;
+begin
+    p1.x := 5$ul;
+    p1.y := 3.5;
+    pout(p1.x);
+    pout(p1.y);
+end

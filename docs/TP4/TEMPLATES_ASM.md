@@ -447,9 +447,68 @@ Válido para `ulongint` (`CMP`) y para `doublef` (`FCOMP` + `FSTSW` + `SAHF`), p
 
 ---
 
+## Templates Prompt 4d — Objetos y atributos
+
+---
+
+## T-24 — Layout de atributos de objeto en `.DATA`
+
+**Prompt**: 4d · **Caso**: `class punto { ulongint x; doublef y; } punto p1;`.
+
+```asm
+.data
+    x_main_punto DD ?
+    y_main_punto DQ ?
+    p1_x_main DD ?
+    p1_y_main DQ ?
+```
+
+Cada atributo de objeto es una entrada independiente en `.DATA` con nombre calificado (`p1.x:main` → `p1_x_main`). El tipo ASM es `DD` para `ulongint`/enum y `DQ` para `doublef`.
+
+---
+
+## T-25 — Lectura y escritura de `ReferenciaAtributo` (`obj.atr`)
+
+**Prompt**: 4d · **Caso**: `p1.x := 5$ul;` y `pout(p1.x);`.
+
+```asm
+; escritura
+mov eax, c_5_ul_ul
+mov p1_x_main, eax
+
+; lectura
+invoke crt_printf, offset fmt_ulongint, p1_x_main
+```
+
+Para `doublef`: `fld <valor> / fstp qword ptr <atributo>` en escritura, y `invoke crt_printf, offset fmt_doublef, <atributo>` en lectura.
+
+---
+
+## T-26 — `COPY` estructural entre objetos compatibles
+
+**Prompt**: 4d · **Caso**: `p2 := p1;` donde ambos son `punto`.
+
+```asm
+mov eax, p1_x_main
+mov p2_x_main, eax
+mov eax, p1_y_main
+mov p2_y_main, eax
+```
+
+Copia campo-a-campo: un `mov` por atributo `ulongint`/enum, dos `mov` (high dword primero) por atributo `doublef`. Los atributos se recorren en orden: bases primero (según `heredaDe`), luego atributos propios.
+
+---
+
+## T-27 — `CLASE` / `FIN_CLASE`
+
+**Prompt**: 4d · **Caso**: `class punto ... end;`.
+
+No emiten instrucciones en `.CODE` (solo marcadores de comentario). Los atributos de objetos se emiten en `.DATA` vía `emitirData()`.
+
+---
+
 ## Templates pendientes (no implementados aún)
 
 | Template | Prompt | Caso previsto |
 |---|---|---|
-| Layout de objetos y `COPY` | 4d | slots `DD`/`DQ`, `rep movsd` |
 | Guardas runtime `b/e/f/h` | 5 | mensajes + `invoke ExitProcess, codigo` |

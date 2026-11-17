@@ -15,7 +15,6 @@ include \masm32\include\masm32rt.inc
 .code
 start:
     ; (PROGRAMA, --, --)
-    ; (CLASE, padre, --)
 mt_m_main_padre:
     push ebp
     mov ebp, esp
@@ -26,9 +25,6 @@ mt_m_main_padre:
 fin_m_main_padre:
     leave
     ret
-    ; (FIN_CLASE, padre, --)
-    ; (CLASE, hija, --)
-    ; (FIN_CLASE, hija, --)
     ; (PAR, pa:main:padre:m, 2$ul)
     ; (PAR, pb:main:padre:m, 3$ul)
     sub esp, 12

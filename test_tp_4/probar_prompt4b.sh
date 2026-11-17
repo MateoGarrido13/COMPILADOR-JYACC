@@ -115,7 +115,7 @@ verificar "$ASM" "variable dentro del else" 'offset fmt_ulongint, x_main'
 verificar "$ASM" "etiqueta de salto intacta" 'label_1:'
 
 ASM="$CASOS/10_pout_atributo.asm"
-verificar "$ASM" "atributo resuelto a nombre ASM" 'invoke crt_printf, offset fmt_ulongint, x_main_punto'
+verificar "$ASM" "atributo resuelto a nombre ASM" 'invoke crt_printf, offset fmt_ulongint, p1_x_main'
 
 ASM="$CASOS/11_pout_dentro_de_funcion.asm"
 verificar "$ASM" "pout de cadena en funcion" 'offset fmt_cadena, offset dentro'

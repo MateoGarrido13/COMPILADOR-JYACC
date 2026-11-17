@@ -17,7 +17,6 @@ include \masm32\include\masm32rt.inc
 .code
 start:
     ; (PROGRAMA, --, --)
-    ; (CLASE, calculadora, --)
 mt_m_main_calculadora:
     push ebp
     mov ebp, esp
@@ -31,7 +30,6 @@ mt_m_main_calculadora:
 fin_m_main_calculadora:
     leave
     ret
-    ; (FIN_CLASE, calculadora, --)
     ; (PAR, base:main:calculadora:m, 10$ul)
     ; (PAR, extra:main:calculadora:m, 5$ul)
     sub esp, 12

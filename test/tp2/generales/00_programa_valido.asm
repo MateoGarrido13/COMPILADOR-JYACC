@@ -14,10 +14,7 @@ include \masm32\include\masm32rt.inc
     p1_main DD ?
     p2_main DD ?
     a_main_base DD ?
-    pa_main_base_m DD ?
     b_main_hija DD ?
-    n_main_foo DD ?
-    d_main_foo DQ ?
     c_0_ul_ul DD 0
     c_4294967295_ul_ul DD 4294967295
     c_1_0 DQ 1.0
@@ -39,20 +36,31 @@ include \masm32\include\masm32rt.inc
     @aux36 DD ?
     @aux38 DD ?
     @aux42 DD ?
+    fmt_ulongint DB "%u",0
+    fmt_cadena DB "%s",0
 
 .code
 start:
     ; (PROGRAMA, --, --)
-    ; (CLASE, base, --)
-    ; (METODO, m, --)
-    ; (ret, pa:main:base:m, --)
-    ; (FIN_METODO, m, --)
-    ; (FIN_CLASE, base, --)
-    ; (CLASE, hija, --)
-    ; (FIN_CLASE, hija, --)
-    ; (FUNCION, foo, --)
-    ; (ret, n:main:foo, --)
-    ; (FIN_FUNCION, foo, --)
+mt_m_main_base:
+    push ebp
+    mov ebp, esp
+    ; this: dword ptr [ebp+8]
+    mov eax, dword ptr [ebp+12]
+    leave
+    ret
+fin_m_main_base:
+    leave
+    ret
+fn_foo_main:
+    push ebp
+    mov ebp, esp
+    mov eax, dword ptr [ebp+8]
+    leave
+    ret
+fin_foo_main:
+    leave
+    ret
     mov eax, c_0_ul_ul
     mov x_main, eax
     mov eax, c_4294967295_ul_ul
@@ -87,7 +95,7 @@ start:
     mov eax, @aux23
     cmp eax, c_1_ul_ul
     jne label_1
-    ; (pout, ok, --)
+    invoke crt_printf, offset fmt_cadena, offset ok
 label_1:
     fild x_main
     fstp @aux28
@@ -95,7 +103,16 @@ label_1:
     fstp z_main
     ; (PAR, n:main:foo, 1$ul)
     ; (PAR, d:main:foo, 2.5)
-    ; (CALL, foo:main, 2)
+    sub esp, 12
+    mov eax, c_1_ul_ul
+    mov dword ptr [esp+0], eax
+    mov eax, dword ptr [c_2_5+4]
+    mov dword ptr [esp+8], eax
+    mov eax, dword ptr [c_2_5]
+    mov dword ptr [esp+4], eax
+    call fn_foo_main
+    add esp, 12
+    mov @aux32, eax
     mov eax, @aux32
     mov x_main, eax
     mov eax, c_2_ul_ul
@@ -124,10 +141,10 @@ label_3:
     mov eax, x_main
     cmp eax, c_0_ul_ul
     jbe label_4
-    ; (pout, hola, --)
+    invoke crt_printf, offset fmt_cadena, offset hola
     jmp label_5
 label_4:
-    ; (pout, x:main, --)
+    invoke crt_printf, offset fmt_ulongint, x_main
 label_5:
     ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0

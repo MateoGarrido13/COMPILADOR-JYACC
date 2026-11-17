@@ -1,0 +1,18 @@
+{{ TP4d: asignacion estructural entre objetos compatibles (COPY).
+   p1 y p2 son de clase punto (ulongint x, ulongint y).
+   p2 := p1 copia campo a campo. }}
+prog
+class punto
+begin
+    ulongint x;
+    ulongint y;
+end;
+punto p1;
+punto p2;
+begin
+    p1.x := 10$ul;
+    p1.y := 20$ul;
+    p2 := p1;
+    pout(p2.x);
+    pout(p2.y);
+end

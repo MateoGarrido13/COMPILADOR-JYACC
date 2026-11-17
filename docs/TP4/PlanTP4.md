@@ -158,23 +158,16 @@ Entrega: convencion completa en DECISIONES_P4c.md, diagrama stack frame, casos .
 ---
 
 ### Prompt 4d — Objetos/atributos: COPY, ReferenciaAtributo, layout (Temas 25,28,31)
-Contexto: Tercetos `COPY`, `:=` con `ReferenciaAtributo`, acceso `obj.atr` / `obj.clase.atr`.
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_P4d.md`, `docs/TP4/TEMPLATES_ASM.md` (T-24..T-27). Archivo modificado: `GeneradorAssembler.java`; casos: `test_tp_4/Objetos y atributos/`; script: `test_tp_4/probar_prompt4d.sh`.
+Contexto: Tercetos de invocacion ya existen. Falta convencion de llamada y traduccion.
 
-Tareas:
-1) Definir layout de objeto en memoria (`.DATA` o stack):
-   - Cada objeto = bloque contiguo de slots (DD para ulongint/enum, DQ para doublef, DD para ref a objeto/clase).
-   - Orden: atributos heredados (bases en orden) + atributos propios. Slot size = 4 o 8 segun tipo.
-   - Offsets fijos por clase (calculados en Entorno/TS al cerrar clase).
-2) Extender `TablaSimbolos.colectarSimbolosData` / `EntradaTabla` para emitir variables objeto como estructura (varias lineas DD/DQ con offsets o `STRUCT` MASM). Simplificacion: emitir cada atributo materializado como variable plana `obj_atr` (ya existe via `declararAtributoDeObjeto`).
-3) `COPY`: copia byte-a-byte o campo-a-campo entre objetos compatibles (mismo layout). Usar `rep movsd` / loop `mov` por slots.
-4) `ReferenciaAtributo` en asignacion/lectura:
-   - `operandoAsm` ya devuelve `texto` (ej. `a1.x` o `a1.Base.y`). Mapear a nombre ASM del atributo materializado en TS (`v_a1_x`, `v_a1_Base_y`).
-   - Lectura: `mov eax, [v_a1_x]` / `fld qword ptr [v_a1_y]`.
-   - Escritura: `mov [v_a1_x], eax` / `fstp qword ptr [v_a1_y]`.
-5) `CLASE` / `FIN_CLASE`: no-op en .CODE (solo marcadores), pero asegurar que atributos de objetos queden en .DATA.
-6) Pruebas: asignacion estructural `a1 := a2`, lectura/escritura `a1.x := 5`, `pout a1.Base.y`, herencia multiple.
-
-Entrega: layout objetos, offsets, mapeo ReferenciaAtributo->ASM en DECISIONES_P4d.md, casos .asm.
+Tareas (completadas):
+1) Layout de objeto en memoria: atributos como simbolos planos en .DATA, bases primero (heredaDe) luego propios, DD para ulongint/enum y DQ para doublef.
+2) TablaSimbolos ya emite atributos de objeto via `declararAtributoDeObjeto` (nombre calificado `objeto.atributo`); no se modifica la TS de TP3.
+3) `COPY`: copia campo-a-campo entre objetos compatibles (un mov por ulongint, dos por doublef).
+4) `ReferenciaAtributo`: se resuelve a nombre ASM del atributo en `operandoAsm()`; lectura y escritura emiten `mov`/`fld`/`fstp` sobre ese nombre.
+5) `CLASE` / `FIN_CLASE`: no-op en .CODE (solo marcadores).
+6) Pruebas: 4 casos manuales en `test_tp_4/Objetos y atributos/` + script `probar_prompt4d.sh`.
 
 ---
 
