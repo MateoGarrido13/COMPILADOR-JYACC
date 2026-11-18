@@ -252,6 +252,82 @@ Tareas completadas:
 
 **Entrega consolidada del Prompt 5:** lista exacta de puntos instrumentados, forma de cada chequeo, ejemplos de mensajes/casos, y scripts de prueba por paquete (5.0, 5.b, 5.e, 5.f, 5.h).
 
+
+
+### Prompt 6 — Integración final, contrato de salida TP4 y suite de pruebas
+Contexto: Generador ASM + runtime checks completos (Prompt 5).
+
+El Prompt 6 se ejecuta como **paquetes secuenciales**, cada uno compitable y verificable por separado, dejando la eliminación de comentarios para el último:
+
+---
+
+#### Paquete 6.0 — Contrato de salida TP4 y generación de `.asm`
+Estado: ⏳ Pendiente.
+Contexto: Backend ASM completo con checks runtime (Prompt 5). Falta ajustar `Compilador.java`/`Main.java` al formato de salida que exige la cátedra para TP4.
+Tareas:
+1) En `Compilador.java`/`Main.java`: ante compilación sin errores, generar archivo `.asm` (mismo nombre base que el fuente, extensión `.asm`, en el mismo directorio o salida definida) y mostrar ruta/éxito por stdout.
+2) Salida por stdout **según cátedra para TP4**:
+   - errores de compilación (léxico, sintáctico, semántico) juntos con descripción y línea;
+   - representación intermedia (tercetos);
+   - contenidos de Tabla de Simbolos.
+   - **NO mostrar** tokens ni estructuras salvo que sea estrictamente necesario por compatibilidad interna (documentar decisión).
+3) Ante errores que impidan ASM correcto: no generar `.asm` inválido; documentar comportamiento.
+4) Prueba: compilar un caso válido y verificar que stdout contiene solo lo pedido y que el `.asm` aparece en la ruta esperada.
+
+---
+
+#### Paquete 6.1 — Validación MASM32: includes, directivas y ensamblable
+Estado: ⏳ Pendiente.
+Contexto: El `.asm` se genera pero no se ha validado con `ml.exe`/`ml64.exe` + `link` usando `masm32rt.inc` en Windows.
+Tareas:
+1) Revisar includes: `.386`, `.model flat, stdcall`, `option casemap:none`, `include \masm32\include\masm32rt.inc` — confirmar rutas y sintaxis exacta para el entorno de la cátedra.
+2) Revisar directivas de sección (`.data`/`.code`), alineación de `DQ` (¿requiere `ALIGN 8`?), `end start` vs `end`, CRLF vs LF.
+3) Verificar que `invoke crt_printf` con `DQ` (doublef) y `%f` funciona en el runtime MASM32 real (pasar qword por pila vs registros).
+4) Ajustar `GeneradorAssembler.java` si hace falta (p.ej. `ALIGN 8` antes de `DQ`, formato de cadenas, terminadores).
+5) Prueba: ensamblar y enlazar al menos 3 casos representativos (ulongint, doublef, objetos) en Windows con la toolchain indicada; registrar comandos y salida.
+
+---
+
+#### Paquete 6.2 — Batería de regresión TP3 y suite TP4/Grupo 43
+Estado: ⏳ Pendiente.
+Contexto: Contrato de salida y MASM validados. Ejecutar suite completa.
+Tareas:
+1) Regresión TP3: temas 13, 17, 19, 23, 25, 28, 31, 33 — fuentes de `test/tp2` y `test/TP3_SEMANTICAS` (si aplica) contra el contrato TP4.
+2) Runtime checks (Prompt 5): al menos un caso que **dispare** cada error b, e, f, h y casos **válidos** límite que no disparen.
+3) Programa integral representativo: combinar control de flujo, funciones/métodos recursivos, objetos con herencia múltiple + COPY + acceso prefijado, `pout` mixto.
+4) Registrar en `docs/TP4/MATRIZ_PRUEBAS_6.2.md`: caso → comando → esperado → obtenido → OK/FALLA.
+5) Script consolidado: `test_tp_4/probar_prompt6_2.sh` que ejecute todo y reporte resumen.
+
+---
+
+#### Paquete 6.3 — Limpieza final, docs de uso y resumen de estado
+Estado: ⏳ Pendiente.
+Contexto: Suite verde. Cierre de documentación y código.
+Tareas:
+1) **Remover `TODO` resueltos** del código (`GeneradorAssembler.java`, `Compilador.java`, `Entorno.java`, etc.). Solo borrar los que ya están implementados y no dejan acción pendiente.
+2) **Actualizar y desarrollar comentarios** (headers de archivo, Javadoc de clases/métodos públicos, y comentarios internos no triviales) para que expliquen en **mayor profundidad** el comportamiento:
+   - Qué hace la clase/método, sus precondiciones y efectos colaterales.
+   - Convenciones clave (p.ej. caller limpia pila, `this` en `[ebp+8]`, `@auxN` globales, layout plano de objetos, copia posicional, fallback recursivo en `getFuncion`).
+   - Decisiones no obvias: por qué se elige X sobre Y (cdecl-like vs stdcall, sin vtable, símbolos planos vs STRUCT, FPU vs SSE, etc.).
+   - Puntos de extensión/risk conocidos (alineación `DQ`, recursión profunda, checks runtime b/e/f/h).
+   - Trazabilidad: relación IR → ASM (p.ej. `; (PAR, a:suma, x:main)` que el generador emite intencionadamente).
+3) Docs cortas de uso en `README.md` o `docs/USO.md`: `javac ...`, `java Main archivo.txt`, cómo ensamblar/ejecutar el `.asm` generado (comandos `ml`/`link` o `masm32rt`).
+4) Resumen final en `docs/TP4/DECISIONES_P6.md` / `docs/TP4/ESTADO_FINAL.md`: qué cumple (temas, runtime), limitaciones conocidas, pasos manuales de ensamblado/ejecución, desviaciones si las hay.
+
+---
+
+#### Paquete 6.4 — Eliminación de comentarios en el proyecto (último) PEDIR PERMISO  CON "**BORRAR COMENTARIOS**"
+Estado: ⏳ Pendiente.
+Contexto: Todo funcional, documentado y probado. Limpieza estética final.
+Tareas:
+1) Eliminar comentarios de depuración, `// TODO` ya resueltos, bloques de código comentado, trazas verbosas que no aportan.
+2) Mantener solo: headers de archivo/clase, Javadoc público útil, comentarios de decisión no obvia (por qué se elige X sobre Y), y comentarios de traceabilidad ASM (p.ej. `; (PAR, a:suma, x:main)` que el generador emite intencionadamente).
+3) Verificar que `git diff` muestra solo eliminación de ruido, sin cambio funcional.
+4) Ejecutar `bash test_tp_4/probar_prompt6_2.sh` una vez más para confirmar que nada se rompió.
+
+---
+
+**Entrega consolidada del Prompt 6:** diff final por paquete, `MATRIZ_PRUEBAS_6.2.md`, `ESTADO_FINAL.md`, instrucciones de ejecución y ensamblado, y confirmación de que la eliminación de comentarios (6.4) no introdujo regresiones.
 ### Prompt 6 — Integración final, contrato de salida TP4 y suite de pruebas
 Contexto: Generador ASM + runtime checks completos (Prompt 5).
 
