@@ -7,10 +7,17 @@ import java.nio.file.Paths;
 
 /*
   Flujo del compilador.
- 
+
   Arma el entorno compartido (tabla de simbolos, reporte, tabla de acciones) y
   encadena las etapas. El Parser generado por BYACC/J desde gramatica.y conduce
   el analisis sintactico, que pide tokens al Analisis Lexico y ejecuta las acciones semanticas.
+
+  AJUSTE POST-6.0 (pedido del usuario): stdout vuelve al formato TP3
+  (fuente numerado, tokens, estructuras, errores, tabla de simbolos y tercetos).
+  El usuario quitara esas impresiones manualmente antes de entregar. Por eso
+  NO se imprime aqui ningun mensaje nuevo de estado del .asm:
+  solo se conserva la compuerta que evita escribir un .asm cuando Reporte
+  tiene errores, y la ruta derivada robusta de rutaAsmPara().
  */
 public class Compilador {
 
@@ -49,24 +56,9 @@ public class Compilador {
         GeneradorTercetos generador = new GeneradorTercetos(reporte);
         generador.generar(tablaAcciones.getReducciones());
 
-        // TP4 Prompt 2: generar archivo .asm esqueleto (encabezado + .DATA + .CODE vacio)
-        String rutaAsm = rutaFuente;
-        int punto = rutaFuente.lastIndexOf('.');
-        if (punto >= 0) {
-            rutaAsm = rutaFuente.substring(0, punto) + ".asm";
-        } else {
-            rutaAsm = rutaFuente + ".asm";
-        }
-        try {
-            GeneradorAssembler ensamblador = new GeneradorAssembler(
-                    generador.getTercetos(),
-                    this.tablaSimbolos,
-                    this.entorno,
-                    generador.getResultados());
-            ensamblador.escribirArchivo(rutaAsm);
-        } catch (IOException e) {
-            System.err.println("No se pudo generar el archivo ASM: " + e.getMessage());
-        }
+        // 6.0: escribir el .asm solo si no hay errores. Sin mensaje en stdout;
+        // el contrato de consola pedido sigue siendo el de TP3.
+        generarArchivoAsm(generador, rutaAsmPara(rutaFuente));
 
         String tokens = RegistroTokens.contenido();
         String estructuras = reporte.contenidoEstructuras();
@@ -85,7 +77,6 @@ public class Compilador {
         System.out.print(tabla);
         System.out.println();
         System.out.print(intermedio);
-
     }
 
     /*
@@ -109,6 +100,39 @@ public class Compilador {
             // se devuelve lo leido hasta el momento sin interrumpir la salida.
         }
         return texto.toString();
+    }
+
+    /*
+      Escribe el .asm solo si la compilacion no tiene errores. Los errores de
+      escritura van a stderr, como en el Codigo original, para no ensuciar el
+      stdout TP3 que el usuario sacara antes de entregar.
+     */
+    private void generarArchivoAsm(GeneradorTercetos generador, String rutaAsm) {
+        if (reporte.hayErrores()) {
+            return;
+        }
+        try {
+            GeneradorAssembler ensamblador = new GeneradorAssembler(
+                    generador.getTercetos(),
+                    this.tablaSimbolos,
+                    this.entorno,
+                    generador.getResultados());
+            ensamblador.escribirArchivo(rutaAsm);
+        } catch (IOException e) {
+            System.err.println("No se pudo generar el archivo ASM: " + e.getMessage());
+        }
+    }
+
+    /*
+      Mismo directorio y nombre base que el fuente, extension .asm. Se busca
+      el ultimo punto DESPUES del ultimo separador para no confundir un punto
+      en el nombre de una carpeta con la extension del archivo.
+     */
+    private String rutaAsmPara(String rutaFuente) {
+        int separador = Math.max(rutaFuente.lastIndexOf('/'), rutaFuente.lastIndexOf('\\'));
+        int punto = rutaFuente.lastIndexOf('.');
+        String base = punto > separador ? rutaFuente.substring(0, punto) : rutaFuente;
+        return base + ".asm";
     }
 
     public TablaSimbolos getTablaSimbolos() {

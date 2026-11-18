@@ -101,9 +101,9 @@ Casos en `test_tp_4/Integracion/` (fuente `.txt` + snapshot `.asm`):
 
 Además, para cada caso se verifica que no aparezcan `; (CALL`, `; (ret`, `; (FUNCION`, `; (BF` ni `; (COPY`.
 
-### Salida de consola de TP3
+### Salida de consola (TP3, restaurada tras el revert de 6.0)
 
-Snapshots en `test_tp_4/Integracion/consola_tp3/`, comparados con `diff` contra el build de `HEAD` y contra el build actual:
+Snapshots en `test_tp_4/Integracion/consola_tp3/`. En Prompt 4 se compararon con `diff` contra el build de `HEAD` y contra el build actual. El regenerado temporal con contrato TP4 hecho en 6.0 fue revertido por pedido del usuario: los 5 snapshots y `probar_prompt4e.sh` volvieron a su versión original, sin normalización de rutas:
 
 | Fuente | Snapshot |
 |---|---|
@@ -143,7 +143,7 @@ Dentro del script se ejecutan, con el mismo `TP4_BUILD`, los scripts `probar_pro
 4. **`repeat-until` no existe en `gramatica.y`**: solo hay `repeat <bloque> while (<cond>);` (Tema 13). Los casos integrales cubren `repeat-while` anidado.
 5. **MASM32 no ensamblado en este entorno**: se valida texto `.asm` y compilación Java, no `ml.exe`/ejecución en Windows. Revisar especialmente `dword ptr [<sym>+4]`, `invoke crt_printf` con `DQ` y CRLF al ensamblar con la herramienta de la cátedra.
 6. **Chequeos runtime b/e/f/h — ya instrumentados en Prompt 5 (corrección documental)**: el Grupo 43 tiene `b` = overflow de suma `ulongint`, `e` = overflow de producto `doublef`, `f` = resultado negativo en resta `ulongint`, `h` = enum inválido. La división por cero es la letra **a**, que NO pertenece al grupo; el overflow de producto entero es la letra **d**, tampoco asignada. Detalle y correcciones en `ESTADO_RUNTIME_P5.md`.
-7. **Contrato final de salida pendiente**: Prompt 6 ajustará stdout al formato TP4 (errores, tercetos y TS, sin tokens/estructuras). Hoy se conserva deliberadamente la salida TP3 para no romper regresiones.
+7. **Contrato final de salida (estado actual)**: Prompt 4 conservó deliberadamente la salida TP3 para no romper regresiones. El paquete 6.0 la cambió a TP4 y luego la restauró por pedido del usuario; él eliminará el bloque TP3 manualmente antes de entregar. Ver `DECISIONES_6.0.md`.
 8. **Objetos locales**: atributos de objetos declarados dentro de funciones siguen resolviéndose a `.DATA`; parámetros y locales escalares sí van al frame `[ebp±n]`.
 
 ## Archivos del diff final de Prompt 4

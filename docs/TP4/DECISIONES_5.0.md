@@ -2,6 +2,8 @@
 
 > **Actualización de auditoría** (ver `ESTADO_RUNTIME_P5.md`): este documento refleja el estado original del commit `77b2963`. Dos afirmaciones quedaron desactualizadas: (1) `emitirGuardia()` existe pero **no tiene llamadas reales**; los emisores escriben el salto directamente; (2) los labels de fallo se emitían sin un `jmp` previo, por lo que el flujo normal caía en ellos. La corrección **B1** agregó `jmp fin_normal` antes del bloque y `fin_normal:` después. Los booleanos `usaMsg*` se calculan recién en `calcularChequeosRuntime()` (5.b/5.e/5.f/5.h), no en 5.0.
 
+> **Actualización 6.0 (con revert)**: el contrato de stdout se cambió a TP4 y después se restauró a TP3 por pedido del usuario, que eliminará ese bloque manualmente antes de entregar. La frase de más abajo sobre «salida observable de TP3» vuelve a ser vigente. Los mensajes y labels runtime de 5.0 no cambiaron. Ver `DECISIONES_6.0.md`.
+
 ## Resumen
 
 El Paquete 5.0 es la **infraestructura común de chequeos runtime** para el Prompt 5. Solo proviene los elementos que los paquetes 5.b/5.e/5.f/5.h reutilizarán:

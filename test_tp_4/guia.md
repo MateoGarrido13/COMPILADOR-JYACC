@@ -2,6 +2,8 @@
 
 Este documento explica cómo verificar que el **Prompt 2 de TP4** funciona correctamente.
 
+> **Actualización 6.0 (con revert posterior)**: se agregó la compuerta que evita generar `.asm` con errores. El cambio de stdout a formato TP4 fue revertido por pedido del usuario: hoy se imprimen fuente numerado, tokens, estructuras, errores, tabla de símbolos y tercetos, y él eliminará ese bloque manualmente antes de entregar. Ver `docs/TP4/DECISIONES_6.0.md` y `probar_prompt6_0.sh`. Lo demás de esta guía (estructura del `.asm`) sigue vigente.
+
 ## Qué debe hacer el Prompt 2
 
 Al ejecutar el compilador sobre un archivo fuente `.txt`, debe generarse un archivo `.asm` del mismo nombre (extensión cambiada a `.asm`) con:
@@ -27,8 +29,8 @@ Al ejecutar el compilador sobre un archivo fuente `.txt`, debe generarse un arch
 
 ## Qué NO debe cambiar
 
-- La salida por consola de TP3 (fuente numerado, tokens, estructuras, errores, TS, tercetos) debe ser idéntica a antes del Prompt 2.
-- No se rompe ningún caso existente de TP3.
+- La salida por consola sigue siendo la de TP3; el intento de cambiarla en 6.0 fue revertido por pedido del usuario.
+- No se rompe ningún caso existente de TP3; los snapshots bajo `Integracion/consola_tp3/` volvieron a su contenido original.
 
 ## Cómo probar
 
@@ -61,7 +63,7 @@ cat test/tp2/generales/00_programa_valido.asm
 | Sección `.DATA` | Presente con símbolos |
 | Sección `.CODE` | Presente con `start:` y `end start` |
 | `invoke ExitProcess, 0` | Presente |
-| Salida por consola | Sin errores, tercetos/TS iguales a TP3 |
+| Salida por consola | TP3: fuente numerado + tokens + estructuras + errores + TS + tercetos (recorte manual antes de entregar) |
 
 ## Casos de prueba sugeridos
 

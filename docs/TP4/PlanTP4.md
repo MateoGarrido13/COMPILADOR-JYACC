@@ -1,6 +1,6 @@
 ### Estado base
-- Rama/HEAD: tp4alt, commit b9250e0 — Plan 6 (al cierre de la auditoría Prompt 5; más los cambios de corrección descriptos en `ESTADO_RUNTIME_P5.md`). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
-- Pipeline actual (Compilador.java): AnalizadorLexico -> Parser+AccionesSemanticas -> Verificaciones/Entorno -> GeneradorTercetos -> salida stdout (fuente numerado, tokens, estructuras, errores, TS, tercetos). Genera archivo .asm esqueleto (encabezado, .DATA, .CODE mínimo) mediante GeneradorAssembler. Main toma [ruta] o input.txt.
+- Rama/HEAD: tp4alt, commit 909f197 — inciso h ahora valida enums de doublef (incluye 6b1b1ff con las correcciones B1/B2/B3/B4/B5 y R1–R6 de `ESTADO_RUNTIME_P5.md`). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
+- Pipeline actual (Compilador.java): AnalizadorLexico -> Parser+AccionesSemanticas -> Verificaciones/Entorno -> GeneradorTercetos -> salida stdout TP3 (fuente numerado, tokens, estructuras, errores, TS, tercetos), restaurada por pedido del usuario; él la eliminará manualmente antes de entregar. Genera el `.asm` completo mediante GeneradorAssembler solo si no hay errores, en la ruta derivada por `rutaAsmPara()`. Main toma [ruta] o input.txt. Ver `docs/TP4/DECISIONES_6.0.md`.
 
 ### IR / Tercetos (Terceto.java, GeneradorTercetos.java)
 - Terceto(op, op1, op2) 1-based en ListaTercetos. Operandos: EntradaTabla (se imprime lexema), Integer = ref [n], String = etiqueta/literal textual (p.ej. cant params en CALL), ReferenciaAtributo (objeto.atributo/objeto.clase.atributo), null -> --.
@@ -185,7 +185,7 @@ Tareas (completadas):
    - Objetos con herencia multiple, COPY posicional y acceso prefijado (`04_objetos_multiherencia_copy`).
    - `pout` combinado con cadena, expresion, llamada y `todf` (`05_pout_expresiones_llamadas`).
    - Regresion 4d: COPY entre layouts compatibles con nombres distintos (`06_copy_layout_compat_distinto_nombre`).
-4) Salida de consola de TP3 verificada: 5 snapshots comparados contra build limpio de `HEAD` y build actual → 5/5 `IGUAL`.
+4) Salida de consola de TP3 verificada: 5 snapshots comparados contra build limpio de `HEAD` y build actual → 5/5 `IGUAL`. **Nota 6.0**: hubo un regenerado temporal con contrato TP4 que fue revertido por pedido del usuario; los 5 snapshots volvieron al contenido TP3 original y `probar_prompt4e.sh` ya no normaliza rutas.
 5) Limitaciones documentadas en `DECISIONES_P4.md`: sin vtable, layout plano/`this` simbolico, `@auxN` globales con recursion, MASM no ensamblado aqui, checks b/e/f/h para Prompt 5 y contrato final para Prompt 6.
 
 Entrega: diff final Prompt 4, matriz de pruebas, `DECISIONES_P4.md` consolidado. `bash test_tp_4/probar_prompt4e.sh` → OK (incluye regresiones 4d, 4c, 4b, 4a, 3 y 2).
@@ -263,18 +263,14 @@ El Prompt 6 se ejecuta como **paquetes secuenciales**, cada uno compitable y ver
 
 ---
 
-#### Paquete 6.0 — Contrato de salida TP4 y generación de `.asm`
-Estado: ⏳ Pendiente.
-Contexto: Backend ASM completo con checks runtime (Prompt 5). Falta ajustar `Compilador.java`/`Main.java` al formato de salida que exige la cátedra para TP4.
-Tareas:
-1) En `Compilador.java`/`Main.java`: ante compilación sin errores, generar archivo `.asm` (mismo nombre base que el fuente, extensión `.asm`, en el mismo directorio o salida definida) y mostrar ruta/éxito por stdout.
-2) Salida por stdout **según cátedra para TP4**:
-   - errores de compilación (léxico, sintáctico, semántico) juntos con descripción y línea;
-   - representación intermedia (tercetos);
-   - contenidos de Tabla de Simbolos.
-   - **NO mostrar** tokens ni estructuras salvo que sea estrictamente necesario por compatibilidad interna (documentar decisión).
-3) Ante errores que impidan ASM correcto: no generar `.asm` inválido; documentar comportamiento.
-4) Prueba: compilar un caso válido y verificar que stdout contiene solo lo pedido y que el `.asm` aparece en la ruta esperada.
+#### Paquete 6.0 — Generación condicional de `.asm` (stdout TP4 revertido por pedido)
+Estado: ✅ Compuerta y ruta ejecutadas; ⚠️ stdout TP4 revertido a TP3 por pedido del usuario, quien eliminará ese bloque manualmente antes de entregar. Ver `docs/TP4/DECISIONES_6.0.md`. Archivos: `Compilador.java`, `Main.java`; script: `test_tp_4/probar_prompt6_0.sh`. Snapshots y `probar_prompt4e.sh`: sin cambios netos (restaurados a `HEAD`).
+Contexto: Backend ASM completo con checks runtime (Prompt 5). Se conserva la generación del `.asm` y se documenta el desvío temporal del formato de salida.
+Tareas (estado final):
+1) `generarArchivoAsm()` escribe el `.asm` solo si `Reporte.hayErrores()` es falso, en `rutaAsmPara()` (mismo directorio y nombre base, extensión `.asm`). `Main` delega y solo resuelve la ruta.
+2) stdout vuelve al orden TP3: **fuente numerado → tokens → estructuras → errores → TS → tercetos**. No hay mensajes nuevos de `ASM generado:` / `ASM no generado:`; los errores de E/S del `.asm` van a stderr. El contrato TP4 de consola queda como recorte manual previo a la entrega.
+3) Con errores: se imprimen los errores con línea, TS e IR como en TP3; no se escribe `.asm` y no se borra un `.asm` previo para no destruir posibles ediciones del usuario.
+4) Prueba: `bash test_tp_4/probar_prompt6_0.sh` verifica stdout TP3, caso con error, no-generación del `.asm` y regresión 4e. Batería post-reversión en curso; resultado a registrar en `DECISIONES_6.0.md`. `GeneradorAssembler` no se modificó: 6.1 queda libre para MASM32 real.
 
 ---
 
@@ -294,7 +290,7 @@ Tareas:
 Estado: ⏳ Pendiente.
 Contexto: Contrato de salida y MASM validados. Ejecutar suite completa.
 Tareas:
-1) Regresión TP3: temas 13, 17, 19, 23, 25, 28, 31, 33 — fuentes de `test/tp2` y `test/TP3_SEMANTICAS` (si aplica) contra el contrato TP4.
+1) Regresión TP3: temas 13, 17, 19, 23, 25, 28, 31, 33 — fuentes de `test/tp2` y `test/TP3_SEMANTICAS` (si aplica) contra el stdout TP3 vigente.
 2) Runtime checks (Prompt 5): al menos un caso que **dispare** cada error b, e, f, h y casos **válidos** límite que no disparen.
 3) Programa integral representativo: combinar control de flujo, funciones/métodos recursivos, objetos con herencia múltiple + COPY + acceso prefijado, `pout` mixto.
 4) Registrar en `docs/TP4/MATRIZ_PRUEBAS_6.2.md`: caso → comando → esperado → obtenido → OK/FALLA.
