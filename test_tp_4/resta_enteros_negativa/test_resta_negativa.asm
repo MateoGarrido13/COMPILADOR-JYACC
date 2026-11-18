@@ -17,11 +17,13 @@ include \masm32\include\masm32rt.inc
     @aux7 DD ?
     fmt_ulongint DB "%u",0
     msg_overflow_suma DB "Error: overflow en suma de ulongint",0
+    msg_negativo_resta DB "Error: resultado negativo en resta de ulongint",0
 
 .code
 start:
     mov eax, c_5_ul_ul
     sub eax, c_10_ul_ul
+    jb error_negativo_resta
     mov @aux2, eax
     mov eax, @aux2
     mov x_main, eax
@@ -31,6 +33,7 @@ start:
     mov @aux4, eax
     mov eax, @aux4
     sub eax, c_100_ul_ul
+    jb error_negativo_resta
     mov @aux5, eax
     mov eax, @aux5
     mov y_main, eax
@@ -44,5 +47,8 @@ start:
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
+error_negativo_resta:
+    invoke crt_printf, offset msg_negativo_resta
+    invoke ExitProcess, 3
     invoke ExitProcess, 0
 end start

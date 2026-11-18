@@ -17,6 +17,7 @@ include \masm32\include\masm32rt.inc
     @aux22 DD ?
     @aux25 DD ?
     fmt_ulongint DB "%u",0
+    msg_negativo_resta DB "Error: resultado negativo en resta de ulongint",0
 
 .code
 start:
@@ -38,6 +39,7 @@ fn_fact_main:
 label_1:
     mov eax, dword ptr [ebp+8]
     sub eax, c_1_ul_ul
+    jb error_negativo_resta
     mov @aux8, eax
     ; (PAR, n:main:fact, [8])
     sub esp, 4
@@ -91,5 +93,8 @@ fin_escala_main_calculadora:
     mov m_main, eax
     invoke crt_printf, offset fmt_ulongint, r_main
     invoke crt_printf, offset fmt_ulongint, m_main
+error_negativo_resta:
+    invoke crt_printf, offset msg_negativo_resta
+    invoke ExitProcess, 3
     invoke ExitProcess, 0
 end start

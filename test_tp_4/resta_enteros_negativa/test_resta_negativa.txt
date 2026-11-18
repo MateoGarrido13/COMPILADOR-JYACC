@@ -5,7 +5,7 @@ ulongint y;
 ulongint z;
 begin
     x := 5$ul - 10$ul;
-    y := 10$ul + 2$ul - 100$ul
+    y := 10$ul + 2$ul - 100$ul;
     z := x + 5$ul;
     pout(x);
 end

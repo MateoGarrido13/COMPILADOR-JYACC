@@ -617,6 +617,10 @@ public class GeneradorAssembler {
                     break;
                 case "-":
                     salida.append("    sub eax, ").append(o2).append("\n");
+                    // 5.f: chequeo de resultado negativo en resta de ulongint (préstamo CF=1).
+                    if (usaMsgNegativoResta) {
+                        salida.append("    jb error_negativo_resta\n");
+                    }
                     break;
                 case "*":
                     salida.append("    imul eax, ").append(o2).append("\n");
@@ -960,6 +964,32 @@ public class GeneradorAssembler {
             String tipo = r != null ? r.getTipo() : Tipos.INDEFINIDO;
             if (Tipos.DOUBLEF.equals(tipo)) {
                 usaMsgOverflowFloat = true;
+                break;
+            }
+        }
+
+        // 5.f: si hay al menos una resta '-' de tipo ulongint, se activa
+        // el mensaje y label de error_negativo_resta para chequear
+        // resultado negativo en aritmética sin signo.
+        usaMsgNegativoResta = false;
+        for (Terceto t : tercetos) {
+            if (!"-".equals(t.getOperador())) {
+                continue;
+            }
+            int numero = -1;
+            for (int i = 0; i < tercetos.size(); i++) {
+                if (tercetos.get(i) == t) {
+                    numero = i + 1;
+                    break;
+                }
+            }
+            if (numero < 0) {
+                continue;
+            }
+            ResultadoTerceto r = resultados.get(numero);
+            String tipo = r != null ? r.getTipo() : Tipos.INDEFINIDO;
+            if (Tipos.ULONGINT.equals(tipo)) {
+                usaMsgNegativoResta = true;
                 break;
             }
         }

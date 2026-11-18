@@ -225,10 +225,10 @@ Tareas (completadas):
 ---
 
 #### Paquete 5.f — Resultados negativos en restas de enteros sin signo `ulongint`
-Estado: ⏳ Pendiente.
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_5.f.md`. Archivo modificado: `GeneradorAssembler.java`. Pruebas: `test_tp_4/resta_enteros_negativa/` y `test_tp_4/probar_prompt5_f.sh`.
 Contexto: En cada resta de enteros sin signo (`SUB`) de `ulongint`, detectar si el resultado sería negativo (es decir, si el minuendo es menor que el sustraendo). Si es así, saltar a error.
-Tareas pendientes:
-1) En `GeneradorAssembler.emitirAritmetica()` para operador `-` con tipo `ulongint`, tras `sub eax, <op2>`, insertar comprobación de préstamo/salto por debajo (`jb` / `jc` según convención) con salto a `error_negativo_resta`.
+Tareas (completadas):
+1) En `GeneradorAssembler.emitirAritmetica()` para operador `-` con tipo `ulongint`, tras `sub eax, <op2>`, insertar comprobación de préstamo/salto por debajo (`jb`) con salto a `error_negativo_resta`.
 2) Como `ulongint` es sin signo, el resultado nunca debe ser negativo; si `op1 < op2`, la resta produce un valor fuera de rango.
 
 ---
