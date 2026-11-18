@@ -17,7 +17,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
     mov eax, c_10_ul_ul
     mov a_main, eax
     mov eax, c_3_ul_ul
@@ -35,6 +34,5 @@ start:
     sub eax, b_main
     mov @aux8, eax
     invoke crt_printf, offset fmt_ulongint, @aux8
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

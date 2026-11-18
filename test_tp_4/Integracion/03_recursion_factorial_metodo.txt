@@ -1,0 +1,26 @@
+{{ TP4e: factorial recursivo + llamada a metodo + pout.
+   Verifica call recursivo con @auxN, frame con EBP y limpieza caller. }}
+prog
+ulongint function fact(ulongint n)
+begin
+    if (n <= 1$ul)
+        ret(1$ul);
+    else
+        ret(n * fact(n - 1$ul)[1$ul]);
+    end_if;
+end;
+class calculadora
+begin
+    ulongint escala(ulongint v)
+    begin
+        ret(v * v);
+    end;
+end;
+calculadora c;
+ulongint r, m;
+begin
+    r := fact(5$ul)[1$ul];
+    m := c.escala(r)[1$ul];
+    pout(r);
+    pout(m);
+end

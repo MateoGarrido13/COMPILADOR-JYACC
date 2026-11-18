@@ -486,16 +486,31 @@ Para `doublef`: `fld <valor> / fstp qword ptr <atributo>` en escritura, y `invok
 
 ## T-26 — `COPY` estructural entre objetos compatibles
 
-**Prompt**: 4d · **Caso**: `p2 := p1;` donde ambos son `punto`.
+**Prompt**: 4d (corregido en 4e) · **Caso**: `p2 := p1;` donde ambos son `punto` (`ulongint x; doublef y;`).
 
 ```asm
 mov eax, p1_x_main
 mov p2_x_main, eax
-mov eax, p1_y_main
-mov p2_y_main, eax
+mov eax, dword ptr [p1_y_main+4]
+mov dword ptr [p2_y_main+4], eax
+mov eax, dword ptr [p1_y_main]
+mov dword ptr [p2_y_main], eax
 ```
 
-Copia campo-a-campo: un `mov` por atributo `ulongint`/enum, dos `mov` (high dword primero) por atributo `doublef`. Los atributos se recorren en orden: bases primero (según `heredaDe`), luego atributos propios.
+Copia **posicional** campo-a-campo: un `mov` por atributo `ulongint`/enum, dos `mov` de dwords (high primero) por atributo `doublef`. Se recorre el layout efectivo en paralelo: bases primero (según `heredaDe`), luego atributos propios; un propio con el mismo nombre reemplaza al heredado sin moverlo de posición. La compatibilidad la decide `Entorno.clasesCompatibles()` por tipos, no por nombres.
+
+Ejemplo de nombres distintos con el mismo layout (`izq { x, d }` → `der { y, e }`):
+
+```asm
+mov eax, a_x_main          ; posicion 0 (ulongint)
+mov b_y_main, eax
+mov eax, dword ptr [a_d_main+4]
+mov dword ptr [b_e_main+4], eax
+mov eax, dword ptr [a_d_main]
+mov dword ptr [b_e_main], eax
+```
+
+Los corchetes son obligatorios en la sintaxis MASM usada por el generador (`dword ptr [<sym>+4]`).
 
 ---
 
@@ -504,6 +519,88 @@ Copia campo-a-campo: un `mov` por atributo `ulongint`/enum, dos `mov` (high dwor
 **Prompt**: 4d · **Caso**: `class punto ... end;`.
 
 No emiten instrucciones en `.CODE` (solo marcadores de comentario). Los atributos de objetos se emiten en `.DATA` vía `emitirData()`.
+
+---
+
+## Templates Prompt 4e — Integración final
+
+---
+
+## T-28 — Llamada recursiva directa (`fact`)
+
+**Prompt**: 4e · **Caso**: `ret(n * fact(n - 1$ul)[1$ul]);`.
+
+```asm
+fn_fact_main:
+    push ebp
+    mov ebp, esp
+    mov eax, dword ptr [ebp+8]
+    cmp eax, c_1_ul_ul
+    setbe al
+    movzx eax, al
+    mov @aux3, eax
+    mov eax, dword ptr [ebp+8]
+    cmp eax, c_1_ul_ul
+    ja label_1
+    mov eax, c_1_ul_ul
+    leave
+    ret
+label_1:
+    mov eax, dword ptr [ebp+8]
+    sub eax, c_1_ul_ul
+    mov @aux8, eax
+    ; (PAR, n:main:fact, [8])
+    sub esp, 4
+    mov eax, @aux8
+    mov dword ptr [esp+0], eax
+    call fn_fact_main
+    add esp, 4
+    mov @aux10, eax
+    mov eax, dword ptr [ebp+8]
+    imul eax, @aux10
+    mov @aux11, eax
+    mov eax, @aux11
+    leave
+    ret
+```
+
+`Entorno.getFuncion()` consulta también `pilaFunciones`, por lo que la firma de `fact` está disponible mientras su cuerpo se está generando. Sin ese fallback el IR descartaba la llamada recursiva. El llamador limpia la pila (`add esp, 4`) y el retorno llega en EAX. Los `@auxN` son globales: el real se copia a la pila antes del `call`; no se reasignan por activación.
+
+---
+
+## T-29 — Programa integrado 4e: despacho, saltos y `pout`
+
+**Prompt**: 4e · **Caso**: `if (todf(a) > d) ... else ...` con `pout` al final.
+
+```asm
+.code
+start:
+    fild a_main
+    fstp @aux5
+    fld @aux5
+    fcomp d_main
+    fstsw @fpu_status
+    mov ax, @fpu_status
+    sahf
+    seta al
+    movzx eax, al
+    mov @aux6, eax
+    fld @aux5
+    fcomp d_main
+    fstsw @fpu_status
+    mov ax, @fpu_status
+    sahf
+    jbe label_3
+    ; ... rama then / else con etiquetas label_1..label_4 ...
+label_4:
+    invoke crt_printf, offset fmt_ulongint, k_main
+    invoke ExitProcess, 0
+end start
+```
+
+`PROGRAMA` y `FIN_PROGRAMA` son no-op: no aparecen ni como instrucción ni como comentario. El `default` de `emitirCodigo()` solo materializa `label_N:` y marca operadores desconocidos; ningún operador ya implementado cae ahí. Los `.asm` de todas las etapas se regeneraron para reflejar este cambio.
+
+Casos 4e relacionados: `01_if_doublef_anidado`, `02_repeat_while_anidado`, `03_recursion_factorial_metodo`, `04_objetos_multiherencia_copy`, `05_pout_expresiones_llamadas` y `06_copy_layout_compat_distinto_nombre`. Matriz completa en `DECISIONES_P4.md`.
 
 ---
 

@@ -11,12 +11,10 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
     mov eax, c_9_ul_ul
     mov x_main, eax
     fild x_main
     fstp @aux3
     invoke crt_printf, offset fmt_doublef, @aux3
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

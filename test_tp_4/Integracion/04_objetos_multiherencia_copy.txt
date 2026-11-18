@@ -1,0 +1,27 @@
+{{ TP4e: objetos con herencia multiple, COPY posicional y acceso prefijado.
+   b1 aporta ulongint u, b2 aporta doublef v, hija aporta ulongint w. }}
+prog
+class b1
+begin
+    ulongint u;
+end;
+class b2
+begin
+    doublef v;
+end;
+class hija
+begin
+    extends b1, b2;
+    ulongint w;
+end;
+hija s1;
+hija s2;
+begin
+    s1.b1.u := 4$ul;
+    s1.b2.v := 1.25;
+    s1.w := 9$ul;
+    s2 := s1;
+    pout(s2.b1.u);
+    pout(s2.b2.v);
+    pout(s2.w);
+end

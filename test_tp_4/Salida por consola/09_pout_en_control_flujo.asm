@@ -18,7 +18,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
     mov eax, c_0_ul_ul
     mov x_main, eax
 label_1:
@@ -50,6 +49,5 @@ label_3:
     jae label_4
     jmp label_1
 label_4:
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

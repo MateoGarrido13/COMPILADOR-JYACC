@@ -1,0 +1,15 @@
+{{ TP4e: pout combinado con cadena, llamada a funcion, expresion y todf. }}
+prog
+ulongint function suma(ulongint a, ulongint b)
+begin
+    ret(a + b);
+end;
+ulongint x, y;
+begin
+    x := 2$ul;
+    y := 3$ul;
+    pout({resultado=});
+    pout(suma(x, y)[1$ul, 2$ul]);
+    pout(x * y + 1$ul);
+    pout(todf(x));
+end

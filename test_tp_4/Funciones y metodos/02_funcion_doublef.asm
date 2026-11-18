@@ -17,7 +17,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
 fn_escala_main:
     push ebp
     mov ebp, esp
@@ -51,6 +50,5 @@ fin_escala_main:
     fld @aux10
     fstp r_main
     invoke crt_printf, offset fmt_doublef, r_main
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

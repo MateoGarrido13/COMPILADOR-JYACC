@@ -10,10 +10,8 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
     invoke crt_printf, offset fmt_cadena, offset hola
     invoke crt_printf, offset fmt_cadena, offset mundo
     invoke crt_printf, offset fmt_cadena, offset hola
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

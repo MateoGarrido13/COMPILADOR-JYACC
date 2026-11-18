@@ -13,7 +13,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
 fn_mezcla_main:
     push ebp
     mov ebp, esp
@@ -42,6 +41,5 @@ fin_mezcla_main:
     mov @aux10, eax
     mov eax, @aux10
     mov x_main, eax
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

@@ -17,7 +17,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
 fn_suma_main:
     push ebp
     mov ebp, esp
@@ -47,6 +46,5 @@ fin_suma_main:
     mov eax, @aux10
     mov r_main, eax
     invoke crt_printf, offset fmt_ulongint, r_main
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

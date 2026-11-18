@@ -127,11 +127,24 @@ public class Entorno {
     }
 
     // Busca por clave completa nombre:ambito, no por nombre pelado.
+    // Durante el cuerpo de una funcion todavia no fue cerrada (cerrarFuncion
+    // la inserta en 'funciones'), asi que se consulta tambien la pila: eso
+    // permite la recursion directa y mantiene la firma visible al resolver
+    // la invocacion.
     public FuncionDeclarada getFuncion(String clave) {
         if (clave == null) {
             return null;
         }
-        return funciones.get(clave);
+        FuncionDeclarada cerrada = funciones.get(clave);
+        if (cerrada != null) {
+            return cerrada;
+        }
+        for (FuncionDeclarada enCurso : pilaFunciones) {
+            if (enCurso != null && clave.equals(enCurso.clave())) {
+                return enCurso;
+            }
+        }
+        return null;
     }
 
     public EntradaTabla buscarIdentificador(String nombre, String ambito) {

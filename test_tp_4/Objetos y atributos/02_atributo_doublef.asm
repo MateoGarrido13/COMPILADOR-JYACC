@@ -15,13 +15,11 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
     mov eax, c_5_ul_ul
     mov p1_x_main, eax
     fld c_3_5
     fstp p1_y_main
     invoke crt_printf, offset fmt_ulongint, p1_x_main
     invoke crt_printf, offset fmt_doublef, p1_y_main
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

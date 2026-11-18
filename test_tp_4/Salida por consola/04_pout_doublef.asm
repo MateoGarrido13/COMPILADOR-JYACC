@@ -12,7 +12,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
     fld c_2_5
     fstp z_main
     invoke crt_printf, offset fmt_doublef, z_main
@@ -20,6 +19,5 @@ start:
     fadd c_1_0
     fstp @aux4
     invoke crt_printf, offset fmt_doublef, @aux4
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

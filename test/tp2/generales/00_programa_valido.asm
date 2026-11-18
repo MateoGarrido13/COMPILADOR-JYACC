@@ -41,7 +41,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
 mt_m_main_base:
     push ebp
     mov ebp, esp
@@ -146,6 +145,5 @@ label_3:
 label_4:
     invoke crt_printf, offset fmt_ulongint, x_main
 label_5:
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

@@ -158,7 +158,7 @@ Entrega: convencion completa en DECISIONES_P4c.md, diagrama stack frame, casos .
 ---
 
 ### Prompt 4d — Objetos/atributos: COPY, ReferenciaAtributo, layout (Temas 25,28,31)
-Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_P4d.md`, `docs/TP4/TEMPLATES_ASM.md` (T-24..T-27). Archivo modificado: `GeneradorAssembler.java`; casos: `test_tp_4/Objetos y atributos/`; script: `test_tp_4/probar_prompt4d.sh`.
+Estado: ✅ Ejecutado y verificado en 4e. Ver `docs/TP4/DECISIONES_P4d.md`, `docs/TP4/TEMPLATES_ASM.md` (T-24..T-27), `docs/TP4/DECISIONES_P4.md`. Archivo modificado: `GeneradorAssembler.java`; casos: `test_tp_4/Objetos y atributos/`; script: `test_tp_4/probar_prompt4d.sh`. Corrección al cerrar 4e: `COPY` pasó a ser posicional para clases compatibles con nombres de atributos distintos.
 Contexto: Tercetos de invocacion ya existen. Falta convencion de llamada y traduccion.
 
 Tareas (completadas):
@@ -172,21 +172,23 @@ Tareas (completadas):
 ---
 
 ### Prompt 4e — Integracion y pruebas Prompt 4
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_P4.md`, `docs/TP4/TEMPLATES_ASM.md` (T-28..T-29), `docs/TP4/PlanTP4.md`. Archivos modificados: `GeneradorAssembler.java`, `Entorno.java`; casos: `test_tp_4/Integracion/` (6 `.txt` + 6 `.asm` + 5 snapshots `consola_tp3/`); script: `test_tp_4/probar_prompt4e.sh`.
 Contexto: Sub-prompts 4a-4d implementados. Unificar y probar.
 
-Tareas:
-1) Revisar `emitirCodigo()`: despacho completo de todos los operadores del IR (sin `default` comentado).
-2) Ajustar `.DATA` para incluir format strings pout, temporales extra si hacen falta.
-3) Casos integrales dirigidos:
-   - `if/else` con condiciones ulongint/doublef, anidados.
-   - `repeat-until` / `repeat-while`.
-   - Funcion recursiva (factorial) + llamada metodo.
-   - Objetos con herencia multiple, COPY, acceso prefijado.
-   - `pout` combinado con expresiones y llamadas.
-4) Verificar que salida TP3 (consola) no se rompe: errores, tercetos, TS.
-5) Documentar limitaciones conocidas (recursion profundidad, vtable no implementado, etc.).
+Tareas (completadas):
+1) `emitirCodigo()`: despacho explícito de todos los operadores del IR. `PROGRAMA`/`FIN_PROGRAMA` pasaron a no-op; el `default` queda solo para etiquetas `label_N` y operadores desconocidos (defensivo), sin comentarios de operadores ya implementados.
+2) `.DATA` revisado: ya incluía formatos `pout`, `@auxN` tipados, `@fpu_status`, constantes/cadenas y atributos; no hicieron falta símbolos nuevos. Se regeneraron los `.asm` por la desaparición de los comentarios `PROGRAMA`/`FIN_PROGRAMA`.
+3) Casos integrales dirigidos en `test_tp_4/Integracion/`:
+   - `if/else` anidado con `ulongint` y `doublef` (`01_if_doublef_anidado`).
+   - `repeat-while` anidado con `if` interno (`02_repeat_while_anidado`). El lenguaje no tiene `repeat-until` (ver `gramatica.y`).
+   - Funcion recursiva (factorial) + llamada a metodo (`03_recursion_factorial_metodo`). Requirió fallback a funciones en curso en `Entorno.getFuncion()`.
+   - Objetos con herencia multiple, COPY posicional y acceso prefijado (`04_objetos_multiherencia_copy`).
+   - `pout` combinado con cadena, expresion, llamada y `todf` (`05_pout_expresiones_llamadas`).
+   - Regresion 4d: COPY entre layouts compatibles con nombres distintos (`06_copy_layout_compat_distinto_nombre`).
+4) Salida de consola de TP3 verificada: 5 snapshots comparados contra build limpio de `HEAD` y build actual → 5/5 `IGUAL`.
+5) Limitaciones documentadas en `DECISIONES_P4.md`: sin vtable, layout plano/`this` simbolico, `@auxN` globales con recursion, MASM no ensamblado aqui, checks b/e/f/h para Prompt 5 y contrato final para Prompt 6.
 
-Entrega: diff final Prompt 4, matriz de pruebas, DECISIONES_P4.md consolidado.
+Entrega: diff final Prompt 4, matriz de pruebas, `DECISIONES_P4.md` consolidado. `bash test_tp_4/probar_prompt4e.sh` → OK (incluye regresiones 4d, 4c, 4b, 4a, 3 y 2).
 
 ### Prompt 5 — Errores en tiempo de ejecución Grupo 43 (b, e, f, h)
 Contexto: Backend ASM funcional (Prompt 4). Grupo 43 requiere chequeos runtime: b,e,f,h.

@@ -1,0 +1,20 @@
+{{ TP4e: if/else anidados mezclando ulongint y doublef.
+   Verifica comparador FPU (todf/a), BF con Jcc inverso, BI, etiquetas y pout. }}
+prog
+ulongint a, b, k;
+doublef d;
+begin
+    a := 5$ul;
+    b := 2$ul;
+    d := 1.5;
+    if (todf(a) > d)
+        if (b >= 2$ul)
+            k := 11$ul;
+        else
+            k := 12$ul;
+        end_if;
+    else
+        k := 20$ul;
+    end_if;
+    pout(k);
+end

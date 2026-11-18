@@ -14,7 +14,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
 fn_eco_main:
     push ebp
     mov ebp, esp
@@ -35,6 +34,5 @@ fin_eco_main:
     mov @aux8, eax
     mov eax, @aux8
     mov x_main, eax
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start

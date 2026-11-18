@@ -11,13 +11,14 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /*
-  Generador de archivo assembler MASM32 32-bit (TP4, Prompts 2, 3, 4a, 4b y 4c).
+  Generador de archivo assembler MASM32 32-bit (TP4, Prompts 2, 3, 4a..4e).
 
   Emite un archivo .asm con:
   - encabezado .386 / .model flat, stdcall / option casemap:none /
@@ -33,7 +34,10 @@ import java.util.Set;
     * Prompt 4b: pout -> INVOKE crt_printf con formato segun el tipo del operando.
     * Prompt 4c: funciones/metodos con stack frame (EBP), argumentos en pila,
       retorno en EAX/ST(0), llamadas directas y 'this' implicito en [ebp+8].
-    * Resto de operadores (COPY, CLASE): comentario, reservado para Prompt 4d.
+    * Prompt 4d: objetos/atributos (ReferenciaAtributo, COPY posicional,
+    *   CLASE/FIN_CLASE como marcadores; atributos en .DATA).
+    * Prompt 4e: despacho explicito de todos los operadores del IR; el unico
+    *   fallback a comentario es para operadores desconocidos (defensivo).
 
   Convenciones del Tema 13 (control de flujo, filminas 10.2 y 11.1):
     - Los destinos de BF/BI son etiquetas IR label_N ya resueltas por
@@ -279,6 +283,10 @@ public class GeneradorAssembler {
             String tipo = r != null ? r.getTipo() : Tipos.INDEFINIDO;
 
             switch (op) {
+                case "PROGRAMA":
+                case "FIN_PROGRAMA":
+                    // Marcadores estructurales del IR: no emiten instrucciones.
+                    break;
                 case "+":
                 case "-":
                 case "*":
@@ -343,11 +351,13 @@ public class GeneradorAssembler {
                     // Los atributos de los objetos se emiten en .DATA via emitirData().
                     break;
                 default:
+                    // Unico fallback: etiquetas IR label_N y operadores
+                    // desconocidos (defensivo, no deberian aparecer).
                     if (esEtiqueta(op)) {
                         emitirEtiqueta(op);
                     } else {
-                        // Operadores estructurales no implementados aun (Prompt 4d en parte).
-                        salida.append("    ; ").append(t.visualizar()).append("\n");
+                        salida.append("    ; operador no reconocido: ")
+                              .append(t.visualizar()).append("\n");
                     }
                     break;
             }
@@ -1183,11 +1193,16 @@ public class GeneradorAssembler {
     /* ---------- Prompt 4d: objetos y atributos ---------- */
 
     /*
-      Copia estructural (COPY) entre objetos compatibles: mismo layout de
-      atributos (heredados + propios, en orden). Como los atributos de un
-      objeto se emiten en .DATA como simbolos planos y dispersos (uno por
-      atributo, no como bloque contiguo), la copia se hace campo-a-campo:
-      un mov por atributo ulongint y dos mov por atributo doublef
+      Copia estructural (COPY) entre objetos compatibles. La compatibilidad la
+      decidio la semantica con Entorno.clasesCompatibles(): mismo layout de
+      tipos, bases primero y propios despues; los NOMBRES de los atributos no
+      tienen que coincidir. Por eso la copia es POSICIONAL: se recorren los
+      layouts efectivos de ambas clases en paralelo y se busca, para cada
+      posicion, la entrada materializada de cada objeto en la TS.
+
+      Como los atributos se emiten en .DATA como simbolos planos y dispersos
+      (uno por atributo, no como bloque contiguo), la copia se hace campo-a-campo:
+      un mov por atributo ulongint/enum y dos mov por atributo doublef
       (high dword primero).
     */
     private void emitirCopiar(Object destino, Object origen, int numero) {
@@ -1199,9 +1214,12 @@ public class GeneradorAssembler {
         EntradaTabla objOrigen = (EntradaTabla) origen;
 
         String tipoDest = objDest.tipoDato;
-        Entorno.ClaseDeclarada clase = entorno != null ? entorno.claseDe(tipoDest) : null;
-        if (clase == null) {
-            salida.append("    ; COPY (clase no resuelta para destino: ").append(tipoDest).append(")\n");
+        String tipoOrigen = objOrigen.tipoDato;
+        Entorno.ClaseDeclarada claseDest = entorno != null ? entorno.claseDe(tipoDest) : null;
+        Entorno.ClaseDeclarada claseOrigen = entorno != null ? entorno.claseDe(tipoOrigen) : null;
+        if (claseDest == null || claseOrigen == null) {
+            salida.append("    ; COPY (clase no resuelta: ")
+                   .append(tipoDest).append(" / ").append(tipoOrigen).append(")\n");
             return;
         }
 
@@ -1209,95 +1227,102 @@ public class GeneradorAssembler {
         String ambitoOrigen = objOrigen.ambito != null ? objOrigen.ambito : "";
         String nombreObjDest = TablaSimbolos.nombreDe(objDest.lexema);
         String nombreObjOrigen = TablaSimbolos.nombreDe(objOrigen.lexema);
-        String claveClase = clase.clave();
 
-        // Recolectar declarantes: bases primero (heredaDe), luego la clase propia.
-        List<Entorno.ClaseDeclarada> declarantes = new ArrayList<>();
-        recolectarDeclarantes(clase, declarantes, new HashSet<>());
+        List<AtributoPosicional> attrsDest = atributosEfectivos(claseDest);
+        List<AtributoPosicional> attrsOrigen = atributosEfectivos(claseOrigen);
+        if (attrsDest.size() != attrsOrigen.size()) {
+            // No deberia pasar: la semantica ya descarto layouts incompatibles.
+            salida.append("    ; COPY (layouts de distinto tamanio: ")
+                   .append(claseDest.clave()).append(" / ").append(claseOrigen.clave()).append(")\n");
+            return;
+        }
 
-        for (Entorno.ClaseDeclarada declarante : declarantes) {
-            boolean esPropia = declarante.clave().equals(claveClase);
-            String prefijoDest = esPropia
-                    ? nombreObjDest
-                    : nombreObjDest + "." + declarante.nombre;
-            String prefijoOrigen = esPropia
-                    ? nombreObjOrigen
-                    : nombreObjOrigen + "." + declarante.nombre;
+        for (int i = 0; i < attrsDest.size(); i++) {
+            AtributoPosicional aDest = attrsDest.get(i);
+            AtributoPosicional aOrigen = attrsOrigen.get(i);
+            String nombreAttrDest = claveAtributoDeObjeto(nombreObjDest, claseDest, aDest);
+            String nombreAttrOrigen = claveAtributoDeObjeto(nombreObjOrigen, claseOrigen, aOrigen);
 
-            for (Map.Entry<String, String> atributo : declarante.atributos.entrySet()) {
-                String nombreAttrDest = prefijoDest + "." + atributo.getKey();
-                String nombreAttrOrigen = prefijoOrigen + "." + atributo.getKey();
+            EntradaTabla eDest = tablaSimbolos.buscarIdentificador(nombreAttrDest, ambitoDest);
+            EntradaTabla eOrigen = tablaSimbolos.buscarIdentificador(nombreAttrOrigen, ambitoOrigen);
 
-                EntradaTabla eDest = tablaSimbolos.buscarIdentificador(nombreAttrDest, ambitoDest);
-                EntradaTabla eOrigen = tablaSimbolos.buscarIdentificador(nombreAttrOrigen, ambitoOrigen);
+            if (eDest == null || eOrigen == null) {
+                salida.append("    ; COPY (atributo no encontrado en TS: ")
+                       .append(nombreAttrDest).append(" / ").append(nombreAttrOrigen).append(")\n");
+                continue;
+            }
 
-                if (eDest == null || eOrigen == null) {
-                    salida.append("    ; COPY (atributo no encontrado en TS: ")
-                          .append(nombreAttrDest).append(" / ").append(nombreAttrOrigen).append(")\n");
-                    continue;
-                }
+            String asmDest = tablaSimbolos.nombreAsmDe(eDest);
+            String asmOrigen = tablaSimbolos.nombreAsmDe(eOrigen);
+            String tipoEfectivo = tipoEfectivo(aDest.tipo);
 
-                String asmDest = tablaSimbolos.nombreAsmDe(eDest);
-                String asmOrigen = tablaSimbolos.nombreAsmDe(eOrigen);
-                String tipoEfectivo = entorno != null
-                        ? entorno.tipoEfectivo(atributo.getValue())
-                        : atributo.getValue();
-
-                if (esFlotante(tipoEfectivo)) {
-                    // doublef: copiar dos dwords, high primero en direccion alta.
-                    salida.append("    mov eax, dword ptr ").append(asmOrigen).append("+4\n");
-                    salida.append("    mov dword ptr ").append(asmDest).append("+4, eax\n");
-                    salida.append("    mov eax, dword ptr ").append(asmOrigen).append("\n");
-                    salida.append("    mov dword ptr ").append(asmDest).append(", eax\n");
-                } else {
-                    // ulongint / enumerado: copiar un dword.
-                    salida.append("    mov eax, ").append(asmOrigen).append("\n");
-                    salida.append("    mov ").append(asmDest).append(", eax\n");
-                }
+            if (esFlotante(tipoEfectivo)) {
+                // doublef: dos dwords; high en la direccion alta.
+                String baseOrigen = comoMemoria(asmOrigen);
+                String baseDest = comoMemoria(asmDest);
+                salida.append("    mov eax, dword ptr ").append(conDesplazamiento4(baseOrigen)).append("\n");
+                salida.append("    mov dword ptr ").append(conDesplazamiento4(baseDest)).append(", eax\n");
+                salida.append("    mov eax, dword ptr ").append(baseOrigen).append("\n");
+                salida.append("    mov dword ptr ").append(baseDest).append(", eax\n");
+            } else {
+                // ulongint / enumerado: copiar un dword.
+                salida.append("    mov eax, ").append(asmOrigen).append("\n");
+                salida.append("    mov ").append(asmDest).append(", eax\n");
             }
         }
     }
 
+    /* Un atributo del layout efectivo, con la clase que lo declara. */
+    private static class AtributoPosicional {
+        final Entorno.ClaseDeclarada declarante;
+        final String nombre;
+        final String tipo;
+
+        AtributoPosicional(Entorno.ClaseDeclarada declarante, String nombre, String tipo) {
+            this.declarante = declarante;
+            this.nombre = nombre;
+            this.tipo = tipo;
+        }
+    }
+
     /*
-      Recolecta las clases declarantes de atributos en orden: bases primero
-      (siguiendo heredaDe de forma recursiva), luego la clase propia.
-      Se usa para emitir atributos en el orden correcto del layout.
+      Layout efectivo adoptado de Entorno.clasesCompatibles(): bases primero
+      (heredaDe, en orden), luego atributos propios. Un atributo propio con el
+      mismo nombre que uno heredado reemplaza al heredado SIN moverlo de
+      posicion (LinkedHashMap.put conserva el orden de insercion).
     */
-    private void recolectarDeclarantes(Entorno.ClaseDeclarada clase,
-            List<Entorno.ClaseDeclarada> destino, Set<String> visitadas) {
+    private List<AtributoPosicional> atributosEfectivos(Entorno.ClaseDeclarada clase) {
+        Map<String, AtributoPosicional> efectivos = new LinkedHashMap<>();
+        recolectarAtributosPosicionales(clase, efectivos, new HashSet<String>());
+        return new ArrayList<>(efectivos.values());
+    }
+
+    private void recolectarAtributosPosicionales(Entorno.ClaseDeclarada clase,
+            Map<String, AtributoPosicional> destino, Set<String> visitadas) {
         if (clase == null || !visitadas.add(clase.clave())) {
             return;
         }
         for (String claveBase : clase.heredaDe) {
             if (entorno != null) {
-                recolectarDeclarantes(entorno.getClase(claveBase), destino, visitadas);
-            }
-        }
-        destino.add(clase);
-    }
-
-    /*
-      Calcula el tamaño en bytes de una instancia de la clase dada, recorriendo
-      primero las bases (heredaDe, en orden) y luego los atributos propios.
-      ulongint/enum = 4 bytes; doublef = 8 bytes.
-    */
-    private int tamanioObjeto(Entorno.ClaseDeclarada clase) {
-        if (clase == null) {
-            return 0;
-        }
-        int total = 0;
-        for (String claveBase : clase.heredaDe) {
-            if (entorno != null) {
-                Entorno.ClaseDeclarada base = entorno.getClase(claveBase);
-                total += tamanioObjeto(base);
+                recolectarAtributosPosicionales(entorno.getClase(claveBase), destino, visitadas);
             }
         }
         for (Map.Entry<String, String> atributo : clase.atributos.entrySet()) {
-            String tipoEfectivo = entorno != null
-                    ? entorno.tipoEfectivo(atributo.getValue())
-                    : atributo.getValue();
-            total += esFlotante(tipoEfectivo) ? 8 : 4;
+            destino.put(atributo.getKey(),
+                    new AtributoPosicional(clase, atributo.getKey(), atributo.getValue()));
         }
-        return total;
+    }
+
+    /*
+      Clave TS del atributo materializado para un objeto. Entorno crea
+      `objeto.atributo` para los propios y `objeto.base.atributo` para los
+      heredados; se usa el NOMBRE CORTO de la clase declarante como prefijo.
+    */
+    private String claveAtributoDeObjeto(String nombreObjeto,
+            Entorno.ClaseDeclarada claseObjeto, AtributoPosicional atributo) {
+        boolean esPropia = atributo.declarante.clave().equals(claseObjeto.clave());
+        return esPropia
+                ? nombreObjeto + "." + atributo.nombre
+                : nombreObjeto + "." + atributo.declarante.nombre + "." + atributo.nombre;
     }
 }
