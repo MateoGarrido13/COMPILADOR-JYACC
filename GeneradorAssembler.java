@@ -213,6 +213,23 @@ public class GeneradorAssembler {
 
     private void emitirData() {
         salida.append(".data\n");
+        Set<String> nombresEnData = emitirSimbolosDeTablaDeSimbolos();
+        emitirReceptoresThis(nombresEnData);
+        emitirTemporalesAux();
+        emitirMarcadorEstadoFPU();
+        emitirFormatosPout();
+        emitirMensajesErrorRuntime();
+        emitirCadenasErrorGeneradas();
+        salida.append("\n");
+    }
+
+    /*
+      Emite los símbolos de la tabla de símbolos (variables, parámetros,
+      atributos, constantes y cadenas) que no viven en el stack frame.
+      Devuelve los nombres ya emitidos para evitar duplicados con los
+      receptores this.
+    */
+    private Set<String> emitirSimbolosDeTablaDeSimbolos() {
         List<TablaSimbolos.SimboloDataAsm> simbolos = tablaSimbolos.colectarSimbolosData(entorno);
         Set<String> nombresEnData = new HashSet<>();
         for (TablaSimbolos.SimboloDataAsm s : simbolos) {
@@ -225,6 +242,14 @@ public class GeneradorAssembler {
                   .append(valorInicial(s)).append("\n");
             nombresEnData.add(s.nombreAsm);
         }
+        return nombresEnData;
+    }
+
+    /*
+      Emite receptores de CALLMET: solo un puntero mientras 4d no defina el
+      layout. Se omite si ya fue emitido como símbolo de la tabla.
+    */
+    private void emitirReceptoresThis(Set<String> nombresEnData) {
         // Receptores de CALLMET: solo un puntero mientras 4d no defina el layout.
         for (String nombre : objetosThis) {
             if (!nombresEnData.contains(nombre)) {
@@ -232,6 +257,12 @@ public class GeneradorAssembler {
                       .append(" ; this (layout en 4d)\n");
             }
         }
+    }
+
+    /*
+      Emite temporales implicitos @auxN con tipo ASM conocido (DD/DQ).
+    */
+    private void emitirTemporalesAux() {
         // Temporales implicitos @auxN con tipo ASM conocido (DD/DQ)
         for (ResultadoTerceto r : resultados.values()) {
             if (r.produceValor() && r.tipoAsmDato() != null) {
@@ -239,10 +270,22 @@ public class GeneradorAssembler {
                       .append(r.tipoAsmDato()).append(" ?\n");
             }
         }
+    }
+
+    /*
+      Emite la palabra de estado de la FPU, solo si hay comparaciones doublef.
+    */
+    private void emitirMarcadorEstadoFPU() {
         // Palabra de estado de la FPU, solo si hay comparaciones doublef.
         if (usaFpuStatus) {
             salida.append("    ").append(FPU_STATUS).append(" DW ?\n");
         }
+    }
+
+    /*
+      Emite los formatos de impresión, solo los que necesitan los tercetos pout.
+    */
+    private void emitirFormatosPout() {
         // Formatos de impresion, solo los que necesitan los tercetos pout.
         if (usaFmtUlongint) {
             salida.append("    ").append(FMT_ULONGINT).append(" DB \"%u\",0\n");
@@ -253,6 +296,13 @@ public class GeneradorAssembler {
         if (usaFmtCadena) {
             salida.append("    ").append(FMT_CADENA).append(" DB \"%s\",0\n");
         }
+    }
+
+    /*
+      Emite los mensajes de error runtime del Prompt 5, solo los que son
+      necesarios según los chequeos activos (5.b, 5.e, 5.f, 5.h).
+    */
+    private void emitirMensajesErrorRuntime() {
         // Mensajes de error runtime (Prompt 5.0), solo los que son necesarios.
         if (usaMsgOverflowSuma) {
             salida.append("    ").append(MSG_OVERFLOW_SUMA)
@@ -270,10 +320,15 @@ public class GeneradorAssembler {
             salida.append("    ").append(MSG_ENUM_INVALIDO)
                   .append(" DB \"Error: asignacion invalida a variable de tipo enumeracion\",0\n");
         }
-        // Cadenas de error detectadas durante la generacion de ASM.
-        // Se declaran en .DATA para poder imprimirse por consola al ejecutar
-        // el .asm generado, siguiendo el patron de ASSETS/asmwhello_console.asm
-        // (StdOut + ExitProcess).
+    }
+
+    /*
+      Emite cadenas de error detectadas durante la generacion de ASM.
+      Se declaran en .DATA para poder imprimirse por consola al ejecutar
+      el .asm generado, siguiendo el patron de ASSETS/asmwhello_console.asm
+      (StdOut + ExitProcess).
+    */
+    private void emitirCadenasErrorGeneradas() {
         if (!cadenasErrorPorTexto.isEmpty()) {
             salida.append("\n");
             for (Map.Entry<String, String> entrada : cadenasErrorPorTexto.entrySet()) {
@@ -281,7 +336,6 @@ public class GeneradorAssembler {
                       .append(cadenaAsm(entrada.getValue())).append("\",0\n");
             }
         }
-        salida.append("\n");
     }
 
     private String valorInicial(TablaSimbolos.SimboloDataAsm s) {
