@@ -5,6 +5,8 @@ Este documento explica cómo verificar que el **Prompt 2 de TP4** funciona corre
 > **Actualización 6.0 (con revert posterior)**: se agregó la compuerta que evita generar `.asm` con errores. El cambio de stdout a formato TP4 fue revertido por pedido del usuario: hoy se imprimen fuente numerado, tokens, estructuras, errores, tabla de símbolos y tercetos, y él eliminará ese bloque manualmente antes de entregar. Ver `docs/TP4/DECISIONES_6.0.md` y `probar_prompt6_0.sh`. Lo demás de esta guía (estructura del `.asm`) sigue vigente.
 >
 > **Actualización 6.1**: el `.asm` generado se escribe con terminadores **CRLF**; no se agrega `ALIGN 8` y `DQ` se mantiene para `doublef`. Nueva verificación estática: `bash test_tp_4/probar_prompt6_1.sh`. El ensamblado/enlace con `ml.exe`/`link` sigue pendiente de Windows; ver `docs/TP4/DECISIONES_6.1.md`.
+>
+> **Actualización 6.2**: suite consolidada `bash test_tp_4/probar_prompt6_2.sh` (137 fuentes TP3, chequeos b/e/f/h y programa integral). Detalle en `docs/TP4/MATRIZ_PRUEBAS_6.2.md`. Esta guía sigue describiendo el esqueleto del Prompt 2; las verificaciones nuevas se suman, no la reemplazan.
 
 ## Qué debe hacer el Prompt 2
 

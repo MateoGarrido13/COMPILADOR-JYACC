@@ -287,14 +287,14 @@ Tareas (estado final):
 ---
 
 #### Paquete 6.2 — Batería de regresión TP3 y suite TP4/Grupo 43
-Estado: ⏳ Pendiente.
-Contexto: Contrato de salida y MASM validados. Ejecutar suite completa.
-Tareas:
-1) Regresión TP3: temas 13, 17, 19, 23, 25, 28, 31, 33 — fuentes de `test/tp2` y `test/TP3_SEMANTICAS` (si aplica) contra el stdout TP3 vigente.
-2) Runtime checks (Prompt 5): al menos un caso que **dispare** cada error b, e, f, h y casos **válidos** límite que no disparen.
-3) Programa integral representativo: combinar control de flujo, funciones/métodos recursivos, objetos con herencia múltiple + COPY + acceso prefijado, `pout` mixto.
-4) Registrar en `docs/TP4/MATRIZ_PRUEBAS_6.2.md`: caso → comando → esperado → obtenido → OK/FALLA.
-5) Script consolidado: `test_tp_4/probar_prompt6_2.sh` que ejecute todo y reporte resumen.
+Estado: ✅ Ejecutado; ⚠️ disparo runtime real pendiente de Windows. Ver `docs/TP4/MATRIZ_PRUEBAS_6.2.md`. Script: `test_tp_4/probar_prompt6_2.sh`; fuente integral: `test_tp_4/Integracion/07_programa_integral_6_2.txt`.
+Contexto: Contrato de salida y MASM validados estáticamente. Suite completa ejecutada.
+Tareas (estado final):
+1) Regresión TP3: 137 fuentes de temas 13, 17, 19, 23, 25, 28, 31, 33 y de `test/TP3_SEMANTICAS`. Criterio: sin excepciones, orden TP3 presente y stdout byte-idéntico en dos corridas; más los 5 snapshots canónicos de 4e. Resultado: 137/137, 0 fallas.
+2) Runtime checks b/e/f/h: suites 5.b/5.e/5.f/5.h más caso disparador y caso válido límite por cada uno, con verificación de la guardia en el `.asm`. Resultado: 13/13 aseveraciones OK. El salto real en ejecución requiere Windows.
+3) Programa integral: `07_programa_integral_6_2.txt` combina `repeat`+`if`, recursión, herencia múltiple con COPY y acceso prefijado, y `pout` mixto. Compila sin errores; 14 aseveraciones sobre el `.asm` OK.
+4) Matriz completa en `docs/TP4/MATRIZ_PRUEBAS_6.2.md`: caso → comando → esperado → obtenido → OK/FALLA.
+5) `bash test_tp_4/probar_prompt6_2.sh` → `EXIT 0`, 0 `FALLA:`. Reutilizable tal cual en 6.4 (paso 4).
 
 ---
 

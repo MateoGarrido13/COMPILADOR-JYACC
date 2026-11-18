@@ -243,7 +243,7 @@ Auditoría de los 5 scripts y las 6 carpetas (14 pares `.txt`/`.asm` después de
 
 1. **6.0** ✅ Compuerta y ruta del `.asm` ejecutadas; ⚠️ stdout TP4 revertido a TP3 por pedido del usuario (él lo recortará antes de entregar). Snapshots y `probar_prompt4e.sh` restaurados a `HEAD`. Detalle en `DECISIONES_6.0.md`.
 2. **6.1** ✅ validación estática ejecutada: includes, `.data`/`.code`, `end start`, `DQ` sin `ALIGN 8`, `crt_printf` con `%f` y CRLF al escribir el `.asm` (`probar_prompt6_1.sh`, exit 0). ⚠️ Ensamblado/enlace real con `ml.exe`/`link` pendiente de Windows. Detalle en `DECISIONES_6.1.md`.
-3. **6.2** ⏳ batería de regresión y suite con disparo real de b/e/f/h + casos límite; cubrir las brechas 1–12 de §7.
+3. **6.2** ✅ batería de regresión ejecutada: 137 fuentes TP3 deterministas, suites b/e/f/h + casos límite y programa integral (`probar_prompt6_2.sh`, exit 0, 0 `FALLA:`). Matriz en `MATRIZ_PRUEBAS_6.2.md`. ⚠️ Disparo real en ejecución pendiente de Windows; las brechas 1–12 de §7 siguen siendo limitaciones conocidas documentadas, no se resolvieron en este paquete.
 4. **6.3** ⏳ limpieza de TODOs resueltos **y desarrollo profundo de comentarios** (precondiciones, efectos, convenciones y decisiones no obvias), docs de uso.
 5. **6.4** ⏳ eliminación de comentarios: **último paquete**, requiere confirmación explícita («**BORRAR COMENTARIOS**»).
 
