@@ -1,6 +1,6 @@
 # Decisiones y cambios — Paquete 5.h (TP4, Grupo 43, MASM32 32-bit)
 
-> **Nota de auditoría — documento NO canónico.** Duplica a `DECISIONES_5_h.md`, creado en el mismo commit `313d164`. Fuente consolidada: `ESTADO_RUNTIME_P5.md`. Ver allí las correcciones B1/B3/B4/B5 aplicadas después de este documento.
+> **Nota de auditoría — documento NO canónico.** Duplica a `DECISIONES_5_h.md`, creado en el mismo commit `313d164`. Fuente consolidada: `ESTADO_RUNTIME_P5.md`. Ver allí B1/B3/B4/B5. B5 se cerró unificando activación/emisión y luego se **extendió a enums `doublef`** con `FLD`/`FCOMP`/`FSTSW`/`SAHF`/`jp`/`jz`, constantes `c_* DQ` y `@fpu_status DW ?`; casos nuevos `03_doublef_valida` y `04_doublef_invalida`.
 
 ## Resumen
 
@@ -51,7 +51,9 @@ Ninguno. Todos los cambios de código están en `GeneradorAssembler.java` (ya ex
 | `test_tp_4/enumerados/02_asignacion_invalida.txt` | Caso de prueba: asignación `x := y` con `y := 5$ul` y `dias = [1, 2, 3]` (valor 5 fuera del enum). Verifica que se genera el código de chequeo y que en tiempo de ejecución se tomaría el salto a `error_enum_invalido`. |
 | `test_tp_4/enumerados/01_asignacion_valida.asm` | Snapshot generado del caso válido. |
 | `test_tp_4/enumerados/02_asignacion_invalida.asm` | Snapshot generado del caso inválido. |
-| `test_tp_4/probar_prompt5_h.sh` | Script de verificación del Paquete 5.h. |
+| `test_tp_4/enumerados/03_doublef_valida.{txt,asm}` | Extensión: enum `doublef` con valor válido desde variable; ejerce `fcomp`/`fstsw`/`sahf`/`jp`/`jz` y copia `fld`/`fstp`. |
+| `test_tp_4/enumerados/04_doublef_invalida.{txt,asm}` | Extensión: valor `3.5` fuera de `[1.5, 2.5]`; cae en `jmp error_enum_invalido`. |
+| `test_tp_4/probar_prompt5_h.sh` | Script de verificación del Paquete 5.h (4 casos + regresiones). |
 
 ## TEST PRUEBA
 
@@ -67,12 +69,14 @@ bash test_tp_4/probar_prompt5_h.sh
 |---------|----------|-------------------|
 | `test_tp_4/enumerados/01_asignacion_valida.txt` + `.asm` | Valida que una asignación válida a variable de tipo enum (`x := 2$ul` con `dias = [1, 2, 3]`) genere el código de chequeo (`mov eax, c_2_ul_ul`, `cmp eax, 1`, `je enum_valido_0`, `cmp eax, 2`, `je enum_valido_0`, `cmp eax, 3`, `je enum_valido_0`, `jmp error_enum_invalido`, `enum_valido_0:`, `mov x_main, eax`). Como el valor 2 pertenece al enum, el salto a `error_enum_invalido` no se tomaría en tiempo de ejecución. El .asm debe contener `msg_enum_invalido` en `.DATA` y el label `error_enum_invalido:` en `.CODE`. | Código de salida 0 del script; todas las verificaciones `verificar` reportan `OK`. |
 | `test_tp_4/enumerados/02_asignacion_invalida.txt` + `.asm` | Valida que una asignación inválida a variable de tipo enum (`x := y` con `y := 5$ul` y `dias = [1, 2, 3]`) genere el mismo código de chequeo. Como el valor 5 no pertenece al enum, en tiempo de ejecución se tomaría el salto a `error_enum_invalido`. El .asm debe contener `mov eax, y_main`, `cmp eax, 1/2/3`, `je enum_valido_0`, `jmp error_enum_invalido`, `enum_valido_0:`, `mov x_main, eax`. | Código de salida 0 del script; todas las verificaciones `verificar` reportan `OK`. |
-| `test_tp_4/probar_prompt5_h.sh` | Script de verificación que compila el proyecto, ejecuta los 2 casos, verifica los patrones en los `.asm` y ejecuta las regresiones de todos los prompts anteriores (5.0, 5.b, 5.e, 5.f, 4e, 4d, 4c, 4b, 4a, 3, 2). | Código de salida 0; todas las verificaciones `OK`; 0 `FALLA`. |
+| `test_tp_4/enumerados/03_doublef_valida.txt` + `.asm` | Asignación válida a enum `doublef` (`1.5` desde variable). Esperado: `c_1_5 DQ 1.5`, `c_2_5 DQ 2.5`, `@fpu_status DW ?`, `fcomp c_1_5`, `fcomp c_2_5`, `fstsw @fpu_status`, `sahf`, `jp error_enum_invalido`, `jz enum_valido_0`, `fstp m_main`, `jmp fin_normal`/`fin_normal:`. | Código de salida 0 del script; verificaciones `OK`. |
+| `test_tp_4/enumerados/04_doublef_invalida.txt` + `.asm` | Asignación inválida a enum `doublef` (`3.5` no pertenece a `[1.5, 2.5]`). Esperado: mismas comparaciones y `jmp error_enum_invalido` final. | Código de salida 0 del script; verificaciones `OK`. |
+| `test_tp_4/probar_prompt5_h.sh` | Script de verificación que compila el proyecto, ejecuta los 4 casos, verifica los patrones en los `.asm` y ejecuta las regresiones de todos los prompts anteriores (5.0, 5.b, 5.e, 5.f, 4e, 4d, 4c, 4b, 4a, 3, 2). | Código de salida 0; todas las verificaciones `OK`; 0 `FALLA`. |
 
 ## Riesgos abiertos
 
 1. **Códigos de salida de `ExitProcess`**: el valor 4 es provisional; la cátedra/Grupo 43 puede exigir otro. Ajustar si hay un contrato definido.
-2. **Solo enums con base `ulongint`**: el chequeo se aplica únicamente a variables de tipo enum con tipo base `ulongint` (el caso del Grupo 43). Los enums con base `doublef` no están cubiertos en este paquete.
+2. **Enums `doublef` (resuelto con extensión)**: el predicado compartido `tipoEnumeradoChequeable()` acepta `ulongint` y `doublef`. La rama flotante usa `emitirComparacionFpu()` (filmina 11.1), `jp` para NaN/desordenado y `jz` para igualdad; `FCOMP` balancea la pila. Quedan sin explorar NaN/±Inf de entrada, enum de un solo valor, duplicados/0 y atributos/parámetros de enum `doublef`.
 3. **Solo variables, no atributos de objeto**: el chequeo se aplica cuando el destino de `:=` es una `EntradaTabla` (variable). Las asignaciones a `ReferenciaAtributo` (objeto.atributo) de tipo enum no están cubiertas en esta versión.
 4. **Idioma de los mensajes**: los mensajes están en español; revisar si la cátedra requiere inglés u otro idioma.
 5. **Valor constante vs variable**: el chequeo runtime se aplica también cuando el origen es una constante fuera del rango del enum (aunque esto también podría detectarse estáticamente en `Verificaciones.java`). El chequeo runtime es la capa de defensa en profundidad requerida por el Grupo 43.

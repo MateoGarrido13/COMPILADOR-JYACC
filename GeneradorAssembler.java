@@ -711,19 +711,23 @@ public class GeneradorAssembler {
     }
 
     /*
-      Enumerado chequeable en runtime: solo los de base ulongint, porque es
-      el unico caso en que el generador sabe comparar con CMP eax, valor.
-      La activacion en calcularChequeosRuntime y la emision usan este mismo
-      metodo, asi no queda un 'error_enum_invalido:' muerto cuando el enum
-      tiene base doublef (correccion B5).
+      Enumerado chequeable en runtime: bases ulongint (CMP eax, valor) y
+      doublef (FLD / FCOMP contra cada constante DQ). La activacion en
+      calcularChequeosRuntime y la emision usan este mismo predicado, asi
+      no queda un 'error_enum_invalido:' muerto (B5) ni un destino sin
+      chequeo (B3/B4). Tipos base sin soporte de comparacion (cadena,
+      clases) quedan fuera y siguen cubiertos solo por el control estatico.
     */
     private Entorno.TipoEnumerado tipoEnumeradoChequeable(String tipo) {
         if (entorno == null || tipo == null) {
             return null;
         }
         Entorno.TipoEnumerado enumTipo = entorno.getTipoEnumerado(tipo);
-        return enumTipo != null && Tipos.ULONGINT.equals(enumTipo.tipoBase)
-                ? enumTipo : null;
+        if (enumTipo == null) {
+            return null;
+        }
+        return Tipos.ULONGINT.equals(enumTipo.tipoBase)
+                || Tipos.DOUBLEF.equals(enumTipo.tipoBase) ? enumTipo : null;
     }
 
     /*
@@ -738,6 +742,20 @@ public class GeneradorAssembler {
             return false;
         }
         String etiquetaOk = "enum_valido_" + contadorEnumChequeo++;
+        boolean flotante = Tipos.DOUBLEF.equals(enumTipo.tipoBase);
+        if (flotante) {
+            emitirChequeoEnumDoublef(src, enumTipo, etiquetaOk);
+        } else {
+            emitirChequeoEnumEntero(src, enumTipo, etiquetaOk);
+        }
+        salida.append(etiquetaOk).append(":\n");
+        emitirCopiaPorTipo(flotante ? Tipos.DOUBLEF : Tipos.ULONGINT, src, dst);
+        return true;
+    }
+
+    /* Enum de base entera: MOV EAX + CMP inmediato, un SALTO por valor. */
+    private void emitirChequeoEnumEntero(String src, Entorno.TipoEnumerado enumTipo,
+            String etiquetaOk) {
         salida.append("    mov eax, ").append(src).append("\n");
         for (String valorLexema : enumTipo.valores) {
             BigInteger valor = Tipos.valorEntero(valorLexema);
@@ -747,9 +765,45 @@ public class GeneradorAssembler {
             }
         }
         salida.append("    jmp error_enum_invalido\n");
-        salida.append(etiquetaOk).append(":\n");
-        emitirCopiaPorTipo(Tipos.ULONGINT, src, dst);
-        return true;
+    }
+
+    /*
+      Enum de base doublef: se reutiliza la secuencia de comparacion FPU de
+      la filmina 11.1 (FLD / FCOMP / FSTSW / MOV AX / SAHF). FCOMP hace POP,
+      asi que la pila queda balanceada tras cada valor (no repetir B2).
+      Tras SAHF, ZF=C3 (igualdad) y PF=C2 (desordenado/NaN): JP descarta NaN
+      antes de aceptar el valor. Las constantes se referencian por su simbolo
+      ya materializado en .DATA (c_* DQ) para no reescapar literales.
+    */
+    private void emitirChequeoEnumDoublef(String src,
+            Entorno.TipoEnumerado enumTipo, String etiquetaOk) {
+        for (String valorLexema : enumTipo.valores) {
+            String valorAsm = operandoConstanteEnum(valorLexema);
+            if (valorAsm == null) {
+                continue;
+            }
+            emitirComparacionFpu(src, valorAsm);
+            salida.append("    jp error_enum_invalido\n");
+            salida.append("    jz ").append(etiquetaOk).append("\n");
+        }
+        salida.append("    jmp error_enum_invalido\n");
+    }
+
+    /*
+      Nombre ASM de una constante ya registrada en la tabla de simbolos.
+      emitirData() corre antes que emitirCodigo(), por lo que nombreAsmDe()
+      devuelve el nombre ya asignado (idempotente). Fallback: literal fuente.
+    */
+    private String operandoConstanteEnum(String lexema) {
+        if (lexema == null) {
+            return null;
+        }
+        for (EntradaTabla e : tablaSimbolos.entradas()) {
+            if (e.uso == EntradaTabla.Uso.CONSTANTE && lexema.equals(e.lexema)) {
+                return tablaSimbolos.nombreAsmDe(e);
+            }
+        }
+        return lexema;
     }
 
     private void emitirAsignacionExpresion(Object destino, Object origen,
@@ -860,6 +914,13 @@ public class GeneradorAssembler {
                 Terceto cmp = tercetoPorReferencia(t.getOp1());
                 if (cmp != null && esComparador(cmp.getOperador())
                         && (esFlotanteOperando(cmp.getOp1()) || esFlotanteOperando(cmp.getOp2()))) {
+                    return true;
+                }
+            } else if (":=".equals(op)) {
+                // 5.h con enum doublef usa FLD/FCOMP/FSTSW @fpu_status.
+                Entorno.TipoEnumerado enumTipo =
+                        tipoEnumeradoChequeable(tipoDeDestinoAsignacion(t.getOp1()));
+                if (enumTipo != null && Tipos.DOUBLEF.equals(enumTipo.tipoBase)) {
                     return true;
                 }
             }
@@ -1097,8 +1158,8 @@ public class GeneradorAssembler {
                 continue;
             }
             // CORRECCION B4/B5: incluye atributos de objeto como destino y
-            // exige base ulongint, igual que el emisor del chequeo, para no
-            // activar un label de error que nunca se salta.
+            // usa el mismo predicado que el emisor (ulongint o doublef), para
+            // no activar un label de error que nunca se salta.
             if (tipoEnumeradoChequeable(tipoDeDestinoAsignacion(t.getOp1())) != null) {
                 usaMsgEnumInvalido = true;
                 break;

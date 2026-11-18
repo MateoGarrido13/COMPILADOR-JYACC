@@ -1,6 +1,6 @@
 # Decisiones y cambios — Paquete 5.h (TP4, Grupo 43, MASM32 32-bit)
 
-> **Nota de auditoría — documento NO canónico.** Duplica a `DECISIONES_P5h.md`, creado en el mismo commit `313d164`. Fuente consolidada: `ESTADO_RUNTIME_P5.md`. Cambios posteriores a este documento: la guardia se extrajo a `emitirChequeoEnum()` y la usan **ambos** emisores de `:=` (corrección **B3**); se instrumentan también atributos de objeto (**B4** parcial); la activación exige base `ulongint` para no emitir un label muerto con enums `doublef` (**B5**); se agregó `jmp fin_normal` / `fin_normal:` (**B1**).
+> **Nota de auditoría — documento NO canónico.** Duplica a `DECISIONES_P5h.md`, creado en el mismo commit `313d164`. Fuente consolidada: `ESTADO_RUNTIME_P5.md`. Cambios posteriores a este documento: la guardia se extrajo a `emitirChequeoEnum()` y la usan **ambos** emisores de `:=` (**B3**); se instrumentan también atributos de objeto (**B4** parcial); **B5** se resolvió primero unificando activación/emisión y luego se **extendió a enums `doublef`** con comparación FPU (`FLD`/`FCOMP`/`FSTSW`/`SAHF`/`jp`/`jz`); se agregó `jmp fin_normal` / `fin_normal:` (**B1**). Ver §4.5 y §10 de la fuente consolidada.
 
 ## Resumen
 
@@ -32,7 +32,7 @@ El Grupo 43 requiere chequeos de errores en tiempo de ejecución. La condición 
 
 2. **Secuencia de comparación contra valores del enum**: Para cada valor permitido del enumerado se emite `cmp eax, <valor> / je enum_valido_N`. Si coincide con algún valor, salta a `enum_valido_N` y continúa copiando al destino. Si ninguno coincide, `jmp error_enum_invalido` lleva al label de fallo que imprime el mensaje y termina el proceso.
 
-3. **Solo para enumerados con base `ulongint`**: El chequeo se aplica estrictamente a enumerados cuyo `tipoBase` sea `ulongint` (el único tipo base soportado actualmente para valores de enum en el lexico).
+3. **Bases soportadas**: el chequeo se aplica a enumerados con `tipoBase` `ulongint` (`CMP eax`) **y `doublef`** (`FLD`/`FCOMP` contra constantes `c_* DQ`, con `jp` para NaN/desordenado y `jz` para igualdad). Ambos comparten el predicado `tipoEnumeradoChequeable()`, por lo que activación y emisión no divergen. `FCOMP` hace `POP` y mantiene balanceada la pila FPU.
 
 ## Archivos .java creados
 
@@ -47,7 +47,9 @@ Ninguno. Todos los cambios de código están en `GeneradorAssembler.java` (ya ex
 | `test_tp_4/enumerados/02_asignacion_invalida.txt` | Caso de prueba: asignación inválida a variable de tipo enumeración (x := 5$ul a enum [1,2,3]). Verifica que se genera la guardia y que en runtime se tomaría el salto a error_enum_invalido. |
 | `test_tp_4/enumerados/01_asignacion_valida.asm` | Snapshot generado del caso válido. |
 | `test_tp_4/enumerados/02_asignacion_invalida.asm` | Snapshot generado del caso inválido. |
-| `test_tp_4/probar_prompt5_h.sh` | Script de verificación del Paquete 5.h. |
+| `test_tp_4/enumerados/03_doublef_valida.{txt,asm}` | Extensión: asignación válida a enum `doublef` desde variable; ejerce `fcomp c_1_5`/`c_2_5`, `jp`, `jz` y copia `fld`/`fstp`. |
+| `test_tp_4/enumerados/04_doublef_invalida.{txt,asm}` | Extensión: `3.5` fuera de `[1.5, 2.5]` vía variable; ningún `jz`, cae en `jmp error_enum_invalido`. |
+| `test_tp_4/probar_prompt5_h.sh` | Script de verificación del Paquete 5.h (actualmente 4 casos + regresiones). |
 
 ## ## test probar
 
@@ -63,11 +65,13 @@ bash test_tp_4/probar_prompt5_h.sh
 |---------|----------|-------------------|
 | `test_tp_4/enumerados/01_asignacion_valida.txt` + `.asm` | Valida una asignación válida a enum (x := 2$ul a enum [1,2,3]). El .asm debe contener `mov eax, c_2_ul_ul`, `cmp eax, 1`, `cmp eax, 2`, `cmp eax, 3`, `je enum_valido_0`, `jmp error_enum_invalido`, `msg_enum_invalido` en `.DATA` y el label `error_enum_invalido:` en `.CODE`. Como el valor 2 sí pertenece al enum, en runtime se tomaría el salto a `enum_valido_0` y no al error. | Código de salida 0 del script; todas las verificaciones `verificar` reportan `OK`. |
 | `test_tp_4/enumerados/02_asignacion_invalida.txt` + `.asm` | Valida una asignación inválida a enum (x := 5$ul a enum [1,2,3]). El .asm debe contener la misma guardia de comparación. Como el valor 5 no pertenece al enum, en runtime se tomaría el salto `jmp error_enum_invalido` y el programa terminaría con `ExitProcess, 4`. | Código de salida 0 del script; todas las verificaciones `verificar` reportan `OK`. |
-| `test_tp_4/probar_prompt5_h.sh` | Script de verificación que compila el proyecto, ejecuta los 2 casos, verifica los patrones en los `.asm` y ejecuta las regresiones de todos los prompts anteriores (5.0, 5.b, 5.e, 4e…2). | Código de salida 0; todas las verificaciones `OK`; 0 `FALLA`. |
+| `test_tp_4/enumerados/03_doublef_valida.txt` + `.asm` | Asignación válida a enum `doublef`. El `.asm` debe contener `c_1_5 DQ 1.5`, `c_2_5 DQ 2.5`, `@fpu_status DW ?`, `fcomp c_1_5`, `fcomp c_2_5`, `fstsw @fpu_status`, `sahf`, `jp error_enum_invalido`, `jz enum_valido_0` y `fstp m_main`. | Código de salida 0 del script; todas las verificaciones `verificar` reportan `OK`. |
+| `test_tp_4/enumerados/04_doublef_invalida.txt` + `.asm` | Asignación inválida a enum `doublef` (`3.5` no pertenece a `[1.5, 2.5]`). El `.asm` debe contener las comparaciones y el `jmp error_enum_invalido` final, sin comparación que iguale `3.5`. | Código de salida 0 del script; todas las verificaciones `verificar` reportan `OK`. |
+| `test_tp_4/probar_prompt5_h.sh` | Script de verificación que compila el proyecto, ejecuta los 4 casos, verifica los patrones en los `.asm` y ejecuta las regresiones de todos los prompts anteriores (5.0, 5.b, 5.e, 5.f, 4e…2). | Código de salida 0; todas las verificaciones `OK`; 0 `FALLA`. |
 
 ## Riesgos abiertos
 
 1. **Códigos de salida de `ExitProcess`**: el valor 4 es provisional (heredado de 5.0); la cátedra/Grupo 43 puede exigir otro. Ajustar si hay un contrato definido.
-2. **Solo enumerados con base `ulongint`**: el chequeo se aplica únicamente a enumerados cuyo tipo base sea `ulongint`. Si se agregan enumerados con base `doublef`, el chequeo de rango requeriría usar la FPU en lugar de `cmp` sobre `eax`.
+2. **Enums `doublef` (resuelto)**: ya no es una limitación; se comparan con FPU y se rechaza NaN/desordenado vía `jp`. Quedan sin explorar NaN/±Inf de entrada, enum de un solo valor, valores duplicados/0 y atributos/parámetros de enum `doublef` (ver brecha 11 de `ESTADO_RUNTIME_P5.md`).
 3. **Redundancia en asignaciones encadenadas**: si se hace `y := 5$ul; x := y`, ambos tercetos generan la guardia completa aunque `y` ya fue validado. Esto es correcto pero no óptimo; una optimización futura podría reutilizar el resultado de una validación previa.
 4. **Idioma de los mensajes**: los mensajes están en español; revisar si la cátedra requiere inglés u otro idioma.

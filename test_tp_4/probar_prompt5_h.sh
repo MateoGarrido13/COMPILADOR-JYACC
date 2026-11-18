@@ -4,10 +4,12 @@
 #
 # Verifica:
 #  1. Compilacion del proyecto
-#  2. Los 2 casos en "enumerados/" compilan sin errores
+#  2. Los 4 casos en "enumerados/" compilan sin errores
 #  3. El .asm de cada caso contiene la guardia de enum:
-#     mov eax, <valor> / cmp eax, <valor_permitido> / je enum_valido_N
-#     (repetido para cada valor del enum) seguido de jmp error_enum_invalido
+#     - base ulongint: mov eax / cmp eax, <valor> / je enum_valido_N
+#     - base doublef: fld / fcomp <constante DQ> / fstsw / sahf /
+#       jp error_enum_invalido / jz enum_valido_N
+#     seguido de jmp error_enum_invalido
 #  4. El .asm contiene msg_enum_invalido en .DATA y el label
 #     error_enum_invalido: en .CODE con ExitProcess, 4
 #  5. Regresiones de prompts anteriores (incluyendo 5.0, 5.b, 5.e)
@@ -86,6 +88,28 @@ verificar "$ASM" "mensaje de error en .DATA" 'msg_enum_invalido DB "Error: asign
 verificar "$ASM" "codigo de salida 4 en label de fallo" 'invoke ExitProcess, 4'
 verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
 verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
+
+ASM="$CASOS/03_doublef_valida.asm"
+verificar "$ASM" "doublef: carga del valor a chequear" 'fld v_main'
+verificar "$ASM" "doublef: comparacion contra 1.5" 'fcomp c_1_5'
+verificar "$ASM" "doublef: comparacion contra 2.5" 'fcomp c_2_5'
+verificar "$ASM" "doublef: FSTSW @fpu_status" 'fstsw @fpu_status'
+verificar "$ASM" "doublef: SAHF" 'sahf'
+verificar "$ASM" "doublef: rechazo de NaN/ordenado" 'jp error_enum_invalido'
+verificar "$ASM" "doublef: salto jz a enum_valido_0" 'jz enum_valido_0'
+verificar "$ASM" "doublef: @fpu_status declarado en .DATA" '@fpu_status DW ?'
+verificar "$ASM" "doublef: copia final FLD/FSTP" 'fstp m_main'
+verificar "$ASM" "doublef: mensaje de error en .DATA" 'msg_enum_invalido DB "Error: asignacion invalida a variable de tipo enumeracion",0'
+verificar "$ASM" "doublef: B1 jmp fin_normal" 'jmp fin_normal'
+verificar "$ASM" "doublef: B1 fin_normal:" 'fin_normal:'
+
+ASM="$CASOS/04_doublef_invalida.asm"
+verificar "$ASM" "doublef invalida: fcomp contra 1.5" 'fcomp c_1_5'
+verificar "$ASM" "doublef invalida: fcomp contra 2.5" 'fcomp c_2_5'
+verificar "$ASM" "doublef invalida: jmp error_enum_invalido" 'jmp error_enum_invalido'
+verificar "$ASM" "doublef invalida: etiqueta error_enum_invalido:" 'error_enum_invalido:'
+verificar "$ASM" "doublef invalida: ExitProcess, 4" 'invoke ExitProcess, 4'
+verificar "$ASM" "doublef invalida: B1 jmp fin_normal" 'jmp fin_normal'
 
 ASM="$CASOS/02_asignacion_invalida.asm"
 verificar "$ASM" "guardia mov eax en asignacion invalida" 'mov eax, c_5_ul_ul'

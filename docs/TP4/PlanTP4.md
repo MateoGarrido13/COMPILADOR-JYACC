@@ -234,13 +234,15 @@ Tareas (completadas):
 ---
 
 #### Paquete 5.h — Asignación inválida a variable de tipo enumeración
-Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_5_h.md` y `docs/TP4/DECISIONES_P5h.md` (duplicados, ver `ESTADO_RUNTIME_P5.md`).
+Estado: ✅ Ejecutado y **extendido a enums `doublef`** a pedido del usuario. Ver `docs/TP4/ESTADO_RUNTIME_P5.md` (fuente consolidada) y las notas duplicadas `DECISIONES_5_h.md` / `DECISIONES_P5h.md`.
 Contexto: Al asignar a una variable/enumerado destino, validar que el valor (constante o resultado de expresión) pertenezca al conjunto permitido del enum; si no, error runtime y terminar.
 Tareas completadas:
-1) En `GeneradorAssembler.emitirAsignacionSentencia()` se detecta cuando el destino es una variable de tipo enumerado y se emite el chequeo runtime: `mov eax, <valor>` seguido de `cmp eax, <valorN>` / `je enum_valido_<n>` para cada valor del enum, y `jmp error_enum_invalido` si ninguno coincide.
-2) `calcularChequeosRuntime()` activa `usaMsgEnumInvalido` cuando hay alguna asignación `:=` cuyo destino es variable de tipo enum (usando `Entorno.getTipoEnumerado()`).
-3) Se reutilizan `msg_enum_invalido` en `.DATA` y el label `error_enum_invalido:` en `.CODE` (infraestructura 5.0 ya existente).
-4) Casos de prueba en `test_tp_4/enumerados/`: `01_asignacion_valida.txt` (valor en el enum) y `02_asignacion_invalida.txt` (valor fuera del enum vía variable ulongint), más script `probar_prompt5_h.sh` con regresiones 5.0/5.b/5.e/5.f.
+1) `emitirChequeoEnum()` centraliza la guardia y la invocan **ambos** emisores de `:=` (sentencia y expresión, B3); `tipoDeDestinoAsignacion()` cubre variables y atributos (B4 parcial).
+2) `calcularChequeosRuntime()` activa `usaMsgEnumInvalido` con el mismo predicado `tipoEnumeradoChequeable()` usado por el emisor (B5). El predicado acepta bases `ulongint` y `doublef`.
+3) Base `ulongint`: `mov eax, <valor>` + `cmp eax, <valorN>` / `je enum_valido_<n>` por valor, y `jmp error_enum_invalido` si ninguno coincide.
+4) Base `doublef` (extensión): reutiliza `emitirComparacionFpu()` → `fld` / `fcomp <c_* DQ>` / `fstsw @fpu_status` / `mov ax, @fpu_status` / `sahf`, con `jp error_enum_invalido` (NaN/desordenado) y `jz enum_valido_<n>` (igualdad). `FCOMP` mantiene balanceada la pila; `calcularUsoFpuStatus()` declara `@fpu_status DW ?`.
+5) Se reutilizan `msg_enum_invalido` en `.DATA` y el label `error_enum_invalido:` en `.CODE` (infraestructura 5.0), precedidos por `jmp fin_normal` (B1).
+6) Casos de prueba en `test_tp_4/enumerados/`: `01_asignacion_valida.txt`, `02_asignacion_invalida.txt` (`ulongint`) y los nuevos `03_doublef_valida.txt`, `04_doublef_invalida.txt`, más script `probar_prompt5_h.sh` con regresiones 5.0/5.b/5.e/5.f.
 
 ---
 
