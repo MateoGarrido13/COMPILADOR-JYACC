@@ -193,21 +193,105 @@ Entrega: diff final Prompt 4, matriz de pruebas, `DECISIONES_P4.md` consolidado.
 ### Prompt 5 — Errores en tiempo de ejecución Grupo 43 (b, e, f, h)
 Contexto: Backend ASM funcional (Prompt 4). Grupo 43 requiere chequeos runtime: b,e,f,h.
 
-Tareas:
-1) Infraestructura comun: en .DATA define mensajes de error y en .CODE rutinas/labels de fallo que impriman mensaje claro e invoquen terminacion (`invoke ExitProcess, codigo` o equivalente). Reutilizable por todos los chequeos.
-2) `b` Division por cero en `doublef`:
-   - antes de `FDIV/FDIVP/FDIVR` relevante, comprobar divisor == 0.0 (FTST/FXAM o cargar y comparar via entero/FPU+SAHF segun estrategia) y saltar a error si cero.
-3) `e` Overflow en producto de enteros `ulongint`:
-   - en multiplicacion 32-bit sin signo (`MUL`), detectar overflow (CF/EDX segun forma) cuando resultado excede 32 bits / rango ulongint y reportar.
-4) `f` Overflow en producto de punto flotante `doublef`:
-   - tras producto FPU, detectar overflow/infinito/resultado fuera de rango representable (examinar estado FPU, `FXAM/FSTSW`, o comparar magnitud con max doublef) y reportar.
-5) `h` Asignacion invalida a variables de tipo enumeracion (Tema 23):
-   - al asignar a variable/enumerado destino, validar que el valor (constante o resultado de expresion) pertenezca al conjunto permitido del enum; si no, error runtime y terminar.
-   - usa metadata de Entorno/TS (valores del enum, tipo base ulongint) para generar comparaciones/rangos/tabla de valores segun implementacion.
-6) Inserta chequeos en todos los puntos relevantes del IR/expresiones generadas (incluye temporales/resultados intermedios cuando aplique). No rompas casos validos.
-7) Pruebas: un caso que dispare cada error b,e,f,h y casos limite validos que no disparen. Compila Java y verifica que el .asm contiene las guardas.
+El Prompt 5 se ejecuta como **cuatro paquetes semánticos independientes**, cada uno compitable y verificable por separado, ejecutados en este orden:
 
-Entrega: lista exacta de puntos instrumentados, forma de cada chequeo, ejemplos de mensajes/casos.
+---
+
+#### Paquete 5.0 — Infraestructura común de runtime (base para b/e/f/h)
+
+**Semántica:** Proveer los mensajes de error y las rutinas de fallo que todos los chequeos reutilizan, sin instrumentar aún ningún punto concreto.
+
+Tareas:
+1) En `.DATA`: definir las cadenas de mensaje de error (una por chequeo: b, e, f, h) y sus `fmt_*` si fuera necesario.
+2) En `.CODE`: definir labels de fallo (`error_overflow_suma`, `error_overflow_float`, `error_negativo_resta`, `error_enum_invalido`) que impriman el mensaje claro e invoquen terminación (`invoke ExitProcess, <codigo>` o equivalente).
+3) Crear un emisor helper reutilizable `emitirGuardia(saltoCondicional, labelError)` que emita el salto condicional al label de error correspondiente.
+
+**Archivos a modificar:** `GeneradorAssembler.java` (emisores de labels de fallo y mensajes en `.DATA`). Opcionalmente `Entorno.java` / `TablaSimbolos.java` si se necesitan metadatos de rango.
+
+**Prueba mínima:** Un programa que no active ningún chequeo y verifique que no aparecen labels de error ni mensajes innecesarios en el `.asm`.
+
+**Entrega:** Infraestructura de mensajes y labels de fallo lista para ser consumida por los paquetes 5.b, 5.e, 5.f y 5.h.
+
+---
+
+#### Paquete 5.b — Overflow en sumas de enteros `ulongint`
+
+**Semántica:** En cada suma de enteros sin signo (`ADD`) de `ulongint`, detectar si el resultado excede el rango de 32 bits sin signo (0..4294967295). Si excede, saltar a error de overflow.
+
+Tareas:
+1) En `GeneradorAssembler.emitirAritmetica()` para operador `+` con tipo `ulongint`, tras `add eax, <op2>`, insertar comprobación de acarreo (`jc`) con salto a `error_overflow_suma`.
+2) El acarreo CF=1 indica que el resultado no cabe en 32 bits sin signo.
+
+**Archivos a modificar:** `GeneradorAssembler.java`.
+
+**Pruebas:**
+- Caso válido: `10$ul + 20$ul` → sin salto a `error_overflow_suma`.
+- Caso disparador: `0xFFFFFFFF$ul + 1$ul` → aparece salto a `error_overflow_suma`.
+
+**Entrega:** Detección de overflow en suma `ulongint` instrumentada en todos los puntos relevantes del IR.
+
+---
+
+#### Paquete 5.e — Overflow en productos de punto flotante `doublef`
+
+**Semántica:** Tras cada producto FPU (`fmul`) de `doublef`, detectar overflow/infinito o resultado fuera del rango representable y reportar.
+
+Tareas:
+1) En `GeneradorAssembler.emitirAritmetica()` para operador `*` con tipo `doublef`, tras `fmul <op2>` e `fstp @auxN`, insertar inspección de estado FPU (`FSTSW`/`SAHF` o `FXAM`) con salto condicional a `error_overflow_float`.
+
+**Archivos a modificar:** `GeneradorAssembler.java`.
+
+**Pruebas:**
+- Caso válido: `1.5 * 2.0` → sin salto.
+- Caso disparador: `max_doublef * max_doublef` → aparece salto a `error_overflow_float`.
+
+**Entrega:** Detección de overflow en producto `doublef` instrumentada en todos los puntos relevantes del IR.
+
+---
+
+#### Paquete 5.f — Resultados negativos en restas de enteros sin signo `ulongint`
+
+**Semántica:** En cada resta de enteros sin signo (`SUB`) de `ulongint`, detectar si el resultado sería negativo (es decir, si el minuendo es menor que el sustraendo). Si es así, saltar a error.
+
+Tareas:
+1) En `GeneradorAssembler.emitirAritmetica()` para operador `-` con tipo `ulongint`, tras `sub eax, <op2>`, insertar comprobación de prestamo/salto por debajo (`jb` / `jc` según convención) con salto a `error_negativo_resta`.
+2) Como `ulongint` es sin signo, el resultado nunca debe ser negativo; si `op1 < op2`, la resta produce un valor fuera de rango.
+
+**Archivos a modificar:** `GeneradorAssembler.java`.
+
+**Pruebas:**
+- Caso válido: `20$ul - 10$ul` → sin salto a `error_negativo_resta`.
+- Caso disparador: `10$ul - 20$ul` → aparece salto a `error_negativo_resta`.
+
+**Entrega:** Detección de resultado negativo en resta `ulongint` instrumentada en todos los puntos relevantes del IR.
+
+---
+
+#### Paquete 5.h — Asignación inválida a variable de tipo enumeración
+
+**Semántica:** Al asignar a una variable/enumerado destino, validar que el valor (constante o resultado de expresión) pertenezca al conjunto permitido del enum; si no, error runtime y terminar.
+
+Tareas:
+1) En `GeneradorAssembler.emitirAsignacionSentencia()` (o emisor dedicado de `:=`) cuando el destino es una variable de tipo enum, insertar comparaciones del valor asignado contra cada valor permitido del enum (o tabla de saltos) con salto a `error_enum_invalido` si no coincide ninguno.
+2) Usar metadatos de `Entorno`/`TablaSimbolos` (`getTipoEnumerado()`, `contieneValorEnumerado()`, valores del enum, tipo base `ulongint`) para generar las comparaciones/rangos.
+
+**Archivos a modificar:** `GeneradorAssembler.java`; `Entorno.java` / `TablaSimbolos.java` solo si se requiere exponer metadatos adicionales al backend ASM.
+
+**Pruebas:**
+- Caso válido: `x := valor_permitido;` → sin salto a error.
+- Caso disparador: `x := valor_no_permitido;` → aparece salto a `error_enum_invalido`.
+
+**Entrega:** Validación de asignación a enumeración instrumentada en todos los puntos relevantes del IR.
+
+---
+
+#### Reglas transversales del Prompt 5
+
+- **No romper casos válidos:** ningún chequeo puede disparar sobre programas que actualmente compilan y generan `.asm` correcto.
+- **Inserta chequeos en todos los puntos relevantes del IR/expresiones generadas** (incluye temporales y resultados intermedios cuando aplique).
+- Cada paquete deja su propio script o casos en `test_tp_4/` y no avanza al siguiente hasta que el anterior esté verde.
+
+**Entrega consolidada del Prompt 5:** lista exacta de puntos instrumentados, forma de cada chequeo, ejemplos de mensajes/casos, y scripts de prueba por paquete (5.0, 5.b, 5.e, 5.f, 5.h).
 
 ### Prompt 6 — Integración final, contrato de salida TP4 y suite de pruebas
 Contexto: Generador ASM + runtime checks completos (Prompt 5).

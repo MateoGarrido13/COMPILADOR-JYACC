@@ -1,0 +1,11 @@
+{{ TP4 5.0: programa simple sin chequeos runtime activos.
+   Debe generar .asm sin labels de fallo ni mensajes de error (5.0 solo es
+   infraestructura; los paquetes 5.b/5.e/5.f/5.h aun no activan nada). }}
+prog
+ulongint x, y;
+begin
+    x := 10$ul;
+    y := 20$ul;
+    pout(x);
+    pout(y);
+end

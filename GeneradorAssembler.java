@@ -38,6 +38,9 @@ import java.util.Set;
     *   CLASE/FIN_CLASE como marcadores; atributos en .DATA).
     * Prompt 4e: despacho explicito de todos los operadores del IR; el unico
     *   fallback a comentario es para operadores desconocidos (defensivo).
+    * Prompt 5.0: infraestructura de chequeos runtime (mensajes de error en
+    *   .DATA, labels de fallo en .CODE y helper emitirGuardia). Ningun chequeo
+    *   esta activo aun; los paquetes 5.b/5.e/5.f/5.h activaran los suyos.
 
   Convenciones del Tema 13 (control de flujo, filminas 10.2 y 11.1):
     - Los destinos de BF/BI son etiquetas IR label_N ya resueltas por
@@ -98,6 +101,17 @@ public class GeneradorAssembler {
     private boolean usaFmtUlongint = false;
     private boolean usaFmtDoublef = false;
     private boolean usaFmtCadena = false;
+
+    /* Mensajes de error runtime (Prompt 5.0). Se emiten solo los que son
+       necesarios por algun chequeo activo (5.b/5.e/5.f/5.h). */
+    private static final String MSG_OVERFLOW_SUMA = "msg_overflow_suma";
+    private static final String MSG_OVERFLOW_FLOAT = "msg_overflow_float";
+    private static final String MSG_NEGATIVO_RESTA = "msg_negativo_resta";
+    private static final String MSG_ENUM_INVALIDO = "msg_enum_invalido";
+    private boolean usaMsgOverflowSuma = false;
+    private boolean usaMsgOverflowFloat = false;
+    private boolean usaMsgNegativoResta = false;
+    private boolean usaMsgEnumInvalido = false;
 
     /* ---------- Prompt 4c: funciones, metodos y stack frame ---------- */
 
@@ -232,6 +246,23 @@ public class GeneradorAssembler {
         if (usaFmtCadena) {
             salida.append("    ").append(FMT_CADENA).append(" DB \"%s\",0\n");
         }
+        // Mensajes de error runtime (Prompt 5.0), solo los que son necesarios.
+        if (usaMsgOverflowSuma) {
+            salida.append("    ").append(MSG_OVERFLOW_SUMA)
+                  .append(" DB \"Error: overflow en suma de ulongint\",0\n");
+        }
+        if (usaMsgOverflowFloat) {
+            salida.append("    ").append(MSG_OVERFLOW_FLOAT)
+                  .append(" DB \"Error: overflow en producto de doublef\",0\n");
+        }
+        if (usaMsgNegativoResta) {
+            salida.append("    ").append(MSG_NEGATIVO_RESTA)
+                  .append(" DB \"Error: resultado negativo en resta de ulongint\",0\n");
+        }
+        if (usaMsgEnumInvalido) {
+            salida.append("    ").append(MSG_ENUM_INVALIDO)
+                  .append(" DB \"Error: asignacion invalida a variable de tipo enumeracion\",0\n");
+        }
         salida.append("\n");
     }
 
@@ -361,6 +392,29 @@ public class GeneradorAssembler {
                     }
                     break;
             }
+        }
+
+        // Labels de fallo runtime (Prompt 5.0), solo los que son necesarios.
+        // Cada label imprime su mensaje y termina con ExitProcess.
+        if (usaMsgOverflowSuma) {
+            salida.append("error_overflow_suma:\n");
+            salida.append("    invoke crt_printf, offset ").append(MSG_OVERFLOW_SUMA).append("\n");
+            salida.append("    invoke ExitProcess, 1\n");
+        }
+        if (usaMsgOverflowFloat) {
+            salida.append("error_overflow_float:\n");
+            salida.append("    invoke crt_printf, offset ").append(MSG_OVERFLOW_FLOAT).append("\n");
+            salida.append("    invoke ExitProcess, 2\n");
+        }
+        if (usaMsgNegativoResta) {
+            salida.append("error_negativo_resta:\n");
+            salida.append("    invoke crt_printf, offset ").append(MSG_NEGATIVO_RESTA).append("\n");
+            salida.append("    invoke ExitProcess, 3\n");
+        }
+        if (usaMsgEnumInvalido) {
+            salida.append("error_enum_invalido:\n");
+            salida.append("    invoke crt_printf, offset ").append(MSG_ENUM_INVALIDO).append("\n");
+            salida.append("    invoke ExitProcess, 4\n");
         }
 
         salida.append("    invoke ExitProcess, 0\n");
@@ -1324,5 +1378,23 @@ public class GeneradorAssembler {
         return esPropia
                 ? nombreObjeto + "." + atributo.nombre
                 : nombreObjeto + "." + atributo.declarante.nombre + "." + atributo.nombre;
+    }
+
+    /* ---------- Prompt 5.0: infraestructura de chequeos runtime ---------- */
+
+    /*
+      Emitir una guardia condicional: si se cumple la condicion, salta al label
+      de fallo correspondiente. Se usa desde los paquetes 5.b/5.e/5.f/5.h para
+      insertar chequeos runtime antes/despues de operaciones aritmeticas o de
+      asignacion.
+
+      Ejemplo de uso (paquete 5.b, overflow en suma de ulongint):
+        emitirGuardia("jc", "error_overflow_suma");   // salta si acarreo CF=1
+
+      La condicion ASM (p.ej. "je", "jne", "jc") la decide el llamante segun
+      el tipo de comparacion previa (FPU, enteros, etc.).
+    */
+    private void emitirGuardia(String condicionSalto, String labelError) {
+        salida.append("    ").append(condicionSalto).append(" ").append(labelError).append("\n");
     }
 }
