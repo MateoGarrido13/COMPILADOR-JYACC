@@ -1,0 +1,10 @@
+{{ TP4 5.h: asignación inválida a variable de tipo enumeración.
+   Valor 5 no pertenece al enum dias = [1,2,3]; debe generar guardia en runtime. }}
+prog
+typedef dias = [1$ul, 2$ul, 3$ul];
+dias x;
+ulongint y;
+begin
+    y := 5$ul;
+    x := y;
+end

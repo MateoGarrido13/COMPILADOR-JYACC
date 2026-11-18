@@ -1,6 +1,7 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -112,6 +113,9 @@ public class GeneradorAssembler {
     private boolean usaMsgOverflowFloat = false;
     private boolean usaMsgNegativoResta = false;
     private boolean usaMsgEnumInvalido = false;
+    /* Contador para generar etiquetas unicas de salto de exito en el chequeo
+       runtime de asignacion a enumerado (Prompt 5.h). */
+    private int contadorEnumChequeo = 0;
 
     /* ---------- Prompt 4c: funciones, metodos y stack frame ---------- */
 
@@ -684,6 +688,40 @@ public class GeneradorAssembler {
             return;
         }
 
+        // 5.h: chequeo runtime para asignacion a variable de tipo enumeracion.
+        // El valor ya cargado se compara contra cada valor permitido del enum;
+        // si ninguno coincide, se salta a error_enum_invalido.
+        if (destino instanceof EntradaTabla && usaMsgEnumInvalido) {
+            EntradaTabla destEntry = (EntradaTabla) destino;
+            Entorno.TipoEnumerado enumTipo =
+                    entorno != null ? entorno.getTipoEnumerado(destEntry.tipoDato) : null;
+            if (enumTipo != null && Tipos.ULONGINT.equals(enumTipo.tipoBase)) {
+                String etiquetaOk = "enum_valido_" + contadorEnumChequeo++;
+                salida.append("    mov eax, ").append(src).append("\n");
+                boolean algunoValido = false;
+                for (String valorLexema : enumTipo.valores) {
+                    BigInteger valor = Tipos.valorEntero(valorLexema);
+                    if (valor != null) {
+                        salida.append("    cmp eax, ").append(valor.intValue()).append("\n");
+                        salida.append("    je ").append(etiquetaOk).append("\n");
+                        algunoValido = true;
+                    }
+                }
+                if (!algunoValido) {
+                    // Enumerado sin valores declarados: cualquier valor es invalido.
+                    salida.append("    jmp error_enum_invalido\n");
+                    salida.append(etiquetaOk).append(":\n");
+                    emitirCopiaPorTipo(Tipos.ULONGINT, src, dst);
+                    return;
+                }
+                salida.append("    jmp error_enum_invalido\n");
+                salida.append(etiquetaOk).append(":\n");
+                // Solo se copia al destino si el valor pertenece al enum.
+                emitirCopiaPorTipo(Tipos.ULONGINT, src, dst);
+                return;
+            }
+        }
+
         // Determinar el tipo del destino: EntradaTabla (variable/parametro) o
         // ReferenciaAtributo (atributo de objeto).
         boolean flotante = false;
@@ -990,6 +1028,27 @@ public class GeneradorAssembler {
             String tipo = r != null ? r.getTipo() : Tipos.INDEFINIDO;
             if (Tipos.ULONGINT.equals(tipo)) {
                 usaMsgNegativoResta = true;
+                break;
+            }
+        }
+
+        // 5.h: si hay al menos una asignacion ':= ' a una variable de tipo
+        // enumeracion, se activa el mensaje y label de error_enum_invalido para
+        // chequear en runtime que el valor asignado pertenezca al enum.
+        usaMsgEnumInvalido = false;
+        for (Terceto t : tercetos) {
+            if (!":=".equals(t.getOperador())) {
+                continue;
+            }
+            Object op1 = t.getOp1();
+            if (!(op1 instanceof EntradaTabla)) {
+                continue;
+            }
+            EntradaTabla destino = (EntradaTabla) op1;
+            if (destino.tipoDato != null
+                    && entorno != null
+                    && entorno.getTipoEnumerado(destino.tipoDato) != null) {
+                usaMsgEnumInvalido = true;
                 break;
             }
         }

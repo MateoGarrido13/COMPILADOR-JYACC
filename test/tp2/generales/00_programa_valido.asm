@@ -39,6 +39,7 @@ include \masm32\include\masm32rt.inc
     fmt_ulongint DB "%u",0
     fmt_cadena DB "%s",0
     msg_overflow_suma DB "Error: overflow en suma de ulongint",0
+    msg_enum_invalido DB "Error: asignacion invalida a variable de tipo enumeracion",0
 
 .code
 start:
@@ -117,6 +118,15 @@ label_1:
     mov eax, @aux32
     mov x_main, eax
     mov eax, c_2_ul_ul
+    cmp eax, 2
+    je enum_valido_0
+    cmp eax, 4
+    je enum_valido_0
+    cmp eax, 6
+    je enum_valido_0
+    jmp error_enum_invalido
+enum_valido_0:
+    mov eax, c_2_ul_ul
     mov p1_main, eax
 label_2:
     mov eax, x_main
@@ -151,5 +161,8 @@ label_5:
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
+error_enum_invalido:
+    invoke crt_printf, offset msg_enum_invalido
+    invoke ExitProcess, 4
     invoke ExitProcess, 0
 end start

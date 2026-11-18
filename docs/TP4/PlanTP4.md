@@ -1,5 +1,5 @@
 ### Estado base
-- Rama/HEAD: tp4, commit 350eb1f — P3: traduccion basica a .CODE (TP4 Prompt 3). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
+- Rama/HEAD: tp4alt, commit 7e468d2 — 5f: Restas ulongint, pruebas y documentacion. TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
 - Pipeline actual (Compilador.java): AnalizadorLexico -> Parser+AccionesSemanticas -> Verificaciones/Entorno -> GeneradorTercetos -> salida stdout (fuente numerado, tokens, estructuras, errores, TS, tercetos). Genera archivo .asm esqueleto (encabezado, .DATA, .CODE mínimo) mediante GeneradorAssembler. Main toma [ruta] o input.txt.
 
 ### IR / Tercetos (Terceto.java, GeneradorTercetos.java)
@@ -234,11 +234,13 @@ Tareas (completadas):
 ---
 
 #### Paquete 5.h — Asignación inválida a variable de tipo enumeración
-Estado: ⏳ Pendiente.
+Estado: ✅ Ejecutado.
 Contexto: Al asignar a una variable/enumerado destino, validar que el valor (constante o resultado de expresión) pertenezca al conjunto permitido del enum; si no, error runtime y terminar.
-Tareas pendientes:
-1) En `GeneradorAssembler.emitirAsignacionSentencia()` (o emisor dedicado de `:=`) cuando el destino es una variable de tipo enum, insertar comparaciones del valor asignado contra cada valor permitido del enum (o tabla de saltos) con salto a `error_enum_invalido` si no coincide ninguno.
-2) Usar metadatos de `Entorno`/`TablaSimbolos` (`getTipoEnumerado()`, `contieneValorEnumerado()`, valores del enum, tipo base `ulongint`) para generar las comparaciones/rangos.
+Tareas completadas:
+1) En `GeneradorAssembler.emitirAsignacionSentencia()` se detecta cuando el destino es una variable de tipo enumerado y se emite el chequeo runtime: `mov eax, <valor>` seguido de `cmp eax, <valorN>` / `je enum_valido_<n>` para cada valor del enum, y `jmp error_enum_invalido` si ninguno coincide.
+2) `calcularChequeosRuntime()` activa `usaMsgEnumInvalido` cuando hay alguna asignación `:=` cuyo destino es variable de tipo enum (usando `Entorno.getTipoEnumerado()`).
+3) Se reutilizan `msg_enum_invalido` en `.DATA` y el label `error_enum_invalido:` en `.CODE` (infraestructura 5.0 ya existente).
+4) Casos de prueba en `test_tp_4/enumerados/`: `01_asignacion_valida.txt` (valor en el enum) y `02_asignacion_invalida.txt` (valor fuera del enum vía variable ulongint), más script `probar_prompt5_h.sh` con regresiones 5.0/5.b/5.e/5.f.
 
 ---
 

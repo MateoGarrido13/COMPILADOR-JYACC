@@ -37,12 +37,12 @@ Correspondencia entre iteración **3.x** del plan y tema del grupo:
 
 | Campo | Valor |
 |-------|-------|
-| Rama | `tp4` |
-| Último commit en `HEAD` | `350eb1f — P3: traduccion basica a .CODE (TP4 Prompt 3)` |
-| Último commit de código del plan | TP3: `71cdbcd 3.10: Herencia múltiple con documentacion alineada` (rama `SEMANTICAStp03`); TP4: `350eb1f P3: traduccion basica a .CODE` (rama `tp4`) |
-| Prompts ejecutados | TP3: 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 (completado en rama `SEMANTICAStp03`); TP4: Prompt 1, 2 y 3 (rama `tp4`) |
-| Prompt en curso / siguiente | Prompt 4 de TP4 — Control de flujo y temas particulares (13,19,25,28,31) en ASM |
-| Commits del plan completados | TP3: 15 de 15; TP4: 3 de 6 |
+| Rama | `tp4alt` |
+| Último commit en `HEAD` | `7e468d2 — 5f: Restas ulongint, pruebas y documentacion` |
+| Último commit de código del plan | TP3: `71cdbcd 3.10: Herencia múltiple con documentacion alineada` (rama `SEMANTICAStp03`); TP4: `7e468d2 5f: Restas ulongint, pruebas y documentacion` (rama `tp4alt`) |
+| Prompts ejecutados | TP3: 0, 1A, 1B, 2, 2B, 6 y 8, 9 y 16, 13, 17, 33, 19, 23, 25, 28, 31 (completado en rama `SEMANTICAStp03`); TP4: Prompt 1, 2, 3, 4 y 5 completados (rama `tp4alt`) |
+| Prompt en curso / siguiente | Prompt 6 de TP4 — Integración final, contrato de salida TP4 y suite de pruebas |
+| Commits del plan completados | TP3: 15 de 15; TP4: 5 de 6 |
 
 ### Reglas de granularidad para commits
 
@@ -78,7 +78,7 @@ Cuando un prompt supere esos límites, se divide en commits más pequeños mante
 
 ### Plan
 
-El plan de prompts de TP3 quedó completo con el 31 (rama `SEMANTICAStp03`). El proyecto continúa en la rama `tp4` con el plan de TP4 (ver `docs/TP4/PlanTP4.md`).
+El plan de prompts de TP3 quedó completo con el 31 (rama `SEMANTICAStp03`). El proyecto continúa en la rama `tp4alt` con el plan de TP4 (ver `docs/TP4/PlanTP4.md`).
 
 ## TP4 — Plan de prompts (rama `tp4`)
 
@@ -87,8 +87,8 @@ El plan de prompts de TP3 quedó completo con el 31 (rama `SEMANTICAStp03`). El 
 | 1 | Auditoría fina y adaptación de TS/Tercetos para ASM | ✅ **Ejecutado** | `docs/TP4/PROMPT-1.md`, `docs/TP4/IR_CONTRATO.md`, `docs/TP4/DECISIONES_P1.md` | `test/tp2/generales/00_programa_valido.txt`, `test/TP3_y_TP4/ITERACION/01_repeat_simple.txt`, `test/tp2/verificacion_r17_asig_expresiones/estructura_respetada.txt`, `test/tp2/verificacion_r33_conversion/todf_a_entero.txt`, `test/tp2/verificacion_r25_objetos/misma_estructura.txt`, `test/tp2/verificacion_r28_r31_atributos/metodo_heredado_prefijado_con_orden.txt` |
 | 2 | Esqueleto GeneradorAssembler y sección `.DATA` | ✅ **Ejecutado** | `docs/TP4/DECISIONES_P2.md` | `test/tp2/generales/00_programa_valido.txt` (genera `.asm` esqueleto) |
 | 3 | Traducción básica a `.CODE`: aritmética, asignación y `todf` | ✅ **Ejecutado** | `docs/TP4/DECISIONES_P3.md` | Caso con `ulongint`, `doublef`, `+`, `*`, `todf` y asignaciones |
-| 4 | Control de flujo y temas particulares (13,19,25,28,31) en ASM | ⏳ Pendiente | — | — |
-| 5 | Errores en tiempo de ejecución Grupo 43 (b, e, f, h) | ⏳ Pendiente | — | — |
+| 4 | Control de flujo y temas particulares (13,19,25,28,31) en ASM | ✅ **Ejecutado** | `docs/TP4/DECISIONES_P4.md`, `docs/TP4/TEMPLATES_ASM.md` | `test_tp_4/Integracion/` + regresiones 4d, 4c, 4b, 4a, 3, 2 |
+| 5 | Errores en tiempo de ejecución Grupo 43 (b, e, f, h) | 5.0, 5.b, 5.e, 5.f, 5.h ✅ Ejecutado | `docs/TP4/DECISIONES_5.0.md`, `DECISIONES_5.b.md`, `DECISIONES_5.e.md`, `DECISIONES_5.f.md`; 5.h implementado en `GeneradorAssembler.java` | `test_tp_4/resta_enteros_negativos/`, `producto_doublef/`, `resta_enteros_negativa/`, `test_tp_4/enumerados/` |
 | 6 | Integración final, contrato de salida TP4 y suite de pruebas | ⏳ Pendiente | — | — |
 
 ## Prompt 25 — ejecutado
