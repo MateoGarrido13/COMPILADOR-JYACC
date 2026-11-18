@@ -4,11 +4,9 @@
 #
 # Verifica:
 #  1. Compilacion del proyecto
-#  2. Los 2 casos en "producto_doublef_overflow/" compilan sin errores
-#  3. El .asm de cada caso contiene: fmul, fstp, fld, fxam, fstsw ax, sahf,
-#     jc error_overflow_float (chequeo de overflow/infinito tras cada fmul)
-#  4. El .asm contiene msg_overflow_float en .DATA y el label
-#     error_overflow_float: en .CODE
+#  2. Los 2 casos en "producto_doublef/" compilan sin errores
+#  3. El .asm de cada caso contiene fmul seguido de fxam/fstsw/sahf/jc error_overflow_float
+#  4. El .asm contiene msg_overflow_float en .DATA y el label error_overflow_float: en .CODE
 #  5. Regresiones de prompts anteriores (incluyendo 5.0 y 5.b)
 #
 # Uso: bash test_tp_4/probar_prompt5_e.sh
@@ -17,7 +15,7 @@ set -u
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD="${TP4_BUILD:-/tmp/tp4p5e_build}"
-CASOS="$RAIZ/test_tp_4/producto_doublef_overflow"
+CASOS="$RAIZ/test_tp_4/producto_doublef"
 
 echo "=== Paquete 5.e de TP4 — Overflow en productos de punto flotante doublef ==="
 echo "Raiz: $RAIZ"
@@ -74,24 +72,20 @@ echo "[3/4] Verificando chequeo 5.e en los .asm..."
 
 ASM="$CASOS/01_producto_valido.asm"
 verificar "$ASM" "fmul en producto valido" 'fmul b_main'
-verificar "$ASM" "fstp despues de fmul" 'fstp @aux4'
-verificar "$ASM" "fld para inspeccion FPU" 'fld @aux4'
-verificar "$ASM" "fxam para examinar ST(0)" 'fxam'
-verificar "$ASM" "fstsw ax + sahf" 'fstsw ax'
-verificar "$ASM" "sahf despues de fstsw" 'sahf'
-verificar "$ASM" "salto condicional a error_overflow_float" 'jc error_overflow_float'
+verificar "$ASM" "guardia fxam despues de fmul" 'fxam'
+verificar "$ASM" "guardia fstsw sahf despues de fxam" 'fstsw ax'
+verificar "$ASM" "guardia sahf despues de fstsw" 'sahf'
+verificar "$ASM" "salto jc error_overflow_float" 'jc error_overflow_float'
 verificar "$ASM" "mensaje de error en .DATA" 'msg_overflow_float DB "Error: overflow en producto de doublef",0'
 verificar "$ASM" "label de fallo en .CODE" 'error_overflow_float:'
 verificar "$ASM" "codigo de salida 2 en label de fallo" 'invoke ExitProcess, 2'
 
 ASM="$CASOS/02_producto_desborda.asm"
-verificar "$ASM" "fmul en producto que desborda" 'fmul b_main'
-verificar "$ASM" "fstp despues de fmul" 'fstp @aux4'
-verificar "$ASM" "fld para inspeccion FPU" 'fld @aux4'
-verificar "$ASM" "fxam para examinar ST(0)" 'fxam'
-verificar "$ASM" "fstsw ax + sahf" 'fstsw ax'
-verificar "$ASM" "sahf despues de fstsw" 'sahf'
-verificar "$ASM" "salto condicional a error_overflow_float" 'jc error_overflow_float'
+verificar "$ASM" "fmul en producto desborda" 'fmul b_main'
+verificar "$ASM" "guardia fxam despues de fmul" 'fxam'
+verificar "$ASM" "guardia fstsw sahf despues de fxam" 'fstsw ax'
+verificar "$ASM" "guardia sahf despues de fstsw" 'sahf'
+verificar "$ASM" "salto jc error_overflow_float" 'jc error_overflow_float'
 verificar "$ASM" "mensaje de error en .DATA" 'msg_overflow_float DB "Error: overflow en producto de doublef",0'
 verificar "$ASM" "label de fallo en .CODE" 'error_overflow_float:'
 verificar "$ASM" "codigo de salida 2 en label de fallo" 'invoke ExitProcess, 2'

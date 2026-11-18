@@ -1,0 +1,10 @@
+{{ TP4 5.e: producto doublef que NO desborda.
+   Debe generar fmul sin jc error_overflow_float. }}
+prog
+doublef a, b, r;
+begin
+    a := 1.5;
+    b := 2.0;
+    r := a * b;
+    pout(r);
+end
