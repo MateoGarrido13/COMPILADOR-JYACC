@@ -589,6 +589,18 @@ public class GeneradorAssembler {
         salida.append("    fstp ").append(destino).append("\n");
     }
 
+    private void emitirCopiaPorTipo(String tipo, String origen, String destino) {
+        if (esFlotante(tipo)) {
+            // Copiar doublef: cargar en FPU y guardar en destino DQ
+            salida.append("    fld ").append(origen).append("\n");
+            salida.append("    fstp ").append(destino).append("\n");
+        } else {
+            // Copiar ulongint: cargar en EAX y guardar en destino DD
+            salida.append("    mov eax, ").append(origen).append("\n");
+            salida.append("    mov ").append(destino).append(", eax\n");
+        }
+    }
+
     private void emitirAsignacionExpresion(Object destino, Object origen,
             int numero, String tipoResultado) {
         String dst = operandoAsm(destino);
@@ -602,15 +614,7 @@ public class GeneradorAssembler {
 
         boolean flotante = esFlotante(tipoResultado);
 
-        if (flotante) {
-            // El origen ya es un auxiliar DQ; copiarlo al destino
-            salida.append("    fld ").append(src).append("\n");
-            salida.append("    fstp ").append(dst).append("\n");
-        } else {
-            // Copiar entero de 32 bits
-            salida.append("    mov eax, ").append(src).append("\n");
-            salida.append("    mov ").append(dst).append(", eax\n");
-        }
+        emitirCopiaPorTipo(tipoResultado, src, dst);
     }
 
     private void emitirAsignacionSentencia(Object destino, Object origen) {
@@ -631,13 +635,7 @@ public class GeneradorAssembler {
             flotante = esFlotante(((ReferenciaAtributo) destino).getTipo());
         }
 
-        if (flotante) {
-            salida.append("    fld ").append(src).append("\n");
-            salida.append("    fstp ").append(dst).append("\n");
-        } else {
-            salida.append("    mov eax, ").append(src).append("\n");
-            salida.append("    mov ").append(dst).append(", eax\n");
-        }
+        emitirCopiaPorTipo(flotante ? Tipos.DOUBLEF : Tipos.ULONGINT, src, dst);
     }
 
     /* ---------- Control de flujo y comparaciones (Prompt 4a) ---------- */
@@ -1026,14 +1024,14 @@ public class GeneradorAssembler {
         }
         cola.addLast(f);
     }
-
-    private String nombreEtiqueta(Entorno.FuncionDeclarada f) {
+    // para que esten disponibles sin tener que instanicar a un  GeneradorA
+    private static String nombreEtiqueta(Entorno.FuncionDeclarada f) {
         String clave = f.entrada != null && f.entrada.lexema != null
                 ? f.entrada.lexema : f.clave();
         return (f.esMetodo ? "mt_" : "fn_") + sanitizarEtiqueta(clave);
     }
 
-    private String sanitizarEtiqueta(String texto) {
+    private static String sanitizarEtiqueta(String texto) {
         if (texto == null) {
             return "anon";
         }
