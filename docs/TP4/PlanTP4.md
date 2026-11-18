@@ -270,19 +270,19 @@ Tareas (estado final):
 1) `generarArchivoAsm()` escribe el `.asm` solo si `Reporte.hayErrores()` es falso, en `rutaAsmPara()` (mismo directorio y nombre base, extensión `.asm`). `Main` delega y solo resuelve la ruta.
 2) stdout vuelve al orden TP3: **fuente numerado → tokens → estructuras → errores → TS → tercetos**. No hay mensajes nuevos de `ASM generado:` / `ASM no generado:`; los errores de E/S del `.asm` van a stderr. El contrato TP4 de consola queda como recorte manual previo a la entrega.
 3) Con errores: se imprimen los errores con línea, TS e IR como en TP3; no se escribe `.asm` y no se borra un `.asm` previo para no destruir posibles ediciones del usuario.
-4) Prueba: `bash test_tp_4/probar_prompt6_0.sh` verifica stdout TP3, caso con error, no-generación del `.asm` y regresión 4e. Batería post-reversión en curso; resultado a registrar en `DECISIONES_6.0.md`. `GeneradorAssembler` no se modificó: 6.1 queda libre para MASM32 real.
+4) Prueba: `bash test_tp_4/probar_prompt6_0.sh` verifica stdout TP3, caso con error, no-generación del `.asm` y regresión 4e. Batería post-reversión: 7/7 scripts EXIT 0, 0 `FALLA:`; detalle en `DECISIONES_6.0.md` §4. En 6.0 `GeneradorAssembler` no se modificó; 6.1 ajustó solo los terminadores al escribir.
 
 ---
 
 #### Paquete 6.1 — Validación MASM32: includes, directivas y ensamblable
-Estado: ⏳ Pendiente.
-Contexto: El `.asm` se genera pero no se ha validado con `ml.exe`/`ml64.exe` + `link` usando `masm32rt.inc` en Windows.
-Tareas:
-1) Revisar includes: `.386`, `.model flat, stdcall`, `option casemap:none`, `include \masm32\include\masm32rt.inc` — confirmar rutas y sintaxis exacta para el entorno de la cátedra.
-2) Revisar directivas de sección (`.data`/`.code`), alineación de `DQ` (¿requiere `ALIGN 8`?), `end start` vs `end`, CRLF vs LF.
-3) Verificar que `invoke crt_printf` con `DQ` (doublef) y `%f` funciona en el runtime MASM32 real (pasar qword por pila vs registros).
-4) Ajustar `GeneradorAssembler.java` si hace falta (p.ej. `ALIGN 8` antes de `DQ`, formato de cadenas, terminadores).
-5) Prueba: ensamblar y enlazar al menos 3 casos representativos (ulongint, doublef, objetos) en Windows con la toolchain indicada; registrar comandos y salida.
+Estado: ✅ Validación estática ejecutada (includes, directivas, `DQ`, `crt_printf`, CRLF); ⚠️ ensamblado y enlazado reales pendientes de Windows. Ver `docs/TP4/DECISIONES_6.1.md`. Archivo: `GeneradorAssembler.java`; script: `test_tp_4/probar_prompt6_1.sh`.
+Contexto: El `.asm` ya se generaba; aquí se revisó contra MASM32 y se ajustaron solo los terminadores de línea. No hay `ml.exe`/`ml64.exe` ni SDK en este entorno.
+Tareas (estado final):
+1) Includes confirmados: `.386`, `.model flat, stdcall`, `option casemap:none`, `include \masm32\include\masm32rt.inc`. `masm32rt.inc` ya aporta `.486`, `msvcrt.inc` y las librerías; no se agregaron `includelib` duplicados. Sin cambios.
+2) `.data`/`.code` y `end start` correctos. **No se agrega `ALIGN 8`** (`.386` fija alineación de segmento DWORD(4); en x86 no es requisito de corrección). **`DQ` se mantiene**: con reales codifica el mismo IEEE double que `REAL8`. Se adoptó **CRLF** al escribir el `.asm`, documentado en `DECISIONES_6.1.md` §2.4.
+3) `invoke crt_printf, offset fmt_doublef, <símbolo DQ>` revisado: `crt_printf` es `PROTO C :VARARG`, el qword va por valor en la pila. Sin cambios; la comprobación de impresión real queda para Windows.
+4) Único ajuste en `GeneradorAssembler.escribirArchivo()`: normalizar `\n` a `\r\n` solo al escribir. `generar()` sigue devolviendo LF.
+5) `bash test_tp_4/probar_prompt6_1.sh` → exit 0, 0 `FALLA:`, 3 casos (ulongint, doublef, objetos) validados estáticamente. Ensamblar/enlazar esos 3 casos en Windows con `ml.exe /c /coff` + `link /SUBSYSTEM:CONSOLE` y registrar salida; no ejecutable aquí.
 
 ---
 

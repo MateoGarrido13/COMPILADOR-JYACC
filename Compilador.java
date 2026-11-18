@@ -60,6 +60,8 @@ public class Compilador {
         // el contrato de consola pedido sigue siendo el de TP3.
         generarArchivoAsm(generador, rutaAsmPara(rutaFuente));
 
+        // --- Eliminar estas lineas antes de entregar, para que la salida sea solo el .asm. ---
+
         String tokens = RegistroTokens.contenido();
         String estructuras = reporte.contenidoEstructuras();
         String intermedio = generador.contenido();
@@ -77,6 +79,9 @@ public class Compilador {
         System.out.print(tabla);
         System.out.println();
         System.out.print(intermedio);
+
+        // -------------------------------------------------------------------------------------
+
     }
 
     /*

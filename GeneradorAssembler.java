@@ -208,7 +208,13 @@ public class GeneradorAssembler {
         }
         try (BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8))) {
-            writer.write(generar());
+            // Paquete 6.1: MASM espera CRLF en los archivos fuente (la guia del
+            // usuario de MASM indica que cada linea se separa con CR/LF). El
+            // generador sigue armando el texto con '\n' para que las pruebas
+            // textuales no cambien; la conversion ocurre solo al escribir.
+            // Normalizar primero evita duplicar '\r' si el texto ya trae CRLF.
+            String contenido = generar().replace("\r\n", "\n").replace("\n", "\r\n");
+            writer.write(contenido);
         }
     }
 

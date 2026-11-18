@@ -242,7 +242,7 @@ Auditoría de los 5 scripts y las 6 carpetas (14 pares `.txt`/`.asm` después de
 **Estado del Prompt 6 al cierre del paquete 6.0**:
 
 1. **6.0** ✅ Compuerta y ruta del `.asm` ejecutadas; ⚠️ stdout TP4 revertido a TP3 por pedido del usuario (él lo recortará antes de entregar). Snapshots y `probar_prompt4e.sh` restaurados a `HEAD`. Detalle en `DECISIONES_6.0.md`.
-2. **6.1** ⏳ validación MASM32 real (`ml.exe`/`link`, `masm32rt.inc`, alineación de `DQ`, CRLF) — imposible en este entorno.
+2. **6.1** ✅ validación estática ejecutada: includes, `.data`/`.code`, `end start`, `DQ` sin `ALIGN 8`, `crt_printf` con `%f` y CRLF al escribir el `.asm` (`probar_prompt6_1.sh`, exit 0). ⚠️ Ensamblado/enlace real con `ml.exe`/`link` pendiente de Windows. Detalle en `DECISIONES_6.1.md`.
 3. **6.2** ⏳ batería de regresión y suite con disparo real de b/e/f/h + casos límite; cubrir las brechas 1–12 de §7.
 4. **6.3** ⏳ limpieza de TODOs resueltos **y desarrollo profundo de comentarios** (precondiciones, efectos, convenciones y decisiones no obvias), docs de uso.
 5. **6.4** ⏳ eliminación de comentarios: **último paquete**, requiere confirmación explícita («**BORRAR COMENTARIOS**»).

@@ -84,7 +84,7 @@ Verifica:
 
 - `javac -encoding UTF-8 -d /tmp/opencode/build_restore *.java "acciones semanticas"/*.java otras_acciones/*.java` → exit 0.
 - `bash test_tp_4/probar_prompt6_0.sh` → exit 0, 0 `FALLA:`.
-- Batería post-reversión (`/tmp/opencode/run5_*.log`): **en ejecución**; el resultado se registra acá cuando termine.
+- Batería post-reversión (`/tmp/opencode/run5_*.log`): **7/7 EXIT 0, 0 `FALLA:`** — `probar_prompt5_0.sh`, `probar_prompt5_b.sh`, `probar_prompt5_e.sh`, `probar_prompt5_f.sh`, `probar_prompt5_h.sh`, `probar_prompt4e.sh` y `probar_prompt6_0.sh`. Ejecutada antes del cambio CRLF de 6.1; la regresión posterior a ese cambio se registró con los mismos criterios (ver `DECISIONES_6.1.md` §4).
 
 ---
 
@@ -92,7 +92,7 @@ Verifica:
 
 | Paquete | Gancho que deja este estado |
 |---------|-----------------------------|
-| **6.1** | `GeneradorAssembler` sin cambios. El `.asm` ya se escribe en la ruta canónica cuando no hay errores; faltan `ml.exe`/`link`, `ALIGN 8`, CRLF y `crt_printf` con `DQ`. |
+| **6.1** | `GeneradorAssembler` solo cambió en `escribirArchivo()` (CRLF al escribir). El `.asm` ya se escribe en la ruta canónica cuando no hay errores; `ALIGN 8` y `REAL8` se descartaron y `crt_printf` con `DQ` se revisó. Ensamblado/enlace real pendiente de Windows. Ver `DECISIONES_6.1.md`. |
 | **6.2** | Los scripts pueden aseverar la no-generación del `.asm` con errores. El stdout TP4 **no** está disponible: el usuario lo recortará manualmente antes de entregar; si se decide automatizar, hay que reabrir el cambio de stdout. |
 | **6.3** | Los comentarios nuevos explican decisiones no obvias (compuerta, ruta, revert) y deben sobrevivir a la limpieza. |
 | **6.4** | Sin ejecutar: requiere «**BORRAR COMENTARIOS**». |

@@ -33,6 +33,8 @@ end start
 
 **Fuente filmina**: `winasmtut.pdf` (labels, `option casemap:none`, `end start`),TP4 enunciado (MASM32 32-bit, `masm32rt.inc`).
 
+Nota 6.1: el archivo `.asm` se escribe con terminadores **CRLF** (normalización en `GeneradorAssembler.escribirArchivo()`); el texto interno del generador sigue usando `\n`. No se emite `ALIGN 8`: con `.386` la alineación de segmento es DWORD(4) y en x86 no es requisito de corrección para `DQ`. Ver `DECISIONES_6.1.md`.
+
 ---
 
 ## T-02 — Sección `.DATA` desde la tabla de símbolos
