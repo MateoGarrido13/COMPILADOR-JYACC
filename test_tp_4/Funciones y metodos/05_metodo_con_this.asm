@@ -13,6 +13,7 @@ include \masm32\include\masm32rt.inc
     @aux4 DD ?
     @aux10 DD ?
     fmt_ulongint DB "%u",0
+    msg_overflow_suma DB "Error: overflow en suma de ulongint",0
 
 .code
 start:
@@ -22,6 +23,7 @@ mt_m_main_calculadora:
     ; this: dword ptr [ebp+8]
     mov eax, dword ptr [ebp+12]
     add eax, dword ptr [ebp+16]
+    jc error_overflow_suma
     mov @aux4, eax
     mov eax, @aux4
     leave
@@ -44,5 +46,8 @@ fin_m_main_calculadora:
     mov eax, @aux10
     mov r_main, eax
     invoke crt_printf, offset fmt_ulongint, r_main
+error_overflow_suma:
+    invoke crt_printf, offset msg_overflow_suma
+    invoke ExitProcess, 1
     invoke ExitProcess, 0
 end start

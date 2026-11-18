@@ -1,0 +1,10 @@
+{{ TP4 5.b: suma ulongint que NO desborda.
+   Debe generar add eax, ... SIN jc error_overflow_suma. }}
+prog
+ulongint x, y, r;
+begin
+    x := 10$ul;
+    y := 20$ul;
+    r := x + y;
+    pout(r);
+end

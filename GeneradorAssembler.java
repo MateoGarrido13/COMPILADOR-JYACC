@@ -181,6 +181,7 @@ public class GeneradorAssembler {
         prepararObjetosThis();
         usaFpuStatus = calcularUsoFpuStatus();
         calcularFormatosPout();
+        calcularChequeosRuntime();
         emitirEncabezado();
         emitirData();
         emitirCodigo();
@@ -543,10 +544,22 @@ public class GeneradorAssembler {
             // Entero: mov eax, op1; <op> eax, op2; mov destino, eax
             salida.append("    mov eax, ").append(o1).append("\n");
             switch (operador) {
-                case "+": salida.append("    add eax, ").append(o2).append("\n"); break;
-                case "-": salida.append("    sub eax, ").append(o2).append("\n"); break;
-                case "*": salida.append("    imul eax, ").append(o2).append("\n"); break;
-                case "/": salida.append("    div ").append(o2).append("\n"); break;
+                case "+":
+                    salida.append("    add eax, ").append(o2).append("\n");
+                    // 5.b: chequeo de overflow en suma de ulongint (acarreo CF=1).
+                    if (usaMsgOverflowSuma) {
+                        salida.append("    jc error_overflow_suma\n");
+                    }
+                    break;
+                case "-":
+                    salida.append("    sub eax, ").append(o2).append("\n");
+                    break;
+                case "*":
+                    salida.append("    imul eax, ").append(o2).append("\n");
+                    break;
+                case "/":
+                    salida.append("    div ").append(o2).append("\n");
+                    break;
             }
             salida.append("    mov ").append(destino).append(", eax\n");
         }
@@ -829,6 +842,36 @@ public class GeneradorAssembler {
                 usaFmtDoublef = true;
             } else if (Tipos.ULONGINT.equals(tipo)) {
                 usaFmtUlongint = true;
+            }
+        }
+    }
+
+    /*
+      Calcula qué chequeos runtime del Prompt 5 deben activarse.
+      Para 5.b: si hay algún terceto de suma '+' con tipo ulongint, se activa
+      el mensaje y label de error_overflow_suma.
+    */
+    private void calcularChequeosRuntime() {
+        usaMsgOverflowSuma = false;
+        for (Terceto t : tercetos) {
+            if (!"+".equals(t.getOperador())) {
+                continue;
+            }
+            int numero = -1;
+            for (int i = 0; i < tercetos.size(); i++) {
+                if (tercetos.get(i) == t) {
+                    numero = i + 1;
+                    break;
+                }
+            }
+            if (numero < 0) {
+                continue;
+            }
+            ResultadoTerceto r = resultados.get(numero);
+            String tipo = r != null ? r.getTipo() : Tipos.INDEFINIDO;
+            if (Tipos.ULONGINT.equals(tipo)) {
+                usaMsgOverflowSuma = true;
+                break;
             }
         }
     }
