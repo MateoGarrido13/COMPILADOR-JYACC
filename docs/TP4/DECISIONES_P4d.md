@@ -99,6 +99,34 @@ bash test_tp_4/probar_prompt4d.sh   # OK (incluye regresiones 4c, 4b, 4a, 3 y 2)
 3. **Nombres ASM de atributos**: dependen de `sanitizarBaseAsm()` que reemplaza `.` y `:` por `_`. Si dos objetos tienen atributos con nombres que colisionan tras sanitizacion, `TablaSimbolos.nombreAsmDe()` agrega sufijos numericos.
 4. **COPY sobre objetos locales en stack**: `operandoAsm()` resuelve atributos via `nombreAsmDe` (siempre `.DATA`), incluso dentro de funciones. Si un objeto se declara local en una funcion, su atributo seguiria resolviendo a `.DATA`. Esto es consistente con la decision de 4c de que parametros/locales de tipo basico van al stack, pero objetos quedan en `.DATA`.
 
+## Mensajes de error por consola (patron ASSETS/asmwhello_console.asm)
+
+Los errores detectados durante la generacion de codigo ASM (en `emitirCopiar()` de `GeneradorAssembler.java`) se imprimen por consola al ejecutar el `.asm` generado, siguiendo el patron de `ASSETS/asmwhello_console.asm` (`StdOut` + `ExitProcess`).
+
+### Mecanismo
+
+1. **Registro**: `registrarCadenaError(texto)` almacena el mensaje y devuelve un nombre ASM unico (`msg_error_1`, `msg_error_2`, ...).
+2. **Declaracion en `.DATA`**: `emitirData()` declara cada cadena registrada como `<nombre> DB "<texto>",0`.
+3. **Emision en `.CODE`**: `emitirErrorYSaliendo(nombre, codigoSalida)` emite:
+   ```asm
+       invoke StdOut, addr <nombre>
+       invoke ExitProcess, <codigoSalida>
+   ```
+   Esto imprime el mensaje por consola y termina el proceso con el codigo dado.
+
+### Errores cubiertos en `emitirCopiar()`
+
+| Situación | Mensaje por consola | Código de salida |
+|-----------|--------------------|------------------|
+| Operandos no son `EntradaTabla` | `Error: COPY - operandos invalidos (destino/origen no son EntradaTabla)` | 1 |
+| Clases no resueltas | `Error: COPY - clases no resueltas: <tipoDest> / <tipoOrigen>` | 1 |
+| Layouts de distinto tamaño | `Error: COPY - layouts de distinto tamaño: <clave1> / <clave2>` | 1 |
+| Atributo no encontrado en TS | `Error: COPY - atributo no encontrado en TS: <attr1> / <attr2>` | 1 |
+
+### Nota
+
+`masm32rt.inc` (incluido en el encabezado del `.asm`) ya provee `StdOut` y `ExitProcess`, por lo que no son necesarios includes adicionales de `kernel32.inc` ni `masm32.inc`.
+
 ## TEST PRUEBA
 
 ### Script a ejecutar

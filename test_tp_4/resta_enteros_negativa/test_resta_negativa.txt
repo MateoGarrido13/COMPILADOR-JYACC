@@ -1,0 +1,7 @@
+{{ Resta ulongint que produce negativo en ejecucion (wrap-around sin signo). }}
+prog
+ulongint x;
+begin
+    x := 5$ul - 10$ul;
+    pout(x);
+end

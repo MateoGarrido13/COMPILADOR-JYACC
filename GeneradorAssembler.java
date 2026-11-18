@@ -137,6 +137,12 @@ public class GeneradorAssembler {
     private final Set<String> objetosThis = new LinkedHashSet<>();
     private Entorno.FuncionDeclarada funcionActual = null;
 
+    /* ---------- Mensajes de error por consola en el .asm generado ---------- */
+    // Siguen el patron de ASSETS/asmwhello_console.asm: StdOut + ExitProcess.
+    // Se emiten cuando se ejecuta el .asm, no como comentarios estaticos.
+    private final Map<String, String> cadenasErrorPorTexto = new HashMap<>();
+    private int contadorCadenasError = 0;
+
     public GeneradorAssembler(List<Terceto> tercetos,
             TablaSimbolos tablaSimbolos,
             Entorno entorno,
@@ -262,6 +268,17 @@ public class GeneradorAssembler {
         if (usaMsgEnumInvalido) {
             salida.append("    ").append(MSG_ENUM_INVALIDO)
                   .append(" DB \"Error: asignacion invalida a variable de tipo enumeracion\",0\n");
+        }
+        // Cadenas de error detectadas durante la generacion de ASM.
+        // Se declaran en .DATA para poder imprimirse por consola al ejecutar
+        // el .asm generado, siguiendo el patron de ASSETS/asmwhello_console.asm
+        // (StdOut + ExitProcess).
+        if (!cadenasErrorPorTexto.isEmpty()) {
+            salida.append("\n");
+            for (Map.Entry<String, String> entrada : cadenasErrorPorTexto.entrySet()) {
+                salida.append("    ").append(entrada.getKey()).append(" DB \"")
+                      .append(cadenaAsm(entrada.getValue())).append("\",0\n");
+            }
         }
         salida.append("\n");
     }
@@ -1244,6 +1261,31 @@ public class GeneradorAssembler {
         return base.startsWith("[") ? base : "[" + base + "]";
     }
 
+    /* ---------- Mensajes de error por consola (patron ASSETS/asmwhello_console.asm) ---------- */
+
+    /*
+      Registra un mensaje de error que se declarara en .DATA y se imprimira por
+      consola al ejecutar el .asm generado, usando StdOut + ExitProcess.
+      Devuelve el nombre ASM de la cadena para poder invocarla luego.
+    */
+    private String registrarCadenaError(String texto) {
+        if (cadenasErrorPorTexto.containsKey(texto)) {
+            return cadenasErrorPorTexto.get(texto);
+        }
+        String nombre = "msg_error_" + (++contadorCadenasError);
+        cadenasErrorPorTexto.put(texto, nombre);
+        return nombre;
+    }
+
+    /*
+      Emite en .CODE: imprime el mensaje por consola con StdOut y termina con
+      el codigo de salida dado. Sigue el patron de ASSETS/asmwhello_console.asm.
+    */
+    private void emitirErrorYSaliendo(String nombreCadena, int codigoSalida) {
+        salida.append("    invoke StdOut, addr ").append(nombreCadena).append("\n");
+        salida.append("    invoke ExitProcess, ").append(codigoSalida).append("\n");
+    }
+
     /* ---------- Prompt 4d: objetos y atributos ---------- */
 
     /*
@@ -1261,7 +1303,8 @@ public class GeneradorAssembler {
     */
     private void emitirCopiar(Object destino, Object origen, int numero) {
         if (!(destino instanceof EntradaTabla) || !(origen instanceof EntradaTabla)) {
-            salida.append("    ; COPY (operandos invalidos: destino/origen no son EntradaTabla)\n");
+            String msg = registrarCadenaError("Error: COPY - operandos invalidos (destino/origen no son EntradaTabla)");
+            emitirErrorYSaliendo(msg, 1);
             return;
         }
         EntradaTabla objDest = (EntradaTabla) destino;
@@ -1272,8 +1315,8 @@ public class GeneradorAssembler {
         Entorno.ClaseDeclarada claseDest = entorno != null ? entorno.claseDe(tipoDest) : null;
         Entorno.ClaseDeclarada claseOrigen = entorno != null ? entorno.claseDe(tipoOrigen) : null;
         if (claseDest == null || claseOrigen == null) {
-            salida.append("    ; COPY (clase no resuelta: ")
-                   .append(tipoDest).append(" / ").append(tipoOrigen).append(")\n");
+            String msg = registrarCadenaError("Error: COPY - clases no resueltas: " + tipoDest + " / " + tipoOrigen);
+            emitirErrorYSaliendo(msg, 1);
             return;
         }
 
@@ -1285,9 +1328,9 @@ public class GeneradorAssembler {
         List<AtributoPosicional> attrsDest = atributosEfectivos(claseDest);
         List<AtributoPosicional> attrsOrigen = atributosEfectivos(claseOrigen);
         if (attrsDest.size() != attrsOrigen.size()) {
-            // No deberia pasar: la semantica ya descarto layouts incompatibles.
-            salida.append("    ; COPY (layouts de distinto tamanio: ")
-                   .append(claseDest.clave()).append(" / ").append(claseOrigen.clave()).append(")\n");
+            String msg = registrarCadenaError("Error: COPY - layouts de distinto tamanio: "
+                    + claseDest.clave() + " / " + claseOrigen.clave());
+            emitirErrorYSaliendo(msg, 1);
             return;
         }
 
@@ -1301,8 +1344,9 @@ public class GeneradorAssembler {
             EntradaTabla eOrigen = tablaSimbolos.buscarIdentificador(nombreAttrOrigen, ambitoOrigen);
 
             if (eDest == null || eOrigen == null) {
-                salida.append("    ; COPY (atributo no encontrado en TS: ")
-                       .append(nombreAttrDest).append(" / ").append(nombreAttrOrigen).append(")\n");
+                String msg = registrarCadenaError("Error: COPY - atributo no encontrado en TS: "
+                        + nombreAttrDest + " / " + nombreAttrOrigen);
+                emitirErrorYSaliendo(msg, 1);
                 continue;
             }
 
