@@ -540,6 +540,16 @@ public class GeneradorAssembler {
                 case "/": salida.append("    fdiv ").append(o2).append("\n"); break;
             }
             salida.append("    fstp ").append(destino).append("\n");
+            // 5.e: despues de fmul de doublef, detectar overflow/infinito o
+            // resultado fuera del rango representable (FXAM + FSTSW/SAHF ->
+            // jc salta si C0=1, es decir +infinito/-infinito/NaN).
+            if ("*".equals(operador) && usaMsgOverflowFloat) {
+                salida.append("    fld ").append(destino).append("\n");
+                salida.append("    fxam\n");
+                salida.append("    fstsw ax\n");
+                salida.append("    sahf\n");
+                salida.append("    jc error_overflow_float\n");
+            }
         } else {
             // Entero: mov eax, op1; <op> eax, op2; mov destino, eax
             salida.append("    mov eax, ").append(o1).append("\n");
@@ -871,6 +881,33 @@ public class GeneradorAssembler {
             String tipo = r != null ? r.getTipo() : Tipos.INDEFINIDO;
             if (Tipos.ULONGINT.equals(tipo)) {
                 usaMsgOverflowSuma = true;
+                break;
+            }
+        }
+
+        // 5.e: si hay al menos una multiplicacion '*' de tipo doublef, se activa
+        // el mensaje y label de error_overflow_float para chequear overflow
+        // (infinito / fuera de rango) tras cada fmul de punto flotante.
+        usaMsgOverflowFloat = false;
+        for (Terceto t : tercetos) {
+            if (!"*".equals(t.getOperador())) {
+                continue;
+            }
+            int numero = -1;
+            for (int i = 0; i < tercetos.size(); i++) {
+                if (tercetos.get(i) == t) {
+                    numero = i + 1;
+                    break;
+                }
+            }
+            if (numero < 0) {
+                continue;
+            }
+
+            ResultadoTerceto r = resultados.get(numero);
+            String tipo = r != null ? r.getTipo() : Tipos.INDEFINIDO;
+            if (Tipos.DOUBLEF.equals(tipo)) {
+                usaMsgOverflowFloat = true;
                 break;
             }
         }

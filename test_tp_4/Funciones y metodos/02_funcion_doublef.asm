@@ -14,6 +14,7 @@ include \masm32\include\masm32rt.inc
     @aux3 DQ ?
     @aux10 DQ ?
     fmt_doublef DB "%f",0
+    msg_overflow_float DB "Error: overflow en producto de doublef",0
 
 .code
 start:
@@ -23,6 +24,11 @@ fn_escala_main:
     fld qword ptr [ebp+8]
     fmul qword ptr [ebp+16]
     fstp @aux3
+    fld @aux3
+    fxam
+    fstsw ax
+    sahf
+    jc error_overflow_float
     fld @aux3
     leave
     ret
@@ -50,5 +56,8 @@ fin_escala_main:
     fld @aux10
     fstp r_main
     invoke crt_printf, offset fmt_doublef, r_main
+error_overflow_float:
+    invoke crt_printf, offset msg_overflow_float
+    invoke ExitProcess, 2
     invoke ExitProcess, 0
 end start

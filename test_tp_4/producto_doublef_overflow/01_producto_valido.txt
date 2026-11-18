@@ -1,0 +1,11 @@
+{{ TP4 5.e: producto doublef valido (1.5 * 2.0 = 3.0).
+   El chequeo de overflow se instrumenta estaticamente pero no se dispara
+   en tiempo de ejecución porque el resultado es finito (CF=0 tras SAHF). }}
+prog
+doublef a, b, r;
+begin
+    a := 1.5d+0;
+    b := 2.0d+0;
+    r := a * b;
+    pout(r);
+end
