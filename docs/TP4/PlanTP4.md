@@ -1,5 +1,5 @@
 ### Estado base
-- Rama/HEAD: tp4alt, commit 7e468d2 — 5f: Restas ulongint, pruebas y documentacion. TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
+- Rama/HEAD: tp4alt, commit b9250e0 — Plan 6 (al cierre de la auditoría Prompt 5; más los cambios de corrección descriptos en `ESTADO_RUNTIME_P5.md`). TP3 completado en rama SEMANTICAStp03 (temas 13,17,19,23,25,28,31,33 ejecutados).
 - Pipeline actual (Compilador.java): AnalizadorLexico -> Parser+AccionesSemanticas -> Verificaciones/Entorno -> GeneradorTercetos -> salida stdout (fuente numerado, tokens, estructuras, errores, TS, tercetos). Genera archivo .asm esqueleto (encabezado, .DATA, .CODE mínimo) mediante GeneradorAssembler. Main toma [ruta] o input.txt.
 
 ### IR / Tercetos (Terceto.java, GeneradorTercetos.java)
@@ -208,7 +208,7 @@ Tareas (completadas):
 ---
 
 #### Paquete 5.b — Overflow en sumas de enteros `ulongint`
-Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_5.b.md`. Archivo modificado: `GeneradorAssembler.java`. Pruebas: `test_tp_4/resta_enteros_negativos/` y `test_tp_4/probar_prompt5_b.sh`.
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_5.b.md`. Archivo modificado: `GeneradorAssembler.java`. Pruebas: la carpeta `test_tp_4/resta_enteros_negativos/` contiene los casos de suma (`01_suma_valida`, `02_suma_desborda`) pese a su nombre, junto con `test_tp_4/probar_prompt5_b.sh`. Ver `ESTADO_RUNTIME_P5.md`.
 Contexto: En cada suma de enteros sin signo (`ADD`) de `ulongint`, detectar si el resultado excede el rango de 32 bits sin signo (0..4294967295). Si excede, saltar a error de overflow.
 Tareas (completadas):
 1) En `GeneradorAssembler.emitirAritmetica()` para operador `+` con tipo `ulongint`, tras `add eax, <op2>`, insertar comprobación de acarreo (`jc`) con salto a `error_overflow_suma`.
@@ -217,7 +217,7 @@ Tareas (completadas):
 ---
 
 #### Paquete 5.e — Overflow en productos de punto flotante `doublef`
-Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_5.e.md`. Archivo modificado: `GeneradorAssembler.java`. Pruebas: `test_tp_4/producto_doublef/` y `test_tp_4/probar_prompt5_e.sh`.
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_5.e.md` y `docs/TP4/DECISIONES_5_e.md` (duplicados, ver `ESTADO_RUNTIME_P5.md`). Archivo modificado: `GeneradorAssembler.java`. Pruebas: `test_tp_4/producto_doublef/` y `test_tp_4/producto_doublef_overflow/` (esta última recién agregada al script), con `test_tp_4/probar_prompt5_e.sh`.
 Contexto: Tras cada producto FPU (`fmul`) de `doublef`, detectar overflow/infinito o resultado fuera del rango representable y reportar.
 Tareas (completadas):
 1) En `GeneradorAssembler.emitirAritmetica()` para operador `*` con tipo `doublef`, tras `fmul <op2>` e `fstp @auxN`, insertar inspección de estado FPU (`FXAM` + `FSTSW`/`SAHF`) con salto condicional a `error_overflow_float`.
@@ -234,7 +234,7 @@ Tareas (completadas):
 ---
 
 #### Paquete 5.h — Asignación inválida a variable de tipo enumeración
-Estado: ✅ Ejecutado.
+Estado: ✅ Ejecutado. Ver `docs/TP4/DECISIONES_5_h.md` y `docs/TP4/DECISIONES_P5h.md` (duplicados, ver `ESTADO_RUNTIME_P5.md`).
 Contexto: Al asignar a una variable/enumerado destino, validar que el valor (constante o resultado de expresión) pertenezca al conjunto permitido del enum; si no, error runtime y terminar.
 Tareas completadas:
 1) En `GeneradorAssembler.emitirAsignacionSentencia()` se detecta cuando el destino es una variable de tipo enumerado y se emite el chequeo runtime: `mov eax, <valor>` seguido de `cmp eax, <valorN>` / `je enum_valido_<n>` para cada valor del enum, y `jmp error_enum_invalido` si ninguno coincide.
@@ -328,21 +328,5 @@ Tareas:
 ---
 
 **Entrega consolidada del Prompt 6:** diff final por paquete, `MATRIZ_PRUEBAS_6.2.md`, `ESTADO_FINAL.md`, instrucciones de ejecución y ensamblado, y confirmación de que la eliminación de comentarios (6.4) no introdujo regresiones.
-### Prompt 6 — Integración final, contrato de salida TP4 y suite de pruebas
-Contexto: Generador ASM + runtime checks completos (Prompt 5).
 
-Tareas:
-1) Ajusta Compilador.java/Main.java al contrato TP4:
-   - ante compilacion sin errores, generar archivo .asm (nombre/ruta clara, p.ej. junto al fuente o salida definida) ademas de mostrar ruta/exito.
-   - salida por stdout segun catedra para esta etapa: errores de compilacion (lex/sint/sem) juntos con descripcion y linea; representacion intermedia (tercetos); contenidos de Tabla de Simbolos. Evita mostrar tokens/estructuras salvo que sea necesario por compatibilidad interna (documenta decision).
-   - ante errores que impidan ASM correcto, no generar .asm invalido o generar solo si esta explicitamente permitido; documenta comportamiento.
-2) Revisa includes/rutinas MASM32 usadas para que el .asm sea ensamblable y ejecutable con la herramienta indicada (masm32rt). Ajusta detalles de formato/directivas si hace falta.
-3) Ejecuta bateria de regresion TP3 relevante y casos TP4/Grupo 43:
-   - temas 13,17,19,23,25,28,31,33
-   - runtime b,e,f,h (al menos un disparo por chequeo + validos)
-   - programa integral representativo.
-   Registra comandos, resultados y cualquier desviacion.
-4) Limpieza final: remover TODOs resueltos, comentarios coherentes, docs cortas de uso (`javac ...`, `java Main ...`, como ensamblar/ejecutar .asm) si corresponde en README o doc existente.
-5) Resume estado final: que cumple, limitaciones conocidas, y pasos manuales de ensamblado/ejecucion.
-
-Entrega: diff final, instrucciones de ejecucion, matriz breve de pruebas (caso -> esperado -> obtenido), y ubicacion del .asm generado.
+Nota de auditoría: se eliminó un bloque duplicado del Prompt 6 (texto original agregado por el commit `b9250e0` junto a la versión atomizada 6.0–6.4). La versión vigente es la de los paquetes 6.0 a 6.4; 6.4 (eliminación de comentarios) queda como último paquete y requiere confirmación explícita.

@@ -38,11 +38,13 @@ start:
     jb error_negativo_resta
     mov @aux8, eax
     invoke crt_printf, offset fmt_ulongint, @aux8
+    jmp fin_normal
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
 error_negativo_resta:
     invoke crt_printf, offset msg_negativo_resta
     invoke ExitProcess, 3
+fin_normal:
     invoke ExitProcess, 0
 end start

@@ -62,8 +62,10 @@ fin_suma_main:
     fild x_main
     fstp @aux16
     invoke crt_printf, offset fmt_doublef, @aux16
+    jmp fin_normal
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
+fin_normal:
     invoke ExitProcess, 0
 end start

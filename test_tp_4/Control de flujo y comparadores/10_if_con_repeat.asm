@@ -15,10 +15,10 @@ include \masm32\include\masm32rt.inc
     @aux8 DD ?
     @aux10 DD ?
     @aux12 DD ?
+    msg_overflow_suma DB "Error: overflow en suma de ulongint",0
 
 .code
 start:
-    ; (PROGRAMA, --, --)
     mov eax, c_1_ul_ul
     mov flag_main, eax
     mov eax, c_0_ul_ul
@@ -36,11 +36,13 @@ start:
 label_1:
     mov eax, s_main
     add eax, x_main
+    jc error_overflow_suma
     mov @aux8, eax
     mov eax, @aux8
     mov s_main, eax
     mov eax, x_main
     add eax, c_1_ul_ul
+    jc error_overflow_suma
     mov @aux10, eax
     mov eax, @aux10
     mov x_main, eax
@@ -59,6 +61,10 @@ label_3:
     mov eax, c_99_ul_ul
     mov s_main, eax
 label_4:
-    ; (FIN_PROGRAMA, --, --)
+    jmp fin_normal
+error_overflow_suma:
+    invoke crt_printf, offset msg_overflow_suma
+    invoke ExitProcess, 1
+fin_normal:
     invoke ExitProcess, 0
 end start

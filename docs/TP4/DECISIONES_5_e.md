@@ -1,5 +1,7 @@
 # Decisiones y cambios — Paquete 5.e (TP4, Grupo 43, MASM32 32-bit)
 
+> **Nota de auditoría — documento NO canónico.** Duplica a `DECISIONES_5.e.md` (con punto) con diferencias de carpeta y de redacción. Describe `producto_doublef_overflow/`, que antes estaba huérfana: ningún script la ejecutaba. Ahora `probar_prompt5_e.sh` ejecuta **ambas** carpetas. La secuencia actual incluye `fstp st(0)` (**B2**) y `jmp fin_normal` / `fin_normal:` (**B1**). Fuente consolidada: `ESTADO_RUNTIME_P5.md`.
+
 ## Resumen
 
 El Paquete 5.e implementa el chequeo de **overflow en productos de punto flotante `doublef`** (condición **e** del Grupo 43).

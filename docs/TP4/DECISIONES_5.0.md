@@ -1,5 +1,7 @@
 # Decisiones y cambios — Paquete 5.0 (TP4, Grupo 43, MASM32 32-bit)
 
+> **Actualización de auditoría** (ver `ESTADO_RUNTIME_P5.md`): este documento refleja el estado original del commit `77b2963`. Dos afirmaciones quedaron desactualizadas: (1) `emitirGuardia()` existe pero **no tiene llamadas reales**; los emisores escriben el salto directamente; (2) los labels de fallo se emitían sin un `jmp` previo, por lo que el flujo normal caía en ellos. La corrección **B1** agregó `jmp fin_normal` antes del bloque y `fin_normal:` después. Los booleanos `usaMsg*` se calculan recién en `calcularChequeosRuntime()` (5.b/5.e/5.f/5.h), no en 5.0.
+
 ## Resumen
 
 El Paquete 5.0 es la **infraestructura común de chequeos runtime** para el Prompt 5. Solo proviene los elementos que los paquetes 5.b/5.e/5.f/5.h reutilizarán:

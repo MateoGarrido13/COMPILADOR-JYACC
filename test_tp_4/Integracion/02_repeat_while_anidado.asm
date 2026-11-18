@@ -93,8 +93,10 @@ label_6:
     jc error_overflow_suma
     mov @aux29, eax
     invoke crt_printf, offset fmt_ulongint, @aux29
+    jmp fin_normal
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
+fin_normal:
     invoke ExitProcess, 0
 end start

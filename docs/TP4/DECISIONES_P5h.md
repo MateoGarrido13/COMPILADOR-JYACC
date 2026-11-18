@@ -1,5 +1,7 @@
 # Decisiones y cambios — Paquete 5.h (TP4, Grupo 43, MASM32 32-bit)
 
+> **Nota de auditoría — documento NO canónico.** Duplica a `DECISIONES_5_h.md`, creado en el mismo commit `313d164`. Fuente consolidada: `ESTADO_RUNTIME_P5.md`. Ver allí las correcciones B1/B3/B4/B5 aplicadas después de este documento.
+
 ## Resumen
 
 El Paquete 5.h implementa el chequeo de **asignación inválida a variable de tipo enumeración** (condición **h** del Grupo 43).

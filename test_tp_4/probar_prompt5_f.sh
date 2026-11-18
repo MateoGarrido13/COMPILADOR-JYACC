@@ -71,18 +71,24 @@ no_verificar() {
 echo "[3/4] Verificando chequeo 5.f en los .asm..."
 
 ASM="$CASOS/01_resta_valida.asm"
-verificar "$ASM" "sub eax en resta valida" 'sub eax, c_10_ul_ul'
+# CORRECCION: los .txt actuales restan variables (x - y), no constantes;
+# el patron anterior ('sub eax, c_10_ul_ul') era de una version vieja.
+verificar "$ASM" "sub eax en resta valida" 'sub eax, y_main'
 verificar "$ASM" "guardia jb error_negativo_resta despues de sub" 'jb error_negativo_resta'
 verificar "$ASM" "mensaje de error en .DATA" 'msg_negativo_resta DB "Error: resultado negativo en resta de ulongint",0'
 verificar "$ASM" "label de fallo en .CODE" 'error_negativo_resta:'
 verificar "$ASM" "codigo de salida 3 en label de fallo" 'invoke ExitProcess, 3'
+verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
+verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
 ASM="$CASOS/02_resta_negativa.asm"
-verificar "$ASM" "sub eax en resta negativa" 'sub eax, c_20_ul_ul'
+verificar "$ASM" "sub eax en resta negativa" 'sub eax, y_main'
 verificar "$ASM" "guardia jb error_negativo_resta despues de sub" 'jb error_negativo_resta'
 verificar "$ASM" "mensaje de error en .DATA" 'msg_negativo_resta DB "Error: resultado negativo en resta de ulongint",0'
 verificar "$ASM" "label de fallo en .CODE" 'error_negativo_resta:'
 verificar "$ASM" "codigo de salida 3 en label de fallo" 'invoke ExitProcess, 3'
+verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
+verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
 echo
 

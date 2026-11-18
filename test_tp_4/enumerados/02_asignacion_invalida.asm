@@ -27,8 +27,10 @@ start:
 enum_valido_0:
     mov eax, y_main
     mov x_main, eax
+    jmp fin_normal
 error_enum_invalido:
     invoke crt_printf, offset msg_enum_invalido
     invoke ExitProcess, 4
+fin_normal:
     invoke ExitProcess, 0
 end start

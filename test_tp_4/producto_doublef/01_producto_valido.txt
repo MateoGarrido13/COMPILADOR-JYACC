@@ -1,5 +1,6 @@
-{{ TP4 5.e: producto doublef que NO desborda.
-   Debe generar fmul sin jc error_overflow_float. }}
+{{ TP4 5.e: producto doublef que NO desborda (1.5 * 2.0 = 3.0).
+   Genera la guardia completa tras fmul: fxam / fstsw ax / fstp st(0) /
+   sahf / jc error_overflow_float; en este caso C0=0 y no se salta. }}
 prog
 doublef a, b, r;
 begin

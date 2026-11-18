@@ -1,5 +1,7 @@
 # Decisiones y cambios — Paquete 5.h (TP4, Grupo 43, MASM32 32-bit)
 
+> **Nota de auditoría — documento NO canónico.** Duplica a `DECISIONES_P5h.md`, creado en el mismo commit `313d164`. Fuente consolidada: `ESTADO_RUNTIME_P5.md`. Cambios posteriores a este documento: la guardia se extrajo a `emitirChequeoEnum()` y la usan **ambos** emisores de `:=` (corrección **B3**); se instrumentan también atributos de objeto (**B4** parcial); la activación exige base `ulongint` para no emitir un label muerto con enums `doublef` (**B5**); se agregó `jmp fin_normal` / `fin_normal:` (**B1**).
+
 ## Resumen
 
 El Paquete 5.h implementa el chequeo de **asignación inválida a variable de tipo enumeración** (condición **h** del Grupo 43).

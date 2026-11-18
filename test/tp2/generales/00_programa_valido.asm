@@ -158,11 +158,13 @@ label_3:
 label_4:
     invoke crt_printf, offset fmt_ulongint, x_main
 label_5:
+    jmp fin_normal
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
 error_enum_invalido:
     invoke crt_printf, offset msg_enum_invalido
     invoke ExitProcess, 4
+fin_normal:
     invoke ExitProcess, 0
 end start

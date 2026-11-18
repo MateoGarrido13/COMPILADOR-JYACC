@@ -51,8 +51,10 @@ label_3:
     jae label_4
     jmp label_1
 label_4:
+    jmp fin_normal
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
+fin_normal:
     invoke ExitProcess, 0
 end start

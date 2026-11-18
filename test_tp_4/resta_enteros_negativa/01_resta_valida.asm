@@ -26,8 +26,10 @@ start:
     mov eax, @aux4
     mov r_main, eax
     invoke crt_printf, offset fmt_ulongint, r_main
+    jmp fin_normal
 error_negativo_resta:
     invoke crt_printf, offset msg_negativo_resta
     invoke ExitProcess, 3
+fin_normal:
     invoke ExitProcess, 0
 end start

@@ -76,6 +76,8 @@ verificar "$ASM" "guarda jc error_overflow_suma despues de add" 'jc error_overfl
 verificar "$ASM" "mensaje de error en .DATA" 'msg_overflow_suma DB "Error: overflow en suma de ulongint",0'
 verificar "$ASM" "label de fallo en .CODE" 'error_overflow_suma:'
 verificar "$ASM" "codigo de salida 1 en label de fallo" 'invoke ExitProcess, 1'
+verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
+verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
 ASM="$CASOS/02_suma_desborda.asm"
 verificar "$ASM" "add eax en suma que desborda" 'add eax, y_main'
@@ -83,6 +85,8 @@ verificar "$ASM" "guarda jc error_overflow_suma despues de add" 'jc error_overfl
 verificar "$ASM" "mensaje de error en .DATA" 'msg_overflow_suma DB "Error: overflow en suma de ulongint",0'
 verificar "$ASM" "label de fallo en .CODE" 'error_overflow_suma:'
 verificar "$ASM" "codigo de salida 1 en label de fallo" 'invoke ExitProcess, 1'
+verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
+verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
 echo
 

@@ -93,8 +93,10 @@ fin_escala_main_calculadora:
     mov m_main, eax
     invoke crt_printf, offset fmt_ulongint, r_main
     invoke crt_printf, offset fmt_ulongint, m_main
+    jmp fin_normal
 error_negativo_resta:
     invoke crt_printf, offset msg_negativo_resta
     invoke ExitProcess, 3
+fin_normal:
     invoke ExitProcess, 0
 end start

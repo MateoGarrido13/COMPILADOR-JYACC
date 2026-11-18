@@ -84,6 +84,9 @@ no_verificar "$ASM" "sin mensaje overflow suma" 'overflow en suma de ulongint'
 no_verificar "$ASM" "sin mensaje overflow float" 'overflow en producto de doublef'
 no_verificar "$ASM" "sin mensaje negativo en resta" 'resultado negativo en resta de ulongint'
 no_verificar "$ASM" "sin mensaje enum invalido" 'asignacion invalida a variable de tipo enumeracion'
+# B1: sin chequeos activos no debe emitirse el salto de skip (no hay bloque que saltar)
+no_verificar "$ASM" "sin jmp fin_normal" 'jmp fin_normal'
+no_verificar "$ASM" "sin etiqueta fin_normal" 'fin_normal:'
 
 echo
 

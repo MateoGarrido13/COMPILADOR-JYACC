@@ -40,8 +40,11 @@ import java.util.Set;
     * Prompt 4e: despacho explicito de todos los operadores del IR; el unico
     *   fallback a comentario es para operadores desconocidos (defensivo).
     * Prompt 5.0: infraestructura de chequeos runtime (mensajes de error en
-    *   .DATA, labels de fallo en .CODE y helper emitirGuardia). Ningun chequeo
-    *   esta activo aun; los paquetes 5.b/5.e/5.f/5.h activaran los suyos.
+    *   .DATA, labels de fallo en .CODE y helper emitirGuardia). Los paquetes
+    *   5.b/5.e/5.f/5.h instrumentan sus puntos y activan mensaje + label solo
+    *   cuando el programa realmente los necesita. El bloque de labels va
+    *   precedido de un jmp y seguido de 'fin_normal:' para que el flujo
+    *   correcto no caiga en las rutinas de error (correccion B1).
 
   Convenciones del Tema 13 (control de flujo, filminas 10.2 y 11.1):
     - Los destinos de BF/BI son etiquetas IR label_N ya resueltas por
@@ -166,6 +169,12 @@ public class GeneradorAssembler {
 
     public String generar() {
         salida.setLength(0);
+        // Reutilizar la misma instancia para dos fuentes no debe heredar
+        // contadores ni mensajes de la generacion anterior: las etiquetas
+        // enum_valido_N y msg_error_N deben arrancar de cero en cada .asm.
+        contadorEnumChequeo = 0;
+        cadenasErrorPorTexto.clear();
+        contadorCadenasError = 0;
         auxPorTerceto.clear();
         declaracionPorTerceto.clear();
         declaracionPorClave.clear();
@@ -472,6 +481,16 @@ public class GeneradorAssembler {
 
         // Labels de fallo runtime (Prompt 5.0), solo los que son necesarios.
         // Cada label imprime su mensaje y termina con ExitProcess.
+        // CORRECCION B1: sin este salto incondicional, el ultimo terceto del
+        // flujo normal cae directamente en el primer 'error_*:' y cualquier
+        // programa instrumentado imprime el mensaje y termina con codigo
+        // 1..4 aunque no haya ocurrido error. Es el mismo patron que la
+        // filmina winasmtut.pdf: 'jmp _quit' antes del bloque de error.
+        boolean hayChequeosRuntime = usaMsgOverflowSuma || usaMsgOverflowFloat
+                || usaMsgNegativoResta || usaMsgEnumInvalido;
+        if (hayChequeosRuntime) {
+            salida.append("    jmp fin_normal\n");
+        }
         if (usaMsgOverflowSuma) {
             salida.append("error_overflow_suma:\n");
             salida.append("    invoke crt_printf, offset ").append(MSG_OVERFLOW_SUMA).append("\n");
@@ -491,6 +510,11 @@ public class GeneradorAssembler {
             salida.append("error_enum_invalido:\n");
             salida.append("    invoke crt_printf, offset ").append(MSG_ENUM_INVALIDO).append("\n");
             salida.append("    invoke ExitProcess, 4\n");
+        }
+
+        // CORRECCION B1: destino del jmp emitido antes del bloque de error.
+        if (hayChequeosRuntime) {
+            salida.append("fin_normal:\n");
         }
 
         salida.append("    invoke ExitProcess, 0\n");
@@ -605,6 +629,13 @@ public class GeneradorAssembler {
                 salida.append("    fld ").append(destino).append("\n");
                 salida.append("    fxam\n");
                 salida.append("    fstsw ax\n");
+                // CORRECCION B2: FXAM inspecciona ST(0) pero no lo consume.
+                // Sin este FSTP, cada producto de doublef deja un valor apilado
+                // en la FPU; despues de 8 fmuls se desborda la pila (ST overflow)
+                // y aparece un falso overflow en un programa valido. FSTP no
+                // modifica AX ni los flags de la CPU, por lo que C0 (ya copiado
+                // a AH por FSTSW) se conserva intacto para SAHF/JC.
+                salida.append("    fstp st(0)\n");
                 salida.append("    sahf\n");
                 salida.append("    jc error_overflow_float\n");
             }
@@ -663,18 +694,79 @@ public class GeneradorAssembler {
         }
     }
 
+    /*
+      Tipo del destino de una asignacion. El IR puede destinar ':= tanto a
+      una variable/parametro (EntradaTabla) como a un atributo de objeto
+      (ReferenciaAtributo); centralizar la resolucion evita que un emisor
+      chequee enums y el otro no (correccion B4).
+    */
+    private String tipoDeDestinoAsignacion(Object destino) {
+        if (destino instanceof EntradaTabla) {
+            return ((EntradaTabla) destino).tipoDato;
+        }
+        if (destino instanceof ReferenciaAtributo) {
+            return ((ReferenciaAtributo) destino).getTipo();
+        }
+        return null;
+    }
+
+    /*
+      Enumerado chequeable en runtime: solo los de base ulongint, porque es
+      el unico caso en que el generador sabe comparar con CMP eax, valor.
+      La activacion en calcularChequeosRuntime y la emision usan este mismo
+      metodo, asi no queda un 'error_enum_invalido:' muerto cuando el enum
+      tiene base doublef (correccion B5).
+    */
+    private Entorno.TipoEnumerado tipoEnumeradoChequeable(String tipo) {
+        if (entorno == null || tipo == null) {
+            return null;
+        }
+        Entorno.TipoEnumerado enumTipo = entorno.getTipoEnumerado(tipo);
+        return enumTipo != null && Tipos.ULONGINT.equals(enumTipo.tipoBase)
+                ? enumTipo : null;
+    }
+
+    /*
+      Chequeo runtime 5.h. Devuelve true si emitio el test y la copia; false
+      si el destino no es un enum chequeable y el llamante debe copiar por
+      su cuenta. Lo usan AMBOS emisores de ':=' (correccion B3).
+    */
+    private boolean emitirChequeoEnum(String dst, Object destino, String src) {
+        Entorno.TipoEnumerado enumTipo =
+                tipoEnumeradoChequeable(tipoDeDestinoAsignacion(destino));
+        if (!usaMsgEnumInvalido || enumTipo == null) {
+            return false;
+        }
+        String etiquetaOk = "enum_valido_" + contadorEnumChequeo++;
+        salida.append("    mov eax, ").append(src).append("\n");
+        for (String valorLexema : enumTipo.valores) {
+            BigInteger valor = Tipos.valorEntero(valorLexema);
+            if (valor != null) {
+                salida.append("    cmp eax, ").append(valor.intValue()).append("\n");
+                salida.append("    je ").append(etiquetaOk).append("\n");
+            }
+        }
+        salida.append("    jmp error_enum_invalido\n");
+        salida.append(etiquetaOk).append(":\n");
+        emitirCopiaPorTipo(Tipos.ULONGINT, src, dst);
+        return true;
+    }
+
     private void emitirAsignacionExpresion(Object destino, Object origen,
             int numero, String tipoResultado) {
         String dst = operandoAsm(destino);
         String src = operandoAsm(origen);
-        String aux = auxPorTerceto.get(numero);
 
         if (dst.equals("--") || src.equals("--")) {
             salida.append("    ; := expr  (operandos invalidos)\n");
             return;
         }
 
-        boolean flotante = esFlotante(tipoResultado);
+        // CORRECCION B3: ':= dentro de expresion' llegaba aqui sin chequear
+        // el enum, aunque calcularChequeosRuntime ya habia activado 5.h.
+        if (emitirChequeoEnum(dst, destino, src)) {
+            return;
+        }
 
         emitirCopiaPorTipo(tipoResultado, src, dst);
     }
@@ -688,49 +780,13 @@ public class GeneradorAssembler {
             return;
         }
 
-        // 5.h: chequeo runtime para asignacion a variable de tipo enumeracion.
-        // El valor ya cargado se compara contra cada valor permitido del enum;
-        // si ninguno coincide, se salta a error_enum_invalido.
-        if (destino instanceof EntradaTabla && usaMsgEnumInvalido) {
-            EntradaTabla destEntry = (EntradaTabla) destino;
-            Entorno.TipoEnumerado enumTipo =
-                    entorno != null ? entorno.getTipoEnumerado(destEntry.tipoDato) : null;
-            if (enumTipo != null && Tipos.ULONGINT.equals(enumTipo.tipoBase)) {
-                String etiquetaOk = "enum_valido_" + contadorEnumChequeo++;
-                salida.append("    mov eax, ").append(src).append("\n");
-                boolean algunoValido = false;
-                for (String valorLexema : enumTipo.valores) {
-                    BigInteger valor = Tipos.valorEntero(valorLexema);
-                    if (valor != null) {
-                        salida.append("    cmp eax, ").append(valor.intValue()).append("\n");
-                        salida.append("    je ").append(etiquetaOk).append("\n");
-                        algunoValido = true;
-                    }
-                }
-                if (!algunoValido) {
-                    // Enumerado sin valores declarados: cualquier valor es invalido.
-                    salida.append("    jmp error_enum_invalido\n");
-                    salida.append(etiquetaOk).append(":\n");
-                    emitirCopiaPorTipo(Tipos.ULONGINT, src, dst);
-                    return;
-                }
-                salida.append("    jmp error_enum_invalido\n");
-                salida.append(etiquetaOk).append(":\n");
-                // Solo se copia al destino si el valor pertenece al enum.
-                emitirCopiaPorTipo(Tipos.ULONGINT, src, dst);
-                return;
-            }
+        // 5.h: mismo chequeo que en asignacion-expresion, compartido para no
+        // duplicar la logica ni dejar destinos sin instrumentar (B3/B4).
+        if (emitirChequeoEnum(dst, destino, src)) {
+            return;
         }
 
-        // Determinar el tipo del destino: EntradaTabla (variable/parametro) o
-        // ReferenciaAtributo (atributo de objeto).
-        boolean flotante = false;
-        if (destino instanceof EntradaTabla) {
-            flotante = esFlotante(((EntradaTabla) destino).tipoDato);
-        } else if (destino instanceof ReferenciaAtributo) {
-            flotante = esFlotante(((ReferenciaAtributo) destino).getTipo());
-        }
-
+        boolean flotante = esFlotante(tipoDeDestinoAsignacion(destino));
         emitirCopiaPorTipo(flotante ? Tipos.DOUBLEF : Tipos.ULONGINT, src, dst);
     }
 
@@ -1040,14 +1096,10 @@ public class GeneradorAssembler {
             if (!":=".equals(t.getOperador())) {
                 continue;
             }
-            Object op1 = t.getOp1();
-            if (!(op1 instanceof EntradaTabla)) {
-                continue;
-            }
-            EntradaTabla destino = (EntradaTabla) op1;
-            if (destino.tipoDato != null
-                    && entorno != null
-                    && entorno.getTipoEnumerado(destino.tipoDato) != null) {
+            // CORRECCION B4/B5: incluye atributos de objeto como destino y
+            // exige base ulongint, igual que el emisor del chequeo, para no
+            // activar un label de error que nunca se salta.
+            if (tipoEnumeradoChequeable(tipoDeDestinoAsignacion(t.getOp1())) != null) {
                 usaMsgEnumInvalido = true;
                 break;
             }
@@ -1649,9 +1701,11 @@ public class GeneradorAssembler {
 
     /*
       Emitir una guardia condicional: si se cumple la condicion, salta al label
-      de fallo correspondiente. Se usa desde los paquetes 5.b/5.e/5.f/5.h para
-      insertar chequeos runtime antes/despues de operaciones aritmeticas o de
-      asignacion.
+      de fallo correspondiente. Se deja como helper reutilizable de la
+      infraestructura 5.0. En la implementacion actual los emisores escriben
+      el salto directamente (emitirAritmetica / emitirChequeoEnum) porque el
+      salto va pegado a la instruccion que fija los flags; este metodo queda
+      disponible para futuras instrumentaciones y no tiene llamadas reales.
 
       Ejemplo de uso (paquete 5.b, overflow en suma de ulongint):
         emitirGuardia("jc", "error_overflow_suma");   // salta si acarreo CF=1

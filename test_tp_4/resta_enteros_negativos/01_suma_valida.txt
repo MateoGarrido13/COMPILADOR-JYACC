@@ -1,5 +1,9 @@
 {{ TP4 5.b: suma ulongint que NO desborda.
-   Debe generar add eax, ... SIN jc error_overflow_suma. }}
+   Genera add eax, ... seguido de jc error_overflow_suma (guarda siempre
+   presente); en este caso concreto CF=0 y el salto no se toma.
+   Nota de nomenclatura: esta carpeta se llama 'resta_enteros_negativos'
+   pero contiene casos de SUMA (5.b). La de restas es
+   'resta_enteros_negativa' (5.f). }}
 prog
 ulongint x, y, r;
 begin

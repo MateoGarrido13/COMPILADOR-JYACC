@@ -1,5 +1,7 @@
 # Decisiones y cambios — Paquete 5.e (TP4, Grupo 43, MASM32 32-bit)
 
+> **Nota de auditoría — documento NO canónico.** Existe `DECISIONES_5_e.md` (guion bajo) con otro relato del mismo paquete. Este archivo describe la carpeta `producto_doublef/`; el otro describe `producto_doublef_overflow/`. **Ambos se ejecutan hoy**, porque `probar_prompt5_e.sh` fue corregido. El caso `producto_doublef/02_producto_desborda.txt` es en realidad `1000000.0 * 2000000.0 = 2e12` (**no desborda**); el único caso con desbordamiento real es `producto_doublef_overflow/02_producto_desborda.txt` (`max_doublef * max_doublef`). La secuencia actual incluye `fstp st(0)` (corrección **B2**) y `jmp fin_normal` / `fin_normal:` (**B1**). Fuente consolidada: `ESTADO_RUNTIME_P5.md`.
+
 ## Resumen
 
 El Paquete 5.e implementa el chequeo de **overflow en productos de punto flotante `doublef`** (condición **e** del Grupo 43).

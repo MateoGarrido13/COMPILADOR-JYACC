@@ -90,7 +90,7 @@ imul eax, b_main
 mov @aux5, eax
 ```
 
-Nota: la división entera (`div`) y los chequeos `b/e/f/h` (Prompt 5) aún no instrumentan este template.
+Nota actualizada: la división entera (`div`) sigue sin chequeo porque la letra **a** (división por cero) no fue asignada al Grupo 43. Los chequeos `b` (jc tras `add`) y `f` (jb tras `sub`) SÍ instrumentan este template desde el Prompt 5. Ver `ESTADO_RUNTIME_P5.md`.
 
 ---
 

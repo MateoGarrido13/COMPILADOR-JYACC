@@ -25,13 +25,16 @@ start:
     fld @aux4
     fxam
     fstsw ax
+    fstp st(0)
     sahf
     jc error_overflow_float
     fld @aux4
     fstp r_main
     invoke crt_printf, offset fmt_doublef, r_main
+    jmp fin_normal
 error_overflow_float:
     invoke crt_printf, offset msg_overflow_float
     invoke ExitProcess, 2
+fin_normal:
     invoke ExitProcess, 0
 end start

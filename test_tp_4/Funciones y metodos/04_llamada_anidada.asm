@@ -63,8 +63,10 @@ fin_combinar_main:
     mov eax, @aux14
     mov r_main, eax
     invoke crt_printf, offset fmt_ulongint, r_main
+    jmp fin_normal
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
+fin_normal:
     invoke ExitProcess, 0
 end start

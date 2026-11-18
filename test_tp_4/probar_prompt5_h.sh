@@ -84,6 +84,8 @@ verificar "$ASM" "etiqueta enum_valido_0:" 'enum_valido_0:'
 verificar "$ASM" "etiqueta error_enum_invalido:" 'error_enum_invalido:'
 verificar "$ASM" "mensaje de error en .DATA" 'msg_enum_invalido DB "Error: asignacion invalida a variable de tipo enumeracion",0'
 verificar "$ASM" "codigo de salida 4 en label de fallo" 'invoke ExitProcess, 4'
+verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
+verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
 ASM="$CASOS/02_asignacion_invalida.asm"
 verificar "$ASM" "guardia mov eax en asignacion invalida" 'mov eax, c_5_ul_ul'
@@ -96,11 +98,14 @@ verificar "$ASM" "etiqueta enum_valido_0:" 'enum_valido_0:'
 verificar "$ASM" "etiqueta error_enum_invalido:" 'error_enum_invalido:'
 verificar "$ASM" "mensaje de error en .DATA" 'msg_enum_invalido DB "Error: asignacion invalida a variable de tipo enumeracion",0'
 verificar "$ASM" "codigo de salida 4 en label de fallo" 'invoke ExitProcess, 4'
+verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
+verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
 echo
 
 echo "[4/4] Regresiones..."
-for script in probar_prompt5_0.sh probar_prompt5_b.sh probar_prompt5_e.sh probar_prompt4e.sh probar_prompt4d.sh probar_prompt4c.sh probar_prompt4b.sh probar_prompt4a.sh probar_prompt3.sh probar_prompt2.sh; do
+# CORRECCION: se agrega 5.f, ausente antes aunque el plan lo declaraba.
+for script in probar_prompt5_0.sh probar_prompt5_b.sh probar_prompt5_e.sh probar_prompt5_f.sh probar_prompt4e.sh probar_prompt4d.sh probar_prompt4c.sh probar_prompt4b.sh probar_prompt4a.sh probar_prompt3.sh probar_prompt2.sh; do
     if (cd "$RAIZ/test_tp_4" && TP4_BUILD="$BUILD" bash "$script" >/tmp/p5h_regresion_${script}.log 2>&1); then
         echo "   OK: $script"
     else

@@ -15,7 +15,6 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
-    ; (PROGRAMA, --, --)
     mov eax, c_5_ul_ul
     mov a_main, eax
     mov eax, c_3_ul_ul
@@ -35,6 +34,5 @@ label_1:
     mov eax, c_2_ul_ul
     mov k_main, eax
 label_2:
-    ; (FIN_PROGRAMA, --, --)
     invoke ExitProcess, 0
 end start
