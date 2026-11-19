@@ -7,7 +7,6 @@ include \masm32\include\masm32rt.inc
     u_main_basea DD ?
     v_main_baseb DQ ?
     w_main_derivada DD ?
-    c_1_ul_ul DD 1
     s1_basea_u_main DD ?
     s1_baseb_v_main DQ ?
     s1_w_main DD ?
@@ -19,61 +18,29 @@ include \masm32\include\masm32rt.inc
     c_4_ul_ul DD 4
     c_1_25 DQ 1.25
     c_9_ul_ul DD 9
+    c_1_ul_ul DD 1
     c_0_ul_ul DD 0
     c_5_ul_ul DD 5
     total DB "total=",0
-    @aux9 DD ?
-    @aux14 DD ?
-    @aux16 DD ?
-    @aux17 DD ?
-    @aux28 DD ?
-    @aux30 DD ?
-    @aux33 DD ?
-    @aux35 DD ?
-    @aux42 DD ?
+    @aux18 DD ?
+    @aux20 DD ?
+    @aux23 DD ?
+    @aux25 DD ?
+    @aux32 DD ?
     fmt_ulongint DB "%u",0
     fmt_doublef DB "%f",0
     fmt_cadena DB "%s",0
     msg_overflow_suma DB "Error: overflow en suma de ulongint",0
-    msg_negativo_resta DB "Error: resultado negativo en resta de ulongint",0
 
 .code
 start:
-fn_fact_main:
+fn_identidad_main:
     push ebp
     mov ebp, esp
     mov eax, dword ptr [ebp+8]
-    cmp eax, c_1_ul_ul
-    setbe al
-    movzx eax, al
-    mov @aux9, eax
-    mov eax, dword ptr [ebp+8]
-    cmp eax, c_1_ul_ul
-    ja label_1
-    mov eax, c_1_ul_ul
     leave
     ret
-    jmp label_2
-label_1:
-    mov eax, dword ptr [ebp+8]
-    sub eax, c_1_ul_ul
-    jb error_negativo_resta
-    mov @aux14, eax
-    ; (PAR, n:main:fact, [14])
-    sub esp, 4
-    mov eax, @aux14
-    mov dword ptr [esp+0], eax
-    call fn_fact_main
-    add esp, 4
-    mov @aux16, eax
-    mov eax, dword ptr [ebp+8]
-    imul eax, @aux16
-    mov @aux17, eax
-    mov eax, @aux17
-    leave
-    ret
-label_2:
-fin_fact_main:
+fin_identidad_main:
     leave
     ret
     mov eax, c_4_ul_ul
@@ -94,48 +61,48 @@ fin_fact_main:
     mov i_main, eax
     mov eax, c_0_ul_ul
     mov total_main, eax
-label_3:
+label_1:
     mov eax, i_main
     cmp eax, c_4_ul_ul
     setbe al
     movzx eax, al
-    mov @aux28, eax
+    mov @aux18, eax
     mov eax, i_main
     cmp eax, c_4_ul_ul
-    ja label_4
+    ja label_2
     mov eax, total_main
     add eax, i_main
     jc error_overflow_suma
-    mov @aux30, eax
-    mov eax, @aux30
+    mov @aux20, eax
+    mov eax, @aux20
     mov total_main, eax
-label_4:
+label_2:
     mov eax, i_main
     add eax, c_1_ul_ul
     jc error_overflow_suma
-    mov @aux33, eax
-    mov eax, @aux33
+    mov @aux23, eax
+    mov eax, @aux23
     mov i_main, eax
     mov eax, i_main
     cmp eax, c_5_ul_ul
     setbe al
     movzx eax, al
-    mov @aux35, eax
+    mov @aux25, eax
     mov eax, i_main
     cmp eax, c_5_ul_ul
-    ja label_5
-    jmp label_3
-label_5:
+    ja label_3
+    jmp label_1
+label_3:
     invoke crt_printf, offset fmt_cadena, offset total
     invoke crt_printf, offset fmt_ulongint, total_main
-    ; (PAR, n:main:fact, 5$ul)
+    ; (PAR, n:main:identidad, 5$ul)
     sub esp, 4
     mov eax, c_5_ul_ul
     mov dword ptr [esp+0], eax
-    call fn_fact_main
+    call fn_identidad_main
     add esp, 4
-    mov @aux42, eax
-    invoke crt_printf, offset fmt_ulongint, @aux42
+    mov @aux32, eax
+    invoke crt_printf, offset fmt_ulongint, @aux32
     invoke crt_printf, offset fmt_ulongint, s2_basea_u_main
     invoke crt_printf, offset fmt_doublef, s2_baseb_v_main
     invoke crt_printf, offset fmt_ulongint, s2_w_main
@@ -143,9 +110,6 @@ label_5:
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
-error_negativo_resta:
-    invoke crt_printf, offset msg_negativo_resta
-    invoke ExitProcess, 3
 fin_normal:
     invoke ExitProcess, 0
 end start
