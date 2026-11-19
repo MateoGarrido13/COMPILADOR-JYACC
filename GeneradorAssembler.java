@@ -84,6 +84,59 @@ import java.util.Set;
       frame y 'operandoAsm' los resuelve como [ebp+desplazamiento].
 
   No altera la salida observable de TP3 (consola/tercetos/TS).
+
+  Precondiciones y efectos:
+    - Precondicion: tercetos y resultados describen el mismo programa, la TS
+      ya esta cerrada y el Entorno tiene las firmas resueltas. Esa
+      correspondencia no se valida aqui: mezclar fuentes distintos daria un
+      .asm incoherente sin que el generador lo detecte.
+    - Efecto: generar() construye el texto en memoria con '\n';
+      escribirArchivo() lo normaliza a CRLF solo al escribir (paquete 6.1).
+      La misma instancia es reutilizable: generar() limpia contadores, caches
+      y mapas antes de emitir para que un segundo .asm no herede el primero.
+    - No modifica claves ni tipos de la TS ni del Entorno. Solo consulta su
+      cache de nombres ASM (nombreAsmPorClave) para garantizar unicidad global.
+
+  Decisiones no obvias:
+    - Llamadas internas cdecl-like, no stdcall: el CALLER reserva y limpia los
+      argumentos con 'add esp, N' porque crt_printf es VARARG y un callee no
+      puede limpiar una pila de longitud variable. El '.model flat, stdcall'
+      del encabezado rige las APIs de masm32rt.inc, no estas llamadas a mano.
+    - Sin vtable: el IR ya trae el metodo resuelto (prefijo y herencia se
+      decidieron en el analisis semantico), asi que el despacho es directo a
+      mt_<clave>. Una vtable duplicaria una decision ya tomada aguas arriba.
+    - Simbolos planos en vez de STRUCT: atributos como s1_basea_u_main se
+      aplanan con el nombre calificado por ambito y COPY copia dword por dword
+      en orden de declaracion. Asi la herencia multiple queda explicita en
+      .DATA sin depender de offsets de STRUCT ni de alineacion interna.
+    - x87 FPU en vez de SSE: el destino es .386 con masm32rt.inc y las
+      comparaciones doublef siguen la filmina 11.1 (FLD/FCOMP/FSTSW/SAHF).
+      El overflow float se detecta con FXAM + JC sobre C0, no con excepciones
+      SSE.
+    - DQ sin ALIGN 8 (validado en 6.1): con .386 la alineacion de segmento es
+      DWORD (4); los qword se leen por mitades con 'mov dword ptr [sim+4]' y
+      crt_printf recibe el double de 64 bits desde memoria. Anadir ALIGN
+      cambiaria offsets ya probados sin aportar correccion en x86.
+
+  Trazabilidad IR -> ASM:
+    - Los comentarios '; (PAR, a:suma, x:main)' se emiten intencionalmente:
+      enfrentan cada PAR/CALL del IR con su ranura en la pila. No son ruido de
+      depuracion; 6.4 debe conservarlos como comentario de decision.
+    - Cada @auxN deriva del numero de terceto (ResultadoTerceto.nombreAuxiliar),
+      de modo que el indice del IR puede rastrearse en el texto ensamblado.
+    - label_N es la etiqueta que GeneradorTercetos emparejo con BF/BI: BF
+      rehace la comparacion invirtiendo el JCC y BI salta sin condicion.
+
+  Riesgos conocidos / puntos de extension:
+    - La recursion profunda consume stack frames EBP sin control de desbordamiento;
+      el runtime check (i) no pertenece al grupo 43 y no se instrumenta.
+    - Los chequeos b/e/f/h se activan de forma condicional. Verificar la
+      GUARDIA en el texto no equivale a verificar el SALTO en ejecucion: eso
+      requiere ml.exe/link y maquinas Windows.
+    - La unicidad de nombres ASM es case-insensitive; dos claves que difieran
+      solo en mayuscula reciben sufijos _1, _2. El lexico ya rechaza
+      identificadores con mayuscula en el fuente, pero las claves internas
+      pueden contenerlas (name mangling con ambitos y constantes).
  */
 public class GeneradorAssembler {
 
@@ -167,6 +220,14 @@ public class GeneradorAssembler {
         }
     }
 
+    /*
+      Arma el .asm completo en memoria y lo devuelve usando '\n' como separador.
+      Precondicion: la instancia ya recibio tercetos, TS, Entorno y resultados.
+      Efecto: reinicia todos los contadores y caches de la instancia antes de
+      emitir, de modo que generar() dos veces sobre el mismo objeto sea
+      determinista y no acumule sufijos ni mensajes de la corrida anterior.
+      No escribe archivos; escribirArchivo() es el unico que lo hace.
+     */
     public String generar() {
         salida.setLength(0);
         // Reutilizar la misma instancia para dos fuentes no debe heredar
@@ -201,6 +262,12 @@ public class GeneradorAssembler {
         return salida.toString();
     }
 
+    /*
+      Escribe el resultado de generar() en 'ruta' con terminadores CRLF, que es
+      lo que espera MASM. Crea el directorio padre si hace falta. Precondicion:
+      la ruta debe ser escribible; cualquier IOException se propaga y
+      Compilador la convierte en un mensaje por stderr, nunca en stdout.
+     */
     public void escribirArchivo(String ruta) throws IOException {
         Path path = Paths.get(ruta);
         if (path.getParent() != null) {

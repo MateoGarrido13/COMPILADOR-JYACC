@@ -18,6 +18,42 @@ import java.util.Set;
 
   Todas las claves de los mapas incluyen el ambito, para que dos declaraciones
   con el mismo nombre en funciones distintas no se pisen.
+
+  Convenciones de claves (name mangling):
+    - Simbolo: nombre:ambito, donde 'ambito' es la cadena de contencion con
+      ':' como separador. TablaSimbolos.nombreDe()/ambitoDe() son las
+      contrapartes para partir la clave. Integran el prefijo de clase y el
+      ambito de declaracion, no solo el nombre corto.
+    - Atributo prefijado: <objeto>.<base>.<atributo> dentro del ambito del
+      objeto. La herencia multiple se aplana en ese nombre; no hay vtable.
+    - Constantes y cadenas usan prefijos reservados ($const:, $cadena:) para
+      no colisionar con identificadores ni con palabras reservadas.
+
+  Precondiciones y efectos:
+    - No emite errores: Verificaciones decide que es invalido. Entorno solo
+      registra o descarta; las funciones de alta devuelven la entrada creada y
+      el llamador comprueba Reporte.
+    - Abrir funcion/clase empuja en pilaFunciones/pilaClases; cerrar saca,
+      elimina el ambito de la TS y descarta las claves relacionadas de los
+      mapas. Por ser un parser ascendente, el elemento 'actual' puede no
+      estar todavia en el mapa cerrado.
+    - getFuncion(clave) mira primero el mapa de funciones cerradas y luego
+      pilaFunciones. Ese fallback recursivo es necesario porque el cuerpo de
+      una funcion puede invocarse a si misma antes de que cerrarFuncion() la
+      inserte en el mapa; sin el, la recursion directa no resolveria.
+    - Los mapas son LinkedHashMap para que el orden de declaracion sea
+      estable: COPY posicional y el orden de atributos dependen de el.
+
+  Decisiones no obvias / riesgos:
+    - La resolucion por cadena de ambitos se delega en TablaSimbolos.resolver;
+      Entorno no decide precedencia de nombres para no duplicar la politica.
+    - Una clase con herencia invalida se marca 'valida = false'; al cerrarse
+      no queda declarada y GeneradorTercetos omite su terceto CLASE. Es una
+      forma de no generar codigo para una construccion que ya erro.
+    - No se hace busqueda de metodos por nombre corto: la firma y el ambito
+      forman parte de la clave, asi que una sobrecarga por ambito no se pisa
+      con otra clase. El costo es que el llamador debe resolver la clave
+      completa antes de preguntar.
  */
 public class Entorno {
 
@@ -131,6 +167,9 @@ public class Entorno {
     // la inserta en 'funciones'), asi que se consulta tambien la pila: eso
     // permite la recursion directa y mantiene la firma visible al resolver
     // la invocacion.
+    // Precondicion: 'clave' ya viene mangled; null devuelve null sin efecto.
+    // Efecto: ninguno; es una consulta. Si la clave no existe en ninguno de
+    // los dos lugares, devuelve null y el llamador debe reportar el error.
     public FuncionDeclarada getFuncion(String clave) {
         if (clave == null) {
             return null;

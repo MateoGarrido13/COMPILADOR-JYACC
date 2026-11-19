@@ -29,7 +29,7 @@ Al ejecutar el compilador sobre un archivo fuente `.txt`, debe generarse un arch
    - `start:`
    - `invoke ExitProcess, 0`
    - `end start`
-   - Comentario `TODO` para traducción real de tercetos (Prompt 3)
+   - Traducción real de tercetos (Prompt 3): ya implementada; no queda comentario `TODO` pendiente
 
 ## Qué NO debe cambiar
 

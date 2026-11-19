@@ -18,6 +18,43 @@ import java.util.Map;
     funcion: (PAR, formal, real) ... (CALL, funcion, cantidadDeParametros)
     metodo:  (PAR, formal, real) ... (CALLMET, objeto, metodo)
   El resultado de la invocacion es el numero del terceto CALL/CALLMET.
+
+  Contrato del IR (precondiciones y efectos):
+    - Entrada: la lista ordenada de reducciones que TablaAcciones registro
+      durante el parseo. Cada reduccion aporta regla, lexema/linea y los
+      valores de los hijos; este generador NO reanaliza el texto fuente.
+    - Salida: ListaTercetos (indices 1..N) y, en paralelo, un
+      ResultadoTerceto por indice con tipo y flag 'produceValor'. Ese mapa es
+      la precondicion de GeneradorAssembler: de el salen los @auxN y el tipo
+      DD/DQ de cada temporal. Si un operando es un Integer, se interpreta
+      como referencia al numero de terceto que lo produjo.
+    - Efecto sobre el estado interno: pila de saltos pendientes, pila de
+      inicios de repeat y marcas de clase. Los saltos se resuelven al cerrar
+      la estructura; quedar pendiente al final seria un error de armado.
+
+  Convenciones de saltos y etiquetas:
+    - label_N se crea al cerrar el then o el cuerpo del repeat. BF sobre un
+      comparador guarda el operador y sus operandos originales: el ASM
+      rehace la comparacion con el JCC INVERSO. BF sobre un booleano ya
+      materializado usa CMP aux,0 / JE. BI salta sin condicion.
+    - SALTO_INVALIDO (-1) se usa cuando la condicion ya reporto error: mantiene
+      balanceada la pila de saltos en ifs anidados sin emitir un salto que
+      apunte a un terceto inexistente.
+
+  Trazabilidad hacia el ASM:
+    - El indice del terceto es estable y se propaga al nombre @auxN; por eso
+      el generador assembler puede emitir '; (PAR, a:suma, x:main)' y otros
+      comentarios de traza que vinculan la pila con el IR.
+    - Los marcadores CLASE/FIN_CLASE y FUNCION/FIN_FUNCION no producen valor:
+      son hitos para el back-end (layout de objetos y stack frames).
+
+  Riesgos conocidos:
+    - Los chequeos runtime b/e/f/h se instrumentan aguas abajo, en el ASM,
+      no aqui. Este modulo solo decide tipos y produce valores; no sabe si
+      una suma desbordara.
+    - Una expresion invalida puede marcar su resultado como no productor; los
+      tercetos que la consumen deben tolerar un operando sin valor para no
+      generar un @auxN fantasma.
  */
 public class GeneradorTercetos {
 

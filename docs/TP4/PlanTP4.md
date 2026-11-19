@@ -299,18 +299,14 @@ Tareas (estado final):
 ---
 
 #### Paquete 6.3 — Limpieza final, docs de uso y resumen de estado
-Estado: ⏳ Pendiente.
+Estado: ✅ Ejecutado. Solo comentarios y documentación; sin cambios funcionales. Detalle en `docs/TP4/DECISIONES_P6.md` y `docs/TP4/ESTADO_FINAL.md`.
 Contexto: Suite verde. Cierre de documentación y código.
-Tareas:
-1) **Remover `TODO` resueltos** del código (`GeneradorAssembler.java`, `Compilador.java`, `Entorno.java`, etc.). Solo borrar los que ya están implementados y no dejan acción pendiente.
-2) **Actualizar y desarrollar comentarios** (headers de archivo, Javadoc de clases/métodos públicos, y comentarios internos no triviales) para que expliquen en **mayor profundidad** el comportamiento:
-   - Qué hace la clase/método, sus precondiciones y efectos colaterales.
-   - Convenciones clave (p.ej. caller limpia pila, `this` en `[ebp+8]`, `@auxN` globales, layout plano de objetos, copia posicional, fallback recursivo en `getFuncion`).
-   - Decisiones no obvias: por qué se elige X sobre Y (cdecl-like vs stdcall, sin vtable, símbolos planos vs STRUCT, FPU vs SSE, etc.).
-   - Puntos de extensión/risk conocidos (alineación `DQ`, recursión profunda, checks runtime b/e/f/h).
-   - Trazabilidad: relación IR → ASM (p.ej. `; (PAR, a:suma, x:main)` que el generador emite intencionadamente).
-3) Docs cortas de uso en `README.md` o `docs/USO.md`: `javac ...`, `java Main archivo.txt`, cómo ensamblar/ejecutar el `.asm` generado (comandos `ml`/`link` o `masm32rt`).
-4) Resumen final en `docs/TP4/DECISIONES_P6.md` / `docs/TP4/ESTADO_FINAL.md`: qué cumple (temas, runtime), limitaciones conocidas, pasos manuales de ensamblado/ejecución, desviaciones si las hay.
+Tareas (estado final):
+1) TODOs: búsqueda `\bTODO\b|FIXME|XXX` en `*.java` → **0 coincidencias reales**. No había nada resuelto que borrar. Se corrigió la única mención desactualizada en `test_tp_4/guia.md:32` y el comentario stale de `TablaSimbolos.tipoAsmDe()` ("layout pendiente de Prompt 4"). Las apariciones de `TODO` en el resto de las docs son históricas.
+2) Comentarios profundizados en `Compilador.java`, `Main.java`, `GeneradorAssembler.java`, `Entorno.java`, `TablaSimbolos.java` y `GeneradorTercetos.java`: precondiciones, efectos, convenciones (caller limpia pila, `this` en `[ebp+8]`, `@auxN`, layout plano, copia posicional, fallback de `getFuncion`), decisiones no obvias (cdecl-like, sin vtable, símbolos planos vs STRUCT, FPU vs SSE, DQ sin ALIGN 8), riesgos (recursión profunda, guardias b/e/f/h) y trazabilidad IR→ASM (`; (PAR, a:suma, x:main)`). No se borraron comentarios de decisión: eso queda para 6.4 con permiso explícito.
+3) Guía de uso creada en `docs/USO.md`: compilación Java (`javac -encoding UTF-8 -d <build> *.java "acciones semanticas"/*.java otras_acciones/*.java`), ejecución (`java -cp <build> Main archivo.txt`), ruta del `.asm`, contrato de consola y comandos Windows `ml.exe /c /coff /Fo caso.obj caso.asm` + `link.exe /SUBSYSTEM:CONSOLE /OUT:caso.exe caso.obj`.
+4) Resúmenes creados en `docs/TP4/DECISIONES_P6.md` y `docs/TP4/ESTADO_FINAL.md`: cobertura de temas y runtime, limitaciones, pasos manuales de ensamblado/ejecución y desviación del stdout TP3 (el usuario recortará el bloque marcado en `Compilador.java` antes de entregar).
+5) Regresión post-6.3: `javac` limpio y `bash test_tp_4/probar_prompt6_2.sh` → `EXIT 0`, 0 `FALLA:` (137 fuentes TP3), con el build de `/tmp/opencode/tp3build`. Log local: `/tmp/opencode/run6_3.log`.
 
 ---
 

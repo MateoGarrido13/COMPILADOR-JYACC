@@ -18,6 +18,26 @@ import java.nio.file.Paths;
   NO se imprime aqui ningun mensaje nuevo de estado del .asm:
   solo se conserva la compuerta que evita escribir un .asm cuando Reporte
   tiene errores, y la ruta derivada robusta de rutaAsmPara().
+
+  Contrato de compilar(String) (precondiciones y efectos):
+    - Precondicion: rutaFuente apunta a un archivo legible. Si no existe, se
+      informa por System.err y el metodo termina sin lanzar: no se escriben
+      .asm ni se imprime el listado TP3.
+    - Estado compartido: RegistroTokens y ControlAmbito son estaticos, por eso
+      se reinician al inicio de cada compilacion. Sin ese reinicio, una segunda
+      compilacion en la misma JVM arrastraria tokens y ambitos de la anterior
+      (las suites lo detectan ejecutando cada fuente en su propio proceso, pero
+      la API publica debe ser reentrable).
+    - Orden de etapas: el lexico se abre antes del parser; el parser dispara
+      las acciones semanticas que llenan la TS y el Entorno; recien despues se
+      recorren las reducciones para construir los tercetos. Ese orden es la
+      precondicion de GeneradorAssembler: cuando colecta simbolos para .DATA,
+      la TS y las firmas ya estan completas.
+    - Efecto colateral controlado: el unico archivo que se crea es el .asm, y
+      solo si Reporte.hayErrores() == false. Las excepciones de escritura van
+      a stderr para no alterar el contrato de consola TP3.
+    - Los getters exponen el estado resultante para pruebas y para el
+      generador; no inician etapas ni imprimen nada.
  */
 public class Compilador {
 
@@ -35,6 +55,12 @@ public class Compilador {
         AccionesSemanticas.registrar(tablaAcciones, entorno, verificaciones);
     }
 
+    /*
+      Ejecuta el pipeline completo para un fuente. No devuelve valor: el
+      resultado observable es el .asm (si no hay errores) y el stdout TP3 del
+      bloque marcado mas abajo. El lexico se cierra en esta misma llamada, incluso
+      si el parser encontro errores: no se delega su cierre al llamador.
+     */
     public void compilar(String rutaFuente) {
         reporte.setEcoEnConsola(false);
         RegistroTokens.reiniciar();

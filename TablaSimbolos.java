@@ -8,6 +8,44 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+/*
+  Tabla de simbolos del compilador. Ademas del rol clasico de TP3 (alta,
+  busqueda, resolucion por ambito y volcado por consola) es la fuente de los
+  simbolos de .DATA del TP4.
+
+  Convenciones y precondiciones:
+    - Clave de identificador: 'nombre:ambito'. ambito es la cadena de contencion
+      con ':' de separador; nombreDe()/ambitoDe() la descomponen. Las claves se
+      guardan en minusculas por convencion del lexico.
+    - Constantes y cadenas NO comparten clave con identificadores: usan
+      $const: y $cadena:. Sin esos prefijos, el contenido de una cadena podria
+      coincidir con 'if' o con 'x:main' y se sobreescribiria una entrada.
+    - porPuntero[0] es null: el puntero de una entrada es su indice real y
+      empieza en 1. Los tercetos guardan punteros, no strings, por eso este
+      indice es parte del contrato del IR.
+    - resolver() sube por la cadena de ambitos pero solo acepta entradas con
+      'declarado == true'; buscarIdentificador() no sube y no filtra. La
+      distincion importa: un uso previo crea la entrada antes de la declaracion.
+    - Efecto colateral de nombreAsmDe(): asigna y cachea el nombre ASM en la
+      propia EntradaTabla y en nombreAsmPorClave. Esa cache es la que garantiza
+      unicidad global; limpiarCacheNombresAsm() la reinicia entre generaciones.
+
+  Decisiones no obvias:
+    - Se prefieren simbolos planos (DD/DQ/DB con nombre sanitizado) antes que
+      STRUCT: el layout de objetos se aplana en el nombre calificado y COPY se
+      hace campo a campo en orden de declaracion. Evita alineaciones internas y
+      mantiene la herencia multiple visible en .DATA.
+    - La sanitizacion reserva palabras de MASM y compara en minusculas, porque
+      MASM es case-insensitive. Un nombre valido en el fuente puede volverse
+      invalido al manglarlo (':' a '_', '$ul' a '_ul_'), de ahi el sufijo _N.
+    - DD para ulongint, DQ para doublef, DB para cadenas; no se anade ALIGN 8
+      (paquete 6.1): con .386 la alineacion de segmento es DWORD y los qword
+      se manipulan por mitades.
+
+  Riesgo conocido: colectarSimbolosData() recorre la tabla en orden de insercion
+  (LinkedHashMap). Ese orden es estable y determinista, pero no es el orden de
+  declaracion del fuente si las acciones semanticas insertan antes de declarar.
+ */
 public class TablaSimbolos {
 
     /*
@@ -128,6 +166,13 @@ public class TablaSimbolos {
         return tabla.values();
     }
 
+    /*
+      Devuelve (y la cachea) la forma sanitizada del simbolo para MASM.
+      Precondicion: entrada no truncada; con null devuelve null sin efecto.
+      Efecto: muta EntradaTabla.setNombreAsm() y las dos caches de unicidad.
+      Dos entradas distintas que sanitizen al mismo texto obtienen _1, _2...
+      La comparacion es case-insensitive porque MASM no distingue mayusculas.
+     */
     public String nombreAsmDe(EntradaTabla entrada) {
         if (entrada == null) {
             return null;
@@ -280,8 +325,10 @@ public class TablaSimbolos {
         if (Tipos.DOUBLEF.equals(tipoEfectivo)) return "DQ";
         if (Tipos.ULONGINT.equals(tipoEfectivo)) return "DD";
         if (e != null && e.uso == EntradaTabla.Uso.CADENA) return "DB";
-        // Clases/objetos: layout pendiente (Prompt 4). Se exponen como DD placeholder
-        // solo si ya se requiere; por ahora null salvo tipos basicos/enums efectivos.
+        // Clases y objetos no se emiten desde aqui: la referencia al objeto se
+        // reserva como DD en emitirData() via objetosThis, y sus atributos ya
+        // estan materializados en la TS con tipo efectivo (VARIABLE/ATRIBUTO).
+        // Devolver null excluye al simbolo de .DATA sin perder su trazabilidad.
         return null;
     }
 
