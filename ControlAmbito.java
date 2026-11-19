@@ -56,7 +56,7 @@ public class ControlAmbito {
     private static int estadoMiembro = MIEMBRO_INICIO;
     private static boolean ignorarMiembros = false;
 
-    public static void reiniciar(TablaSimbolos simbolos) {
+    public static void reiniciar() {
         marcos.clear();
         pilaAmbitos.clear();
         pendientes.clear();
