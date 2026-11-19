@@ -519,7 +519,7 @@ public class GeneradorTercetos {
             return crearTerceto("todf", convertido, null, Tipos.DOUBLEF, true);
         }
         if (valor instanceof AsignacionEnExpresion) {
-            AsignacionEnExpresion asignacion = (AsignaemitircionEnExpresion) valor;
+            AsignacionEnExpresion asignacion = (AsignacionEnExpresion) valor;
             if (asignacion.destino == null) {
                 return null;
             }
