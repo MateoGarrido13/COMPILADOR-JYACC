@@ -4,6 +4,18 @@ Este documento explica cómo verificar que el GeneradorAssembler esqueleto de TP
 
 ---
 
+## REGLAS SIN TEST DEDICADO - ATENCION
+
+Las siguientes reglas asignadas NO cuentan con un archivo de prueba especifico dedicado en el repositorio. Se deben crear antes de considerar la cobertura completa:
+
+| Regla | Descripcion | Estado |
+|-------|-------------|--------|
+| R31   | Herencia circular: detectar que una clase no hereda directa o indirectamente de si misma | SIN TEST DEDICADO |
+
+Todas las demás reglas asignadas (R13, R17, R19, R23, R25, R28, R33) y todos los chequeos de ejecucion (b, e, f, h) tienen al menos un test asociado.
+
+---
+
 ## Reglas semánticas asignadas y sus tests
 
 ### R13 — Estructura de iteración `repeat`/`while`
@@ -183,13 +195,6 @@ Este documento explica cómo verificar que el GeneradorAssembler esqueleto de TP
 3. Asignación inválida (doublef): asignar valor `doublef` fuera del conjunto activa `error_enum_invalido`.
 
 ---
-
-## Reglas sin test específico dedicado
-
-Las siguientes reglas no cuentan con un archivo de prueba dedicado que las cubra específicamente:
-
-- **R31 — Herencia circular:** no existe un test que verifique que una clase que hereda de sí misma sea rechazada.
-
 ---
 
 ## Cómo ejecutar los tests
