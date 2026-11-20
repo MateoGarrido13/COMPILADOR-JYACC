@@ -1,0 +1,11 @@
+{{ Chequeo runtime 5.h: asignacion valida a enum doublef.
+   El valor proviene de una variable para ejercitar la guardia FPU. }}
+prog
+typedef medidas = [1.5, 2.5];
+medidas m;
+doublef v;
+begin
+    v := 2.5;
+    m := v;
+    pout(m);
+end

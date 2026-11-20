@@ -1,0 +1,11 @@
+{{ Chequeo runtime 5.h: asignacion invalida a enum ulongint.
+   El valor 5 no pertenece al conjunto [1, 2, 3]. }}
+prog
+typedef dias = [1$ul, 2$ul, 3$ul];
+dias x;
+ulongint y;
+begin
+    y := 5$ul;
+    x := y;
+    pout(x);
+end

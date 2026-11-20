@@ -1,0 +1,10 @@
+{{ Chequeo runtime 5.b: suma en el limite del rango unsigned sin desbordar.
+   4294967294 + 1 debe terminar en 4294967295. }}
+prog
+ulongint x, y, r;
+begin
+    x := 4294967294$ul;
+    y := 1$ul;
+    r := x + y;
+    pout(r);
+end
