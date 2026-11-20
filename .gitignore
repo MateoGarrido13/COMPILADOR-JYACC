@@ -3,3 +3,5 @@
 CORRECCIONES/
 ASSETS/
 NOTAS_EVAL/
+*.exe
+*.asm

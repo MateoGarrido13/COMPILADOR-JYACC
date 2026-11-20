@@ -559,14 +559,14 @@ public class GeneradorAssembler {
         // programa instrumentado imprime el mensaje y termina con codigo
         // 1..4 aunque no haya ocurrido error. Es el mismo patron que la
         // filmina winasmtut.pdf: 'jmp _quit' antes del bloque de error.
-        boolean hayChequeosRuntime = usaMsgOverflowSuma || usaMsgOverflowFloat
+        boolean hayChequeosRuntime = usaMsgOverflowSuma || usaMsgOverflowFloat // HAY ALGUN ERROR EN EJECUCION (?)
                 || usaMsgNegativoResta || usaMsgEnumInvalido;
         if (hayChequeosRuntime) {
             salida.append("    jmp fin_normal\n");
         }
         if (usaMsgOverflowSuma) {
-            salida.append("error_overflow_suma:\n");
-            salida.append("    invoke crt_printf, offset ").append(MSG_OVERFLOW_SUMA).append("\n");
+            salida.append("error_overflow_suma:\n"); // LABEL DE LA FUNCION 
+            salida.append("    invoke crt_printf, offset ").append(MSG_OVERFLOW_SUMA).append("\n"); // EXIT PROCESSS 
             salida.append("    invoke ExitProcess, 1\n");
         }
         if (usaMsgOverflowFloat) {
@@ -670,7 +670,7 @@ public class GeneradorAssembler {
     }
 
     /* ---------- Emision de instrucciones ---------- */
-
+      //RECORRE LOS TERCETOS, ACYIVAS FLAGS PARA VERIFICAR EN RUNTIME , 
     private void emitirAritmetica(String operador, Object op1, Object op2,
             int numero, String tipoResultado) {
         String o1 = operandoAsm(op1);
@@ -687,9 +687,9 @@ public class GeneradorAssembler {
 
         if (flotante) {
             // FPU: fld op1; f<op> op2; fstp destino
-            salida.append("    fld ").append(o1).append("\n");
+            salida.append("    fld ").append(o1).append("\n"); 
             switch (operador) {
-                case "+": salida.append("    fadd ").append(o2).append("\n"); break;
+                case "+": salida.append("    fadd ").append(o2).append("\n"); break; 
                 case "-": salida.append("    fsub ").append(o2).append("\n"); break;
                 case "*": salida.append("    fmul ").append(o2).append("\n"); break;
                 case "/": salida.append("    fdiv ").append(o2).append("\n"); break;
@@ -699,7 +699,7 @@ public class GeneradorAssembler {
             // resultado fuera del rango representable (FXAM + FSTSW/SAHF ->
             // jc salta si C0=1, es decir +infinito/-infinito/NaN).
             if ("*".equals(operador) && usaMsgOverflowFloat) {
-                salida.append("    fld ").append(destino).append("\n");
+                salida.append("    fld ").append(destino).append("\n"); 
                 salida.append("    fxam\n");
                 salida.append("    fstsw ax\n");
                 // CORRECCION B2: FXAM inspecciona ST(0) pero no lo consume.
@@ -710,7 +710,7 @@ public class GeneradorAssembler {
                 // a AH por FSTSW) se conserva intacto para SAHF/JC.
                 salida.append("    fstp st(0)\n");
                 salida.append("    sahf\n");
-                salida.append("    jc error_overflow_float\n");
+                salida.append("    jc error_overflow_float\n"); // SALTO AL LABEL QUE HACE LA SALIDA POR EXIT , jc : 
             }
         } else {
             // Entero: mov eax, op1; <op> eax, op2; mov destino, eax
@@ -808,10 +808,10 @@ public class GeneradorAssembler {
       si el destino no es un enum chequeable y el llamante debe copiar por
       su cuenta. Lo usan AMBOS emisores de ':=' (correccion B3).
     */
-    private boolean emitirChequeoEnum(String dst, Object destino, String src) {
+    private boolean emitirChequeoEnum(String dst, Object destino, String src) { // adiciona la rutina de verificacion de una asignacion valida 
         Entorno.TipoEnumerado enumTipo =
                 tipoEnumeradoChequeable(tipoDeDestinoAsignacion(destino));
-        if (!usaMsgEnumInvalido || enumTipo == null) {
+        if (!usaMsgEnumInvalido || enumTipo == null) { // si existe asignacion entre enums , 
             return false;
         }
         String etiquetaOk = "enum_valido_" + contadorEnumChequeo++;
@@ -1145,7 +1145,7 @@ public class GeneradorAssembler {
       Para 5.b: si hay algún terceto de suma '+' con tipo ulongint, se activa
       el mensaje y label de error_overflow_suma.
     */
-    private void calcularChequeosRuntime() {
+    private void calcularChequeosRuntime() { // RECORRE LOS TERCETOS, ACTIVA FLAGS PARA VERIFICAR EN RUNTIME 
         usaMsgOverflowSuma = false;
         for (Terceto t : tercetos) {
             if (!"+".equals(t.getOperador())) {
