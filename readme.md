@@ -63,3 +63,8 @@ Cualquier archivo de esas carpetas se puede pasar como argumento. Por ejemplo:
 java Main test/tp1/verificacion_constantes_ulongint/limites_validos.txt
 java Main test/semantica/estructuras/una_sentencia.txt
 ```
+
+
+## Guía de pruebas
+
+El archivo `guia.md` en la raíz del repositorio detalla, para cada regla semántica asignada (R13, R17, R19, R23, R25, R28, R31, R33) y cada chequeo de ejecución (b, e, f, h), las reglas de testing específicas y las rutas exactas de los archivos de prueba que las implementan.
