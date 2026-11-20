@@ -1,0 +1,8 @@
+{{ Chequeo ejecucion: asignacion de variable enum doublef - caso valido }}
+prog
+typedef temperatura = [1$ul, 2$ul, 3$ul];
+temperatura t1;
+begin
+    t1 := 2$ul;
+    pout({enum_doublef_valido});
+end

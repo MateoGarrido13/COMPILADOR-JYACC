@@ -1,0 +1,9 @@
+{{ Chequeo ejecucion: resta de enteros - caso negativo desde variables }}
+prog
+ulongint a, b, c;
+begin
+    a := 100$ul;
+    b := 200$ul;
+    c := a - b;
+    pout({resta_negativa_desde_variables});
+end

@@ -1,0 +1,10 @@
+{{ Chequeo ejecucion: resta de enteros - caso encadenado negativo }}
+prog
+ulongint a, b, c, d;
+begin
+    a := 50$ul;
+    b := 100$ul;
+    c := 150$ul;
+    d := a - b - c;
+    pout({resta_encadenada_negativa});
+end

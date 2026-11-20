@@ -1,0 +1,10 @@
+{{ Chequeo ejecucion: overflow de suma de enteros - caso sin overflow }}
+prog
+ulongint a, b, c;
+begin
+    a := 100$ul;
+    b := 200$ul;
+    c := a + b;
+    pout({suma_sin_overflow});
+    pout(c);
+end
