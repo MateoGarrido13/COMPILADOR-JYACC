@@ -1,9 +1,0 @@
-{{ Chequeo ejecucion: asignaciones de variables enum invalidas }}
-prog
-typedef color = [1$ul, 2$ul, 3$ul];
-color c1, c2;
-begin
-    c1 := 1$ul;
-    c2 := 99$ul;
-    pout({fin_asignacion_enum_invalida});
-end

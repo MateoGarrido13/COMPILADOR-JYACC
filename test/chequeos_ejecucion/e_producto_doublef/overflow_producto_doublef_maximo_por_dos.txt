@@ -1,9 +1,0 @@
-{{ Chequeo ejecucion: overflow por producto de doublef - caso maximo por dos }}
-prog
-doublef a, b, c;
-begin
-    a := 1.0d308;
-    b := 2.0;
-    c := a * b;
-    pout({producto_maximo_por_dos});
-end

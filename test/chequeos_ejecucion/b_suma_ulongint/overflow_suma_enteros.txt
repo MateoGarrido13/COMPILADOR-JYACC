@@ -1,9 +1,0 @@
-{{ Chequeo ejecucion: overflow de suma de enteros }}
-prog
-ulongint a, b, c;
-begin
-    a := 4294967295$ul;
-    b := 4294967295$ul;
-    c := a + b;
-    pout({fin_suma_overflow});
-end

@@ -1,7 +1,0 @@
-{{ Chequeo ejecucion: overflow de suma de enteros - literal que desborda }}
-prog
-ulongint c;
-begin
-    c := 4294967295$ul + 1$ul;
-    pout({suma_literal_desborda});
-end

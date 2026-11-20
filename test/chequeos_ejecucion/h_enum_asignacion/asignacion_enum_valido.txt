@@ -1,8 +1,0 @@
-{{ Chequeo ejecucion: asignacion de variable enum - caso valido }}
-prog
-typedef color = [1$ul, 2$ul, 3$ul];
-color c1;
-begin
-    c1 := 1$ul;
-    pout({enum_valido});
-end

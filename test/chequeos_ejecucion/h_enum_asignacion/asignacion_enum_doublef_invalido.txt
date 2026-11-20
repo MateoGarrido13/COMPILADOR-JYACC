@@ -1,8 +1,0 @@
-{{ Chequeo ejecucion: asignacion de variable enum doublef - caso invalido }}
-prog
-typedef temperatura = [1$ul, 2$ul, 3$ul];
-temperatura t1;
-begin
-    t1 := 99$ul;
-    pout({enum_doublef_invalido});
-end

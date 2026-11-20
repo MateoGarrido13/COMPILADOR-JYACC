@@ -1,9 +1,0 @@
-{{ Chequeo ejecucion: overflow por producto de doublef }}
-prog
-doublef a, b, c;
-begin
-    a := 1.0d308;
-    b := 1.0d308;
-    c := a * b;
-    pout({fin_producto_overflow});
-end

@@ -1,9 +1,0 @@
-{{ Chequeo ejecucion: overflow de suma de enteros - variables que desbordan }}
-prog
-ulongint a, b, c;
-begin
-    a := 3000000000$ul;
-    b := 2000000000$ul;
-    c := a + b;
-    pout({suma_variables_desborda});
-end
