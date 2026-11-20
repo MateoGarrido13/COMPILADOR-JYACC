@@ -29,11 +29,8 @@ El sintáctico es un **parser LALR(1)** generado con **BYACC/J** a partir de la 
 
 ### 4. Generación de código intermedio
 
-`GeneradorTercetos` recorre las reducciones del parser y emite **tercetos** (instrucciones de tres direcciones) almacenados en `ListaTercetos`. Gestiona saltos pendientes (`BF` para condicionales falsos y `BI` para saltos incondicionales), etiquetas `label_N` para `if`/`else` y `repeat`/`while`, y el plegado de expresiones a izquierda por nivel de precedencia.
+`GeneradorTercetos` recorre las reducciones del parser y emite **tercetos** (instrucciones de tres direcciones) almacenados en `ListaTercetos` (clase interna de `Terceto.java`). Gestiona saltos pendientes (`BF` para condicionales falsos y `BI` para saltos incondicionales), etiquetas `label_N` para `if`/`else` y `repeat`/`while`, y el plegado de expresiones a izquierda por nivel de precedencia.
 
-### 5. Generación de código assembler
-
-`GeneradorAssembler` genera código **assembler MASM/x86 para Windows** a partir de los tercetos. Emite instrucciones FPU para aritmética de punto flotante, instrucciones enteras para el resto, labels de error en tiempo de ejecución (`error_overflow_suma`, `error_overflow_float`, `error_enum_invalido`) y llamadas a `crt_printf` / `ExitProcess` para la salida por consola y la finalización del programa.
 
 ## Requisitos para correrlo
 
