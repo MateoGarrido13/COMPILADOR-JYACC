@@ -8,12 +8,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-/*
-  Mantiene Globals.AMBITO_ACTUAL segun los tokens, sin esperar la reduccion.
-  El encabezado de la funcion sigue en el ambito de afuera: el nombre se apila
-  despues del ')' de los parametros. El end que cierra el begin de esa funcion
-  restaura el ambito anterior. Una clase usa el mismo begin/end y no abre ambito.
- */
 public class ControlAmbito {
 
     private static final int FUNCION = 1;
@@ -27,13 +21,11 @@ public class ControlAmbito {
 
     private static final Deque<Integer> marcos = new ArrayDeque<>();
     private static final Deque<String> pila = new ArrayDeque<>();
-    // Nombres declarados en cada ambito. La clave es el string de AMBITO_ACTUAL.
     private static final Map<String, Set<String>> declarados = new LinkedHashMap<>();
 
     private static int lectura = NADA;
     private static int parentesis = 0;
     private static String nombre = null;
-    // El parser reduce el parametro antes de leer el ')'. Se reclaman al entrar.
     private static final List<EntradaTabla> parametrosPendientes = new ArrayList<>();
 
     public static void reiniciar(TablaSimbolos simbolos) {
@@ -112,12 +104,11 @@ public class ControlAmbito {
         Set<String> nombres = declarados.get(Globals.AMBITO_ACTUAL);
         if (nombres == null) {
             nombres = new HashSet<>();
-            declarados.put(Globals.AMBITO_ACTUAL, nombres); // para este ambito, es alcanzable 
+            declarados.put(Globals.AMBITO_ACTUAL, nombres);
         }
         nombres.add(nombre);
     }
 
-    // Alcanzable si esta declarado en este ambito o en un ambito anidado
     public static boolean alcanzable(String nombre) {
         if (nombre == null || nombre.isEmpty()) {
             return true;
@@ -147,7 +138,6 @@ public class ControlAmbito {
         MonitorAmbito.alEntrar(anterior, Globals.AMBITO_ACTUAL);
     }
 
-    // El parametro se anoto en el ambito de afuera. Pasa al ambito de la funcion.
     private static void reclamarParametros(String ambitoAnterior) {
         Set<String> origen = declarados.get(ambitoAnterior);
         for (EntradaTabla id : parametrosPendientes) {
@@ -170,8 +160,6 @@ public class ControlAmbito {
         Globals.AMBITO_ACTUAL = pila.pop();
     }
 
-    // El end cierra el begin de arriba. Si ese begin era el cuerpo de una
-    // funcion o de una clase, cierra tambien ese marco.
     private static void cerrarBegin() {
         if (marcos.isEmpty() || marcos.peek() != BEGIN) {
             return;

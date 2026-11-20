@@ -5,13 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-/*
-  Flujo del compilador.
- 
-  Arma el entorno compartido (tabla de simbolos, reporte, tabla de acciones) y
-  encadena las etapas. El Parser generado por BYACC/J desde gramatica.y conduce
-  el analisis sintactico, que pide tokens al Analisis Lexico y ejecuta las acciones semanticas.
- */
 public class Compilador {
 
     private final TablaSimbolos tablaSimbolos = new TablaSimbolos();
@@ -69,13 +62,6 @@ public class Compilador {
 
     }
 
-    /*
-      Relee el archivo fuente completo y lo devuelve con cada linea numerada
-      ("N: <linea>"), para abrir la salida por consola. Se relee en lugar de
-      reutilizar LectorFuente porque este solo conserva la linea actual y la
-      carga a demanda del lexico: asi el listado es completo aunque el parser
-      no haya consumido todo el programa.
-     */
     private String contenidoFuenteNumerado(String rutaFuente) {
         StringBuilder texto = new StringBuilder("Codigo fuente:\n");
         try (BufferedReader lector = Files.newBufferedReader(Paths.get(rutaFuente), StandardCharsets.UTF_8)) {
@@ -86,8 +72,6 @@ public class Compilador {
                 numero++;
             }
         } catch (IOException e) {
-            // El AnalizadorLexico ya abrio el archivo: si la relectura falla,
-            // se devuelve lo leido hasta el momento sin interrumpir la salida.
         }
         return texto.toString();
     }

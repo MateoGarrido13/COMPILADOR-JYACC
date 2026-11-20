@@ -3,19 +3,9 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-/*
-  Recorre las reducciones y emite tercetos.
-  Las expresiones se pliegan a izquierda dentro de cada nivel de precedencia.
-  El if apila el BF al terminar la condicion. Al cerrar el then lo completa
-  con una etiqueta label_N. Con else, abre un BI hacia otra etiqueta.
-  El repeat abre la label de inicio al reducirse INICIO_REPEAT, antes del
-  cuerpo. Al cerrar, BF sale si la condicion es falsa y BI vuelve a esa label.
- */
 public class GeneradorTercetos {
 
     private static final class Pendiente {
-        /* Esta clase es un contenedor para los datos de un salto pendiente.
-        numero es el numero del terceto pendiente, incondicional es true si es un salto incondicional */
         final int numero;
         final boolean incondicional;
 
@@ -27,8 +17,8 @@ public class GeneradorTercetos {
 
     private final ListaTercetos lista = new ListaTercetos();
     private final Reporte reporte;
-    private final Deque<Pendiente> pila = new ArrayDeque<>(); // pila de saltos pendientes
-    private final Deque<String> iniciosRepeat = new ArrayDeque<>(); // pila de etiquetas de inicio de repeat
+    private final Deque<Pendiente> pila = new ArrayDeque<>();
+    private final Deque<String> iniciosRepeat = new ArrayDeque<>();
 
     public GeneradorTercetos(Reporte reporte) {
         this.reporte = reporte;
@@ -90,11 +80,6 @@ public class GeneradorTercetos {
         lista.crear(":=", destino, origen);
     }
 
-    /*
-      Genera los tercetos de invocacion de funcion:
-      un PAR por cada parametro real (en el orden de evaluacion indicado)
-      y un CALL que devuelve el resultado de la funcion.
-     */
     private void generarInvocacionFuncion(Reduccion reduccion) {
         Object valor = reduccion.resultado();
         if (!(valor instanceof LlamadaFuncion)) {
@@ -105,7 +90,6 @@ public class GeneradorTercetos {
         List<ParametroReal> parametros = llamada.parametros;
         List<Integer> orden = llamada.ordenEvaluacion;
 
-        // Determina el orden de evaluacion. Si no hay [], se usa el orden fuente 1..n.
         List<Integer> posiciones;
         if (orden == null || orden.isEmpty()) {
             posiciones = new ArrayList<>();
@@ -116,25 +100,19 @@ public class GeneradorTercetos {
             posiciones = orden;
         }
 
-        // Emite un PAR por cada parametro, en el orden de evaluacion indicado.
         for (int pos : posiciones) {
             if (pos < 1 || pos > parametros.size()) {
-                continue; // ya fue reportado por Verificaciones
+                continue;
             }
             ParametroReal param = parametros.get(pos - 1);
             Object valorParam = emitirValor(param.valor, reduccion.getLinea());
             lista.crear("PAR", valorParam, null);
         }
 
-        // Emite el CALL y guarda su numero para que emitir(LlamadaFuncion) lo devuelva.
         int numeroCall = lista.crear("CALL", llamada.funcion, null);
         llamada.setNumeroCall(numeroCall);
     }
 
-    /*
-      Emite el valor de un parametro real. Puede ser una EntradaTabla hoja,
-      una ExpresionDiferida (que genera tercetos intermedios) o un Integer.
-     */
     private Object emitirValor(Object valor, int linea) {
         if (valor instanceof EntradaTabla || valor instanceof Integer) {
             return valor;
@@ -154,7 +132,6 @@ public class GeneradorTercetos {
         pila.push(new Pendiente(bf, false));
     }
 
-    /* Se reduce al leer repeat, antes de generar el cuerpo. */
     private void abrirRepeat() {
         String etiqueta = lista.reservarEtiqueta();
         lista.crearEtiqueta(etiqueta);
@@ -167,7 +144,6 @@ public class GeneradorTercetos {
         }
     }
 
-    /* BF sale si la condicion es falsa. Si no se toma, el BI vuelve al inicio. */
     private void generarRepeat(Reduccion reduccion) {
         if (iniciosRepeat.isEmpty()) {
             reporte.error(reduccion.getLinea(), "Iteracion incompleta");
@@ -199,8 +175,6 @@ public class GeneradorTercetos {
         return lista.crear((String) partes[1], izquierdo, derecho);
     }
 
-    /* Completa el BF con la etiqueta del else, abre el BI y deja esa
-       etiqueta como primer terceto de la rama else. */
     private void cerrarThen(Reduccion reduccion) {
         Pendiente bf = desapilar(reduccion.getLinea());
         if (bf == null) {
@@ -213,16 +187,12 @@ public class GeneradorTercetos {
         lista.crearEtiqueta(etiquetaElse);
     }
 
-    /* If sin else, o el cierre del else: el salto pendiente apunta a una
-       etiqueta nueva, que se emite a continuacion. ERR_FALTA_END_IF usa el
-       mismo cierre para no dejar el BF o el BI vacios. */
     private void cerrarSalto(Reduccion reduccion) {
-        Pendiente pendiente = desapilar(reduccion.getLinea()); // paso la linea por si hay error 
+        Pendiente pendiente = desapilar(reduccion.getLinea());
         if (pendiente == null) {
             return;
         }
 
- 
         String etiqueta = lista.reservarEtiqueta();
         int posicion;
         if (pendiente.incondicional) {
@@ -242,7 +212,6 @@ public class GeneradorTercetos {
         return pila.pop();
     }
 
-    // Devuelve la EntradaTabla hoja o el numero del terceto que resume la expresion.
     private Object emitir(Object valor, int linea) {
         if (valor instanceof EntradaTabla || valor instanceof Integer) {
             return valor;

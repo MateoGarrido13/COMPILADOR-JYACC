@@ -1,24 +1,9 @@
-//### This file created by BYACC 1.8(/Java extension  1.15)
-//### Java capabilities added 7 Jan 97, Bob Jamison
-//### Updated : 27 Nov 97  -- Bob Jamison, Joe Nieten
-//###           01 Jan 98  -- Bob Jamison -- fixed generic semantic constructor
-//###           01 Jun 99  -- Bob Jamison -- added Runnable support
-//###           06 Aug 00  -- Bob Jamison -- made state variables class-global
-//###           03 Jan 01  -- Bob Jamison -- improved flags, tracing
-//###           16 May 01  -- Bob Jamison -- added custom stack sizing
-//###           04 Mar 02  -- Yuval Oren  -- improved java performance, added options
-//###           14 Mar 02  -- Tomas Hurka -- -d support, static initializer workaround
-//### Please send bug reports to tom@hukatronic.cz
-//### static char yysccsid[] = "@(#)yaccpar	1.8 (Berkeley) 01/20/90";
 
 
 
 
 
 
-//#line 31 "gramatica.y"
-/* Esta seccion se copia tal cual al comienzo de Parser.java */
-//#line 19 "Parser.java"
 
 
 
@@ -26,14 +11,13 @@
 public class Parser
 {
 
-boolean yydebug;        //do I want debug output?
-int yynerrs;            //number of errors so far
-int yyerrflag;          //was there an error?
-int yychar;             //the current working character
+boolean yydebug;
+int yynerrs;
+int yyerrflag;
+int yychar;
 
 //########## MESSAGES ##########
 //###############################################################
-// method: debug
 //###############################################################
 void debug(String msg)
 {
@@ -42,13 +26,12 @@ void debug(String msg)
 }
 
 //########## STATE STACK ##########
-final static int YYSTACKSIZE = 500;  //maximum stack size
-int statestk[] = new int[YYSTACKSIZE]; //state stack
+final static int YYSTACKSIZE = 500;
+int statestk[] = new int[YYSTACKSIZE];
 int stateptr;
-int stateptrmax;                     //highest index of stackptr
-int statemax;                        //state when highest index reached
+int stateptrmax;
+int statemax;
 //###############################################################
-// methods: state stack push,pop,drop,peek
 //###############################################################
 final void state_push(int state)
 {
@@ -78,7 +61,6 @@ final int state_peek(int relative)
   return statestk[stateptr-relative];
 }
 //###############################################################
-// method: init_stacks : allocate and prepare stacks
 //###############################################################
 final boolean init_stacks()
 {
@@ -87,7 +69,6 @@ final boolean init_stacks()
   return true;
 }
 //###############################################################
-// method: dump_stacks : show n levels of the stacks
 //###############################################################
 void dump_stacks(int count)
 {
@@ -100,14 +81,12 @@ int i;
 
 
 //########## SEMANTIC VALUES ##########
-//## **user defined:ParserVal
-String   yytext;//user variable to return contextual strings
-ParserVal yyval; //used to return semantic vals from action routines
-ParserVal yylval;//the 'lval' (result) I got from yylex()
+String   yytext;
+ParserVal yyval;
+ParserVal yylval;
 ParserVal valstk[] = new ParserVal[YYSTACKSIZE];
 int valptr;
 //###############################################################
-// methods: value stack push,pop,drop,peek.
 //###############################################################
 final void val_init()
 {
@@ -146,7 +125,6 @@ final ParserVal dup_yyval(ParserVal val)
 {
   return val;
 }
-//#### end semantic value section ####
 public final static short ID=300;
 public final static short ASIG=301;
 public final static short CTE=302;
@@ -708,7 +686,6 @@ final static String yyrule[] = {
 "referencia_atributo : ID '.' ID '.' ID '(' lista_parametros_reales ')'",
 };
 
-//#line 565 "gramatica.y"
 
 
 /* ==========================================================================
@@ -731,20 +708,16 @@ int yylex() {
     return token;
 }
 
-/* El mensaje generico de Yacc se silencia: cada produccion ERR_* informa el
-   faltante concreto del PDF a traves de TablaAcciones y Verificaciones. */
 public void yyerror(String mensaje) {
 }
-//#line 676 "Parser.java"
 //###############################################################
-// method: yylexdebug : check lexer state
 //###############################################################
 void yylexdebug(int state,int ch)
 {
 String s=null;
   if (ch < 0) ch=0;
-  if (ch <= YYMAXTOKEN) //check index bounds
-     s = yyname[ch];    //now get it
+  if (ch <= YYMAXTOKEN)
+     s = yyname[ch];
   if (s==null)
     s = "illegal-symbol";
   debug("state "+state+", reading "+ch+" ("+s+")");
@@ -754,15 +727,13 @@ String s=null;
 
 
 
-//The following are now global, to aid in error reporting
-int yyn;       //next next thing to do
+int yyn;
 int yym;       //
-int yystate;   //current parsing state from state table
-String yys;    //current token string
+int yystate;
+String yys;
 
 
 //###############################################################
-// method: yyparse : parse input and execute indicated items
 //###############################################################
 int yyparse()
 {
@@ -770,55 +741,54 @@ boolean doaction;
   init_stacks();
   yynerrs = 0;
   yyerrflag = 0;
-  yychar = -1;          //impossible char forces a read
-  yystate=0;            //initial state
-  state_push(yystate);  //save it
-  val_push(yylval);     //save empty value
-  while (true) //until parsing is done, either correctly, or w/error
+  yychar = -1;
+  yystate=0;
+  state_push(yystate);
+  val_push(yylval);
+  while (true)
     {
     doaction=true;
     if (yydebug) debug("loop"); 
-    //#### NEXT ACTION (from reduction table)
     for (yyn=yydefred[yystate];yyn==0;yyn=yydefred[yystate])
       {
       if (yydebug) debug("yyn:"+yyn+"  state:"+yystate+"  yychar:"+yychar);
-      if (yychar < 0)      //we want a char?
+      if (yychar < 0)
         {
-        yychar = yylex();  //get next token
+        yychar = yylex();
         if (yydebug) debug(" next yychar:"+yychar);
         //#### ERROR CHECK ####
-        if (yychar < 0)    //it it didn't work/error
+        if (yychar < 0)
           {
-          yychar = 0;      //change it to default string (no -1!)
+          yychar = 0;
           if (yydebug)
             yylexdebug(yystate,yychar);
           }
-        }//yychar<0
-      yyn = yysindex[yystate];  //get amount to shift by (shift index)
+        }
+      yyn = yysindex[yystate];
       if ((yyn != 0) && (yyn += yychar) >= 0 &&
           yyn <= YYTABLESIZE && yycheck[yyn] == yychar)
         {
         if (yydebug)
           debug("state "+yystate+", shifting to state "+yytable[yyn]);
         //#### NEXT STATE ####
-        yystate = yytable[yyn];//we are in a new state
-        state_push(yystate);   //save it
-        val_push(yylval);      //push our lval as the input for next rule
-        yychar = -1;           //since we have 'eaten' a token, say we need another
-        if (yyerrflag > 0)     //have we recovered an error?
-           --yyerrflag;        //give ourselves credit
-        doaction=false;        //but don't process yet
-        break;   //quit the yyn=0 loop
+        yystate = yytable[yyn];
+        state_push(yystate);
+        val_push(yylval);
+        yychar = -1;
+        if (yyerrflag > 0)
+           --yyerrflag;
+        doaction=false;
+        break;
         }
 
-    yyn = yyrindex[yystate];  //reduce
+    yyn = yyrindex[yystate];
     if ((yyn !=0 ) && (yyn += yychar) >= 0 &&
             yyn <= YYTABLESIZE && yycheck[yyn] == yychar)
-      {   //we reduced!
+      {
       if (yydebug) debug("reduce");
       yyn = yytable[yyn];
-      doaction=true; //get ready to execute
-      break;         //drop down to actions
+      doaction=true;
+      break;
       }
     else //ERROR RECOVERY
       {
@@ -827,14 +797,14 @@ boolean doaction;
         yyerror("syntax error");
         yynerrs++;
         }
-      if (yyerrflag < 3) //low error count?
+      if (yyerrflag < 3)
         {
         yyerrflag = 3;
-        while (true)   //do until break
+        while (true)
           {
-          if (stateptr<0)   //check for under & overflow here
+          if (stateptr<0)
             {
-            yyerror("stack underflow. aborting...");  //note lower case 's'
+            yyerror("stack underflow. aborting...");
             return 1;
             }
           yyn = yysindex[state_peek(0)];
@@ -853,9 +823,9 @@ boolean doaction;
             {
             if (yydebug)
               debug("error recovery discarding state "+state_peek(0)+" ");
-            if (stateptr<0)   //check for under & overflow here
+            if (stateptr<0)
               {
-              yyerror("Stack underflow. aborting...");  //capital 'S'
+              yyerror("Stack underflow. aborting...");
               return 1;
               }
             state_pop();
@@ -863,10 +833,10 @@ boolean doaction;
             }
           }
         }
-      else            //discard this token
+      else
         {
         if (yychar == 0)
-          return 1; //yyabort
+          return 1;
         if (yydebug)
           {
           yys = null;
@@ -874,603 +844,460 @@ boolean doaction;
           if (yys == null) yys = "illegal-symbol";
           debug("state "+yystate+", error recovery discards token "+yychar+" ("+yys+")");
           }
-        yychar = -1;  //read another
+        yychar = -1;
         }
-      }//end error recovery
-    }//yyn=0 loop
-    if (!doaction)   //any reason not to proceed?
-      continue;      //skip action
-    yym = yylen[yyn];          //get count of terminals on rhs
+      }
+    }
+    if (!doaction)
+      continue;
+    yym = yylen[yyn];
     if (yydebug)
       debug("state "+yystate+", reducing "+yym+" by rule "+yyn+" ("+yyrule[yyn]+")");
-    if (yym>0)                 //if count of rhs not 'nil'
-      yyval = val_peek(yym-1); //get current semantic value
-    yyval = dup_yyval(yyval); //duplicate yyval if ParserVal is used as semantic value
+    if (yym>0)
+      yyval = val_peek(yym-1);
+    yyval = dup_yyval(yyval);
     switch(yyn)
       {
 //########## USER-SUPPLIED ACTIONS ##########
 case 1:
-//#line 74 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.PROGRAMA, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 2:
-//#line 76 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_FALTA_NOMBRE_PROGRAMA);
           yyval = new ParserVal(acciones.ejecutar(Reglas.PROGRAMA, null, val_peek(0).obj)); }
 break;
 case 3:
-//#line 79 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_FALTA_NOMBRE_PROGRAMA);
           yyval = new ParserVal(acciones.ejecutar(Reglas.PROGRAMA, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 8:
-//#line 92 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.NOMBRE_PROGRAMA, val_peek(0).obj)); }
 break;
 case 9:
-//#line 97 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_EJECUTABLE, val_peek(1).obj)); }
 break;
 case 10:
-//#line 99 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_EJECUTABLE, (Object) null)); }
 break;
 case 11:
-//#line 101 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_BLOQUE_SIN_END, val_peek(0).obj)); }
 break;
 case 12:
-//#line 103 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_BLOQUE_SIN_END)); }
 break;
 case 13:
-//#line 105 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_BEGIN)); }
 break;
 case 14:
-//#line 107 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_BEGIN)); }
 break;
 case 15:
-//#line 115 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_SENTENCIAS, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 16:
-//#line 117 "gramatica.y"
 { yyval = new ParserVal((Object) null); }
 break;
 case 27:
-//#line 135 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_VARIABLES, val_peek(2).obj, val_peek(1).obj)); }
 break;
 case 28:
-//#line 137 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_LISTA_VARIABLES)); }
 break;
 case 29:
-//#line 142 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_OBJETOS, val_peek(2).obj, val_peek(1).obj)); }
 break;
 case 30:
-//#line 147 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.TIPO, Tipos.ULONGINT)); }
 break;
 case 31:
-//#line 149 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.TIPO, Tipos.DOUBLEF)); }
 break;
 case 33:
-//#line 155 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.TIPO, val_peek(0).obj)); }
 break;
 case 34:
-//#line 160 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_VARIABLES, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 35:
-//#line 162 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_VARIABLES, val_peek(0).obj)); }
 break;
 case 36:
-//#line 164 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_FALTA_COMA_VARIABLES);
           yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_VARIABLES, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 37:
-//#line 173 "gramatica.y"
 { acciones.ejecutar(Reglas.INICIO_FUNCION, val_peek(2).obj, val_peek(0).obj); }
 break;
 case 38:
-//#line 175 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_FALTA_NOMBRE_FUNCION);
           acciones.ejecutar(Reglas.INICIO_FUNCION, val_peek(1).obj, null); }
 break;
 case 39:
-//#line 181 "gramatica.y"
 { yyval = val_peek(0); }
 break;
 case 40:
-//#line 186 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
 break;
 case 41:
-//#line 188 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
 break;
 case 42:
-//#line 190 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA);
           yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
 break;
 case 43:
-//#line 193 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_BLOQUE_SIN_END);
           yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
 break;
 case 44:
-//#line 196 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_FALTA_BEGIN);
           yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_FUNCION)); }
 break;
 case 45:
-//#line 202 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_FORMALES, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 46:
-//#line 204 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_FORMALES, val_peek(0).obj)); }
 break;
 case 47:
-//#line 209 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.PARAMETRO_FORMAL, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 48:
-//#line 211 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.PARAMETRO_FORMAL, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 49:
-//#line 213 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_NOMBRE_PARAMETRO, val_peek(0).obj)); }
 break;
 case 50:
-//#line 215 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_TIPO_PARAMETRO, val_peek(0).obj)); }
 break;
 case 51:
-//#line 224 "gramatica.y"
 { acciones.ejecutar(Reglas.INICIO_CLASE, val_peek(0).obj);
           yyval = val_peek(0); }
 break;
 case 52:
-//#line 230 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_CLASE, val_peek(4).obj)); }
 break;
 case 53:
-//#line 232 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA);
           yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_CLASE, val_peek(3).obj)); }
 break;
 case 54:
-//#line 238 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_SENTENCIAS, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 55:
-//#line 240 "gramatica.y"
 { yyval = new ParserVal((Object) null); }
 break;
 case 59:
-//#line 251 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_ATRIBUTO, val_peek(2).obj, val_peek(1).obj)); }
 break;
 case 60:
-//#line 256 "gramatica.y"
 { acciones.ejecutar(Reglas.INICIO_FUNCION, val_peek(1).obj, val_peek(0).obj);
           yyval = val_peek(0); }
 break;
 case 61:
-//#line 262 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_METODO, val_peek(7).obj)); }
 break;
 case 62:
-//#line 267 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_EXTENDS, val_peek(1).obj)); }
 break;
 case 63:
-//#line 269 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_LISTA_EXTENDS)); }
 break;
 case 64:
-//#line 271 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_LISTA_EXTENDS)); }
 break;
 case 65:
-//#line 276 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_CLASES_HEREDADAS, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 66:
-//#line 278 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_CLASES_HEREDADAS, val_peek(0).obj)); }
 break;
 case 67:
-//#line 286 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DECL_TYPEDEF, val_peek(5).obj, val_peek(2).obj)); }
 break;
 case 68:
-//#line 288 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_VALORES_ENUMERADO, val_peek(4).obj)); }
 break;
 case 69:
-//#line 293 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_VALORES_ENUMERADO, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 70:
-//#line 295 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_VALORES_ENUMERADO, val_peek(0).obj)); }
 break;
 case 71:
-//#line 303 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_SENTENCIAS, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 72:
-//#line 305 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_SENTENCIAS, val_peek(0).obj)); }
 break;
 case 74:
-//#line 311 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
 break;
 case 79:
-//#line 317 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_SENTENCIA)); }
 break;
 case 81:
-//#line 323 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_EJECUTABLE, val_peek(1).obj)); }
 break;
 case 82:
-//#line 328 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ASIGNACION, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 83:
-//#line 330 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ASIGNACION, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 84:
-//#line 332 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_ASIGNACION_INVALIDA)); }
 break;
 case 86:
-//#line 341 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
 break;
 case 87:
-//#line 343 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_END_IF, val_peek(3).obj, val_peek(1).obj)); }
 break;
 case 88:
-//#line 345 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_END_IF, val_peek(5).obj, val_peek(3).obj, val_peek(1).obj)); }
 break;
 case 89:
-//#line 347 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PARENTESIS_APERTURA)); }
 break;
 case 90:
-//#line 349 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_CONDICION_SIN_CIERRE)); }
 break;
 case 91:
-//#line 351 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_CONDICION_INVALIDA)); }
 break;
 case 92:
-//#line 358 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_IF, val_peek(3).obj, val_peek(1).obj)); }
 break;
 case 93:
-//#line 360 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_IF_ELSE, val_peek(5).obj, val_peek(3).obj, val_peek(1).obj)); }
 break;
 case 94:
-//#line 367 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.CONDICION_IF, val_peek(0).obj)); }
 break;
 case 95:
-//#line 372 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_THEN, val_peek(0).obj)); }
 break;
 case 96:
-//#line 377 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.BLOQUE_ELSE, val_peek(0).obj)); }
 break;
 case 97:
-//#line 382 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.CONDICION, val_peek(2).obj, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 98:
-//#line 387 "gramatica.y"
 { yyval = new ParserVal((Object) ">="); }
 break;
 case 99:
-//#line 389 "gramatica.y"
 { yyval = new ParserVal((Object) "<="); }
 break;
 case 100:
-//#line 391 "gramatica.y"
 { yyval = new ParserVal((Object) "=="); }
 break;
 case 101:
-//#line 393 "gramatica.y"
 { yyval = new ParserVal((Object) "!="); }
 break;
 case 102:
-//#line 395 "gramatica.y"
 { yyval = new ParserVal((Object) ">"); }
 break;
 case 103:
-//#line 397 "gramatica.y"
 { yyval = new ParserVal((Object) "<"); }
 break;
 case 104:
-//#line 407 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.INICIO_REPEAT)); }
 break;
 case 105:
-//#line 412 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_REPEAT_WHILE, val_peek(5).obj, val_peek(2).obj)); }
 break;
 case 106:
-//#line 414 "gramatica.y"
 { acciones.ejecutar(Reglas.CERRAR_REPEAT);
           yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
 break;
 case 107:
-//#line 417 "gramatica.y"
 { acciones.ejecutar(Reglas.CERRAR_REPEAT);
           yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_CUERPO_ITERACION, val_peek(2).obj)); }
 break;
 case 108:
-//#line 420 "gramatica.y"
 { acciones.ejecutar(Reglas.CERRAR_REPEAT);
           yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_WHILE, val_peek(2).obj)); }
 break;
 case 109:
-//#line 423 "gramatica.y"
 { acciones.ejecutar(Reglas.CERRAR_REPEAT);
           yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PARENTESIS_APERTURA)); }
 break;
 case 110:
-//#line 426 "gramatica.y"
 { acciones.ejecutar(Reglas.CERRAR_REPEAT);
           yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_CONDICION_SIN_CIERRE)); }
 break;
 case 111:
-//#line 435 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_POUT, val_peek(2).obj)); }
 break;
 case 112:
-//#line 437 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_POUT, val_peek(2).obj)); }
 break;
 case 113:
-//#line 439 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ARGUMENTO_POUT)); }
 break;
 case 114:
-//#line 441 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
 break;
 case 115:
-//#line 443 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA)); }
 break;
 case 116:
-//#line 448 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_RET, val_peek(2).obj)); }
 break;
 case 117:
-//#line 450 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_FALTA_PUNTO_Y_COMA);
           yyval = new ParserVal(acciones.ejecutar(Reglas.SENTENCIA_RET, val_peek(1).obj)); }
 break;
 case 118:
-//#line 462 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.SUMA, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 119:
-//#line 464 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.RESTA, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 120:
-//#line 466 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERANDO, val_peek(2).obj)); }
 break;
 case 121:
-//#line 468 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERANDO, val_peek(2).obj)); }
 break;
 case 122:
-//#line 470 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERADOR, val_peek(1).obj, val_peek(0).obj)); }
 break;
 case 124:
-//#line 476 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.MULTIPLICACION, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 125:
-//#line 478 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.DIVISION, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 126:
-//#line 480 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERANDO, val_peek(2).obj)); }
 break;
 case 127:
-//#line 482 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_OPERANDO, val_peek(2).obj)); }
 break;
 case 129:
-//#line 488 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.FACTOR_ID, val_peek(0).obj)); }
 break;
 case 130:
-//#line 490 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.FACTOR_CONSTANTE, val_peek(0).obj)); }
 break;
 case 136:
-//#line 500 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.FACTOR_CONSTANTE_NEGATIVA, val_peek(0).obj)); }
 break;
 case 137:
-//#line 505 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ASIGNACION_EN_EXPRESION, val_peek(4).obj, val_peek(1).obj)); }
 break;
 case 138:
-//#line 507 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_ASIG_DONDE_IGUAL);
           yyval = new ParserVal(acciones.ejecutar(Reglas.ASIGNACION_EN_EXPRESION, val_peek(4).obj, val_peek(1).obj)); }
 break;
 case 139:
-//#line 513 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.CONVERSION_TODF, val_peek(1).obj)); }
 break;
 case 140:
-//#line 518 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.INVOCACION_FUNCION, val_peek(6).obj, val_peek(4).obj, val_peek(1).obj)); }
 break;
 case 141:
-//#line 520 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, val_peek(5).obj, val_peek(3).obj)); }
 break;
 case 142:
-//#line 522 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, val_peek(3).obj, val_peek(1).obj)); }
 break;
 case 143:
-//#line 527 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_REALES, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 144:
-//#line 529 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_PARAMETROS_REALES, val_peek(0).obj)); }
 break;
 case 145:
-//#line 534 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.PARAMETRO_REAL_NOMBRADO, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 147:
-//#line 540 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_ORDEN_EVALUACION, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 148:
-//#line 542 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.LISTA_ORDEN_EVALUACION, val_peek(0).obj)); }
 break;
 case 149:
-//#line 547 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ACCESO_ATRIBUTO, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 150:
-//#line 549 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ACCESO_ATRIBUTO_PREFIJADO, val_peek(4).obj, val_peek(2).obj, val_peek(0).obj)); }
 break;
 case 151:
-//#line 551 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.INVOCACION_METODO, val_peek(8).obj, val_peek(6).obj, val_peek(4).obj, val_peek(1).obj)); }
 break;
 case 152:
-//#line 553 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, val_peek(7).obj, val_peek(5).obj, val_peek(3).obj)); }
 break;
 case 153:
-//#line 555 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, val_peek(5).obj, val_peek(3).obj, val_peek(1).obj)); }
 break;
 case 154:
-//#line 557 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.INVOCACION_METODO_PREFIJADO, val_peek(10).obj, val_peek(8).obj, val_peek(6).obj, val_peek(4).obj, val_peek(1).obj)); }
 break;
 case 155:
-//#line 559 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, val_peek(9).obj, val_peek(7).obj, val_peek(5).obj, val_peek(3).obj)); }
 break;
 case 156:
-//#line 561 "gramatica.y"
 { yyval = new ParserVal(acciones.ejecutar(Reglas.ERR_FALTA_ORDEN_EVALUACION, val_peek(7).obj, val_peek(5).obj, val_peek(3).obj, val_peek(1).obj)); }
 break;
-//#line 1334 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
-    }//switch
-    //#### Now let's reduce... ####
+    }
     if (yydebug) debug("reduce");
-    state_drop(yym);             //we just reduced yylen states
-    yystate = state_peek(0);     //get new state
-    val_drop(yym);               //corresponding value drop
-    yym = yylhs[yyn];            //select next TERMINAL(on lhs)
-    if (yystate == 0 && yym == 0)//done? 'rest' state and at first TERMINAL
+    state_drop(yym);
+    yystate = state_peek(0);
+    val_drop(yym);
+    yym = yylhs[yyn];
+    if (yystate == 0 && yym == 0)
       {
       if (yydebug) debug("After reduction, shifting from state 0 to state "+YYFINAL+"");
-      yystate = YYFINAL;         //explicitly say we're done
-      state_push(YYFINAL);       //and save it
-      val_push(yyval);           //also save the semantic value of parsing
-      if (yychar < 0)            //we want another character?
+      yystate = YYFINAL;
+      state_push(YYFINAL);
+      val_push(yyval);
+      if (yychar < 0)
         {
-        yychar = yylex();        //get next character
-        if (yychar<0) yychar=0;  //clean, if necessary
+        yychar = yylex();
+        if (yychar<0) yychar=0;
         if (yydebug)
           yylexdebug(yystate,yychar);
         }
-      if (yychar == 0)          //Good exit (if lex returns 0 ;-)
-         break;                 //quit the loop--all DONE
-      }//if yystate
-    else                        //else not done yet
-      {                         //get next state and push, for next yydefred[]
-      yyn = yygindex[yym];      //find out where to go
+      if (yychar == 0)
+         break;
+      }
+    else
+      {
+      yyn = yygindex[yym];
       if ((yyn != 0) && (yyn += yystate) >= 0 &&
             yyn <= YYTABLESIZE && yycheck[yyn] == yystate)
-        yystate = yytable[yyn]; //get new state
+        yystate = yytable[yyn];
       else
-        yystate = yydgoto[yym]; //else go to new defred
+        yystate = yydgoto[yym];
       if (yydebug) debug("after reduction, shifting from state "+state_peek(0)+" to state "+yystate+"");
-      state_push(yystate);     //going again, so push state & val...
-      val_push(yyval);         //for next action
+      state_push(yystate);
+      val_push(yyval);
       }
-    }//main loop
-  return 0;//yyaccept!!
+    }
+  return 0;
 }
-//## end of method parse() ######################################
 
 
 
-//## run() --- for Thread #######################################
-/**
- * A default run method, used for operating this parser
- * object in the background.  It is intended for extending Thread
- * or implementing Runnable.  Turn off with -Jnorun .
- */
 public void run()
 {
   yyparse();
 }
-//## end of method run() ########################################
 
 
 
-//## Constructors ###############################################
-/**
- * Default constructor.  Turn off with -Jnoconstruct .
-
- */
 public Parser()
 {
-  //nothing to do
 }
 
 
-/**
- * Create a parser, setting the debug to true or false.
- * @param debugMe true for debugging, false for no debug.
- */
 public Parser(boolean debugMe)
 {
   yydebug=debugMe;

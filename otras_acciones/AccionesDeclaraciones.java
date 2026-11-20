@@ -1,8 +1,5 @@
 import java.util.List;
 
-/*
- Acciones de programa, declaraciones, sentencias y contexto de funcion/clase.
- */
 public class AccionesDeclaraciones {
 
     public static void registrar(TablaAcciones tabla, Entorno entorno, Verificaciones v) {

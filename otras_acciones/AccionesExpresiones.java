@@ -2,15 +2,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Acciones que arman ExpresionDiferida y aplican los chequeos de los temas 17 y 19.
- */
 public class AccionesExpresiones {
 
-    /*
-      Envuelve un valor suelto (expresion sin nombre formal) en un ParametroReal
-      para paso por posicion. Si ya es un ParametroReal lo devuelve tal cual.
-     */
     private static Object envolverParametro(Object valor, int linea) {
         if (valor instanceof ParametroReal) {
             return valor;
@@ -63,7 +56,6 @@ public class AccionesExpresiones {
             List<Object> ordenRaw = ctx.valor(2) == null ? null : ctx.lista(2);
             List<Integer> ordenEvaluacion = comoListaEnteros(ordenRaw, ctx.getLinea());
 
-            // Envuelve parametros posicionales sueltos en ParametroReal
             List<ParametroReal> parametros = new ArrayList<>();
             for (Object p : parametrosReales) {
                 if (p instanceof ParametroReal) {
@@ -73,10 +65,8 @@ public class AccionesExpresiones {
                 }
             }
 
-            // Verifica cantidad de parametros reales vs formales (tambien reporta si la funcion no existe)
             v.verificarCantidadParametros(funcion, parametros, ctx.getLinea());
 
-            // Verifica orden de evaluacion: rango, duplicados, completitud
             v.verificarOrdenEvaluacion(ordenRaw, parametros.size(), ctx.getLinea());
 
             return new LlamadaFuncion(funcion, parametros, ordenEvaluacion, ctx.getLinea());
@@ -124,10 +114,6 @@ public class AccionesExpresiones {
         });
     }
 
-    /*
-      Convierte una lista de constantes (EntradaTabla) del orden de evaluacion
-      en una lista de enteros (posiciones 1-based).
-     */
     private static List<Integer> comoListaEnteros(List<Object> valores, int linea) {
         if (valores == null) {
             return null;

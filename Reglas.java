@@ -1,15 +1,12 @@
-//Catalogo de reglas de la gramatica.
 // EL VALOR BOLEANO ES PARA INDICAR SI LA REGLA ES ESTRUCTURA O NO.
 public enum Reglas {
 
-    // ===== Estructura general del programa =====
     PROGRAMA("Programa", true),
     NOMBRE_PROGRAMA("Nombre de programa", false),
     BLOQUE_EJECUTABLE("Bloque BEGIN - END", true),
     LISTA_SENTENCIAS("Lista de sentencias", false),
     SENTENCIA("Sentencia", false),
 
-    // ===== Sentencias declarativas =====
     DECL_VARIABLES("Declaracion de variables", true),
     LISTA_VARIABLES("Lista de variables", false),
     TIPO("Tipo de dato", false),
@@ -30,7 +27,6 @@ public enum Reglas {
     DECL_TYPEDEF("Definicion de tipo enumerado", true),
     LISTA_VALORES_ENUMERADO("Lista de valores del enumerado", false),
 
-    // ===== Sentencias ejecutables =====
     ASIGNACION("Asignación", true),
     SENTENCIA_IF("Sentencia IF", true),
     SENTENCIA_IF_ELSE("Sentencia IF con ELSE", true),
@@ -44,7 +40,6 @@ public enum Reglas {
     SENTENCIA_POUT("Sentencia POUT", true),
     SENTENCIA_RET("Sentencia RET", true),
 
-    // ===== Expresiones =====
     SUMA("Suma", false),
     RESTA("Resta", false),
     MULTIPLICACION("Multiplicacion", false),
@@ -65,7 +60,6 @@ public enum Reglas {
     INVOCACION_METODO("Invocacion a metodo", true),
     INVOCACION_METODO_PREFIJADO("Invocacion a metodo con prefijo de clase", true),
 
-    // ===== Producciones de error =====
     ERR_SENTENCIA("Sentencia mal formada", false),
     ERR_DECLARACION_INVALIDA("Declaracion mal formada", false),
     ERR_LISTA_VARIABLES("Lista de variables mal formada", false),
@@ -94,7 +88,6 @@ public enum Reglas {
     ERR_FALTA_VALORES_ENUMERADO("Ausencia de valores para la enumeracion", false),
     ERR_FALTA_LISTA_EXTENDS("Ausencia de nombre o lista de clases despues de extends", false);
 
-//  descripcion con la que se informa la estructura sintactica detectada. 
     private final String descripcion;
     private final boolean estructura;
 
@@ -107,12 +100,10 @@ public enum Reglas {
         return descripcion;
     }
 
-    // Indica si la reduccion debe informarse en la lista de estructuras detectadas.
     public boolean esEstructura() {
         return estructura;
     }
 
-    // Indica si la regla corresponde a una produccion de error.
     public boolean esError() {
         return name().startsWith("ERR_");
     }

@@ -32,7 +32,6 @@ public class ContextoLexico {
         if (estado == 11 && (caracter == 'u' || caracter == 'U')) return 17;
         if (estado == 17 && (caracter == 'l' || caracter == 'L')) return 18;
         if (estado == 13 && (caracter == 'd' || caracter == 'D')) return 19;
-        // 'd' es exponente solo si ya hay parte decimal (1.0d). obj.d es punto + id.
         if (estado == 12 && (caracter == 'd' || caracter == 'D') && tieneDigitoTrasPunto(lexema)) {
             return 19;
         }

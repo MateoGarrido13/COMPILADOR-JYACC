@@ -1,15 +1,11 @@
-/*
-  Representa una invocacion de funcion lista para generar tercetos.
-  Contiene la funcion a llamar, los parametros reales y el orden de evaluacion.
- */
 import java.util.List;
 
 public class LlamadaFuncion {
     public final EntradaTabla funcion;
     public final List<ParametroReal> parametros;
-    public final List<Integer> ordenEvaluacion; // posiciones 1-based, o null
+    public final List<Integer> ordenEvaluacion;
     public final int linea;
-    private Integer numeroCall; // numero del terceto CALL, asignado por GeneradorTercetos
+    private Integer numeroCall;
 
     public LlamadaFuncion(EntradaTabla funcion, List<ParametroReal> parametros,
                           List<Integer> ordenEvaluacion, int linea) {

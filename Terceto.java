@@ -1,13 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-  Instruccion de codigo intermedio: operador y dos operandos.
-  Un operando es una EntradaTabla (referencia a la tabla de simbolos), el
-  numero de otro terceto entre corchetes, o el nombre de una etiqueta.
-  Al imprimir, la entrada se muestra por su lexema. Un operando vacio es "--".
-  Una etiqueta es un terceto sin operandos: (label_N, --, --).
- */
 public class Terceto {
 
     final String operador;
@@ -20,7 +13,7 @@ public class Terceto {
         this.op2 = op2;
     }
 
-    void completar(int posicion, Object valor) { // una especie de setter
+    void completar(int posicion, Object valor) {
         if (posicion == 1) {
             op1 = valor;
         } else {
@@ -28,7 +21,7 @@ public class Terceto {
         }
     }
 
-    public String visualizar() { // serializacion 
+    public String visualizar() {
         return "(" + operador + ", " + texto(op1) + ", " + texto(op2) + ")";
     }
 
@@ -49,12 +42,6 @@ public class Terceto {
     }
 }
 
-/*
-  Lista 1-based. crear devuelve el numero del terceto recien agregado, que es
-  el puntero al resultado intermedio. completar escribe un operando que nacio
-  vacio, cuando ya se conoce la etiqueta del salto.
-  Las etiquetas de salto usan un contador propio: label_1, label_2, ...
- */
 class ListaTercetos {
 
     private final List<Terceto> tercetos = new ArrayList<>();

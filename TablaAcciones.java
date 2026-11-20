@@ -2,14 +2,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-/*
-  Estructura que almacena las referencias al codigo ejecutable de cada regla.
- 
-  gramatica.y no contiene logica: cada produccion invoca ejecutar(regla, ...) y
-  esta tabla resuelve que accion semantica corresponde. Ademas registra la lista
-  de reglas reducidas, que es la salida del Analisis Sintactico hacia las etapas
-  siguientes.
- */
 public class TablaAcciones {
 
     private final EnumMap<Reglas, AccionRegla> acciones = new EnumMap<>(Reglas.class);
@@ -24,11 +16,6 @@ public class TablaAcciones {
         acciones.put(regla, accion);
     }
 
-    /*
-      Registra la reduccion, informa la estructura detectada si corresponde y
-      ejecuta el codigo asociado. Si la regla no tiene accion registrada se
-      aplica la accion por defecto de YACC: $$ = $1.
-     */
     public Object ejecutar(Reglas regla, Object... valores) {
         int linea = Globals.numeroLinea;
 
@@ -68,7 +55,6 @@ public class TablaAcciones {
         return acciones.containsKey(regla);
     }
 
-    // Reglas del catalogo que todavia no tienen codigo asociado.
     public List<Reglas> reglasSinAccion() {
         List<Reglas> pendientes = new ArrayList<>();
         for (Reglas regla : Reglas.values()) {
@@ -79,7 +65,7 @@ public class TablaAcciones {
         return pendientes;
     }
 
-    public String contenidoListaReglas() { // un getlistareglas implica un recorrido mas y un costo O(2n)
+    public String contenidoListaReglas() {
         StringBuilder texto = new StringBuilder();
         texto.append("Lista de reglas reducidas (").append(reducciones.size()).append("):\n");
         for(Reduccion reduccion : reducciones) {

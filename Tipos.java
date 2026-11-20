@@ -1,12 +1,5 @@
 import java.math.BigInteger;
 
-/*
-  Tipos de dato del lenguaje segun los temas particulares asignados al grupo.
- 
-  Tema 6:  ulongint  - enteros largos sin signo de 32 bits, sufijo "$ul", rango 0 .. 2^32 - 1
-  Tema 8:  doublef   - punto flotante de 64 bits, exponente con la letra "d"
-  Tema 9:  cadena    - cadenas de una linea delimitadas por llaves
- */
 public class Tipos {
 
     public static final String ULONGINT = "ulongint";
@@ -33,7 +26,6 @@ public class Tipos {
         return ULONGINT.equals(normalizado) || DOUBLEF.equals(normalizado);
     }
 
-    // Deduce el tipo de una constante a partir de su forma lexica. 
     public static String tipoDeConstante(String lexema) {
         if (lexema == null) {
             return null;
@@ -45,7 +37,6 @@ public class Tipos {
         if (texto.endsWith(SUFIJO_ULONGINT)) {
             return ULONGINT;
         }
-        // El tema 8 exige el punto y la parte decimal; el exponente es opcional.
         if (texto.indexOf('.') >= 0) {
             return DOUBLEF;
         }
@@ -76,7 +67,6 @@ public class Tipos {
         return true;
     }
 
-    // Valor entero de una constante, sin el sufijo. Devuelve null si no es entera.
     public static BigInteger valorEntero(String lexema) {
         if (lexema == null) {
             return null;
@@ -94,7 +84,6 @@ public class Tipos {
         return negativo ? valor.negate() : valor;
     }
 
-    // Valor de una constante doublef. El exponente del tema 8 usa 'd' en lugar de 'e'. 
     public static Double valorDoublef(String lexema) {
         if (lexema == null) {
             return null;

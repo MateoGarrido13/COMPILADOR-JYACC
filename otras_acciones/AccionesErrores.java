@@ -1,7 +1,3 @@
-/*
-  Producciones ERR_*: solo informan por Verificaciones.reportar
-  y devuelven el primer valor para no cortar la recuperacion.
- */
 public class AccionesErrores {
 
     public static void registrar(TablaAcciones tabla, Verificaciones v) {

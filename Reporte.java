@@ -2,10 +2,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-  Salidas del compilador. estructuras sintacticas detectadas, errores y warnings,
-  siempre con el numero de linea del codigo fuente.
- */
 public class Reporte {
 
     public static class Mensaje {

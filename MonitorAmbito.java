@@ -1,9 +1,5 @@
 import java.util.List;
 
-/*
-  Reescribe la clave de los identificadores que ya tienen ambito de declaracion.
-  Se lanza al entrar y al salir de una funcion. No decide cuando cambia el ambito.
- */
 public class MonitorAmbito {
 
     private static TablaSimbolos tabla;

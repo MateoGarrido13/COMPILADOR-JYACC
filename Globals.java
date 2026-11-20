@@ -1,20 +1,17 @@
 public class Globals {
     public static EntradaTabla yylval;
     public static int numeroLinea = 1;
-    // Ambito de la declaracion en curso. Arranca en MAIN y cada funcion agrega :NOMBRE.
     public static String AMBITO_ACTUAL = "MAIN";
 
-    // Tokens compuestos (valores > 255)
     public static final int IDENTIFICADOR = 300;
     public static final int ASIGNACION = 301; // ':='
     public static final int CONSTANTE_NUMERICA = 302;
-    public static final int CADENA = 303; // tema 9: cadenas de una linea entre llaves
+    public static final int CADENA = 303;
     public static final int MAYOR_IGUAL = 304;
     public static final int MENOR_IGUAL = 305;
     public static final int IGUAL_IGUAL = 306;
     public static final int DISTINTO = 307;
 
-    // Palabras Reservadas 
     public static final int PR_IF = 400;
     public static final int PR_ELSE = 401;
     public static final int PR_END_IF = 402;

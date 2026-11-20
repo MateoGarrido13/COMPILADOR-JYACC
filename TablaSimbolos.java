@@ -5,10 +5,8 @@ import java.util.Map;
 
 public class TablaSimbolos {
     private final Map<String, EntradaTabla> tabla;
-    // Índice 0 vacío: el puntero de una entrada es su posición y empieza en 1.
     private final List<EntradaTabla> porPuntero;
 
-    // inicializo tabla y ya cargo palabras reservadas, por convencion de nombres, las keys son en minusculas
     public TablaSimbolos() {
         tabla = new LinkedHashMap<>();
         porPuntero = new ArrayList<>();
@@ -31,7 +29,6 @@ public class TablaSimbolos {
         alta("doublef", Globals.PR_DOUBLEF, 0);
     }
 
-    // Única creación de entradas. El mismo lexema conserva el puntero que recibió acá.
     private EntradaTabla crear(String lexema, int tokenID, int numeroLinea) {
         EntradaTabla entrada = new EntradaTabla(lexema, tokenID, numeroLinea);
         entrada.puntero = porPuntero.size();
@@ -124,7 +121,6 @@ public class TablaSimbolos {
         return tokenID >= 400;
     }
 
-    // Inserta el lexema; el tipo y el rango los asigna la semantica. 
     public EntradaTabla buscarOInsertarConstante(String lexema, int tokenID) {
         EntradaTabla entrada = tabla.get(lexema);
         if (entrada == null) {
@@ -133,7 +129,6 @@ public class TablaSimbolos {
         return entrada;
     }
 
-    // Cadenas reconocidas por el lexico (tema 9). El tipo se fija porque coincide con el token.
     public EntradaTabla buscarOInsertarCadena(String cadena) {
         EntradaTabla entrada = tabla.get(cadena);
         if (entrada == null) {
@@ -143,7 +138,6 @@ public class TablaSimbolos {
         return entrada;
     }
 
-     // Inserta o actualiza una constante. La usa el Analisis Sintactico al detectar constantes negativas
     public EntradaTabla insertarConstante(String lexema, String tipoDato, int numeroLinea) {
         EntradaTabla entrada = tabla.get(lexema);
         if (entrada == null) {

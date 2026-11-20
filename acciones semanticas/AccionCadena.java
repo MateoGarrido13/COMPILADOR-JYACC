@@ -8,7 +8,7 @@ public class AccionCadena implements AccionSemantica {
     @Override
     public int ejecutar() {
         String lexema = contexto.lexema.toString();
-        if (lexema.startsWith("{{") && lexema.endsWith("}}")) return -1; // Comentario multilinea, descarto
+        if (lexema.startsWith("{{") && lexema.endsWith("}}")) return -1;
         if (lexema.length() < 2 || !lexema.startsWith("{") || !lexema.endsWith("}")) {
             return error("Cadena no cerrada '" + lexema + "'");
         }
