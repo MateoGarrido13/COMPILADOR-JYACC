@@ -5,6 +5,7 @@
 Compilador desarrollado para la materia Compiladores e Intérpretes, de la carrera Ingeniería en Sistemas de la Facultad de Ciencias Exactas de la UNICEN.
 
 - **Grupo:** 43
+- **Integrantes:** Ciro Gervasio, Rafael Fredes, Mateo Garrido
 - **Cursada:** 2026
 
 El programa lee un archivo fuente del lenguaje definido en los trabajos prácticos de la cursada y encadena el analizador léxico del TP1 con el analizador sintáctico del TP2, seguido del análisis semántico, la generación de código intermedio y la generación de código assembler. La salida por consola comienza con el código fuente con las líneas numeradas (`N: <línea>`) e informa los tokens detectados, las estructuras sintácticas, los errores y el contenido de la tabla de símbolos.
@@ -68,3 +69,15 @@ java Main test/semantica/estructuras/una_sentencia.txt
 ## Guía de pruebas
 
 El archivo `guia.md` en la raíz del repositorio detalla, para cada regla semántica asignada (R13, R17, R19, R23, R25, R28, R31, R33) y cada chequeo de ejecución (b, e, f, h), las reglas de testing específicas y las rutas exactas de los archivos de prueba que las implementan.
+
+## Pendiente
+
+**Errores no abarcados en pruebas de ejecución (MASM/Windows):**
+
+Los casos de prueba que involucran declaraciones de funciones y métodos (ubicados en `test_tp_4/Funciones_y_metodos/` y, en particular, `test_tp_4/Integracion/03_recursion_factorial_metodo.txt`) presentan fallos en tiempo de ejecución o salidas inesperadas. La causa es una limitación en la ordenación de la salida generada dentro de la sección `.code` del archivo Assembler: las funciones y métodos se declaran antes del bloque principal, por lo que sus tercetos quedan al inicio de la estructura intermedia. Al traducirlos de forma secuencial sin reordenar los bloques delimitados por los operadores `FUNCION` o `METODO` ni insertar una bifurcación inicial hacia el cuerpo principal, el punto de entrada del ejecutable ingresa directamente al prólogo de la primera subrutina definida. En consecuencia, el marco de pila `call stack` se inicializa con los registros `EBP` y `ESP` del programa principal sin que haya mediado una instrucción `CALL` que apile una dirección de retorno válida, provocando el desequilibrio de la pila al alcanzar el retorno de la función.
+
+**Solución arquitectónica propuesta:** emitir el bloque de sentencias ejecutables de `main` en primer término (o anteponer un salto incondicional al punto de entrada principal) y relegar las definiciones de subrutinas al final de la sección de código, garantizando que cada invocación construya y destruya su propio stack frame mediante `CALL` y `RET`.
+
+**Documentación incompleta:**
+
+Debido a la priorización en la resolución de chequeos semánticos, manejo de clases, generación de código intermedio y controles en tiempo de ejecución, no se completó con el nivel de profundidad deseado la documentación de ciertas secciones transversales de la segunda entrega: el detalle exhaustivo de la traducción a Assembler, el esquema de name mangling, la sistematización de los casos de prueba y las conclusiones finales. Estos quedan identificados como los principales puntos de mejora para el cierre integral del compilador.
