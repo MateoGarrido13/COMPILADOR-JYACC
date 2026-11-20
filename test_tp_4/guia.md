@@ -4,18 +4,6 @@ Este documento explica cómo verificar que el GeneradorAssembler esqueleto de TP
 
 ---
 
-## REGLAS SIN TEST DEDICADO - ATENCION
-
-Las siguientes reglas asignadas NO cuentan con un archivo de prueba especifico dedicado en el repositorio. Se deben crear antes de considerar la cobertura completa:
-
-| Regla | Descripcion | Estado |
-|-------|-------------|--------|
-| R31   | Herencia circular: detectar que una clase no hereda directa o indirectamente de si misma | SIN TEST DEDICADO |
-
-Todas las demás reglas asignadas (R13, R17, R19, R23, R25, R28, R33) y todos los chequeos de ejecucion (b, e, f, h) tienen al menos un test asociado.
-
----
-
 ## Reglas semánticas asignadas y sus tests
 
 ### R13 — Estructura de iteración `repeat`/`while`
@@ -108,13 +96,14 @@ Todas las demás reglas asignadas (R13, R17, R19, R23, R25, R28, R33) y todos lo
 - `test/semantica/atributos_herencia/desambiguado_tradicional_y.txt` — desambiguado tradicional objeto.clase.atributo
 - `test/semantica/atributos_herencia/metodo_heredado_prefijado_con_orden.txt` — invocación a método heredado prefijado con orden de parámetros
 - `test/semantica/atributos_herencia/metodo_heredado_prefijado_sin_orden.txt` — método heredado prefijado sin orden de parámetros
+- `test_tp_4/herencia_circular/01_herencia_circular_directa.txt` — clase hereda de sí misma (herencia circular directa)
+- `test_tp_4/herencia_circular/02_herencia_circular_indirecta.txt` — a hereda de b, b hereda de a (ciclo indirecto)
+- `test_tp_4/herencia_circular/03_herencia_circular_tres_niveles.txt` — a hereda de b, b hereda de c, c hereda de a (ciclo de tres niveles)
 
 **Reglas de testing:**
 1. Herencia de múltiples bases: una clase que extiende dos clases tiene acceso a atributos y métodos de ambas.
 2. Desambiguación con prefijo: `objeto.base1.miembro` y `objeto.base2.miembro` resuelven sin ambigüedad cuando hay mismo nombre.
 3. Herencia circular: una clase que hereda directa o indirectamente de sí misma es rechazada con error semántico.
-
-**Nota:** No existe un test dedicado exclusivamente a herencia circular; este escenario no está cubierto por un archivo de prueba específico.
 
 ---
 

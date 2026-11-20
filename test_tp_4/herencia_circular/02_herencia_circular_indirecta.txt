@@ -1,0 +1,21 @@
+{{ R31: herencia circular indirecta - a hereda de b, b hereda de a
+   Se espera error semantico: ciclo de herencia detectado }}
+prog
+class a
+begin
+    ulongint x;
+    extends b;
+end;
+class b
+begin
+    ulongint y;
+    extends a;
+end;
+a obj_a;
+b obj_b;
+begin
+    obj_a.x := 1$ul;
+    obj_b.y := 2$ul;
+    pout(obj_a.x);
+    pout(obj_b.y);
+end
