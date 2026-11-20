@@ -56,7 +56,8 @@ El repositorio incluye la carpeta `test`, con casos de prueba en archivos de tex
 
 - `test/tp1/` cubre el analizador léxico: constantes `ulongint` y `doublef` (dentro y fuera de rango, y los formatos del real), identificadores, palabras reservadas, cadenas y comentarios, tanto válidos como inválidos.
 - `test/tp2/generales/` cubre el analizador sintáctico: un programa válido y los errores sintácticos previstos, como la falta de nombre de programa, de `begin`, de `end`, de `;` o de paréntesis.
-- `test/semantica/` agrupa las verificaciones semánticas por área: `estructuras/` (`if`/`begin`/`end`, `repeat`/`while`), `asignaciones/` (asignación en expresiones, unarios, bordes de rango), `atributos_herencia/` (atributos, herencia múltiple, ámbito), `enums/` (enumeraciones), `conversion/` (conversión explícita `todf`), `parametros/` (orden de evaluación de parámetros) y `e2e/` (pruebas end-to-end).
+- `test/semantica/` agrupa las verificaciones semánticas por área: `estructuras/` (`if`/`begin`/`end`, `repeat`/`while`), `asignaciones/` (asignación en expresiones, unarios, bordes de rango), `atributos_herencia/` (atributos, herencia múltiple, ámbito), `enums/` (enumeraciones), `conversion/` (conversión explícita `todf`) y `parametros/` (orden de evaluación de parámetros).
+- `test/e2e/` contiene pruebas end-to-end con programas más extensos: `operaciones_aritmeticas.txt` (varias operaciones aritméticas con `ulongint` y `doublef`) y `formatos_doublef.txt` (asignaciones y operaciones con todos los formatos de constante `doublef`, incluidos exponentes `d+` y `d-`).
 
 Cualquier archivo de esas carpetas se puede pasar como argumento. Por ejemplo:
 

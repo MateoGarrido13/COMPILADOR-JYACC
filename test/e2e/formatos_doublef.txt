@@ -1,0 +1,42 @@
+{{ E2E: formatos de doublef y asignaciones }}
+{{ parte entera con decimal, decimal sin entera, exponente + y - }}
+prog
+doublef a, b, c, d, e, f, g, h, i, j, k, l;
+begin
+    a := 12.34;
+    c := .34;
+    d := 12.34d10;
+    e := 12.34d+10;
+    f := 12.34d-10;
+    h := .5d-1;
+    i := 1.0;
+    j := 0.1;
+    k := 1.0d-1;
+    l := 1.0d+1;
+    pout({a_12_34});
+    pout(a);
+    pout({c_punto_34});
+    pout(c);
+    pout({d_12_34d10});
+    pout(d);
+    pout({e_12_34d+10});
+    pout(e);
+    pout({f_12_34d-10});
+    pout(f);
+    pout({h_punto_5d-1});
+    pout(h);
+    pout({i_1_0});
+    pout(i);
+    pout({j_0_1});
+    pout(j);
+    pout({k_1_0d-1_es_0_1});
+    pout(k);
+    pout({l_1_0d+1_es_10});
+    pout(l);
+    c := i + j;
+    pout({suma_1_0_mas_0_1});
+    pout(c);
+    c := k * l;
+    pout({multiplicacion_1_0d-1_por_1_0d+1});
+    pout(c);
+end
