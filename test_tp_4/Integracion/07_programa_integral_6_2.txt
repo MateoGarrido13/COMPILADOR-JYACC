@@ -1,0 +1,53 @@
+{{ TP4 6.2: programa integral — control de flujo, recursion, objetos con
+   herencia multiple + COPY + acceso prefijado y pout mixto.
+   Verifica convivencia de todas las traducciones en un solo .asm. }}
+prog
+class basea
+begin
+    ulongint u;
+end;
+class baseb
+begin
+    doublef v;
+end;
+class derivada
+begin
+    extends basea, baseb;
+    ulongint w;
+end;
+
+ulongint function fact(ulongint n)
+begin
+    if (n <= 1$ul)
+        ret(1$ul);
+    else
+        ret(n * fact(n - 1$ul)[1$ul]);
+    end_if;
+end;
+
+derivada s1;
+derivada s2;
+ulongint i, total;
+
+begin
+    s1.basea.u := 4$ul;
+    s1.baseb.v := 1.25;
+    s1.w := 9$ul;
+    s2 := s1;
+    i := 1$ul;
+    total := 0$ul;
+    repeat
+    begin
+        if (i <= 4$ul)
+            total := total + i;
+        end_if;
+        i := i + 1$ul;
+    end
+    while (i <= 5$ul);
+    pout({total=});
+    pout(total);
+    pout(fact(5$ul)[1$ul]);
+    pout(s2.basea.u);
+    pout(s2.baseb.v);
+    pout(s2.w);
+end

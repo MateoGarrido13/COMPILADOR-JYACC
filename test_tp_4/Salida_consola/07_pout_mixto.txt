@@ -1,0 +1,15 @@
+{{ TP4b: todos los formatos en un mismo programa.
+   Verifica: los tres fmt_* en .DATA y un invoke por tipo con el pasaje
+   de operandos correcto (valor para numeros, offset para cadena).
+}}
+prog
+ulongint x;
+doublef z;
+begin
+    x := 4$ul;
+    z := 1.25;
+    pout({resultado});
+    pout(x);
+    pout(z);
+    pout(x + 1$ul);
+end

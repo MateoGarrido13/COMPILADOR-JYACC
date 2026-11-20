@@ -1,0 +1,24 @@
+{{ TP4e: repeat-while anidado con if interno y pout de expresion.
+   El lenguaje no tiene repeat-until (gramatica.y solo define repeat ... while). }}
+prog
+ulongint i, j, acc;
+begin
+    i := 0$ul;
+    acc := 0$ul;
+    repeat
+    begin
+        i := i + 1$ul;
+        j := 0$ul;
+        repeat
+            j := j + 1$ul;
+        while (j < i);
+        if (i >= 2$ul)
+            acc := acc + i;
+        else
+            acc := acc + 1$ul;
+        end_if;
+    end
+    while (i < 4$ul);
+    pout(acc);
+    pout(i + acc);
+end

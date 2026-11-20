@@ -1,0 +1,347 @@
+Codigo fuente:
+1: {{ r25: los atributos heredados participan en orden base primero.
+2:    padre aporta ulongint x; hija agrega doublef y. cb declara en ese mismo
+3:    orden ulongint a; doublef b. La asignacion es valida y genera
+4:    (COPY, h1:main, b1:main). Sin errores.
+5: }}
+6: prog
+7: class padre
+8: begin
+9:     ulongint x;
+10: end;
+11: class hija
+12: begin
+13:     extends padre;
+14:     doublef y;
+15: end;
+16: class cb
+17: begin
+18:     ulongint a;
+19:     doublef b;
+20: end;
+21: hija h1;
+22: cb b1;
+23: begin
+24:     h1 := b1;
+25: end
+
+Tokens detectados por el Analizador Léxico:
+[300] Identificador prog:main
+[407] Palabra reservada class
+[300] Identificador padre:main
+[403] Palabra reservada begin
+[414] Palabra reservada ulongint
+[300] Identificador x:main:padre
+[59] ;
+[404] Palabra reservada end
+[59] ;
+[407] Palabra reservada class
+[300] Identificador hija:main
+[403] Palabra reservada begin
+[413] Palabra reservada extends
+[300] Identificador padre:main:hija
+[59] ;
+[415] Palabra reservada doublef
+[300] Identificador y:main:hija
+[59] ;
+[404] Palabra reservada end
+[59] ;
+[407] Palabra reservada class
+[300] Identificador cb:main
+[403] Palabra reservada begin
+[414] Palabra reservada ulongint
+[300] Identificador a:main:cb
+[59] ;
+[415] Palabra reservada doublef
+[300] Identificador b:main:cb
+[59] ;
+[404] Palabra reservada end
+[59] ;
+[300] Identificador hija:main
+[300] Identificador h1:main
+[59] ;
+[300] Identificador cb:main
+[300] Identificador b1:main
+[59] ;
+[403] Palabra reservada begin
+[300] Identificador h1:main
+[301] Operador de asignacion :=
+[300] Identificador b1:main
+[59] ;
+[404] Palabra reservada end
+
+Línea 9: Declaracion de atributo
+Línea 10: Declaracion de clase
+Línea 13: Sentencia EXTENDS
+Línea 14: Declaracion de atributo
+Línea 15: Declaracion de clase
+Línea 18: Declaracion de atributo
+Línea 19: Declaracion de atributo
+Línea 20: Declaracion de clase
+Línea 21: Declaracion de objetos
+Línea 22: Declaracion de objetos
+Línea 24: Asignación
+Línea 25: Bloque BEGIN - END
+Línea 25: Programa
+
+
+Contenido de la tabla de simbolos:
+if -> 400
+Puntero: 1
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+else -> 401
+Puntero: 2
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+end_if -> 402
+Puntero: 3
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+begin -> 403
+Puntero: 4
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+end -> 404
+Puntero: 5
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+pout -> 405
+Puntero: 6
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+ret -> 406
+Puntero: 7
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+class -> 407
+Puntero: 8
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+function -> 408
+Puntero: 9
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+repeat -> 409
+Puntero: 10
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+while -> 410
+Puntero: 11
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+todf -> 411
+Puntero: 12
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+typedef -> 412
+Puntero: 13
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+extends -> 413
+Puntero: 14
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+ulongint -> 414
+Puntero: 15
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+doublef -> 415
+Puntero: 16
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+prog:main -> 300
+Puntero: 17
+Numero de linea: 6
+Tipo de dato: indefinido
+Uso: indefinido
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+padre:main -> 300
+Puntero: 18
+Numero de linea: 7
+Tipo de dato: padre
+Uso: clase
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+x:main:padre -> 300
+Puntero: 19
+Numero de linea: 9
+Tipo de dato: ulongint
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+hija:main -> 300
+Puntero: 20
+Numero de linea: 11
+Tipo de dato: hija
+Uso: clase
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+padre:main:hija -> 300
+Puntero: 21
+Numero de linea: 13
+Tipo de dato: indefinido
+Uso: indefinido
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+y:main:hija -> 300
+Puntero: 22
+Numero de linea: 14
+Tipo de dato: doublef
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+cb:main -> 300
+Puntero: 23
+Numero de linea: 16
+Tipo de dato: cb
+Uso: clase
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+a:main:cb -> 300
+Puntero: 24
+Numero de linea: 18
+Tipo de dato: ulongint
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+b:main:cb -> 300
+Puntero: 25
+Numero de linea: 19
+Tipo de dato: doublef
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+h1:main -> 300
+Puntero: 26
+Numero de linea: 21
+Tipo de dato: hija:main
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+h1.padre.x:main -> 300
+Puntero: 27
+Numero de linea: 21
+Tipo de dato: ulongint
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+h1.y:main -> 300
+Puntero: 28
+Numero de linea: 21
+Tipo de dato: doublef
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+b1:main -> 300
+Puntero: 29
+Numero de linea: 22
+Tipo de dato: cb:main
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+b1.a:main -> 300
+Puntero: 30
+Numero de linea: 22
+Tipo de dato: ulongint
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+b1.b:main -> 300
+Puntero: 31
+Numero de linea: 22
+Tipo de dato: doublef
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+
+Código intermedio:
+1. (PROGRAMA, --, --)
+2. (CLASE, padre, --)
+3. (FIN_CLASE, padre, --)
+4. (CLASE, hija, --)
+5. (FIN_CLASE, hija, --)
+6. (CLASE, cb, --)
+7. (FIN_CLASE, cb, --)
+8. (COPY, h1:main, b1:main)
+9. (FIN_PROGRAMA, --, --)

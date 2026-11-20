@@ -1,0 +1,718 @@
+Codigo fuente:
+1: {{ Programa valido: temas 6 8 9 13 16 17 19 23 25 28 31 33 }}
+2: prog
+3: ulongint x, y, w;
+4: doublef z;
+5: typedef pares = [2$ul, 4$ul, 6$ul];
+6: pares p1, p2;
+7: 
+8: class base
+9: begin
+10:     ulongint a;
+11:     ulongint m(ulongint pa)
+12:     begin
+13:         ret(pa);
+14:     end;
+15: end;
+16: 
+17: class hija
+18: begin
+19:     ulongint b;
+20:     extends base;
+21: end;
+22: 
+23: ulongint function foo(ulongint n, doublef d)
+24: begin
+25:     ret(n);
+26: end;
+27: 
+28: begin
+29:     x := 0$ul;
+30:     y := 4294967295$ul;
+31:     z := 1.0;
+32:     z := .6d-1;
+33:     x := y = (2$ul);
+34:     x := y = (x + y) * w = (1$ul);
+35:     if (x = (1$ul) == 1$ul)
+36:         pout({ok});
+37:     end_if;
+38:     z := todf(x);
+39:     x := foo(n=1$ul, 2.5)[1$ul, 2$ul];
+40:     p1 := 2$ul;
+41:     repeat
+42:         x := x + 1$ul;
+43:     while (x < 3$ul);
+44:     if (x > 0$ul)
+45:         pout({hola});
+46:     else
+47:         pout(x);
+48:     end_if;
+49: end
+
+Tokens detectados por el Analizador Léxico:
+[300] Identificador prog:main
+[414] Palabra reservada ulongint
+[300] Identificador x:main
+[44] ,
+[300] Identificador y:main
+[44] ,
+[300] Identificador w:main
+[59] ;
+[415] Palabra reservada doublef
+[300] Identificador z:main
+[59] ;
+[412] Palabra reservada typedef
+[300] Identificador pares:main
+[61] =
+[91] [
+[302] Constante ulongint 2$ul
+[44] ,
+[302] Constante ulongint 4$ul
+[44] ,
+[302] Constante ulongint 6$ul
+[93] ]
+[59] ;
+[300] Identificador pares:main
+[300] Identificador p1:main
+[44] ,
+[300] Identificador p2:main
+[59] ;
+[407] Palabra reservada class
+[300] Identificador base:main
+[403] Palabra reservada begin
+[414] Palabra reservada ulongint
+[300] Identificador a:main:base
+[59] ;
+[414] Palabra reservada ulongint
+[300] Identificador m:main:base
+[40] (
+[414] Palabra reservada ulongint
+[300] Identificador pa:main:base:m
+[41] )
+[403] Palabra reservada begin
+[406] Palabra reservada ret
+[40] (
+[300] Identificador pa:main:base:m
+[41] )
+[59] ;
+[404] Palabra reservada end
+[59] ;
+[404] Palabra reservada end
+[59] ;
+[407] Palabra reservada class
+[300] Identificador hija:main
+[403] Palabra reservada begin
+[414] Palabra reservada ulongint
+[300] Identificador b:main:hija
+[59] ;
+[413] Palabra reservada extends
+[300] Identificador base:main:hija
+[59] ;
+[404] Palabra reservada end
+[59] ;
+[414] Palabra reservada ulongint
+[408] Palabra reservada function
+[300] Identificador foo:main
+[40] (
+[414] Palabra reservada ulongint
+[300] Identificador n:main:foo
+[44] ,
+[415] Palabra reservada doublef
+[300] Identificador d:main:foo
+[41] )
+[403] Palabra reservada begin
+[406] Palabra reservada ret
+[40] (
+[300] Identificador n:main:foo
+[41] )
+[59] ;
+[404] Palabra reservada end
+[59] ;
+[403] Palabra reservada begin
+[300] Identificador x:main
+[301] Operador de asignacion :=
+[302] Constante ulongint 0$ul
+[59] ;
+[300] Identificador y:main
+[301] Operador de asignacion :=
+[302] Constante ulongint 4294967295$ul
+[59] ;
+[300] Identificador z:main
+[301] Operador de asignacion :=
+[302] Constante doublef 1.0
+[59] ;
+[300] Identificador z:main
+[301] Operador de asignacion :=
+[302] Constante doublef .6d-1
+[59] ;
+[300] Identificador x:main
+[301] Operador de asignacion :=
+[300] Identificador y:main
+[61] =
+[40] (
+[302] Constante ulongint 2$ul
+[41] )
+[59] ;
+[300] Identificador x:main
+[301] Operador de asignacion :=
+[300] Identificador y:main
+[61] =
+[40] (
+[300] Identificador x:main
+[43] +
+[300] Identificador y:main
+[41] )
+[42] *
+[300] Identificador w:main
+[61] =
+[40] (
+[302] Constante ulongint 1$ul
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x:main
+[61] =
+[40] (
+[302] Constante ulongint 1$ul
+[41] )
+[306] Comparador ==
+[302] Constante ulongint 1$ul
+[41] )
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {ok}
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[300] Identificador z:main
+[301] Operador de asignacion :=
+[411] Palabra reservada todf
+[40] (
+[300] Identificador x:main
+[41] )
+[59] ;
+[300] Identificador x:main
+[301] Operador de asignacion :=
+[300] Identificador foo:main
+[40] (
+[300] Identificador n:main
+[61] =
+[302] Constante ulongint 1$ul
+[44] ,
+[302] Constante doublef 2.5
+[41] )
+[91] [
+[302] Constante ulongint 1$ul
+[44] ,
+[302] Constante ulongint 2$ul
+[93] ]
+[59] ;
+[300] Identificador p1:main
+[301] Operador de asignacion :=
+[302] Constante ulongint 2$ul
+[59] ;
+[409] Palabra reservada repeat
+[300] Identificador x:main
+[301] Operador de asignacion :=
+[300] Identificador x:main
+[43] +
+[302] Constante ulongint 1$ul
+[59] ;
+[410] Palabra reservada while
+[40] (
+[300] Identificador x:main
+[60] <
+[302] Constante ulongint 3$ul
+[41] )
+[59] ;
+[400] Palabra reservada if
+[40] (
+[300] Identificador x:main
+[62] >
+[302] Constante ulongint 0$ul
+[41] )
+[405] Palabra reservada pout
+[40] (
+[303] Cadena {hola}
+[41] )
+[59] ;
+[401] Palabra reservada else
+[405] Palabra reservada pout
+[40] (
+[300] Identificador x:main
+[41] )
+[59] ;
+[402] Palabra reservada end_if
+[59] ;
+[404] Palabra reservada end
+
+Línea 3: Declaracion de variables
+Línea 4: Declaracion de variables
+Línea 5: Definicion de tipo enumerado
+Línea 6: Declaracion de objetos
+Línea 10: Declaracion de atributo
+Línea 13: Sentencia RET
+Línea 14: Declaracion de metodo
+Línea 15: Declaracion de clase
+Línea 19: Declaracion de atributo
+Línea 20: Sentencia EXTENDS
+Línea 21: Declaracion de clase
+Línea 25: Sentencia RET
+Línea 26: Declaracion de funcion
+Línea 29: Asignación
+Línea 30: Asignación
+Línea 31: Asignación
+Línea 32: Asignación
+Línea 33: Asignacion en expresion
+Línea 33: Asignación
+Línea 34: Asignacion en expresion
+Línea 34: Asignacion en expresion
+Línea 34: Asignación
+Línea 35: Asignacion en expresion
+Línea 36: Sentencia POUT
+Línea 37: Sentencia IF
+Línea 38: Conversion explicita todf
+Línea 38: Asignación
+Línea 39: Invocacion a funcion
+Línea 39: Asignación
+Línea 40: Asignación
+Línea 42: Asignación
+Línea 43: Sentencia REPEAT - WHILE
+Línea 45: Sentencia POUT
+Línea 47: Sentencia POUT
+Línea 48: Sentencia IF con ELSE
+Línea 49: Bloque BEGIN - END
+Línea 49: Programa
+
+
+Contenido de la tabla de simbolos:
+if -> 400
+Puntero: 1
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+else -> 401
+Puntero: 2
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+end_if -> 402
+Puntero: 3
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+begin -> 403
+Puntero: 4
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+end -> 404
+Puntero: 5
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+pout -> 405
+Puntero: 6
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+ret -> 406
+Puntero: 7
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+class -> 407
+Puntero: 8
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+function -> 408
+Puntero: 9
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+repeat -> 409
+Puntero: 10
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+while -> 410
+Puntero: 11
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+todf -> 411
+Puntero: 12
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+typedef -> 412
+Puntero: 13
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+extends -> 413
+Puntero: 14
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+ulongint -> 414
+Puntero: 15
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+doublef -> 415
+Puntero: 16
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+prog:main -> 300
+Puntero: 17
+Numero de linea: 2
+Tipo de dato: indefinido
+Uso: indefinido
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+x:main -> 300
+Puntero: 18
+Numero de linea: 3
+Tipo de dato: ulongint
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+y:main -> 300
+Puntero: 19
+Numero de linea: 3
+Tipo de dato: ulongint
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+w:main -> 300
+Puntero: 20
+Numero de linea: 3
+Tipo de dato: ulongint
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+z:main -> 300
+Puntero: 21
+Numero de linea: 4
+Tipo de dato: doublef
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+pares:main -> 300
+Puntero: 22
+Numero de linea: 5
+Tipo de dato: ulongint
+Uso: tipo enumerado
+Ambito: main
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+2$ul -> 302
+Puntero: 23
+Numero de linea: 5
+Tipo de dato: ulongint
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+4$ul -> 302
+Puntero: 24
+Numero de linea: 5
+Tipo de dato: ulongint
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+6$ul -> 302
+Puntero: 25
+Numero de linea: 5
+Tipo de dato: ulongint
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+p1:main -> 300
+Puntero: 26
+Numero de linea: 6
+Tipo de dato: pares:main
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+p2:main -> 300
+Puntero: 27
+Numero de linea: 6
+Tipo de dato: pares:main
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+base:main -> 300
+Puntero: 28
+Numero de linea: 8
+Tipo de dato: base
+Uso: clase
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+a:main:base -> 300
+Puntero: 29
+Numero de linea: 10
+Tipo de dato: ulongint
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+m:main:base -> 300
+Puntero: 30
+Numero de linea: 11
+Tipo de dato: ulongint
+Uso: metodo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+pa:main:base:m -> 300
+Puntero: 31
+Numero de linea: 11
+Tipo de dato: ulongint
+Uso: parametro
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+hija:main -> 300
+Puntero: 32
+Numero de linea: 17
+Tipo de dato: hija
+Uso: clase
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+b:main:hija -> 300
+Puntero: 33
+Numero de linea: 19
+Tipo de dato: ulongint
+Uso: atributo
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+base:main:hija -> 300
+Puntero: 34
+Numero de linea: 20
+Tipo de dato: indefinido
+Uso: indefinido
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+foo:main -> 300
+Puntero: 35
+Numero de linea: 23
+Tipo de dato: ulongint
+Uso: funcion
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+n:main:foo -> 300
+Puntero: 36
+Numero de linea: 23
+Tipo de dato: ulongint
+Uso: parametro
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+d:main:foo -> 300
+Puntero: 37
+Numero de linea: 23
+Tipo de dato: doublef
+Uso: parametro
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+0$ul -> 302
+Puntero: 38
+Numero de linea: 29
+Tipo de dato: ulongint
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+4294967295$ul -> 302
+Puntero: 39
+Numero de linea: 30
+Tipo de dato: ulongint
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+1.0 -> 302
+Puntero: 40
+Numero de linea: 31
+Tipo de dato: doublef
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+.6d-1 -> 302
+Puntero: 41
+Numero de linea: 32
+Tipo de dato: doublef
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+1$ul -> 302
+Puntero: 42
+Numero de linea: 34
+Tipo de dato: ulongint
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+ok -> 303
+Puntero: 43
+Numero de linea: 36
+Tipo de dato: cadena
+Uso: cadena
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+n:main -> 300
+Puntero: 44
+Numero de linea: 39
+Tipo de dato: indefinido
+Uso: indefinido
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+2.5 -> 302
+Puntero: 45
+Numero de linea: 39
+Tipo de dato: doublef
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+3$ul -> 302
+Puntero: 46
+Numero de linea: 43
+Tipo de dato: ulongint
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+hola -> 303
+Puntero: 47
+Numero de linea: 45
+Tipo de dato: cadena
+Uso: cadena
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+
+Código intermedio:
+1. (PROGRAMA, --, --)
+2. (CLASE, base, --)
+3. (METODO, m, --)
+4. (ret, pa:main:base:m, --)
+5. (FIN_METODO, m, --)
+6. (FIN_CLASE, base, --)
+7. (CLASE, hija, --)
+8. (FIN_CLASE, hija, --)
+9. (FUNCION, foo, --)
+10. (ret, n:main:foo, --)
+11. (FIN_FUNCION, foo, --)
+12. (:=, x:main, 0$ul)
+13. (:=, y:main, 4294967295$ul)
+14. (:=, z:main, 1.0)
+15. (:=, z:main, .6d-1)
+16. (:=, y:main, 2$ul)
+17. (:=, x:main, [16])
+18. (+, x:main, y:main)
+19. (:=, y:main, [18])
+20. (:=, w:main, 1$ul)
+21. (*, [19], [20])
+22. (:=, x:main, [21])
+23. (:=, x:main, 1$ul)
+24. (==, [23], 1$ul)
+25. (BF, [24], label_1)
+26. (pout, ok, --)
+27. (label_1, --, --)
+28. (todf, x:main, --)
+29. (:=, z:main, [28])
+30. (PAR, n:main:foo, 1$ul)
+31. (PAR, d:main:foo, 2.5)
+32. (CALL, foo:main, 2)
+33. (:=, x:main, [32])
+34. (:=, p1:main, 2$ul)
+35. (label_2, --, --)
+36. (+, x:main, 1$ul)
+37. (:=, x:main, [36])
+38. (<, x:main, 3$ul)
+39. (BF, [38], label_3)
+40. (BI, label_2, --)
+41. (label_3, --, --)
+42. (>, x:main, 0$ul)
+43. (BF, [42], label_4)
+44. (pout, hola, --)
+45. (BI, label_5, --)
+46. (label_4, --, --)
+47. (pout, x:main, --)
+48. (label_5, --, --)
+49. (FIN_PROGRAMA, --, --)

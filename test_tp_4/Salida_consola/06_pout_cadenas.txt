@@ -1,0 +1,10 @@
+{{ TP4b: pout de cadenas literales, con una repetida.
+   Verifica: fmt_cadena DB "%s",0 y "offset" antes del simbolo DB de la cadena.
+   La cadena repetida comparte simbolo en la TS (no se duplica en .DATA).
+}}
+prog
+begin
+    pout({hola});
+    pout({mundo});
+    pout({hola});
+end

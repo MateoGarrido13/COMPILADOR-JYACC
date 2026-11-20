@@ -1,0 +1,9 @@
+{{ TP4b: pout de constantes numericas de ambos tipos.
+   Verifica: fmt_ulongint y fmt_doublef conviven en .DATA;
+   las constantes ya estan materializadas como c_..._ul_ul / c_... DQ.
+}}
+prog
+begin
+    pout(42$ul);
+    pout(3.5);
+end

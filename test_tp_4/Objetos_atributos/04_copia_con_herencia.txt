@@ -1,0 +1,21 @@
+{{ TP4d: copia estructural con herencia. derivada extende base (ulongint x, ulongint y).
+   d2 := d1 copia ambos atributos (heredado x + propio y). }}
+prog
+class base
+begin
+    ulongint x;
+end;
+class derivada
+begin
+    extends base;
+    ulongint y;
+end;
+derivada d1;
+derivada d2;
+begin
+    d1.base.x := 100$ul;
+    d1.y := 200$ul;
+    d2 := d1;
+    pout(d2.base.x);
+    pout(d2.y);
+end

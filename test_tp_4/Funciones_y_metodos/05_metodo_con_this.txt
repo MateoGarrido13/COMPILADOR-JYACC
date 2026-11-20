@@ -1,0 +1,16 @@
+{{ TP4c: metodo con 'this' implicito. El receptor se pasa como offset en [esp],
+   por lo que los formales quedan en [ebp+12] y [ebp+16]. }}
+prog
+class calculadora
+begin
+    ulongint m(ulongint base, ulongint extra)
+    begin
+        ret(base + extra);
+    end;
+end;
+calculadora c;
+ulongint r;
+begin
+    r := c.m(10$ul, 5$ul)[1$ul, 2$ul];
+    pout(r);
+end

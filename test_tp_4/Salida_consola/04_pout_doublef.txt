@@ -1,0 +1,11 @@
+{{ TP4b: pout de variable doublef y de expresion doublef.
+   Verifica: fmt_doublef DB "%f",0, operando DQ en memoria, sin FLD/FSTP
+   en la impresion y sin fmt_ulongint en este programa.
+}}
+prog
+doublef z;
+begin
+    z := 2.5;
+    pout(z);
+    pout(z + 1.0);
+end

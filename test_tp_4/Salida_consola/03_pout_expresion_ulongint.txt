@@ -1,0 +1,12 @@
+{{ TP4b: pout del resultado de una expresion ulongint.
+   Verifica: el operando es [n] -> @auxN (DD) y se pasa por valor.
+}}
+prog
+ulongint a, b, c;
+begin
+    a := 10$ul;
+    b := 3$ul;
+    c := 2$ul;
+    pout(a + b * c);
+    pout(a - b);
+end

@@ -1,0 +1,12 @@
+{{ TP4c: orden de evaluacion [2,1] con parametros nombrados.
+   El IR emite PAR b antes que PAR a; las ranuras siguen siendo a=[esp+0], b=[esp+4]. }}
+prog
+ulongint function elegir(ulongint a, ulongint b)
+begin
+    ret(a);
+end;
+ulongint r;
+begin
+    r := elegir(b = 1$ul, a = 2$ul)[2$ul, 1$ul];
+    pout(r);
+end

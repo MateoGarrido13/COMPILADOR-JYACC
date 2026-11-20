@@ -1,0 +1,174 @@
+Codigo fuente:
+1: ulongint x;
+2: begin
+3:     x := 1$ul;
+4: end
+
+Tokens detectados por el Analizador Léxico:
+[414] Palabra reservada ulongint
+[300] Identificador x:main
+[59] ;
+[403] Palabra reservada begin
+[300] Identificador x:main
+[301] Operador de asignacion :=
+[302] Constante ulongint 1$ul
+[59] ;
+[404] Palabra reservada end
+
+Línea 1: Declaracion de variables
+Línea 3: Asignación
+Línea 4: Bloque BEGIN - END
+Línea 4: Programa
+
+Línea 4: Error: Falta de nombre de programa
+
+Contenido de la tabla de simbolos:
+if -> 400
+Puntero: 1
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+else -> 401
+Puntero: 2
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+end_if -> 402
+Puntero: 3
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+begin -> 403
+Puntero: 4
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+end -> 404
+Puntero: 5
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+pout -> 405
+Puntero: 6
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+ret -> 406
+Puntero: 7
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+class -> 407
+Puntero: 8
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+function -> 408
+Puntero: 9
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+repeat -> 409
+Puntero: 10
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+while -> 410
+Puntero: 11
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+todf -> 411
+Puntero: 12
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+typedef -> 412
+Puntero: 13
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+extends -> 413
+Puntero: 14
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+ulongint -> 414
+Puntero: 15
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+doublef -> 415
+Puntero: 16
+Numero de linea: 0
+Tipo de dato: indefinido
+Uso: reservada
+Declarado: no
+Direccion de memoria: 0
+--------------------------------
+x:main -> 300
+Puntero: 17
+Numero de linea: 1
+Tipo de dato: ulongint
+Uso: variable
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+1$ul -> 302
+Puntero: 18
+Numero de linea: 3
+Tipo de dato: ulongint
+Uso: constante
+Declarado: si
+Direccion de memoria: 0
+--------------------------------
+
+Código intermedio:
+1. (PROGRAMA, --, --)
+2. (:=, x:main, 1$ul)
+3. (FIN_PROGRAMA, --, --)

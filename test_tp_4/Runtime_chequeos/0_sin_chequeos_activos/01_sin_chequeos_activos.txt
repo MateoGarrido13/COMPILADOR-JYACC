@@ -1,0 +1,13 @@
+{{ TP4 5.0: programa simple sin chequeos runtime activos.
+   Debe generar .asm sin labels de fallo ni mensajes de error. No los activa
+   porque el fuente no contiene sumas/restas de ulongint ni productos
+   doublef, aunque los paquetes 5.b/5.e/5.f/5.h ya estan implementados.
+   Tampoco debe emitirse el salto de skip jmp fin_normal. }}
+prog
+ulongint x, y;
+begin
+    x := 10$ul;
+    y := 20$ul;
+    pout(x);
+    pout(y);
+end

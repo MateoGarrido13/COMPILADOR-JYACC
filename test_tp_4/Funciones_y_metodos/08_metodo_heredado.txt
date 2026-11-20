@@ -1,0 +1,20 @@
+{{ TP4c: metodo heredado. El IR trae el metodo resuelto (m:main:padre),
+   asi que se emite un CALL directo a mt_m_main_padre (sin vtable). }}
+prog
+class padre
+begin
+    ulongint m(ulongint pa, ulongint pb)
+    begin
+        ret(pa);
+    end;
+end;
+class hija
+begin
+    extends padre;
+end;
+hija h;
+ulongint r;
+begin
+    r := h.padre.m(2$ul, 3$ul)[1$ul, 2$ul];
+    pout(r);
+end

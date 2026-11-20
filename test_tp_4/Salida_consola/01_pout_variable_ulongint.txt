@@ -1,0 +1,12 @@
+{{ TP4b: pout de variables ulongint.
+   Verifica: fmt_ulongint DB "%u",0 en .DATA e INVOKE crt_printf con el valor
+   por valor (sin offset). No debe emitirse fmt_doublef ni fmt_cadena.
+}}
+prog
+ulongint x, y;
+begin
+    x := 7$ul;
+    y := 4294967295$ul;
+    pout(x);
+    pout(y);
+end

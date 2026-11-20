@@ -1,0 +1,9 @@
+{{ Chequeo runtime 5.e: producto doublef finito sin overflow. }}
+prog
+doublef x, y, r;
+begin
+    x := 1.5;
+    y := 2.0;
+    r := x * y;
+    pout(r);
+end
