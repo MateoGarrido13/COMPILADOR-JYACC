@@ -14,7 +14,7 @@ set -u
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD="${TP4_BUILD:-/tmp/tp4p5_0_build}"
-CASOS="$RAIZ/test_tp_4/Runtime chequeos"
+CASOS="$RAIZ/test_tp_4/Runtime_chequeos/0_sin_chequeos_activos"
 
 echo "=== Paquete 5.0 de TP4 — Infraestructura de chequeos runtime ==="
 echo "Raiz: $RAIZ"

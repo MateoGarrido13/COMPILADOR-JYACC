@@ -1,0 +1,9 @@
+{{ Chequeo runtime 5.f: resta 20 - 10 sin resultado negativo. }}
+prog
+ulongint x, y, r;
+begin
+    x := 20$ul;
+    y := 10$ul;
+    r := x - y;
+    pout(r);
+end

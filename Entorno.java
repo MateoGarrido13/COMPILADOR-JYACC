@@ -170,20 +170,12 @@ public class Entorno {
     // Precondicion: 'clave' ya viene mangled; null devuelve null sin efecto.
     // Efecto: ninguno; es una consulta. Si la clave no existe en ninguno de
     // los dos lugares, devuelve null y el llamador debe reportar el error.
+    
     public FuncionDeclarada getFuncion(String clave) {
-        if (clave == null) {
-            return null;
-        }
-        FuncionDeclarada cerrada = funciones.get(clave);
-        if (cerrada != null) {
-            return cerrada;
-        }
-        for (FuncionDeclarada enCurso : pilaFunciones) {
-            if (enCurso != null && clave.equals(enCurso.clave())) {
-                return enCurso;
-            }
-        }
+    if (clave == null) {
         return null;
+    }
+    return funciones.get(clave);
     }
 
     public EntradaTabla buscarIdentificador(String nombre, String ambito) {

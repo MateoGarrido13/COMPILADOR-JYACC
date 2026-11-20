@@ -1,0 +1,9 @@
+{{ Chequeo runtime 5.h: asignacion valida a enum ulongint.
+   El valor 2 pertenece al conjunto [1, 2, 3]. }}
+prog
+typedef dias = [1$ul, 2$ul, 3$ul];
+dias x;
+begin
+    x := 2$ul;
+    pout(x);
+end

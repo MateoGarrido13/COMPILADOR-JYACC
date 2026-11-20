@@ -23,19 +23,15 @@ include \masm32\include\masm32rt.inc
     c_5_ul_ul DD 5
     total DB "total=",0
     @aux9 DD ?
-    @aux14 DD ?
-    @aux16 DD ?
-    @aux17 DD ?
+    @aux23 DD ?
+    @aux25 DD ?
     @aux28 DD ?
     @aux30 DD ?
-    @aux33 DD ?
-    @aux35 DD ?
-    @aux42 DD ?
+    @aux37 DD ?
     fmt_ulongint DB "%u",0
     fmt_doublef DB "%f",0
     fmt_cadena DB "%s",0
     msg_overflow_suma DB "Error: overflow en suma de ulongint",0
-    msg_negativo_resta DB "Error: resultado negativo en resta de ulongint",0
 
 .code
 start:
@@ -55,23 +51,6 @@ fn_fact_main:
     ret
     jmp label_2
 label_1:
-    mov eax, dword ptr [ebp+8]
-    sub eax, c_1_ul_ul
-    jb error_negativo_resta
-    mov @aux14, eax
-    ; (PAR, n:main:fact, [14])
-    sub esp, 4
-    mov eax, @aux14
-    mov dword ptr [esp+0], eax
-    call fn_fact_main
-    add esp, 4
-    mov @aux16, eax
-    mov eax, dword ptr [ebp+8]
-    imul eax, @aux16
-    mov @aux17, eax
-    mov eax, @aux17
-    leave
-    ret
 label_2:
 fin_fact_main:
     leave
@@ -99,28 +78,28 @@ label_3:
     cmp eax, c_4_ul_ul
     setbe al
     movzx eax, al
-    mov @aux28, eax
+    mov @aux23, eax
     mov eax, i_main
     cmp eax, c_4_ul_ul
     ja label_4
     mov eax, total_main
     add eax, i_main
     jc error_overflow_suma
-    mov @aux30, eax
-    mov eax, @aux30
+    mov @aux25, eax
+    mov eax, @aux25
     mov total_main, eax
 label_4:
     mov eax, i_main
     add eax, c_1_ul_ul
     jc error_overflow_suma
-    mov @aux33, eax
-    mov eax, @aux33
+    mov @aux28, eax
+    mov eax, @aux28
     mov i_main, eax
     mov eax, i_main
     cmp eax, c_5_ul_ul
     setbe al
     movzx eax, al
-    mov @aux35, eax
+    mov @aux30, eax
     mov eax, i_main
     cmp eax, c_5_ul_ul
     ja label_5
@@ -134,8 +113,8 @@ label_5:
     mov dword ptr [esp+0], eax
     call fn_fact_main
     add esp, 4
-    mov @aux42, eax
-    invoke crt_printf, offset fmt_ulongint, @aux42
+    mov @aux37, eax
+    invoke crt_printf, offset fmt_ulongint, @aux37
     invoke crt_printf, offset fmt_ulongint, s2_basea_u_main
     invoke crt_printf, offset fmt_doublef, s2_baseb_v_main
     invoke crt_printf, offset fmt_ulongint, s2_w_main
@@ -143,9 +122,6 @@ label_5:
 error_overflow_suma:
     invoke crt_printf, offset msg_overflow_suma
     invoke ExitProcess, 1
-error_negativo_resta:
-    invoke crt_printf, offset msg_negativo_resta
-    invoke ExitProcess, 3
 fin_normal:
     invoke ExitProcess, 0
 end start

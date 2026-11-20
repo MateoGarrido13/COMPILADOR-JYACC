@@ -1,9 +1,0 @@
-{{ TP4 5.h: asignación válida a variable de tipo enumeración.
-   Debe generar la guardia contra los valores permitidos del enum. }}
-prog
-typedef dias = [1$ul, 2$ul, 3$ul];
-dias x;
-begin
-    x := 2$ul;
-    pout({ok});
-end

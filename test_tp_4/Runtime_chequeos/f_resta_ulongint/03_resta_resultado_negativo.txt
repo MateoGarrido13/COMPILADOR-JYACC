@@ -1,0 +1,10 @@
+{{ Chequeo runtime 5.f: 10 - 20 daria un resultado negativo.
+   Debe activarse jb error_negativo_resta y finalizar el programa. }}
+prog
+ulongint x, y, r;
+begin
+    x := 10$ul;
+    y := 20$ul;
+    r := x - y;
+    pout(r);
+end
