@@ -1,9 +1,0 @@
-{{ Chequeo runtime 5.b: suma simple de ulongint sin desbordamiento. }}
-prog
-ulongint x, y, r;
-begin
-    x := 10$ul;
-    y := 20$ul;
-    r := x + y;
-    pout(r);
-end

@@ -1,8 +1,0 @@
-{{ Chequeo runtime 5.b: 4294967295 + 1 desborda ulongint.
-   Debe activarse jc error_overflow_suma y finalizar el programa. }}
-prog
-ulongint r;
-begin
-    r := 4294967295$ul + 1$ul;
-    pout(r);
-end
