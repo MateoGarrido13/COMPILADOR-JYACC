@@ -1,14 +1,8 @@
-# Guía de prueba — Prompt 2 de TP4 (GeneradorAssembler esqueleto)
+# Guía de prueba — GeneradorAssembler esqueleto TP4
 
-Este documento explica cómo verificar que el **Prompt 2 de TP4** funciona correctamente.
+Este documento explica cómo verificar que el GeneradorAssembler esqueleto de TP4 funciona correctamente.
 
-> **Actualización 6.0 (con revert posterior)**: se agregó la compuerta que evita generar `.asm` con errores. El cambio de stdout a formato TP4 fue revertido por pedido del usuario: hoy se imprimen fuente numerado, tokens, estructuras, errores, tabla de símbolos y tercetos, y él eliminará ese bloque manualmente antes de entregar. Ver `docs/TP4/DECISIONES_6.0.md` y `probar_prompt6_0.sh`. Lo demás de esta guía (estructura del `.asm`) sigue vigente.
->
-> **Actualización 6.1**: el `.asm` generado se escribe con terminadores **CRLF**; no se agrega `ALIGN 8` y `DQ` se mantiene para `doublef`. Nueva verificación estática: `bash test_tp_4/probar_prompt6_1.sh`. El ensamblado/enlace con `ml.exe`/`link` sigue pendiente de Windows; ver `docs/TP4/DECISIONES_6.1.md`.
->
-> **Actualización 6.2**: suite consolidada `bash test_tp_4/probar_prompt6_2.sh` (137 fuentes TP3, chequeos b/e/f/h y programa integral). Detalle en `docs/TP4/MATRIZ_PRUEBAS_6.2.md`. Esta guía sigue describiendo el esqueleto del Prompt 2; las verificaciones nuevas se suman, no la reemplazan.
-
-## Qué debe hacer el Prompt 2
+## Qué debe hacer el GeneradorAssembler
 
 Al ejecutar el compilador sobre un archivo fuente `.txt`, debe generarse un archivo `.asm` del mismo nombre (extensión cambiada a `.asm`) con:
 
@@ -29,11 +23,11 @@ Al ejecutar el compilador sobre un archivo fuente `.txt`, debe generarse un arch
    - `start:`
    - `invoke ExitProcess, 0`
    - `end start`
-   - Traducción real de tercetos (Prompt 3): ya implementada; no queda comentario `TODO` pendiente
+   - Traducción real de tercetos: ya implementada; no queda comentario `TODO` pendiente
 
 ## Qué NO debe cambiar
 
-- La salida por consola sigue siendo la de TP3; el intento de cambiarla en 6.0 fue revertido por pedido del usuario.
+- La salida por consola sigue siendo la de TP3.
 - No se rompe ningún caso existente de TP3; los snapshots bajo `Integracion/consola_tp3/` volvieron a su contenido original.
 
 ## Cómo probar
@@ -44,13 +38,7 @@ Desde la raíz del proyecto:
 # 1. Compilar
 javac -encoding UTF-8 -d /tmp/tp4p2 *.java "acciones semanticas"/*.java otras_acciones/*.java
 
-# 2. Ejecutar el script de prueba
-bash test_tp_4/probar_prompt2.sh
-```
-
-O ejecutar manualmente:
-
-```bash
+# 2. Ejecutar manualmente
 java -cp /tmp/tp4p2 Main test/tp2/generales/00_programa_valido.txt
 cat test/tp2/generales/00_programa_valido.asm
 ```
@@ -67,7 +55,7 @@ cat test/tp2/generales/00_programa_valido.asm
 | Sección `.DATA` | Presente con símbolos |
 | Sección `.CODE` | Presente con `start:` y `end start` |
 | `invoke ExitProcess, 0` | Presente |
-| Salida por consola | TP3: fuente numerado + tokens + estructuras + errores + TS + tercetos (recorte manual antes de entregar) |
+| Salida por consola | TP3: fuente numerado + tokens + estructuras + errores + TS + tercetos |
 
 ## Casos de prueba sugeridos
 

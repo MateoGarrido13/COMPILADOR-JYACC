@@ -1,7 +1,7 @@
 {{ TP4b + nota para 4c: pout dentro del cuerpo de una funcion.
    La filmina printf-variables advierte que printf toca el stack y puede
-   cortar el RET si no hay prefijo/sufijo de preservacion. El prologue del
-   Prompt 4c resuelve eso; aqui solo se valida la emision del pout.
+   cortar el RET si no hay prefijo/sufijo de preservacion. El prologue
+   resuelve eso; aqui solo se valida la emision del pout.
 }}
 prog
 ulongint function eco(ulongint a)
