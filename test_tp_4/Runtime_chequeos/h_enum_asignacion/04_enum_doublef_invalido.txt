@@ -1,0 +1,11 @@
+{{ Chequeo runtime 5.h: asignacion invalida a enum doublef.
+   3.5 no pertenece al conjunto [1.5, 2.5]. }}
+prog
+typedef medidas = [1.5, 2.5];
+medidas m;
+doublef v;
+begin
+    v := 3.5;
+    m := v;
+    pout(m);
+end

@@ -64,7 +64,7 @@ public class Compilador {
     public void compilar(String rutaFuente) {
         reporte.setEcoEnConsola(false);
         RegistroTokens.reiniciar();
-        ControlAmbito.reiniciar(tablaSimbolos);
+        ControlAmbito.reiniciar();
 
         try {
             lexico = new AnalizadorLexico(tablaSimbolos, reporte, rutaFuente);

@@ -10,14 +10,10 @@ include \masm32\include\masm32rt.inc
     c_5_ul_ul DD 5
     c_main DD ? ; this (layout en 4d)
     @aux3 DD ?
-    @aux8 DD ?
-    @aux10 DD ?
-    @aux11 DD ?
+    @aux12 DD ?
     @aux17 DD ?
-    @aux22 DD ?
-    @aux25 DD ?
+    @aux20 DD ?
     fmt_ulongint DB "%u",0
-    msg_negativo_resta DB "Error: resultado negativo en resta de ulongint",0
 
 .code
 start:
@@ -37,23 +33,6 @@ fn_fact_main:
     ret
     jmp label_2
 label_1:
-    mov eax, dword ptr [ebp+8]
-    sub eax, c_1_ul_ul
-    jb error_negativo_resta
-    mov @aux8, eax
-    ; (PAR, n:main:fact, [8])
-    sub esp, 4
-    mov eax, @aux8
-    mov dword ptr [esp+0], eax
-    call fn_fact_main
-    add esp, 4
-    mov @aux10, eax
-    mov eax, dword ptr [ebp+8]
-    imul eax, @aux10
-    mov @aux11, eax
-    mov eax, @aux11
-    leave
-    ret
 label_2:
 fin_fact_main:
     leave
@@ -64,8 +43,8 @@ mt_escala_main_calculadora:
     ; this: dword ptr [ebp+8]
     mov eax, dword ptr [ebp+12]
     imul eax, dword ptr [ebp+12]
-    mov @aux17, eax
-    mov eax, @aux17
+    mov @aux12, eax
+    mov eax, @aux12
     leave
     ret
 fin_escala_main_calculadora:
@@ -77,8 +56,8 @@ fin_escala_main_calculadora:
     mov dword ptr [esp+0], eax
     call fn_fact_main
     add esp, 4
-    mov @aux22, eax
-    mov eax, @aux22
+    mov @aux17, eax
+    mov eax, @aux17
     mov r_main, eax
     ; (PAR, v:main:calculadora:escala, r:main)
     sub esp, 8
@@ -88,15 +67,10 @@ fin_escala_main_calculadora:
     mov dword ptr [esp+4], eax
     call mt_escala_main_calculadora
     add esp, 8
-    mov @aux25, eax
-    mov eax, @aux25
+    mov @aux20, eax
+    mov eax, @aux20
     mov m_main, eax
     invoke crt_printf, offset fmt_ulongint, r_main
     invoke crt_printf, offset fmt_ulongint, m_main
-    jmp fin_normal
-error_negativo_resta:
-    invoke crt_printf, offset msg_negativo_resta
-    invoke ExitProcess, 3
-fin_normal:
     invoke ExitProcess, 0
 end start
