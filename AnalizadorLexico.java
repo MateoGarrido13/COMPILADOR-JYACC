@@ -114,6 +114,10 @@ public class AnalizadorLexico {
                 return new AccionConstanteEntera(contexto).ejecutar();
             case 21: case 27: case 28: case 29: case 30: case 31: case 32: case 33: case 34: case 35:
                 return new AccionConstanteFloat(contexto).ejecutar();
+            case 37:
+                contexto.reporte.error(contexto.fuente.linea(),
+                        "Identificador invalido '" + contexto.lexema + "'");
+                return -1;
             default:
                 return new AccionSimbolo(contexto).ejecutar();
         }
