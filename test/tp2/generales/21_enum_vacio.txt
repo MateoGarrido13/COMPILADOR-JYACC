@@ -1,5 +1,9 @@
+{{ r23: typedef vacío; error al definir una variable de tipo no existente; imprime una cadena con valor "x" y otra con valor "ok" }}
+
 prog
 typedef color = [];
+color x;
 begin
+    pout({x});
     pout({ok});
 end
