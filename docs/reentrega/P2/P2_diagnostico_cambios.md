@@ -1,7 +1,8 @@
 # Ola 2 — diagnóstico y cambios
 
-Prompt ejecutado en esta corrida: **P2-01** (expected results del tema 17).  
-Prompts `P2-02` a `P2-07`: **pendientes**, con estado registrado al final.  
+Prompts ejecutados: **P2-01** (expected results del tema 17) y **P2-02** (expected results del tema 19).  
+Prompts `P2-03` a `P2-07`: **pendientes**, con estado registrado al final.  
+P2-01 quedó commiteado en `736089b`; P2-02 se documenta en la sección 9.  
 Fecha: 24/11/2026.
 
 Este archivo concentra la Ola 2. Acá se documentan los cambios, la razón de cada uno, la verificación y lo que queda para los prompts siguientes. La Ola 1 quedó cerrada en `docs/reentrega/P1_diagnostico_cambios.md`.
@@ -507,7 +508,7 @@ Idéntico a 2.3. Es el resultado esperado en esta corrida: P2-01 prohíbe tocar 
 | Prompt | Estado | Observación |
 |---|---|---|
 | P2-01 | **Ejecutado** | Expected results del tema 17 alineados. Sin tocar código. Ver secciones 3-5. |
-| P2-02 | Pendiente | Alinear `18_falta_orden.txt` y referenciar el caso general 18. |
+| P2-02 | **Ejecutado** | Caso general 18 agregado; filas r19 ajustadas. Sin tocar código. Ver sección 9. |
 | P2-03 | Pendiente | Regenerar `Parser.java`: valor inválido en `ID ASIG '(' expresion ')'`. |
 | P2-04 | Eliminado | Según el plan, proponía un cambio que no compilaría y era redundante. |
 | P2-05 | Pendiente | Registrar acción para `ERR_FALTA_ORDEN_EVALUACION`. |
@@ -530,4 +531,353 @@ Idéntico a 2.3. Es el resultado esperado en esta corrida: P2-01 prohíbe tocar 
 ?? test/tp1/verificacion_identificadores/verificar.sh
 ```
 
-Los cambios nuevos de esta corrida son únicamente `docs/PROMPT-0.md` y `docs/PROMPT-17.md`. El resto corresponde a la Ola 1 y se mantiene sin commitear.
+Los cambios nuevos de esa corrida fueron únicamente `docs/PROMPT-0.md` y `docs/PROMPT-17.md`. El resto correspondía a la Ola 1 y quedó commiteado posteriormente en `736089b` (`1-03 agrega tests y 2-01 actualiza documentación`), junto con este documento.
+
+---
+
+## 9. P2-02 — Expected results tema 19
+
+Fecha: 24/11/2026.  
+Prompt del plan ejecutado: `P2-02`, expected results del tema 19.  
+Estado inicial: `736089b` ya contiene la Ola 1 completa y P2-01. El árbol estaba limpio al arrancar.
+
+### 9.1 Alcance según el plan
+
+```text
+ID: P2-02
+Tema: Documentación.
+Raíz confirmada: TP02:224-236 exige [orden]; docs/PROMPT-19.md:103 y PROMPT-0.md:121-122 ya lo dicen, pero falta referencia al caso general 18.
+Archivos: docs/PROMPT-0.md, docs/PROMPT-19.md.
+Cambio permitido:
+  - Agregar/ajustar fila para 18_falta_orden.txt.
+  - Sin PAR, sin CALL, sin (:=, x, foo).
+Prohibido:
+  - Hacer opcional el corchete.
+Verificación:
+  - Revisar docs y fuentes de test.
+Aceptación:
+  - Expected results alineados con el enunciado.
+Dependencias: P0-02.
+```
+
+Límites respetados: no se tocó `gramatica.y`, ningún `.java` ni ningún test. Solo se editaron los dos documentos permitidos. El corchete sigue siendo obligatorio: el tema 20 no corresponde al grupo.
+
+### 9.2 Estado inicial de la documentación
+
+`docs/PROMPT-0.md` tenía filas para dos casos del tema 19, ambas con IR inválido como expected result:
+
+```markdown
+| `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 2; asignaciones desde `foo` | Invalido |
+| `r19/sin_orden.txt` | Falta orden en dos llamadas | 2; asignaciones desde `foo` | Invalido |
+```
+
+Faltaba una fila para `test/tp2/generales/18_falta_orden.txt`, que es el caso general usado en el diagnóstico (`diagnostico_reentrega.md:554-585`).
+
+`docs/PROMPT-19.md:103` agrupaba solo los dos casos de `verificacion_r19_param_reales`:
+
+```markdown
+| `orden_sin_corchetes.txt`, `sin_orden.txt` | Informan falta del orden obligatorio. |
+```
+
+Además, `PROMPT-19.md:29-30` afirmaba “Una llamada inválida no genera su `CALL`/`CALLMET`”, afirmación que no se cumplía para la omisión del orden: el error se informaba, pero el IR seguía emitiendo una asignación desde `foo`.
+
+### 9.3 Baseline de ejecución
+
+Se compiló el árbol actual y se ejecutaron los tres fuentes desde `/tmp/opencode/p2_02_probe/`:
+
+```text
+== 18_falta_orden.txt
+Línea 8: Error: Falta del orden de evaluacion y asignacion de parametros
+1. (PROGRAMA, --, --)
+2. (FUNCION, foo, --)
+3. (ret, n:main:foo, --)
+4. (FIN_FUNCION, foo, --)
+5. (:=, x:main, foo:main)
+6. (FIN_PROGRAMA, --, --)
+
+== orden_sin_corchetes.txt
+Línea 9: Error: Falta del orden de evaluacion y asignacion de parametros
+Línea 9: Error: Falta de operador en expresion
+Línea 9: Error: Sentencia mal formada
+Línea 10: Error: Falta del orden de evaluacion y asignacion de parametros
+Línea 10: Error: Falta de operador en expresion
+Línea 10: Error: Sentencia mal formada
+1. (PROGRAMA, --, --)
+2. (FUNCION, foo, --)
+3. (ret, n:main:foo, --)
+4. (FIN_FUNCION, foo, --)
+5. (:=, x:main, foo:main)
+6. (:=, x:main, foo:main)
+7. (FIN_PROGRAMA, --, --)
+
+== sin_orden.txt
+Línea 9: Error: Falta del orden de evaluacion y asignacion de parametros
+Línea 10: Error: Falta del orden de evaluacion y asignacion de parametros
+1. (PROGRAMA, --, --)
+2. (FUNCION, foo, --)
+3. (ret, n:main:foo, --)
+4. (FIN_FUNCION, foo, --)
+5. (:=, x:main, foo:main)
+6. (:=, x:main, foo:main)
+7. (FIN_PROGRAMA, --, --)
+```
+
+El error exigido por el enunciado se emitía en los tres casos. Lo inválido era el IR posterior: una o dos asignaciones desde `foo`, sin `PAR` y sin `CALL`.
+
+Hash del fuente general, sin cambios:
+
+```text
+38561952207f84a5c32e900f2b4ffc931a1e0b2ee78cc6733bc62d8f46caec22  test/tp2/generales/18_falta_orden.txt
+```
+
+### 9.4 Cambios en `docs/PROMPT-0.md`
+
+Se agregó una fila nueva y se ajustaron las dos existentes:
+
+```diff
++| `generales/18_falta_orden.txt` | Falta del orden de evaluacion y asignacion de parametros | 0 ejecutables; sin `PAR`, sin `CALL`, sin `(:=, x:main, foo:main)` (objetivo tras P2-05; baseline: 1) | Invalido |
+-| `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 2; asignaciones desde `foo` | Invalido |
++| `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 0 ejecutables; sin asignaciones desde `foo` (objetivo tras P2-05; baseline: 2) | Invalido |
+-| `r19/sin_orden.txt` | Falta orden en dos llamadas | 2; asignaciones desde `foo` | Invalido |
++| `r19/sin_orden.txt` | Falta orden en dos llamadas | 0 ejecutables; sin asignaciones desde `foo` (objetivo tras P2-05; baseline: 2) | Invalido |
+```
+
+**Por qué cada parte:**
+
+1. **Fila `generales/18_falta_orden.txt` nueva**  
+   Cierra la falta señalada en la raíz del prompt. El prefijo `generales/` distingue este fuente de los casos de `verificacion_r19_param_reales/`.
+
+2. **`0 ejecutables`**  
+   Aplica P0-02 al constructor inválido: la invocación sin orden no genera tercetos propios. No se confunde con los delimitadores, que permanecen.
+
+3. **`sin PAR`, `sin CALL`, `sin (:=, x:main, foo:main)`**  
+   Nombra explícitamente los tres efectos prohibidos por el prompt. En el baseline no había `PAR`/`CALL`, pero sí la asignación desde `foo`; tras P2-05 deben desaparecer los tres.
+
+4. **`(objetivo tras P2-05; baseline: 1)` / `(baseline: 2)`**  
+   Mantiene la convención introducida en P2-01: la tabla describe el estado esperado, no el código vigente. P2-05 todavía no se ejecuta.
+
+5. **Ajuste de las filas `r19`**  
+   El prompt las cita explícitamente como parte de la raíz. Dejar `2; asignaciones desde foo` habría contradicho la fila nueva y el criterio de P2-05. Se conservan sus mensajes de error originales.
+
+Se agregó una nota después de la de P2-01:
+
+```markdown
+> Nota P2-02 (24/11/2026): el tema 19 exige el orden entre corchetes. Las tres filas
+> `generales/18_falta_orden.txt`, `r19/orden_sin_corchetes.txt` y `r19/sin_orden.txt`
+> describen el estado objetivo después de P2-05: se informa
+> `Falta del orden de evaluacion y asignacion de parametros` y no se emiten `PAR`, `CALL`
+> ni asignaciones desde el nombre de la función. En el baseline esas asignaciones sí
+> aparecían (1 y 2 respectivamente). El corchete no pasa a ser opcional; el tema 20 no
+> corresponde a este grupo.
+```
+
+### 9.5 Cambios en `docs/PROMPT-19.md`
+
+#### Estado general
+
+Antes:
+
+```markdown
+Implementado. Las invocaciones de funciones y métodos validan sus argumentos y
+el orden de evaluación; las llamadas válidas generan sus copias a formales y
+conservan el tipo de retorno.
+```
+
+Después:
+
+```markdown
+Implementado para las invocaciones que incluyen el orden entre corchetes. Estas
+validan sus argumentos y el orden de evaluación; las llamadas válidas generan sus
+copias a formales y conservan el tipo de retorno. La anulación del IR cuando falta
+el orden queda registrada en P2-02 y su implementación en P2-05.
+```
+
+**Por qué:** acota el “Implementado” a las llamadas con orden válido y remite el caso pendiente a su prompt.
+
+#### Aclaración sobre `CALL`/`CALLMET`
+
+Después de “Una llamada inválida no genera su `CALL`/`CALLMET`” se agregó:
+
+```markdown
+La omisión del orden es el caso pendiente: hoy se informa el error, pero el IR todavía
+contiene `(:=, x:main, foo:main)`; el expected result documentado más abajo exige que esa
+asignación desaparezca.
+```
+
+**Por qué:** corrige una afirmación que, aplicada a este caso, era falsa. Separa el estado actual del objetivo sin cambiar código.
+
+#### Fila de verificación
+
+```diff
+-| `orden_sin_corchetes.txt`, `sin_orden.txt` | Informan falta del orden obligatorio. |
++| `18_falta_orden.txt`, `orden_sin_corchetes.txt`, `sin_orden.txt` | Informan falta del orden obligatorio; tras P2-05 no generan `PAR`, `CALL` ni `(:=, x:main, foo:main)`. |
+```
+
+#### Sección nueva
+
+Se agregó al final del documento:
+
+```markdown
+### Caso general `18_falta_orden.txt`
+
+El enunciado del tema 19 (TP02, líneas 224-236) exige la lista de orden entre
+corchetes: `ID ( <lista_parametros_reales> ) [ <lista_orden_evaluacion> ]`.
+Omitir los corchetes —o escribir `[]`— es inválido. El tema 20, que no corresponde
+al grupo, es el que vuelve opcional esa lista; acá no se adopta esa relajación.
+
+En `test/tp2/generales/18_falta_orden.txt` el error
+`Falta del orden de evaluacion y asignacion de parametros` ya se informa en la
+línea 8. El baseline, sin embargo, emite `(:=, x:main, foo:main)`, es decir, una
+asignación desde el nombre de la función. Ese IR es inválido: no hay `PAR`, no hay
+`CALL` y el resultado de la invocación no puede usarse como valor.
+
+El expected result es: error presente, cero `PAR`, cero `CALL` y cero
+`(:=, x:main, foo:main)`. Se conservan los tercetos de la declaración de `foo`,
+el `ret(n)` interno y los delimitadores `(PROGRAMA)` / `(FIN_PROGRAMA)`, según la
+política P0-02. P2-05 registrará la acción que devuelve una expresión inválida
+para `ERR_FALTA_ORDEN_EVALUACION`; P2-07 verificará este caso junto con
+`orden_sin_corchetes.txt` y `sin_orden.txt`.
+```
+
+**Por qué:** deja en un solo lugar la regla completa del tema 19, el IR esperado y el resto del programa que debe conservarse. La última frase conecta P2-02 con P2-05 y P2-07.
+
+#### Lo que no se tocó
+
+- La sección “Cambios” (`PROMPT-19.md:9-30`) sobre validación de argumentos y orden válido quedó intacta.
+- La tabla de verificación completa se conservó; solo se modificó la fila de los casos sin orden.
+- `docs/PROMPT-0.md:135` (`r28_r31/metodo_heredado_prefijado_sin_orden.txt`: `3; asignaciones desde a1`) no se editó: P2-02 apunta al caso general 18 y a los dos casos `r19`; la corrección del IR en invocaciones a métodos queda cubierta por la misma acción de P2-05 y se revisará en P2-07.
+
+### 9.6 Diff final
+
+```diff
+diff --git a/docs/PROMPT-0.md b/docs/PROMPT-0.md
+@@ -118,8 +118,10 @@ en `/tmp/opencode/tp3-baseline/<misma ruta relativa>`.
+ | `r17/sin_parentesis.txt` | Asignacion mal formada | Ninguno | Invalido |
+ | `r17/usa_asig_sin_anidamiento.txt` | Uso de `:=` donde debe usarse `=` | 0 ejecutables; sin `(:=, y:main, 1$ul)` ni `(:=, x:main, [2])` (objetivo tras P2-03; baseline: 2) | Invalido |
+ | `r19/estructura_respetada.txt` | Ninguno | 10; `PAR`/`CALL` sin copia a formales | Valido |
++| `generales/18_falta_orden.txt` | Falta del orden de evaluacion y asignacion de parametros | 0 ejecutables; sin `PAR`, sin `CALL`, sin `(:=, x:main, foo:main)` (objetivo tras P2-05; baseline: 1) | Invalido |
+-| `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 2; asignaciones desde `foo` | Invalido |
++| `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 0 ejecutables; sin asignaciones desde `foo` (objetivo tras P2-05; baseline: 2) | Invalido |
+-| `r19/sin_orden.txt` | Falta orden en dos llamadas | 2; asignaciones desde `foo` | Invalido |
++| `r19/sin_orden.txt` | Falta orden en dos llamadas | 0 ejecutables; sin asignaciones desde `foo` (objetivo tras P2-05; baseline: 2) | Invalido |
+ | `r19/futuros/orden_fuera_de_rango.txt` | Posicion fuera de rango; cantidad distinta | 8; llamadas con orden parcial | Invalido |
+
+diff --git a/docs/PROMPT-19.md b/docs/PROMPT-19.md
+@@ -3,9 +3,11 @@
+ ## Estado
+ 
+-Implementado. Las invocaciones de funciones y métodos validan sus argumentos y
+-el orden de evaluación; las llamadas válidas generan sus copias a formales y
+-conservan el tipo de retorno.
++Implementado para las invocaciones que incluyen el orden entre corchetes. Estas
++validan sus argumentos y el orden de evaluación; las llamadas válidas generan sus
++copias a formales y conservan el tipo de retorno. La anulación del IR cuando falta
++el orden queda registrada en P2-02 y su implementación en P2-05.
+@@ -29,6 +31,9 @@
+ Los errores semánticos de argumentos y orden se reportan con la línea de la
+ invocación. Una llamada inválida no genera su `CALL`/`CALLMET`.
++La omisión del orden es el caso pendiente: hoy se informa el error, pero el IR todavía
++contiene `(:=, x:main, foo:main)`; el expected result documentado más abajo exige que esa
++asignación desaparezca.
+@@ -101,7 +106,7 @@
+ | `estructura_respetada.txt` | Sin errores; produce `PAR` en el orden indicado y `CALL`. |
+ | `asignacion_en_parametros.txt` | Sin errores; conserva las asignaciones internas y cambia el orden de los `PAR`. |
+-| `orden_sin_corchetes.txt`, `sin_orden.txt` | Informan falta del orden obligatorio. |
++| `18_falta_orden.txt`, `orden_sin_corchetes.txt`, `sin_orden.txt` | Informan falta del orden obligatorio; tras P2-05 no generan `PAR`, `CALL` ni `(:=, x:main, foo:main)`. |
+ | `futuros/orden_fuera_de_rango.txt`, `futuros/orden_repetido.txt` | Informan posiciones inválidas o repetidas y no generan llamadas. |
+@@ -111,3 +116,20 @@
+ | `metodos.txt` | Valida tipos y orden de métodos, y reporta un método inexistente. |
+ | `metodo_heredado_prefijado_con_orden.txt` | Conserva la convención `CALLMET` para métodos heredados válidos. |
++
++### Caso general `18_falta_orden.txt`
++... (sección completa transcripta en 9.5)
+```
+
+Estadística real:
+
+```text
+ docs/PROMPT-0.md  | 13 +++++++++++--
+ docs/PROMPT-19.md | 34 +++++++++++++++++++++++++++++-----
+ 2 files changed, 40 insertions(+), 7 deletions(-)
+```
+
+### 9.7 Verificación
+
+#### Código y fuentes sin cambios
+
+```bash
+git diff --name-only -- '*.java' '*.y'
+```
+
+Resultado: vacío. `javac` compila sin errores. Los hashes de los tres fuentes ejecutados no cambiaron.
+
+#### Búsqueda exigida
+
+```bash
+grep -rnE "18_falta_orden|orden_sin_corchetes|sin_orden" \
+     docs/PROMPT-0.md docs/PROMPT-19.md
+```
+
+Salida:
+
+```text
+docs/PROMPT-0.md:121:| `generales/18_falta_orden.txt` | Falta del orden de evaluacion y asignacion de parametros | 0 ejecutables; sin `PAR`, sin `CALL`, sin `(:=, x:main, foo:main)` (objetivo tras P2-05; baseline: 1) | Invalido |
+docs/PROMPT-0.md:122:| `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 0 ejecutables; sin asignaciones desde `foo` (objetivo tras P2-05; baseline: 2) | Invalido |
+docs/PROMPT-0.md:123:| `r19/sin_orden.txt` | Falta orden en dos llamadas | 0 ejecutables; sin asignaciones desde `foo` (objetivo tras P2-05; baseline: 2) | Invalido |
+docs/PROMPT-0.md:135:| `r28_r31/metodo_heredado_prefijado_sin_orden.txt` | Tres faltas de orden | 3; asignaciones desde `a1` | Invalido |
+docs/PROMPT-0.md:152:> `generales/18_falta_orden.txt`, `r19/orden_sin_corchetes.txt` y `r19/sin_orden.txt`
+docs/PROMPT-19.md:107:| `18_falta_orden.txt`, `orden_sin_corchetes.txt`, `sin_orden.txt` | Informan falta del orden obligatorio; tras P2-05 no generan `PAR`, `CALL` ni `(:=, x:main, foo:main)`. |
+docs/PROMPT-19.md:117:### Caso general `18_falta_orden.txt`
+docs/PROMPT-19.md:124:En `test/tp2/generales/18_falta_orden.txt` el error
+docs/PROMPT-19.md:135:`orden_sin_corchetes.txt` y `sin_orden.txt`.
+```
+
+La línea 135 de `PROMPT-0.md` es la fila de métodos no editada, explicada en 9.5.
+
+#### Corchete no hecho opcional
+
+```bash
+grep -rnEi "orden.*(opcional|sin corchetes.*valido)|corchetes.*opcional" \
+     docs/PROMPT-0.md docs/PROMPT-19.md
+```
+
+Único resultado relevante: la nota P2-02 dice expresamente “El corchete no pasa a ser opcional; el tema 20 no corresponde a este grupo”. No hay ninguna fila que marque `Valido` una invocación sin orden.
+
+#### Ejecución posterior
+
+Los tres casos se ejecutaron otra vez con el mismo código. Salidas idénticas a 9.3: el error sigue presente y los tercetos `(:=, x:main, foo:main)` siguen apareciendo. Es lo esperado: P2-02 prohíbe cambiar Java; P2-05 verificará el estado objetivo.
+
+#### Hashes finales
+
+```text
+38561952207f84a5c32e900f2b4ffc931a1e0b2ee78cc6733bc62d8f46caec22  test/tp2/generales/18_falta_orden.txt
+6ab0ff056405a1eabf9097dbbde4a2465e57aec4df46e3a6a778db355efc2822  docs/PROMPT-0.md
+b412e99cc885211c2cfcf501515273b3e0c01dab7ea818bdae2b7e7e29345926  docs/PROMPT-19.md
+```
+
+#### Criterios de aceptación
+
+| Criterio | Cumplido | Evidencia |
+|---|---|---|
+| Fila para `18_falta_orden.txt` | sí | `PROMPT-0.md:121` y sección nueva en `PROMPT-19.md:117`. |
+| Sin `PAR`, sin `CALL`, sin `(:=, x:main, foo:main)` | sí, como expected result | tres filas y sección nueva; P2-05 pendiente en código. |
+| Corchete obligatorio | sí | nota P2-02; ningún caso sin orden marcado `Valido`. |
+| Sin gramática ni Java modificados | sí | `git diff --name-only -- '*.java' '*.y'` vacío. |
+| Expected results alineados con el enunciado | sí | mensaje + IR nulo del constructor + resto conservado. |
+
+### 9.8 Efectos colaterales analizados
+
+- **P2-05**: ya tiene tres expected results documentados contra los cuales verificar. La acción de `ERR_FALTA_ORDEN_EVALUACION` debe devolver una expresión inválida para que desaparezcan las asignaciones desde `foo`.
+- **P2-07**: deberá comprobar los tres casos juntos y además revisar la fila de métodos (`metodo_heredado_prefijado_sin_orden.txt`) que quedó con `3; asignaciones desde a1`.
+- **P2-03**: sin cambios; su expected result sigue en `PROMPT-0.md:119` y `PROMPT-17.md`.
+- **Casos válidos del tema 19** (`estructura_respetada.txt`, `asignacion_en_parametros.txt`, etc.): sin cambios en sus expected results.
+- **ASM y tests**: ningún archivo `.asm`, `.txt` o `.sh` modificado en P2-02.
+
+### 9.9 Estado de git al cierre de P2-02
+
+```text
+ M docs/PROMPT-0.md
+ M docs/PROMPT-19.md
+```
+
+Ambos archivos contienen ahora los cambios de P2-01 y P2-02. El commit anterior `736089b` incluyó la Ola 1 y P2-01. P2-02 queda sin commitear.

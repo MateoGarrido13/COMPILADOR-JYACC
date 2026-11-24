@@ -2,9 +2,10 @@
 
 ## Estado
 
-Implementado. Las invocaciones de funciones y métodos validan sus argumentos y
-el orden de evaluación; las llamadas válidas generan sus copias a formales y
-conservan el tipo de retorno.
+Implementado para las invocaciones que incluyen el orden entre corchetes. Estas
+validan sus argumentos y el orden de evaluación; las llamadas válidas generan sus
+copias a formales y conservan el tipo de retorno. La anulación del IR cuando falta
+el orden queda registrada en P2-02 y su implementación en P2-05.
 
 ## Cambios
 
@@ -27,7 +28,10 @@ conservan el tipo de retorno.
   asignación y de operadores, sin conversiones implícitas.
 
 Los errores semánticos de argumentos y orden se reportan con la línea de la
-invocación. Una llamada inválida no genera su `CALL`/`CALLMET`.
+invocación. Una llamada inválida no genera su `CALL`/`CALLMET`. La omisión del
+orden es el caso pendiente: hoy se informa el error, pero el IR todavía contiene
+`(:=, x:main, foo:main)`; el expected result documentado más abajo exige que esa
+asignación desaparezca.
 
 ## Clases editadas para completar R19
 
@@ -100,7 +104,7 @@ casos existentes de métodos heredados de
 |---|---|
 | `estructura_respetada.txt` | Sin errores; produce `PAR` en el orden indicado y `CALL`. |
 | `asignacion_en_parametros.txt` | Sin errores; conserva las asignaciones internas y cambia el orden de los `PAR`. |
-| `orden_sin_corchetes.txt`, `sin_orden.txt` | Informan falta del orden obligatorio. |
+| `18_falta_orden.txt`, `orden_sin_corchetes.txt`, `sin_orden.txt` | Informan falta del orden obligatorio; tras P2-05 no generan `PAR`, `CALL` ni `(:=, x:main, foo:main)`. |
 | `futuros/orden_fuera_de_rango.txt`, `futuros/orden_repetido.txt` | Informan posiciones inválidas o repetidas y no generan llamadas. |
 | `tipos_argumentos.txt` | Acepta tipos iguales y rechaza los incompatibles, también para parámetros nombrados. |
 | `aridad_y_formales.txt` | Detecta cantidad incorrecta, nombre inexistente y formal repetido, incluso en mezcla nombrado/posicional. |
@@ -109,3 +113,23 @@ casos existentes de métodos heredados de
 | `orden_limites.txt` | Rechaza orden incompleto y `4294967295` fuera de rango sin desbordamiento. |
 | `metodos.txt` | Valida tipos y orden de métodos, y reporta un método inexistente. |
 | `metodo_heredado_prefijado_con_orden.txt` | Conserva la convención `CALLMET` para métodos heredados válidos. |
+
+### Caso general `18_falta_orden.txt`
+
+El enunciado del tema 19 (TP02, líneas 224-236) exige la lista de orden entre
+corchetes: `ID ( <lista_parametros_reales> ) [ <lista_orden_evaluacion> ]`.
+Omitir los corchetes —o escribir `[]`— es inválido. El tema 20, que no corresponde
+al grupo, es el que vuelve opcional esa lista; acá no se adopta esa relajación.
+
+En `test/tp2/generales/18_falta_orden.txt` el error
+`Falta del orden de evaluacion y asignacion de parametros` ya se informa en la
+línea 8. El baseline, sin embargo, emite `(:=, x:main, foo:main)`, es decir, una
+asignación desde el nombre de la función. Ese IR es inválido: no hay `PAR`, no hay
+`CALL` y el resultado de la invocación no puede usarse como valor.
+
+El expected result es: error presente, cero `PAR`, cero `CALL` y cero
+`(:=, x:main, foo:main)`. Se conservan los tercetos de la declaración de `foo`,
+el `ret(n)` interno y los delimitadores `(PROGRAMA)` / `(FIN_PROGRAMA)`, según la
+política P0-02. P2-05 registrará la acción que devuelve una expresión inválida
+para `ERR_FALTA_ORDEN_EVALUACION`; P2-07 verificará este caso junto con
+`orden_sin_corchetes.txt` y `sin_orden.txt`.
