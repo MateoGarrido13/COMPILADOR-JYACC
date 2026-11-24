@@ -459,6 +459,13 @@ public class GeneradorAssembler {
     private void emitirCodigo() {
         salida.append(".code\n");
         salida.append("start:\n");
+        salida.append("    jmp main_inicio\n");
+
+        // El IR conserva las subrutinas antes del codigo ejecutivo del main.
+        // El salto inicial las salta; main_inicio se abre en el primer terceto
+        // ejecutivo que no pertenezca a una funcion o metodo.
+        boolean dentroSubrutina = false;
+        boolean mainInicioEmitido = false;
 
         for (int i = 0; i < tercetos.size(); i++) {
             Terceto t = tercetos.get(i);
@@ -470,6 +477,15 @@ public class GeneradorAssembler {
             ResultadoTerceto r = resultados.get(numero);
             boolean produceValor = r != null && r.produceValor();
             String tipo = r != null ? r.getTipo() : Tipos.INDEFINIDO;
+
+            if (!dentroSubrutina && !mainInicioEmitido
+                    && !"PROGRAMA".equals(op) && !"FIN_PROGRAMA".equals(op)
+                    && !"CLASE".equals(op) && !"FIN_CLASE".equals(op)
+                    && !"FUNCION".equals(op) && !"METODO".equals(op)
+                    && !"FIN_FUNCION".equals(op) && !"FIN_METODO".equals(op)) {
+                salida.append("main_inicio:\n");
+                mainInicioEmitido = true;
+            }
 
             switch (op) {
                 case "PROGRAMA":
@@ -513,10 +529,12 @@ public class GeneradorAssembler {
                     break;
                 case "FUNCION":
                 case "METODO":
+                    dentroSubrutina = true;
                     emitirPrologo(numero, op, op1);
                     break;
                 case "FIN_FUNCION":
                 case "FIN_METODO":
+                    dentroSubrutina = false;
                     emitirFinFuncion(numero);
                     break;
                 case "ret":
@@ -550,6 +568,12 @@ public class GeneradorAssembler {
                     }
                     break;
             }
+        }
+
+        // Fuente sin codigo ejecutivo en main (por ejemplo, solo clases y
+        // metodos): el salto inicial necesita un destino valido.
+        if (!mainInicioEmitido) {
+            salida.append("main_inicio:\n");
         }
 
         // Labels de fallo runtime (Prompt 5.0), solo los que son necesarios.
