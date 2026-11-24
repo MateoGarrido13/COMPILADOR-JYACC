@@ -100,51 +100,60 @@ int i;
 
 
 //########## SEMANTIC VALUES ##########
-//## **user defined:ParserVal
+//public class ParserVal is defined in ParserVal.java
+
+
 String   yytext;//user variable to return contextual strings
 ParserVal yyval; //used to return semantic vals from action routines
 ParserVal yylval;//the 'lval' (result) I got from yylex()
-ParserVal valstk[] = new ParserVal[YYSTACKSIZE];
+ParserVal valstk[];
 int valptr;
 //###############################################################
 // methods: value stack push,pop,drop,peek.
 //###############################################################
-final void val_init()
+void val_init()
 {
+  valstk=new ParserVal[YYSTACKSIZE];
   yyval=new ParserVal();
   yylval=new ParserVal();
   valptr=-1;
 }
-final void val_push(ParserVal val)
+void val_push(ParserVal val)
 {
-  try {
-    valptr++;
-    valstk[valptr]=val;
-  }
-  catch (ArrayIndexOutOfBoundsException e) {
-    int oldsize = valstk.length;
-    int newsize = oldsize*2;
-    ParserVal[] newstack = new ParserVal[newsize];
-    System.arraycopy(valstk,0,newstack,0,oldsize);
-    valstk = newstack;
-    valstk[valptr]=val;
-  }
+  if (valptr>=YYSTACKSIZE)
+    return;
+  valstk[++valptr]=val;
 }
-final ParserVal val_pop()
+ParserVal val_pop()
 {
+  if (valptr<0)
+    return new ParserVal();
   return valstk[valptr--];
 }
-final void val_drop(int cnt)
+void val_drop(int cnt)
 {
-  valptr -= cnt;
+int ptr;
+  ptr=valptr-cnt;
+  if (ptr<0)
+    return;
+  valptr = ptr;
 }
-final ParserVal val_peek(int relative)
+ParserVal val_peek(int relative)
 {
-  return valstk[valptr-relative];
+int ptr;
+  ptr=valptr-relative;
+  if (ptr<0)
+    return new ParserVal();
+  return valstk[ptr];
 }
 final ParserVal dup_yyval(ParserVal val)
 {
-  return val;
+  ParserVal dup = new ParserVal();
+  dup.ival = val.ival;
+  dup.dval = val.dval;
+  dup.sval = val.sval;
+  dup.obj = val.obj;
+  return dup;
 }
 //#### end semantic value section ####
 public final static short ID=300;
@@ -1328,7 +1337,7 @@ break;
 case 138:
 //#line 507 "gramatica.y"
 { acciones.ejecutar(Reglas.ERR_ASIG_DONDE_IGUAL);
-          yyval = new ParserVal(acciones.ejecutar(Reglas.ASIGNACION_EN_EXPRESION, val_peek(4).obj, val_peek(1).obj)); }
+          yyval = new ParserVal(new ExpresionDiferida().marcarInvalida()); }
 break;
 case 139:
 //#line 513 "gramatica.y"
