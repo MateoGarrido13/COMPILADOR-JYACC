@@ -303,13 +303,10 @@ public class AccionesExpresiones {
                 }
                 return ExpresionDiferida.deOperando(resultado, Tipos.INDEFINIDO).marcarInvalida();
             }
-            if (resultado instanceof ExpresionDiferida) {
-                return ((ExpresionDiferida) resultado).conTipo(Tipos.INDEFINIDO);
-            }
-            if (resultado instanceof EntradaTabla) {
-                return ExpresionDiferida.deOperando(resultado, Tipos.INDEFINIDO);
-            }
-            return resultado;
+            // Invocacion de funcion sin orden: el ID recuperado por la produccion
+            // de error no es un valor utilizable. Devuelve una expresion invalida
+            // para que la asignacion no emita (:=, x:main, foo:main).
+            return new ExpresionDiferida().marcarInvalida();
         });
 
         tabla.registrar(Reglas.INVOCACION_METODO, ctx -> {
