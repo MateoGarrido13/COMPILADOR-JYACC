@@ -33,6 +33,12 @@ public class ExpresionDiferida {
         if (operando instanceof ExpresionDiferida && !((ExpresionDiferida) operando).esValida()) {
             expresion.valida = false;
         }
+        // Una invocacion puede estar marcada invalida por resolucion de firma,
+        // aridad, orden o tipos. Al envolverla, la envoltura debe heredar esa
+        // marca para que ASIGNACION no trate el resultado como un valor valido.
+        if (operando instanceof LlamadaFuncion && !((LlamadaFuncion) operando).esValida()) {
+            expresion.valida = false;
+        }
         return expresion;
     }
 

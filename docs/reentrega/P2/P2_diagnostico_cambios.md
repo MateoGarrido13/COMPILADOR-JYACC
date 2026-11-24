@@ -1,8 +1,8 @@
 # Ola 2 — diagnóstico y cambios
 
-Prompts ejecutados: **P2-01** (expected results del tema 17), **P2-02** (expected results del tema 19), **P2-03** (`:=` en expresión) y **P2-05** (falta de orden).  
-Prompts `P2-06` y `P2-07`: **pendientes**, con estado registrado al final.  
-P2-01 quedó commiteado en `736089b`, P2-02 en `5afeb88` y P2-03 en `744ca55`; P2-03 se documenta en `P2-03_diagnostico_cambios.md` y P2-05 en `P2-05_diagnostico_cambios.md`.  
+Prompts ejecutados: **P2-01** (expected results del tema 17), **P2-02** (expected results del tema 19), **P2-03** (`:=` en expresión), **P2-05** (falta de orden) y **P2-06** (propagación de invalidez).  
+Prompt `P2-07`: **pendiente**, con estado registrado al final.  
+P2-01 quedó commiteado en `736089b`, P2-02 en `5afeb88`, P2-03 en `744ca55` y P2-05 en `646d872`; P2-03 se documenta en `P2-03_diagnostico_cambios.md`, P2-05 en `P2-05_diagnostico_cambios.md` y P2-06 en `P2-06_diagnostico_cambios.md`.  
 Fecha: 24/11/2026.
 
 Este archivo concentra la Ola 2. Acá se documentan los cambios, la razón de cada uno, la verificación y lo que queda para los prompts siguientes. La Ola 1 quedó cerrada en `docs/reentrega/P1_diagnostico_cambios.md`.
@@ -511,8 +511,8 @@ Idéntico a 2.3. Es el resultado esperado en esta corrida: P2-01 prohíbe tocar 
 | P2-02 | **Ejecutado** | Caso general 18 agregado; filas r19 ajustadas. Sin tocar código. Ver sección 9. |
 | P2-03 | **Ejecutado y commiteado (`744ca55`)** | `gramatica.y` + `Parser.java` regenerado; cero `:=` del constructor. Detalle en `P2-03_diagnostico_cambios.md`. |
 | P2-04 | Eliminado | Según el plan, proponía un cambio que no compilaría y era redundante. |
-| P2-05 | **Ejecutado** | Acción de `ERR_FALTA_ORDEN_EVALUACION` devuelve expresión inválida; cero asignaciones desde `foo`. Detalle en `P2-05_diagnostico_cambios.md`. |
-| P2-06 | Pendiente | Propagar invalidez de `LlamadaFuncion` al envolverla. |
+| P2-05 | **Ejecutado y commiteado (`646d872`)** | Acción de `ERR_FALTA_ORDEN_EVALUACION` devuelve expresión inválida; cero asignaciones desde `foo`. Detalle en `P2-05_diagnostico_cambios.md`. |
+| P2-06 | **Ejecutado** | `deOperando()` propaga invalidez de `LlamadaFuncion`; IR sin cambios, estado semántico alineado. Detalle en `P2-06_diagnostico_cambios.md`. |
 | P2-07 | Pendiente | Regresión TP02. |
 
 ---
