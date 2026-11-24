@@ -2,7 +2,7 @@
 
 ## Estado
 
-**Ejecutado.** La asignación dentro de expresiones (`ID = (expr)`) ya está implementada y funciona correctamente.
+**Ejecutado para el operador válido `=`.** La asignación dentro de expresiones (`ID = (expr)`) ya está implementada y funciona correctamente. El uso indebido de `:=` en ese constructor se documenta como inválido más abajo; la corrección del IR queda registrada en P2-01 y su implementación en P2-03.
 
 ## Qué implementa
 
@@ -31,7 +31,7 @@
 
 ## Verificación con tests existentes
 
-Todos los tests de `test/tp2/verificacion_r17_asig_expresiones/` se ejecutaron y se comportan según lo esperado:
+Los tests de `test/tp2/verificacion_r17_asig_expresiones/` se ejecutaron. La tabla describe el estado esperado después de P2-03; `usa_asig_sin_anidamiento.txt` aún no llega a ese estado con el código vigente, como se detalla más abajo:
 
 | Test | Resultado esperado | Estado |
 |------|-------------------|--------|
@@ -42,10 +42,25 @@ Todos los tests de `test/tp2/verificacion_r17_asig_expresiones/` se ejecutaron y
 | `asignacion_en_parametro_valida.txt` | `y = (f(z = (1$ul))[1$ul])`: asignación en parámetro no es anidamiento | ✅ Pasa (sin errores) |
 | `tipo_incompatible.txt` | Tipo incompatible en la asignación interna | ✅ Pasa (error reportado) |
 | `destino_no_asignable.txt` | Destino no asignable (función) | ✅ Pasa (error reportado, sin tercetos) |
-| `usa_asig_sin_anidamiento.txt` | Sin anidamiento, pero `:=` donde debe usarse `=` | ✅ Pasa (`Uso de ':=' donde debe usarse '='`) |
+| `usa_asig_sin_anidamiento.txt` | Error `Uso de ':=' donde debe usarse '='` y **cero tercetos `:=`** del constructor | Invalido; error detectado, IR pendiente de P2-03 |
 | `igual_como_asignacion_sentencia.txt` | Error sintáctico (usa `=` donde va `:=`) | ✅ Pasa |
 | `parentesis_anidados.txt` | Error sintáctico | ✅ Pasa |
 | `sin_parentesis.txt` | Error sintáctico | ✅ Pasa |
+
+### Estado inválido de `:=` en expresión
+
+`x := y := (1$ul)` es inválido según el tema 17 del enunciado. El mensaje correcto es
+`Línea N: Error: Uso de ':=' donde debe usarse '='`. La construcción **no debe** generar
+`(:=, y:main, 1$ul)` ni `(:=, x:main, [2])`: el constructor escrito con `:=` se anula por
+completo y solo se conserva el IR de las sentencias válidas vecinas. En este fuente no hay
+sentencias ejecutables vecinas: después de P2-03 quedan los delimitadores
+`(PROGRAMA, --, --)` y `(FIN_PROGRAMA, --, --)`.
+
+Antes de P2-01, este documento marcaba el caso como “✅ Pasa” por el mensaje aislado y
+`PROMPT-0.md` esperaba 1 terceto. Esa lectura era engañosa: el error se informaba, pero el
+IR posterior seguía construyendo dos asignaciones reales. Con P2-01 ambos documentos
+describen el estado objetivo; P2-03 ajustará el código sin tocar la alternativa válida
+con `=`.
 
 ## Criterios de aceptación cumplidos
 

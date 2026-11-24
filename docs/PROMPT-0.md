@@ -116,7 +116,7 @@ en `/tmp/opencode/tp3-baseline/<misma ruta relativa>`.
 | `r17/igual_como_asignacion_sentencia.txt` | Sentencia mal formada | Ninguno | Invalido |
 | `r17/parentesis_anidados.txt` | Asignacion mal formada | Ninguno | Invalido |
 | `r17/sin_parentesis.txt` | Asignacion mal formada | Ninguno | Invalido |
-| `r17/usa_asig_sin_anidamiento.txt` | Uso de `:=` donde va `=` | 1 | Invalido |
+| `r17/usa_asig_sin_anidamiento.txt` | Uso de `:=` donde debe usarse `=` | 0 ejecutables; sin `(:=, y:main, 1$ul)` ni `(:=, x:main, [2])` (objetivo tras P2-03; baseline: 2) | Invalido |
 | `r19/estructura_respetada.txt` | Ninguno | 10; `PAR`/`CALL` sin copia a formales | Valido |
 | `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 2; asignaciones desde `foo` | Invalido |
 | `r19/sin_orden.txt` | Falta orden en dos llamadas | 2; asignaciones desde `foo` | Invalido |
@@ -138,6 +138,14 @@ en `/tmp/opencode/tp3-baseline/<misma ruta relativa>`.
 | `r33/en_condicion_if.txt` | Ninguno | 5; `todf` no genera conversion | Valido |
 | `r33/falta_paren_cierre.txt` | Asignacion mal formada | 1 | Invalido |
 | `r33/lado_izquierdo.txt` | Sentencia mal formada (dos veces) | 1 | Invalido |
+
+> Nota P2-01 (24/11/2026): la fila de `r17/usa_asig_sin_anidamiento.txt` describe el estado
+> objetivo después de P2-03. El fuente es el mismo que
+> `test/tp2/generales/17_asig_donde_igual.txt`; en el baseline se emitían
+> `(:=, y:main, 1$ul)` y `(:=, x:main, [2])`. Ese IR es inválido: el tema 17 exige `=` y el
+> constructor escrito con `:=` debe anularse por completo. El mensaje
+> `Uso de ':=' donde debe usarse '='` ya se emitía en el baseline. Hasta aplicar P2-03,
+> el código sigue emitiendo esos dos tercetos.
 
 ## Hallazgos que justifican las fases siguientes
 

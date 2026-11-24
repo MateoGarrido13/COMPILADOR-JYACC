@@ -1,8 +1,7 @@
 # Ola 1 — diagnóstico y cambios
 
-Prompts ejecutados: **P1-01** (estado dedicado “ID inválido”, 23/11/2026) y **P1-02** (mensaje del error léxico residual, 24/11/2026).  
-Prompt `P1-03`: **pendiente**.  
-P1-01 quedó commiteado como `d7de3bf`; P1-02 se documenta en la sección 8.  
+Prompts ejecutados: **P1-01** (estado dedicado “ID inválido”, 23/11/2026), **P1-02** (mensaje del error léxico residual, 24/11/2026) y **P1-03** (regresión TP01, 24/11/2026).  
+Ola 1 cerrada. P1-01 quedó commiteado como `d7de3bf`; P1-02 en la sección 8; P1-03 en la sección 9.  
 Fechas: 23/11/2026 y 24/11/2026.
 
 Este archivo concentra toda la Ola 1. Acá se documentan los cambios efectuados, la razón de cada uno, la verificación y lo que queda para los prompts siguientes.
@@ -311,7 +310,7 @@ Los hashes de los dos `.asm` TP04 siguen siendo `f8bdc552…` y `aac7910f…`. N
 |---|---|---|
 | P1-01 | **Ejecutado y commiteado** | Estado 19 + acción 37 + celda `[16][20]`. Verificado. Commit `d7de3bf`. |
 | P1-02 | **Ejecutado** | `errorLexico()` usa `contexto.caracter` cuando el lexema está vacío. Ver sección 8. |
-| P1-03 | Pendiente | Faltan casos de regresión en `test/tp1/verificacion_identificadores/` con aserciones sobre ausencia de ID fragmentado. |
+| P1-03 | **Ejecutado** | 5 casos nuevos + `verificar.sh` en `test/tp1/verificacion_identificadores/`. Ver sección 9. |
 
 ---
 
@@ -580,7 +579,7 @@ Idénticos a los hashes registrados en la corrida P0. P1-02 no llega al generado
 |---|---|---|
 | P1-01 | Ejecutado y commiteado (`d7de3bf`) | Estado 19 + acción 37 + celda `[16][20]`. |
 | P1-02 | **Ejecutado** | `errorLexico()` con fallback a `contexto.caracter`. Suite 294/294 sin diffs de IR. |
-| P1-03 | Pendiente | Agregar casos y aserciones en `test/tp1/verificacion_identificadores/`; debe cubrir ID fragmentado y también carácter suelto. |
+| P1-03 | **Ejecutado** | Cubre ID a izquierda, derecha, en declaración, dentro de cadena y carácter suelto. Ver sección 9. |
 
 ### 8.8 Estado de git al cierre de P1-02
 
@@ -589,4 +588,296 @@ Idénticos a los hashes registrados en la corrida P0. P1-02 no llega al generado
  M docs/reentrega/P1_diagnostico_cambios.md
 ```
 
-`MatrizTransiciones.java` ya no aparece como modificado porque P1-01 fue commiteado. El único diff de código pendiente es el de `errorLexico()`. No se agregaron ni borraron archivos de test.
+`MatrizTransiciones.java` ya no aparece como modificado porque P1-01 fue commiteado. El único diff de código pendiente es el de `errorLexico()`. No se agregaron ni borraron archivos de test al cierre de P1-02.
+
+---
+
+## 9. P1-03 — regresión TP01
+
+Fecha: 24/11/2026.  
+Prompt del plan ejecutado: `P1-03`, “Pruebas”.  
+Estado inicial: P1-01 commiteado en `d7de3bf`; P1-02 pendiente de commit en el árbol de trabajo.
+
+### 9.1 Alcance según el plan
+
+```text
+Raíz confirmada: Los casos actuales no verifican ausencia de ID fragmentado.
+Archivos: test/tp1/verificacion_identificadores/.
+Cambio permitido:
+  - Agregar casos: ID inválido a la izquierda, a la derecha, en declaración.
+  - Agregar caso `{id#malo}` para conservar cadenas de una línea.
+  - Verificar: error único, sin ID fragmentado, sin asignación derivada.
+Prohibido:
+  - Borrar caracter_invalido.txt.
+Verificación:
+  - java -cp ... Main <cada caso>
+Aceptación:
+  - `(:=, x:main, id:main)` no aparece.
+  - `{id#malo}` sigue emitiendo `(pout, id#malo, --)`.
+```
+
+Se agregaron los cuatro casos exigidos más uno adicional para fijar P1-02 (carácter suelto), coherente con lo registrado en la sección 8.7. No se borró ni se editó `caracter_invalido.txt`, `alfanumericos.txt` ni `longitud.txt`.
+
+### 9.2 Estado previo de la carpeta
+
+```text
+test/tp1/verificacion_identificadores/
+  alfanumericos.txt
+  caracter_invalido.txt
+  longitud.txt
+```
+
+No había runner ni archivos de expected results. El único caso con carácter inválido (`caracter_invalido.txt`) coloca los IDs rotos a la **izquierda** del `:=`; por eso no exponía el fallo de la asignación reconocida con la primera mitad. La explicación pedida sobre el compilador pre-P1-01 quedó registrada en la conversación y se resume en 9.7.
+
+### 9.3 Archivos creados
+
+Seis archivos nuevos, todos dentro de la carpeta permitida:
+
+| Archivo | Propósito |
+|---|---|
+| `id_invalido_derecha.txt` | Caso crítico del profesor: `x := id#malo + 1$ul;`. |
+| `id_invalido_izquierda.txt` | `id#malo := 1$ul;` seguido de `x := 2$ul;`. |
+| `id_invalido_declaracion.txt` | Declaración inválida separada de `x`, para no perder la declaración válida. |
+| `id_invalido_en_cadena.txt` | `{id#malo}` debe seguir siendo cadena de una línea. |
+| `caracter_invalido_suelto.txt` | `@` sin ID en curso: fija el mensaje de P1-02. |
+| `verificar.sh` | Runner con aserciones sobre mensajes e IR. |
+
+#### `id_invalido_derecha.txt`
+
+```text
+{{ TP1: caracter invalido que divide un ID a la derecha de ':=' }}
+prog
+ulongint x, id, malo;
+begin
+    x := id#malo + 1$ul;
+end
+```
+
+`id` y `malo` se declaran para que el caso pre-P1-01 emitiera `(:=, x:main, id:main)`. Sin esas declaraciones, el error de ámbito ocultaba el terceto y el test no detectaba la regresión. Se verificó experimentalmente.
+
+#### `id_invalido_izquierda.txt`
+
+```text
+{{ TP1: caracter invalido que divide un ID a la izquierda de ':=' }}
+prog
+ulongint x, id, malo;
+begin
+    id#malo := 1$ul;
+    x := 2$ul;
+end
+```
+
+La segunda sentencia comprueba P0-02: el constructor inválido se anula, pero el resto del programa se entrega.
+
+#### `id_invalido_declaracion.txt`
+
+```text
+{{ TP1: caracter invalido que divide un ID en una declaracion }}
+prog
+ulongint x;
+ulongint id#malo;
+begin
+    x := 1$ul;
+end
+```
+
+La declaración de `x` se pone en su propia sentencia a propósito. Ver 9.7: si `x` compartiera lista con el ID inválido, P1-01/P1-02 pierden su declaración.
+
+#### `id_invalido_en_cadena.txt`
+
+```text
+{{ TP1: la secuencia id#malo es texto valido dentro de una cadena }}
+prog
+begin
+    pout({id#malo});
+end
+```
+
+#### `caracter_invalido_suelto.txt`
+
+```text
+{{ TP1: caracter invalido suelto, sin identificador en curso }}
+prog
+ulongint x;
+begin
+    x := @1$ul;
+end
+```
+
+### 9.4 `verificar.sh`
+
+`chmod +x` aplicado. Compila el proyecto solo si `TP3_BUILD` no está definido o si no existe `$BUILD/Main.class`; así se pueden pasar builds de control sin que el script los sobrescriba. Copia cada caso a un `mktemp -d` antes de ejecutar `Main`, para no escribir `.asm` dentro del repo.
+
+Funciones centrales:
+
+```bash
+contar() {
+    printf '%s\n' "$1" | grep -F -c -- "$2" || true
+}
+
+verificar() {
+    local caso="$1" descripcion="$2" salida="$3" patron="$4" esperado="$5"
+    local cantidad
+    cantidad="$(contar "$salida" "$patron")"
+    if [[ "$cantidad" -ne "$esperado" ]]; then
+        echo "FALLA $caso"
+        echo "  $descripcion: esperado $esperado, obtenido $cantidad"
+        echo "  patron: $patron"
+        fallos=$((fallos + 1))
+    fi
+}
+
+ejecutar() {
+    local nombre="$1"
+    cp "$DIR/$nombre" "$TMP/$nombre"
+    java -cp "$BUILD" Main "$TMP/$nombre" 2>&1
+}
+```
+
+`grep -F` evita que `(:=,`, `'$ul'` o `'id#malo'` se interpreten como regex.
+
+Aserciones por caso:
+
+| Caso | Patrón | Esperado |
+|---|---|---|
+| derecha | `Identificador invalido 'id#malo'` | 1 |
+| derecha | `Lexema no reconocido ''` | 0 |
+| derecha | `(:=, x:main, id:main)` | 0 |
+| derecha | `(:=, x:main, malo:main)` | 0 |
+| derecha | `(:=,` | 0 |
+| izquierda | `Identificador invalido 'id#malo'` | 1 |
+| izquierda | `Lexema no reconocido ''` | 0 |
+| izquierda | `(:=, x:main, 2$ul)` | 1 |
+| izquierda | `(:=, id:main, 1$ul)` | 0 |
+| izquierda | `(:=, malo:main, 1$ul)` | 0 |
+| declaración | `Identificador invalido 'id#malo'` | 1 |
+| declaración | `Lexema no reconocido ''` | 0 |
+| declaración | `(:=, x:main, 1$ul)` | 1 |
+| declaración | `(:=, id:main, 1$ul)` | 0 |
+| declaración | `Error de ambito 'x' no es alcanzable` | 0 |
+| cadena | `Error:` | 0 |
+| cadena | `Identificador invalido` | 0 |
+| cadena | `(pout, id#malo, --)` | 1 |
+| suelto | `Lexema no reconocido '@'` | 1 |
+| suelto | `Lexema no reconocido ''` | 0 |
+
+Total: 20 aserciones, 5 casos.
+
+### 9.5 Incidencias de la corrida
+
+1. **`RAIZ` mal calculada.** Primera versión del script usaba `"$DIR/../.."`, copiado de `test/TP3_SEMANTICAS/ejecutar.sh`. Esta carpeta está un nivel más profunda, así que `javac` buscó `test/*.java`. Corrección: `"$DIR/../../.."`.
+
+2. **Control negativo contaminado.** Con `TP3_BUILD` apuntando al build pre-P1-01, el script igual recompilaba los fuentes actuales sobre ese directorio y el control daba `0 fallos`. Corrección: compilar solo si no hay `$BUILD/Main.class`. El build pre-P1-01 se reconstruyó con `git archive HEAD~1`.
+
+### 9.6 Verificación
+
+Comandos:
+
+```bash
+chmod +x test/tp1/verificacion_identificadores/verificar.sh
+
+TP3_BUILD=/tmp/opencode/tp3build_p1_03 \
+  test/tp1/verificacion_identificadores/verificar.sh
+
+TP3_BUILD=/tmp/opencode/p1_02_refs/build_p1_01 \
+  test/tp1/verificacion_identificadores/verificar.sh
+
+TP3_BUILD=/tmp/opencode/p1_02_refs/build_pre_p1 \
+  test/tp1/verificacion_identificadores/verificar.sh
+```
+
+Resultados:
+
+| Build | Casos | Fallos | Detalle |
+|---|---|---|---|
+| Actual (P1-01 + P1-02) | 5 | **0** | Todas las aserciones pasan. |
+| Solo P1-01, sin P1-02 | 5 | 2 | Fallan las dos aserciones de `caracter_invalido_suelto.txt`: `''` en vez de `'@'`. |
+| Pre-P1-01 (`HEAD~1`) | 5 | **10** | Falla derecha (4), izquierda (2), declaración (2), suelto (2). Cadena pasa, como corresponde. |
+
+Detalle del control pre-P1-01:
+
+```text
+FALLA id_invalido_derecha.txt
+  un error lexico sobre el ID completo: esperado 1, obtenido 0
+  sin mensaje con lexema vacio: esperado 0, obtenido 1
+  sin asignacion desde la primera mitad: esperado 0, obtenido 1
+  sin tercetos de asignacion: esperado 0, obtenido 1
+
+FALLA id_invalido_izquierda.txt
+  un error lexico sobre el ID completo: esperado 1, obtenido 0
+  sin mensaje con lexema vacio: esperado 0, obtenido 1
+
+FALLA id_invalido_declaracion.txt
+  un error lexico sobre el ID completo: esperado 1, obtenido 0
+  sin mensaje con lexema vacio: esperado 0, obtenido 1
+
+FALLA caracter_invalido_suelto.txt
+  caracter informado en el mensaje: esperado 1, obtenido 0
+  sin mensaje con lexema vacio: esperado 0, obtenido 1
+```
+
+Esto confirma que los tests no son vacuos: detectan exactamente los tres defectos corregidos.
+
+Suite semántica general:
+
+```bash
+test/TP3_SEMANTICAS/ejecutar.sh
+```
+
+Resultado: `0/47 casos OK`, todos por `falta la linea '--- ESPERADO ---'`. Es un fallo preexistente del contrato entre ese runner y esos archivos, no una regresión de P1-03: este prompt solo agregó archivos en `test/tp1/verificacion_identificadores/` y no tocó `test/TP3_SEMANTICAS/`.
+
+### 9.7 Hallazgo colateral fuera de alcance
+
+Al diseñar el caso de declaración se comprobó este comportamiento:
+
+```text
+ulongint x, id#malo;
+begin
+    x := 1$ul;
+end
+```
+
+| Versión | Errores | IR |
+|---|---|---|
+| Pre-P1-01 | `Lexema no reconocido ''`, `Falta de ',' en declaracion de variables` | `(:=, x:main, 1$ul)` presente |
+| P1-01 + P1-02 | `Identificador invalido 'id#malo'`, `Lista de variables mal formada`, `Error de ambito 'x' no es alcanzable` | solo `(PROGRAMA)` y `(FIN_PROGRAMA)` |
+
+La recuperación sintáctica de `LISTA_VARIABLES` descarta toda la lista cuando el primer token inválido aparece antes de cerrarla, y pierde la declaración válida de `x`. Esto tensiona la política P0-02 (“el resto del programa se entrega completo”). No se corrigió aquí: P1-03 permite agregar tests, no cambiar `gramatica.y`, `Parser.java` ni acciones semánticas. El caso de test usa dos declaraciones separadas para aislar el ID inválido y no enmascarar este efecto. Requiere un prompt nuevo o una decisión explícita.
+
+### 9.8 Criterios de aceptación del plan
+
+| Criterio | Cumplido | Evidencia |
+|---|---|---|
+| Caso ID inválido a la izquierda | sí | `id_invalido_izquierda.txt` |
+| Caso ID inválido a la derecha | sí | `id_invalido_derecha.txt` |
+| Caso ID inválido en declaración | sí | `id_invalido_declaracion.txt` |
+| Caso `{id#malo}` en cadena | sí | `id_invalido_en_cadena.txt` |
+| `(:=, x:main, id:main)` no aparece | sí | aserción con esperado 0 |
+| `(pout, id#malo, --)` sigue apareciendo | sí | aserción con esperado 1 |
+| `caracter_invalido.txt` no borrado | sí | sigue en la carpeta, sin cambios |
+| Sin ID fragmentado | sí | cero `Lexema no reconocido ''` en los 5 casos |
+
+### 9.9 Estado final de la Ola 1
+
+| Prompt | Estado | Resultado |
+|---|---|---|
+| P1-01 | Ejecutado y commiteado (`d7de3bf`) | Estado 19 + acción 37 + celda `[16][20]`. |
+| P1-02 | Ejecutado | `errorLexico()` con fallback a `contexto.caracter`. |
+| P1-03 | **Ejecutado** | 5 casos + `verificar.sh`. 5/5, 0 fallos. Control pre-P1-01: 10 fallos. |
+
+Ola 1 cerrada.
+
+### 9.10 Estado de git al cierre de P1-03
+
+```text
+ M AnalizadorLexico.java
+ M docs/reentrega/P1_diagnostico_cambios.md
+?? test/tp1/verificacion_identificadores/caracter_invalido_suelto.txt
+?? test/tp1/verificacion_identificadores/id_invalido_declaracion.txt
+?? test/tp1/verificacion_identificadores/id_invalido_derecha.txt
+?? test/tp1/verificacion_identificadores/id_invalido_en_cadena.txt
+?? test/tp1/verificacion_identificadores/id_invalido_izquierda.txt
+?? test/tp1/verificacion_identificadores/verificar.sh
+```
+
+`MatrizTransiciones.java` sigue sin diff porque P1-01 ya fue commiteado. Los tres `.txt` originales de la carpeta quedan intactos.

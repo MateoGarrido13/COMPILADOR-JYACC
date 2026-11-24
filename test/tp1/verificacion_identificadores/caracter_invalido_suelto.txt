@@ -1,0 +1,6 @@
+{{ TP1: caracter invalido suelto, sin identificador en curso }}
+prog
+ulongint x;
+begin
+    x := @1$ul;
+end

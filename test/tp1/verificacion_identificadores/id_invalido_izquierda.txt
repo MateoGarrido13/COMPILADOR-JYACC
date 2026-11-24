@@ -1,0 +1,7 @@
+{{ TP1: caracter invalido que divide un ID a la izquierda de ':=' }}
+prog
+ulongint x, id, malo;
+begin
+    id#malo := 1$ul;
+    x := 2$ul;
+end

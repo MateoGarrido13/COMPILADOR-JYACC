@@ -1,0 +1,7 @@
+{{ TP1: caracter invalido que divide un ID en una declaracion }}
+prog
+ulongint x;
+ulongint id#malo;
+begin
+    x := 1$ul;
+end

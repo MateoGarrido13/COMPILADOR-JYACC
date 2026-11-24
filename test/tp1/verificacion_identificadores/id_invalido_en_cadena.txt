@@ -1,0 +1,5 @@
+{{ TP1: la secuencia id#malo es texto valido dentro de una cadena }}
+prog
+begin
+    pout({id#malo});
+end
