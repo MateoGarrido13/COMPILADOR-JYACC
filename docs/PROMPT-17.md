@@ -31,7 +31,7 @@
 
 ## Verificación con tests existentes
 
-Los tests de `test/tp2/verificacion_r17_asig_expresiones/` se ejecutaron. La tabla describe el estado esperado después de P2-03; `usa_asig_sin_anidamiento.txt` aún no llega a ese estado con el código vigente, como se detalla más abajo:
+Los tests de `test/tp2/verificacion_r17_asig_expresiones/` se ejecutaron. La tabla describe el estado verificado en P2-07 después de P2-03; `usa_asig_sin_anidamiento.txt` ya no emite los dos `:=` del constructor, como se detalla más abajo:
 
 | Test | Resultado esperado | Estado |
 |------|-------------------|--------|
@@ -42,7 +42,7 @@ Los tests de `test/tp2/verificacion_r17_asig_expresiones/` se ejecutaron. La tab
 | `asignacion_en_parametro_valida.txt` | `y = (f(z = (1$ul))[1$ul])`: asignación en parámetro no es anidamiento | ✅ Pasa (sin errores) |
 | `tipo_incompatible.txt` | Tipo incompatible en la asignación interna | ✅ Pasa (error reportado) |
 | `destino_no_asignable.txt` | Destino no asignable (función) | ✅ Pasa (error reportado, sin tercetos) |
-| `usa_asig_sin_anidamiento.txt` | Error `Uso de ':=' donde debe usarse '='` y **cero tercetos `:=`** del constructor | Invalido; error detectado, IR pendiente de P2-03 |
+| `usa_asig_sin_anidamiento.txt` | Error `Uso de ':=' donde debe usarse '='` y **cero tercetos `:=`** del constructor | ✅ Pasa (error detectado; solo delimitadores, verificado en P2-07) |
 | `igual_como_asignacion_sentencia.txt` | Error sintáctico (usa `=` donde va `:=`) | ✅ Pasa |
 | `parentesis_anidados.txt` | Error sintáctico | ✅ Pasa |
 | `sin_parentesis.txt` | Error sintáctico | ✅ Pasa |
@@ -59,8 +59,8 @@ sentencias ejecutables vecinas: después de P2-03 quedan los delimitadores
 Antes de P2-01, este documento marcaba el caso como “✅ Pasa” por el mensaje aislado y
 `PROMPT-0.md` esperaba 1 terceto. Esa lectura era engañosa: el error se informaba, pero el
 IR posterior seguía construyendo dos asignaciones reales. Con P2-01 ambos documentos
-describen el estado objetivo; P2-03 ajustará el código sin tocar la alternativa válida
-con `=`.
+describieron el estado objetivo; P2-03 ajustó el código sin tocar la alternativa válida
+con `=` y P2-07 verificó que el caso queda con solo los delimitadores.
 
 ## Criterios de aceptación cumplidos
 

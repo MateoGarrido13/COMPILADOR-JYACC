@@ -130,6 +130,7 @@ asignación desde el nombre de la función. Ese IR es inválido: no hay `PAR`, n
 El expected result es: error presente, cero `PAR`, cero `CALL` y cero
 `(:=, x:main, foo:main)`. Se conservan los tercetos de la declaración de `foo`,
 el `ret(n)` interno y los delimitadores `(PROGRAMA)` / `(FIN_PROGRAMA)`, según la
-política P0-02. P2-05 registrará la acción que devuelve una expresión inválida
-para `ERR_FALTA_ORDEN_EVALUACION`; P2-07 verificará este caso junto con
-`orden_sin_corchetes.txt` y `sin_orden.txt`.
+política P0-02. P2-05 registró la acción que devuelve una expresión inválida
+para `ERR_FALTA_ORDEN_EVALUACION`; P2-07 verificó este caso junto con
+`orden_sin_corchetes.txt` y `sin_orden.txt`: los tres emiten cero `PAR`, cero `CALL` y
+cero asignaciones desde `foo`.

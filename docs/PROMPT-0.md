@@ -116,11 +116,11 @@ en `/tmp/opencode/tp3-baseline/<misma ruta relativa>`.
 | `r17/igual_como_asignacion_sentencia.txt` | Sentencia mal formada | Ninguno | Invalido |
 | `r17/parentesis_anidados.txt` | Asignacion mal formada | Ninguno | Invalido |
 | `r17/sin_parentesis.txt` | Asignacion mal formada | Ninguno | Invalido |
-| `r17/usa_asig_sin_anidamiento.txt` | Uso de `:=` donde debe usarse `=` | 0 ejecutables; sin `(:=, y:main, 1$ul)` ni `(:=, x:main, [2])` (objetivo tras P2-03; baseline: 2) | Invalido |
+| `r17/usa_asig_sin_anidamiento.txt` | Uso de `:=` donde debe usarse `=` | 0 ejecutables; sin `(:=, y:main, 1$ul)` ni `(:=, x:main, [2])` (verificado en P2-07; baseline: 2) | Invalido |
 | `r19/estructura_respetada.txt` | Ninguno | 10; `PAR`/`CALL` sin copia a formales | Valido |
-| `generales/18_falta_orden.txt` | Falta del orden de evaluacion y asignacion de parametros | 0 ejecutables; sin `PAR`, sin `CALL`, sin `(:=, x:main, foo:main)` (objetivo tras P2-05; baseline: 1) | Invalido |
-| `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 0 ejecutables; sin asignaciones desde `foo` (objetivo tras P2-05; baseline: 2) | Invalido |
-| `r19/sin_orden.txt` | Falta orden en dos llamadas | 0 ejecutables; sin asignaciones desde `foo` (objetivo tras P2-05; baseline: 2) | Invalido |
+| `generales/18_falta_orden.txt` | Falta del orden de evaluacion y asignacion de parametros | 0 ejecutables; sin `PAR`, sin `CALL`, sin `(:=, x:main, foo:main)` (verificado en P2-07; baseline: 1) | Invalido |
+| `r19/orden_sin_corchetes.txt` | Falta orden; errores sintacticos | 0 ejecutables; sin asignaciones desde `foo` (verificado en P2-07; baseline: 2) | Invalido |
+| `r19/sin_orden.txt` | Falta orden en dos llamadas | 0 ejecutables; sin asignaciones desde `foo` (verificado en P2-07; baseline: 2) | Invalido |
 | `r19/futuros/orden_fuera_de_rango.txt` | Posicion fuera de rango; cantidad distinta | 8; llamadas con orden parcial | Invalido |
 | `r19/futuros/orden_repetido.txt` | Posicion duplicada; cantidad distinta | 10; llamadas con orden repetido | Invalido |
 | `r23/dos_tipos_validos.txt` | Ninguno | 2; inicializaciones | Valido |
@@ -132,7 +132,7 @@ en `/tmp/opencode/tp3-baseline/<misma ruta relativa>`.
 | `r28_r31/clase_sin_atributos.txt` | Ninguno | Ninguno | Valido |
 | `r28_r31/desambiguado_tradicional_y.txt` | No se puede asignar a `a1.padre.y`/`a1.hija.y` | Ninguno | Valido |
 | `r28_r31/metodo_heredado_prefijado_con_orden.txt` | Ninguno | 4; asignaciones desde `m` | Valido |
-| `r28_r31/metodo_heredado_prefijado_sin_orden.txt` | Tres faltas de orden | 3; asignaciones desde `a1` | Invalido |
+| `r28_r31/metodo_heredado_prefijado_sin_orden.txt` | Tres faltas de orden y una falta de prefijo | 0 ejecutables; sin `CALLMET` ni asignaciones desde `a1` (verificado en P2-07) | Invalido |
 | `r28_r31/metodo_heredado_prefijado_un_parametro.txt` | Ninguno | 6; llamadas tratadas como asignaciones | Mixto |
 | `r33/conversion_vacia.txt` | Asignacion mal formada | Ninguno | Invalido |
 | `r33/en_asignacion.txt` | Ninguno | 4; `todf` no genera conversion | Valido |
@@ -140,21 +140,21 @@ en `/tmp/opencode/tp3-baseline/<misma ruta relativa>`.
 | `r33/falta_paren_cierre.txt` | Asignacion mal formada | 1 | Invalido |
 | `r33/lado_izquierdo.txt` | Sentencia mal formada (dos veces) | 1 | Invalido |
 
-> Nota P2-01 (24/11/2026): la fila de `r17/usa_asig_sin_anidamiento.txt` describe el estado
-> objetivo después de P2-03. El fuente es el mismo que
+> Nota P2-01 / cierre P2-07 (24/11/2026): la fila de `r17/usa_asig_sin_anidamiento.txt`
+> describe el estado verificado después de P2-03. El fuente es el mismo que
 > `test/tp2/generales/17_asig_donde_igual.txt`; en el baseline se emitían
 > `(:=, y:main, 1$ul)` y `(:=, x:main, [2])`. Ese IR es inválido: el tema 17 exige `=` y el
 > constructor escrito con `:=` debe anularse por completo. El mensaje
-> `Uso de ':=' donde debe usarse '='` ya se emitía en el baseline. Hasta aplicar P2-03,
-> el código sigue emitiendo esos dos tercetos.
+> `Uso de ':=' donde debe usarse '='` ya se emitía en el baseline. P2-07 confirma que
+> ambos fuentes emiten solo `(PROGRAMA, --, --)` y `(FIN_PROGRAMA, --, --)`.
 
-> Nota P2-02 (24/11/2026): el tema 19 exige el orden entre corchetes. Las tres filas
-> `generales/18_falta_orden.txt`, `r19/orden_sin_corchetes.txt` y `r19/sin_orden.txt`
-> describen el estado objetivo después de P2-05: se informa
+> Nota P2-02 / cierre P2-07 (24/11/2026): el tema 19 exige el orden entre corchetes. Las
+> tres filas `generales/18_falta_orden.txt`, `r19/orden_sin_corchetes.txt` y
+> `r19/sin_orden.txt` describen el estado verificado después de P2-05: se informa
 > `Falta del orden de evaluacion y asignacion de parametros` y no se emiten `PAR`, `CALL`
 > ni asignaciones desde el nombre de la función. En el baseline esas asignaciones sí
-> aparecían (1 y 2 respectivamente). El corchete no pasa a ser opcional; el tema 20 no
-> corresponde a este grupo.
+> aparecían (1 y 2 respectivamente). P2-07 confirma los tres casos. El corchete no pasa
+> a ser opcional; el tema 20 no corresponde a este grupo.
 
 ## Hallazgos que justifican las fases siguientes
 

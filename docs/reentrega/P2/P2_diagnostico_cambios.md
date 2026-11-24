@@ -1,8 +1,8 @@
 # Ola 2 — diagnóstico y cambios
 
-Prompts ejecutados: **P2-01** (expected results del tema 17), **P2-02** (expected results del tema 19), **P2-03** (`:=` en expresión), **P2-05** (falta de orden) y **P2-06** (propagación de invalidez).  
-Prompt `P2-07`: **pendiente**, con estado registrado al final.  
-P2-01 quedó commiteado en `736089b`, P2-02 en `5afeb88`, P2-03 en `744ca55` y P2-05 en `646d872`; P2-03 se documenta en `P2-03_diagnostico_cambios.md`, P2-05 en `P2-05_diagnostico_cambios.md` y P2-06 en `P2-06_diagnostico_cambios.md`.  
+Prompts ejecutados: **P2-01** (expected results del tema 17), **P2-02** (expected results del tema 19), **P2-03** (`:=` en expresión), **P2-05** (falta de orden), **P2-06** (propagación de invalidez) y **P2-07** (regresión TP02).  
+La Ola 2 quedó cerrada con la corrida P2-07.  
+P2-01 quedó commiteado en `736089b`, P2-02 en `5afeb88`, P2-03 en `744ca55`, P2-05 en `646d872` y P2-06 en `8605966`; P2-03 se documenta en `P2-03_diagnostico_cambios.md`, P2-05 en `P2-05_diagnostico_cambios.md`, P2-06 en `P2-06_diagnostico_cambios.md` y P2-07 en `P2-07_diagnostico_cambios.md`.  
 Fecha: 24/11/2026.
 
 Este archivo concentra la Ola 2. Acá se documentan los cambios, la razón de cada uno, la verificación y lo que queda para los prompts siguientes. La Ola 1 quedó cerrada en `docs/reentrega/P1_diagnostico_cambios.md`.
@@ -512,8 +512,8 @@ Idéntico a 2.3. Es el resultado esperado en esta corrida: P2-01 prohíbe tocar 
 | P2-03 | **Ejecutado y commiteado (`744ca55`)** | `gramatica.y` + `Parser.java` regenerado; cero `:=` del constructor. Detalle en `P2-03_diagnostico_cambios.md`. |
 | P2-04 | Eliminado | Según el plan, proponía un cambio que no compilaría y era redundante. |
 | P2-05 | **Ejecutado y commiteado (`646d872`)** | Acción de `ERR_FALTA_ORDEN_EVALUACION` devuelve expresión inválida; cero asignaciones desde `foo`. Detalle en `P2-05_diagnostico_cambios.md`. |
-| P2-06 | **Ejecutado** | `deOperando()` propaga invalidez de `LlamadaFuncion`; IR sin cambios, estado semántico alineado. Detalle en `P2-06_diagnostico_cambios.md`. |
-| P2-07 | Pendiente | Regresión TP02. |
+| P2-06 | **Ejecutado y commiteado (`8605966`)** | `deOperando()` propaga invalidez de `LlamadaFuncion`; IR sin cambios, estado semántico alineado. Detalle en `P2-06_diagnostico_cambios.md`. |
+| P2-07 | **Ejecutado** | 299 casos vs `5afeb88` con solo 5 diffs esperados; script de 10 casos / 54 asserts, 0 fallos. Detalle en `P2-07_diagnostico_cambios.md`. |
 
 ---
 
@@ -881,3 +881,39 @@ b412e99cc885211c2cfcf501515273b3e0c01dab7ea818bdae2b7e7e29345926  docs/PROMPT-19
 ```
 
 Ambos archivos contienen ahora los cambios de P2-01 y P2-02. El commit anterior `736089b` incluyó la Ola 1 y P2-01. P2-02 queda sin commitear.
+
+---
+
+## 10. P2-07 — Regresión TP02 y cierre de la Ola 2
+
+Fecha: 24/11/2026.  
+Prompt del plan ejecutado: `P2-07`, “Pruebas”.  
+Estado inicial: `8605966`, con P2-03, P2-05 y P2-06 ya commiteados.  
+Detalle completo en `P2-07_diagnostico_cambios.md`.
+
+### 10.1 Resumen
+
+- Baseline: `5afeb88`, anterior a los tres cambios de código de la Ola 2.
+- 299 casos ejecutados con baseline y con código actual: **solo 5 diffs**, todos esperados (2 del tema 17 y 3 del tema 19).
+- 161 ASM generados: **0 diffs**.
+- Script nuevo `test/tp2/verificacion_r19_param_reales/verificar.sh`: **10 casos / 54 asserts / 0 fallos** con el código actual.
+- Control con `5afeb88`: **7 asserts fallidos**, exactamente los IR inválidos que las correcciones debían eliminar.
+- `verificarErrores()` cuenta solo `^Línea N: Error:` para no confundir el eco de un comentario con un error real.
+- Expected results de `PROMPT-0.md`, `PROMPT-17.md` y `PROMPT-19.md` ajustados a estado verificado.
+- Ningún `.java`, `.y`, `.txt` de test ni `.asm` modificado en esta corrida.
+
+### 10.2 Criterios de aceptación
+
+| Criterio | Cumplido | Evidencia |
+|---|---|---|
+| Válidos: mismos tercetos que baseline | sí | Cero diffs en 294 casos; asserts de r17/r19 válidos; 161 ASM sin diff. |
+| Inválidos: sin tercetos del constructor | sí | Cinco diffs muestran la eliminación de los `:=` inválidos; 0 fallos en 54 asserts. |
+| Sin borrar IR vecino válido | sí | `(PROGRAMA)`, `(FIN_PROGRAMA)`, `(FUNCION, foo, --)`, `(ret, ...)`, `PAR`/`CALL` y `BF` conservados. |
+| Assert “sin CALL” en falta de orden | sí | Tres casos con `(CALL,` 0. |
+| Sin cambio de código | sí | `git diff --name-only -- '*.java' '*.y'` vacío. |
+
+### 10.3 Estado final de la Ola 2
+
+La Ola 2 queda cerrada. P2-04 fue eliminado según el plan. P2-01, P2-02, P2-03, P2-05 y P2-06 están commiteados (`736089b`, `5afeb88`, `744ca55`, `646d872`, `8605966`). P2-07 queda sin commitear a la espera del commit del usuario.
+
+Siguiente: Ola 4 (`start:` + `jmp main_inicio`, sin reordenar funciones y sin `leave/ret` duplicado). Después Ola 5 y, con MASM32/Windows, Ola 6.
