@@ -124,7 +124,10 @@ public class AnalizadorLexico {
     }
 
     private int errorLexico(ContextoLexico contexto) { 
-        reporte.error(fuente.linea(), "Lexema no reconocido '" + contexto.lexema + "'");
+        String texto = contexto.lexema.length() == 0
+                ? String.valueOf(contexto.caracter)
+                : contexto.lexema.toString();
+        reporte.error(fuente.linea(), "Lexema no reconocido '" + texto + "'");
         return -1;
     }
 

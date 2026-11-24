@@ -1,8 +1,9 @@
 # Ola 1 — diagnóstico y cambios
 
-Prompt ejecutado en esta corrida: **P1-01** (estado dedicado “ID inválido”).  
-Prompts `P1-02` y `P1-03`: **pendientes**, con estado registrado al final.  
-Fecha: 23/11/2026.
+Prompts ejecutados: **P1-01** (estado dedicado “ID inválido”, 23/11/2026) y **P1-02** (mensaje del error léxico residual, 24/11/2026).  
+Prompt `P1-03`: **pendiente**.  
+P1-01 quedó commiteado como `d7de3bf`; P1-02 se documenta en la sección 8.  
+Fechas: 23/11/2026 y 24/11/2026.
 
 Este archivo concentra toda la Ola 1. Acá se documentan los cambios efectuados, la razón de cada uno, la verificación y lo que queda para los prompts siguientes.
 
@@ -308,8 +309,8 @@ Los hashes de los dos `.asm` TP04 siguen siendo `f8bdc552…` y `aac7910f…`. N
 
 | Prompt | Estado | Observación |
 |---|---|---|
-| P1-01 | **Ejecutado** | Estado 19 + acción 37 + celda `[16][20]`. Verificado. |
-| P1-02 | Pendiente | Falta incluir `contexto.caracter` en `errorLexico()` para caracter inválido **suelto**. Evidencia actual: `x := @1$ul;` todavía da `Lexema no reconocido ''`. |
+| P1-01 | **Ejecutado y commiteado** | Estado 19 + acción 37 + celda `[16][20]`. Verificado. Commit `d7de3bf`. |
+| P1-02 | **Ejecutado** | `errorLexico()` usa `contexto.caracter` cuando el lexema está vacío. Ver sección 8. |
 | P1-03 | Pendiente | Faltan casos de regresión en `test/tp1/verificacion_identificadores/` con aserciones sobre ausencia de ID fragmentado. |
 
 ---
@@ -321,4 +322,271 @@ Los hashes de los dos `.asm` TP04 siguen siendo `f8bdc552…` y `aac7910f…`. N
  M MatrizTransiciones.java
 ```
 
-Este documento es nuevo dentro de `docs/reentrega/`. No se modificaron tests ni otros archivos del repositorio.
+Este documento era nuevo dentro de `docs/reentrega/` al cierre de P1-01. No se modificaron tests ni otros archivos del repositorio en esa corrida.
+
+Nota posterior: el estado de git mostrado arriba fue commiteado por el usuario en `d7de3bf` (`1-01 nuevo estado y accion semantica`), junto con este documento renombrado a `P1_diagnostico_cambios.md`. La sección 8 registra el estado después de P1-02.
+
+---
+
+## 8. P1-02 — mensaje del error léxico residual
+
+Fecha: 24/11/2026.  
+Prompt del plan ejecutado: `P1-02`, “Robustez del mensaje”.  
+Estado inicial: `d7de3bf` ya contiene P1-01. El árbol de trabajo solo tenía sin commitear este documento; P1-02 se aplicó sobre esa base.
+
+### 8.1 Alcance según el plan
+
+El plan indica:
+
+```text
+Raíz confirmada: errorLexico() (:122-125) usa contexto.lexema, vacío en el camino de ERROR desde estado 0.
+Cambio permitido:
+  - Si lexema está vacío, incluir contexto.caracter: "Lexema no reconocido '#'".
+Prohibido:
+  - Cambiar formato de Reporte.
+  - Tocar la matriz.
+Verificación:
+  - Caso con '@' o '$' suelto fuera de sufijo.
+Aceptación:
+  - Ningún mensaje con lexema vacío.
+Dependencias: P1-01.
+```
+
+Se respetaron los cuatro límites: `Reporte` intacto, `MatrizTransiciones.java` intacto, `Parser.java` intacto, tests intactos.
+
+### 8.2 Raíz confirmada
+
+Código antes del cambio (`AnalizadorLexico.java:126-129`):
+
+```java
+private int errorLexico(ContextoLexico contexto) { 
+    reporte.error(fuente.linea(), "Lexema no reconocido '" + contexto.lexema + "'");
+    return -1;
+}
+```
+
+Recorrido exacto para `x := @1$ul;`:
+
+1. `recorrerMatriz():41` lee `@`.
+2. `ContextoLexico.columna():61` lo clasifica como columna 20 (“otro”).
+3. `MATRIZ_ESTADOS[0][20] = -1` (`MatrizTransiciones.java:23`).
+4. `recorrerMatriz():56-58` detecta `ERROR` y llama a `errorLexico()` **antes** de `append` (`:61-63`) y antes de cualquier `retroceder()` (`:64-66`).
+5. `contexto.lexema` sigue siendo `""`.
+6. Mensaje emitido: `Lexema no reconocido ''`.
+
+P1-01 no cubre este camino: el estado 19 solo se alcanza desde el estado 16 (ID en curso). Con `@` suelto se entra por el estado 0 directo a `ERROR`. Por eso la evidencia de P1-01 (`x := @1$ul;` todavía con mensaje vacío) seguía vigente al iniciar P1-02.
+
+### 8.3 Cambio efectuado
+
+`AnalizadorLexico.java`, único archivo de código modificado.
+
+Antes:
+
+```java
+private int errorLexico(ContextoLexico contexto) { 
+    reporte.error(fuente.linea(), "Lexema no reconocido '" + contexto.lexema + "'");
+    return -1;
+}
+```
+
+Después:
+
+```java
+private int errorLexico(ContextoLexico contexto) { 
+    String texto = contexto.lexema.length() == 0
+            ? String.valueOf(contexto.caracter)
+            : contexto.lexema.toString();
+    reporte.error(fuente.linea(), "Lexema no reconocido '" + texto + "'");
+    return -1;
+}
+```
+
+**Por qué cada parte:**
+
+1. **`String texto = ...`**  
+   Centraliza la decisión sin duplicar el llamado a `reporte.error()`. Hay un solo mensaje, con una sola línea (`fuente.linea()`).
+
+2. **`contexto.lexema.length() == 0`**  
+   Es la condición exacta de la raíz. Si el lexema ya tiene contenido, el comportamiento anterior es correcto y no se toca. Evita reemplazar mensajes como `Identificador invalido 'id#malo'` o `Constante entera invalida '1'`.
+
+3. **`String.valueOf(contexto.caracter)`**  
+   `contexto.caracter` ya fue leído de la fuente y, en este camino, nunca se agregó al lexema. Es la única información disponible para identificar el carácter inválido. `String.valueOf()` explicita la conversión a texto y deja el resto de la concatenación igual.
+
+4. **`contexto.lexema.toString()`**  
+   Conserva byte a byte los mensajes existentes para lexemas no vacíos. Es la garantía de regresión: P1-02 solo cambia el caso vacío.
+
+5. **`reporte.error(fuente.linea(), "Lexema no reconocido '" + texto + "'")`**  
+   Mantiene el prefijo, las comillas y el número de línea. No se agregó ni quitó ningún campo en `Reporte`.
+
+6. **`return -1`**  
+   La recuperación sigue siendo la misma: `siguienteToken():30-36` descarta el token y sigue buscando. No se consume ni se devuelve carácter adicional.
+
+**Caso límite analizado:** `errorLexico()` podría recibir `caracter == 0` y lexema vacío solo si se invocara en EOF. Eso no ocurre: `recorrerMatriz():42-43` devuelve `0` antes de `columnaActual()` cuando el lexema está vacío. Por eso no se emite un mensaje con NUL.
+
+### 8.4 Diff final
+
+```diff
+--- a/AnalizadorLexico.java
++++ b/AnalizadorLexico.java
+@@ -124,7 +124,10 @@ public class AnalizadorLexico {
+     }
+ 
+     private int errorLexico(ContextoLexico contexto) { 
+-        reporte.error(fuente.linea(), "Lexema no reconocido '" + contexto.lexema + "'");
++        String texto = contexto.lexema.length() == 0
++                ? String.valueOf(contexto.caracter)
++                : contexto.lexema.toString();
++        reporte.error(fuente.linea(), "Lexema no reconocido '" + texto + "'");
+         return -1;
+     }
+ 
+```
+
+No hay diff en `MatrizTransiciones.java`. La fila 19 sigue:
+
+```java
+{19,19,19,99,99,99,99,99,99,99,99,99,99,99,99,99,19,99,99,99,19,99,99}
+```
+
+### 8.5 Verificación
+
+#### 8.5.1 Reconstrucción de referencias
+
+`/tmp` fue limpiado por el entorno entre el 23 y el 24/11: desaparecieron `/tmp/opencode/tp3build_baseline/`, `/tmp/opencode/tp3build_p1/` y `/tmp/opencode/baseline/`. Se reconstruyeron tres variantes:
+
+```bash
+mkdir -p /tmp/opencode/p1_02_refs/{pre_p1_src,build_pre_p1,p1_01_src,build_p1_01,build_baseline}
+git archive HEAD~1 | tar -x -C /tmp/opencode/p1_02_refs/pre_p1_src     # cedb870, pre-P1-01
+git archive HEAD   | tar -x -C /tmp/opencode/p1_02_refs/p1_01_src      # d7de3bf, con P1-01
+cp -a *.java "acciones semanticas" otras_acciones /tmp/opencode/p1_02_refs/p1_01_src/
+# en esa copia se revierte solo errorLexico() al texto de HEAD
+javac -encoding UTF-8 -d /tmp/opencode/p1_02_refs/build_pre_p1  ...
+javac -encoding UTF-8 -d /tmp/opencode/p1_02_refs/build_p1_01   ...
+javac -encoding UTF-8 -d /tmp/opencode/tp3build_p1_02           ...   # árbol actual con P1-02
+```
+
+`build_p1_01` se construyó dos veces: desde `git archive HEAD` y desde una copia del árbol actual con P1-02 revertido. Ambas variantes dieron salidas idénticas; se usa la segunda como referencia P1-01 en los cuadros siguientes.
+
+#### 8.5.2 Casos dirigidos
+
+Fuentes creadas en `/tmp/opencode/lexprobe2/` (fuera del repo):
+
+```text
+suelto_ar.txt       x := @1$ul;
+suelto_varios.txt   x := @#~?1$ul;
+suelto_dolar.txt    x := 1 + $ul;
+sufijo_valido.txt   x := 1$ul;
+no_vacio.txt        x := 1e#;
+```
+
+Resultados:
+
+| Caso | Pre-P1-01 | P1-01 | P1-02 |
+|---|---|---|---|
+| `suelto_ar.txt` | `Lexema no reconocido ''` | `Lexema no reconocido ''` | `Lexema no reconocido '@'` |
+| `suelto_varios.txt` | cuatro veces `''` | cuatro veces `''` | `'@'`, `'#'`, `'~'`, `'?'` |
+| `suelto_dolar.txt` | sin error léxico | sin error léxico | sin error léxico |
+| `sufijo_valido.txt` | sin errores | sin errores | sin errores |
+| `no_vacio.txt` | `Constante entera invalida '1'` + `Lexema no reconocido ''` | `Constante entera invalida '1'` + `Identificador invalido 'e#'` | igual a P1-01 |
+
+Salida exacta de `suelto_varios.txt` con P1-02:
+
+```text
+Línea 4: Error: Lexema no reconocido '@'
+Línea 4: Error: Lexema no reconocido '#'
+Línea 4: Error: Lexema no reconocido '~'
+Línea 4: Error: Lexema no reconocido '?'
+```
+
+Con P1-01, las cuatro líneas idénticas terminaban en `''`.
+
+**Nota sobre `no_vacio.txt`:** el paso de `Lexema no reconocido ''` a `Identificador invalido 'e#'` es efecto de P1-01 (el `#` pegado a `e` ahora deriva al estado 19), no de P1-02. P1-02 lo deja intacto porque el lexema no está vacío.
+
+**Nota sobre `$` suelto:** `x := 1 + $ul;` no produce error léxico en ninguna variante. `AnalizadorLexico.java:42` intercepta `$` en estado 0 como centinela de fin de entrada y devuelve `0`; el parser informa errores sintácticos (`Constante entera invalida '1'`, `Asignacion mal formada`, `Falta ';'...`, `Falta de delimitador END...`), pero no hay mensaje con lexema vacío. Ese comportamiento es previo y queda fuera de P1-02: cambiarlo implicaría tocar `:42` o la matriz, ambos fuera del prompt. La aceptación “ningún mensaje con lexema vacío” se cumple también acá, de forma vacua.
+
+#### 8.5.3 Suite completa
+
+Se copiaron `test/` y `test_tp_4/` a `/tmp/opencode/p1_02_refs/` para no escribir `.asm` dentro del repo. Se ejecutaron los 294 archivos `.txt` con P1-01 y con P1-02.
+
+```bash
+find /tmp/opencode/p1_02_refs/test /tmp/opencode/p1_02_refs/test_tp_4 -name '*.txt' -print0 |
+while IFS= read -r -d '' f; do
+  java -cp /tmp/opencode/p1_02_refs/build_p1_01 Main "$f" > ".../$rel.out" 2>&1
+  java -cp /tmp/opencode/tp3build_p1_02           Main "$f" > ".../$rel.out" 2>&1
+done
+```
+
+Comparación tras eliminar las líneas `Lexema no reconocido`:
+
+```text
+Total .txt ejecutados: 294
+Diffs tras quitar lineas "Lexema no reconocido": 0
+Archivos con cambio solo en mensaje léxico: 2
+```
+
+Los dos únicos archivos con diff:
+
+| Archivo | P1-01 | P1-02 |
+|---|---|---|
+| `test/TP3_y_TP4/CADENAS_COMENTARIOS/07_cadena_salto_de_linea.txt` | `Línea 11: Error: Lexema no reconocido ''` | `Línea 11: Error: Lexema no reconocido '}'` |
+| `test/tp1/verificaciones_comentarios_cadenas/cadenas_invalidas.txt` | `Línea 7: Error: Lexema no reconocido ''` | `Línea 7: Error: Lexema no reconocido '}'` |
+
+En ambos casos el carácter residual era un `}` sobrante tras una cadena no cerrada. Eran los dos últimos mensajes con lexema vacío que quedaban en toda la suite después de P1-01.
+
+Además, la búsqueda directa sobre la suite completa:
+
+```text
+P1-01 mensajes con lexema vacío: 2
+P1-02 mensajes con lexema vacío: 0
+```
+
+#### 8.5.4 ASM
+
+Generados en árboles separados para no sobrescribirlos:
+
+```text
+P1-01  f8bdc552ab3eb68882d09561cada48989862ce939212c4d498fc66955b1d03f9  01_funcion_ulongint.asm
+P1-01  aac7910fcdfe8bccf5b1675545296b849b815a9a0249b99c1f018937df2dd442  03_recursion_factorial_metodo.asm
+P1-02  f8bdc552ab3eb68882d09561cada48989862ce939212c4d498fc66955b1d03f9  01_funcion_ulongint.asm
+P1-02  aac7910fcdfe8bccf5b1675545296b849b815a9a0249b99c1f018937df2dd442  03_recursion_factorial_metodo.asm
+```
+
+Idénticos a los hashes registrados en la corrida P0. P1-02 no llega al generador de assembler.
+
+#### 8.5.5 Criterios de aceptación del plan
+
+| Criterio | Cumplido | Evidencia |
+|---|---|---|
+| Si el lexema está vacío, se incluye `contexto.caracter` | sí | `suelto_ar.txt`, `suelto_varios.txt` |
+| Formato de `Reporte` sin cambios | sí | mismo prefijo, comillas y `fuente.linea()` |
+| Matriz sin cambios | sí | `git diff -- MatrizTransiciones.java` vacío |
+| Ningún mensaje con lexema vacío en la suite | sí | 2 → 0 en 294 archivos |
+| IR sin cambios | sí | 0 diffs tras quitar líneas de mensaje |
+| ASM sin cambios | sí | hashes idénticos |
+
+### 8.6 Efectos colaterales analizados
+
+- **`Reporte`**: no se agregó campo ni se cambió nivel. Solo cambia el contenido del string en un caso.
+- **Recuperación**: `return -1` y `siguienteToken():30-36` intactos. No se consume ni se devuelve ningún carácter extra.
+- **`case 37`**: intacto. Los IDs inválidos pegados siguen reportando el lexema completo, no el carácter suelto.
+- **Matriz / fila 19**: intacta. La discusión previa sobre `[16][20] = -1` queda descartada por fragmentación; P1-02 ataca el otro camino, el del carácter suelto desde estado 0.
+- **Cadenas y comentarios**: los estados 5/6 no se tocan. El cambio en los dos tests de cadena no cerrada es solo el texto del mensaje; el `}` no se inserta en ningún lexema ni tabla de símbolos.
+- **`Parser.java`**: no se regeneró.
+- **Tests del repo**: no se modificaron; las copias usadas para verificación quedaron en `/tmp`.
+
+### 8.7 Estado de la Ola 1 después de P1-02
+
+| Prompt | Estado | Observación |
+|---|---|---|
+| P1-01 | Ejecutado y commiteado (`d7de3bf`) | Estado 19 + acción 37 + celda `[16][20]`. |
+| P1-02 | **Ejecutado** | `errorLexico()` con fallback a `contexto.caracter`. Suite 294/294 sin diffs de IR. |
+| P1-03 | Pendiente | Agregar casos y aserciones en `test/tp1/verificacion_identificadores/`; debe cubrir ID fragmentado y también carácter suelto. |
+
+### 8.8 Estado de git al cierre de P1-02
+
+```text
+ M AnalizadorLexico.java
+ M docs/reentrega/P1_diagnostico_cambios.md
+```
+
+`MatrizTransiciones.java` ya no aparece como modificado porque P1-01 fue commiteado. El único diff de código pendiente es el de `errorLexico()`. No se agregaron ni borraron archivos de test.
