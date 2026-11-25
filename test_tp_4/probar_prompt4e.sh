@@ -5,7 +5,7 @@
 #  1. Compilacion del proyecto
 #  2. Los 6 casos integrales compilan sin errores
 #  3. ASM integral: if anidado ulongint/doublef, repeat-while anidado,
-#     factorial recursivo + metodo, multiherencia + COPY + prefijos,
+#     llamada a funcion factorial + metodo, multiherencia + COPY + prefijos,
 #     pout mixto (cadena/expresion/llamada/todf) y COPY con nombres distintos
 #  4. Ningun operador ya implementado queda como comentario en el .ASM
 #  5. Salida de consola de TP3 identica a las snapshots (fuente, tokens,
@@ -100,10 +100,11 @@ verificar "$ASM" "pout de expresion" 'offset fmt_ulongint, @aux29'
 ASM="$CASOS/03_recursion_factorial_metodo.asm"
 verificar "$ASM" "prologo de fact" 'fn_fact_main:'
 verificar "$ASM" "frame de fact" 'push ebp'
-verificar "$ASM" "llamada recursiva" 'call fn_fact_main'
-verificar "$ASM" "limpieza de la call recursiva" 'add esp, 4'
-verificar "$ASM" "resultado recursivo en @aux" 'mov @aux10, eax'
-verificar "$ASM" "multiplicacion del factorial" 'imul eax, @aux10'
+verificar "$ASM" "llamada a fact desde main" 'call fn_fact_main'
+verificar "$ASM" "limpieza de la call a fact" 'add esp, 4'
+verificar "$ASM" "resultado de fact en @aux" 'mov @aux17, eax'
+verificar "$ASM" "resultado de fact copiado a r" 'mov r_main, eax'
+verificar "$ASM" "multiplicacion del metodo escala" 'imul eax, dword ptr [ebp+12]'
 verificar "$ASM" "epilogue de fact" 'fin_fact_main:'
 verificar "$ASM" "metodo escala" 'mt_escala_main_calculadora:'
 verificar "$ASM" "this del metodo" '; this: dword ptr [ebp+8]'
@@ -111,7 +112,7 @@ verificar "$ASM" "CALLMET integrado" 'call mt_escala_main_calculadora'
 verificar "$ASM" "limpieza del CALLMET" 'add esp, 8'
 verificar "$ASM" "pout de factorial" 'offset fmt_ulongint, r_main'
 verificar "$ASM" "pout de escala" 'offset fmt_ulongint, m_main'
-no_verificar "$ASM" "CALL recursivo no queda comentado" '; (CALL'
+no_verificar "$ASM" "CALL no queda comentado" '; (CALL'
 
 ASM="$CASOS/04_objetos_multiherencia_copy.asm"
 verificar "$ASM" "atributo heredado de b1 en .DATA" 's1_b1_u_main DD'

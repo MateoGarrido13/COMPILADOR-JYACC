@@ -7,7 +7,7 @@
 #     fuentes compilan sin excepcion, con stdout TP3 determinista.
 #  3. Chequeos runtime b/e/f/h: scripts propios + caso disparador y caso
 #     valido limite por cada uno.
-#  4. Programa integral: control de flujo + recursion + objetos con herencia
+#  4. Programa integral: control de flujo + llamada a funcion + objetos con herencia
 #     multiple, COPY y acceso prefijado + pout mixto.
 #  5. Regresiones 4e, 6.0 y 6.1.
 #
@@ -44,7 +44,7 @@ no_verificar() {
 }
 correr_suite() {
     local nombre="$1" log="$TMP/suite_$1.log"
-    if bash "$RAIZ/test_tp_4/$nombre" > "$log" 2>&1; then
+    if TP4_BUILD="$BUILD" bash "$RAIZ/test_tp_4/$nombre" > "$log" 2>&1; then
         local n
         n="$(grep -c 'FALLA:' "$log" || true)"
         if [[ "$n" -eq 0 ]]; then
@@ -144,23 +144,23 @@ correr_suite probar_prompt5_f.sh
 correr_suite probar_prompt5_h.sh
 
 # Casos disparadores y sus guardias en el .asm generado.
-verificar "$RAIZ/test_tp_4/resta_enteros_negativos/02_suma_desborda.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/b_suma_ulongint/04_suma_variables_desborda.asm" \
     'b: caso disparador 4294967295+1' 'jc error_overflow_suma'
-verificar "$RAIZ/test_tp_4/resta_enteros_negativos/01_suma_valida.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/b_suma_ulongint/01_suma_sin_overflow.asm" \
     'b: caso valido con guardia instrumentada' 'jc error_overflow_suma'
-verificar "$RAIZ/test_tp_4/producto_doublef_overflow/02_producto_desborda.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/e_producto_doublef/03_producto_desborda.asm" \
     'e: caso disparador max_doublef*max_doublef' 'jc error_overflow_float'
-verificar "$RAIZ/test_tp_4/producto_doublef_overflow/01_producto_valido.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/e_producto_doublef/01_producto_finito.asm" \
     'e: caso valido con guardia instrumentada' 'jc error_overflow_float'
-verificar "$RAIZ/test_tp_4/resta_enteros_negativa/02_resta_negativa.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/f_resta_ulongint/03_resta_resultado_negativo.asm" \
     'f: caso disparador 10-20' 'jb error_negativo_resta'
-verificar "$RAIZ/test_tp_4/resta_enteros_negativa/01_resta_valida.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/f_resta_ulongint/01_resta_sin_resultado_negativo.asm" \
     'f: caso valido con guardia instrumentada' 'jb error_negativo_resta'
-verificar "$RAIZ/test_tp_4/enumerados/02_asignacion_invalida.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/h_enum_asignacion/02_enum_ulongint_invalido.asm" \
     'h: caso disparador enum ulongint' 'error_enum_invalido'
-verificar "$RAIZ/test_tp_4/enumerados/04_doublef_invalida.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/h_enum_asignacion/04_enum_doublef_invalido.asm" \
     'h: caso disparador enum doublef' 'error_enum_invalido'
-verificar "$RAIZ/test_tp_4/enumerados/01_asignacion_valida.asm" \
+verificar "$RAIZ/test_tp_4/Runtime_chequeos/h_enum_asignacion/01_enum_ulongint_valido.asm" \
     'h: caso valido compilado' 'end start'
 echo
 
@@ -177,8 +177,8 @@ if [[ -f "$INTEGRAL" ]]; then
     verificar "$I" 'integral: end start' 'end start'
     verificar "$I" 'integral: control de flujo (label_3)' 'label_3:'
     verificar "$I" 'integral: repeat cierra con jmp label_3' 'jmp label_3'
-    verificar "$I" 'integral: funcion recursiva definida' 'fn_fact_main:'
-    verificar "$I" 'integral: llamada recursiva' 'call fn_fact_main'
+    verificar "$I" 'integral: funcion factorial definida' 'fn_fact_main:'
+    verificar "$I" 'integral: llamada a fact desde main' 'call fn_fact_main'
     verificar "$I" 'integral: atributo prefijado basea' 's2_basea_u_main'
     verificar "$I" 'integral: atributo doublef de baseb' 's2_baseb_v_main DQ ?'
     verificar "$I" 'integral: COPY posicional del qword' \

@@ -1,7 +1,8 @@
-{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+{{ Salida ideal esperada (tercetos y tabla de simbolos, sin palabras clave):
+b es hermana de a: no ve local_a. La primera asignacion si genera terceto;
+la segunda se descarta.
 Tercetos:
 1. (:=, local_a:main:a, n:main:a)
-2. (:=, local_a:main:b, m:main:b)
 Variables de la tabla de simbolos (declaradas, sin palabras clave):
 - a:main -> ulongint, funcion
 - n:main:a -> ulongint, parametro

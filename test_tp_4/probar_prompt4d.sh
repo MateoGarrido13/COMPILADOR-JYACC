@@ -3,7 +3,7 @@
 #
 # Verifica:
 #  1. Compilacion del proyecto
-#  2. Los 4 casos manuales en "Objetos y atributos/" compilan sin errores
+#  2. Los 4 casos manuales en "Objetos_atributos/" compilan sin errores
 #  3. Atributos de objeto emitidos en .DATA (DD/DQ)
 #  4. Lectura/escritura de atributo ulongint y doublef (mov/fld/fstp sobre nombre ASM)
 #  5. COPY estructural: copia campo a campo entre objetos compatibles
@@ -16,7 +16,7 @@ set -u
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD="${TP4_BUILD:-/tmp/tp4p4d_build}"
-CASOS="$RAIZ/test_tp_4/Objetos y atributos"
+CASOS="$RAIZ/test_tp_4/Objetos_atributos"
 
 echo "=== Prompt 4d de TP4 — Prueba de objetos y atributos ==="
 echo "Raiz: $RAIZ"

@@ -5,6 +5,12 @@ Rama: `reentrega`
 Plan ejecutado: `docs/reentrega/plan_prompts_reentrega.md`, prompts `P0-01`, `P0-02`, `P0-03`.  
 Alcance: **solo Ola 0**. No se ejecutaron P1–P6. No se generó ni modificó código Java.
 
+> Nota de cierre P6-01 (24/11/2026): este documento es registro histórico. La
+> decisión A de P0-03 quedó sin efecto: la recursión no se incluye en la
+> reentrega y Ola 5 no se ejecutó. Estado final vigente: llamada a función
+> abierta descartada silenciosamente, sin `PAR`/`CALL` interno y sin mensaje.
+> Las menciones a “P5A pendiente” ya no son trabajo pendiente.
+
 ---
 
 ## 1. Resumen
@@ -13,7 +19,7 @@ Alcance: **solo Ola 0**. No se ejecutaron P1–P6. No se generó ni modificó c�
 |---|---|---|
 | P0-01 | Ejecutado | Baseline compilado y guardado fuera del repo. 6 salidas de consola + 2 `.asm`. |
 | P0-02 | Verificado / ya absorbido | Política de IR escrita en el plan v2. Revisión de `docs/PROMPT-0.md` registrada abajo. |
-| P0-03 | Verificado / ya absorbido | Decisión A (recursión aceptada) vigente en el plan. Pendiente de código en P5A-01. |
+| P0-03 | Decisión histórica sin efecto | En su momento se fijó A (recursión aceptada); P6-01 la dejó sin efecto. Ola 5 no se ejecutó. |
 
 Cambios en el repo durante esta corrida: **ninguno sobre fuentes, tests ni docs existentes**.  
 Único archivo nuevo: este documento.  
@@ -141,11 +147,11 @@ La política es consistente con el comportamiento deseado: **el programa se entr
 
 ---
 
-## 4. P0-03 — recursión aceptada
+## 4. P0-03 — decisión histórica sobre recursión
 
-### 4.1 Estado
+### 4.1 Estado en la corrida P0
 
-Decisión A vigente en `docs/reentrega/plan_prompts_reentrega.md:101-119`. Rama B eliminada. Orden actualizado: `P5A-01 → P5A-04`.
+En esa corrida se fijó la decisión A en `docs/reentrega/plan_prompts_reentrega.md:101-119` y se descartó la rama B. Ese orden (`P5A-01 → P5A-04`) quedó sin efecto en P6-01: la recursión no se incluye en esta reentrega.
 
 ### 4.2 Verificación estática
 
@@ -180,7 +186,7 @@ El IR baseline muestra `label_1:` y `label_2:` vacíos dentro de `fact`, confirm
 
 ### 4.3 Conclusión P0-03
 
-Decisión registrada. Implementación pendiente en `P5A-01`. Documentación obsoleta pendiente en `P5A-02`. No se hizo nada de esto en esta corrida.
+Decisión registrada en esa corrida. No se ejecutó `P5A-01` ni `P5A-02`; P6-01 dejó sin efecto la decisión y corrigió la documentación obsoleta.
 
 ---
 
@@ -211,9 +217,9 @@ Pendientes inmediatos después de P0:
 2. Anulación de `x := y := (...)` (P2-03, requiere regenerar `Parser.java`).
 3. Anulación de `x := foo(1$ul)` (P2-05, sin regenerar Parser).
 4. `start: → jmp main_inicio` en `GeneradorAssembler` (P4-01).
-5. `getFuncion()` con fallback (P5A-01).
+5. `getFuncion()` con fallback (P5A-01): dejado sin efecto en P6-01; no ejecutar.
 
-No se avanzó sobre ninguno de ellos en esta corrida.
+No se avanzó sobre ninguno de los cuatro primeros en esta corrida.
 
 ### Estado final de git
 

@@ -1,6 +1,7 @@
-{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+{{ Salida ideal esperada (tercetos y tabla de simbolos, sin palabras clave):
+cb es hermana de ca, por lo que no ve el atributo x de ca. La asignacion
+se descarta y no deja terceto ejecutable.
 Tercetos:
-1. (:=, x:main:cb:m, n:main:cb:m)
 Variables de la tabla de simbolos (declaradas, sin palabras clave):
 - ca:main -> ca, clase
 - x:main:ca -> ulongint, atributo

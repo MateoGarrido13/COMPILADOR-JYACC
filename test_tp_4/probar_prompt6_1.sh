@@ -57,8 +57,8 @@ echo
 
 echo "[2/5] Generando tres casos representativos..."
 CASOS=(
-    "test_tp_4/Salida por consola/01_pout_variable_ulongint.txt"
-    "test_tp_4/Salida por consola/04_pout_doublef.txt"
+    "test_tp_4/Salida_consola/01_pout_variable_ulongint.txt"
+    "test_tp_4/Salida_consola/04_pout_doublef.txt"
     "test_tp_4/Integracion/04_objetos_multiherencia_copy.txt"
 )
 NOMBRES=(ulongint doublef objetos)

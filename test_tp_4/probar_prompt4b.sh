@@ -3,7 +3,7 @@
 #
 # Verifica:
 #  1. Compilacion del proyecto
-#  2. Los 11 casos manuales en "Salida por consola/" compilan sin errores
+#  2. Los 11 casos manuales en "Salida_consola/" compilan sin errores
 #  3. .DATA con los formatos usados (y solo los usados)
 #  4. INVOKE crt_printf con formato correcto, valor por valor para numeros
 #     y "offset" para cadenas
@@ -15,7 +15,7 @@ set -u
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD="${TP4_BUILD:-/tmp/tp4p4b_build}"
-CASOS="$RAIZ/test_tp_4/Salida por consola"
+CASOS="$RAIZ/test_tp_4/Salida_consola"
 
 echo "=== Prompt 4b de TP4 — Prueba de pout ==="
 echo "Raiz: $RAIZ"

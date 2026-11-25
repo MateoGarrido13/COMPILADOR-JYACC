@@ -4,7 +4,7 @@
 #
 # Verifica:
 #  1. Compilacion del proyecto
-#  2. Los 4 casos en "enumerados/" compilan sin errores
+#  2. Los 4 casos en "Runtime_chequeos/h_enum_asignacion/" compilan sin errores
 #  3. El .asm de cada caso contiene la guardia de enum:
 #     - base ulongint: mov eax / cmp eax, <valor> / je enum_valido_N
 #     - base doublef: fld / fcomp <constante DQ> / fstsw / sahf /
@@ -20,7 +20,7 @@ set -u
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD="${TP4_BUILD:-/tmp/tp4p5h_build}"
-CASOS="$RAIZ/test_tp_4/enumerados"
+CASOS="$RAIZ/test_tp_4/Runtime_chequeos/h_enum_asignacion"
 
 echo "=== Paquete 5.h de TP4 — Asignación inválida a variable de tipo enumeración ==="
 echo "Raiz: $RAIZ"
@@ -75,7 +75,7 @@ no_verificar() {
 
 echo "[3/4] Verificando chequeo 5.h en los .asm..."
 
-ASM="$CASOS/01_asignacion_valida.asm"
+ASM="$CASOS/01_enum_ulongint_valido.asm"
 verificar "$ASM" "guardia mov eax en asignacion valida" 'mov eax, c_2_ul_ul'
 verificar "$ASM" "cmp contra valor 1 del enum" 'cmp eax, 1'
 verificar "$ASM" "cmp contra valor 2 del enum" 'cmp eax, 2'
@@ -89,7 +89,7 @@ verificar "$ASM" "codigo de salida 4 en label de fallo" 'invoke ExitProcess, 4'
 verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
 verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
-ASM="$CASOS/03_doublef_valida.asm"
+ASM="$CASOS/03_enum_doublef_valido.asm"
 verificar "$ASM" "doublef: carga del valor a chequear" 'fld v_main'
 verificar "$ASM" "doublef: comparacion contra 1.5" 'fcomp c_1_5'
 verificar "$ASM" "doublef: comparacion contra 2.5" 'fcomp c_2_5'
@@ -103,7 +103,7 @@ verificar "$ASM" "doublef: mensaje de error en .DATA" 'msg_enum_invalido DB "Err
 verificar "$ASM" "doublef: B1 jmp fin_normal" 'jmp fin_normal'
 verificar "$ASM" "doublef: B1 fin_normal:" 'fin_normal:'
 
-ASM="$CASOS/04_doublef_invalida.asm"
+ASM="$CASOS/04_enum_doublef_invalido.asm"
 verificar "$ASM" "doublef invalida: fcomp contra 1.5" 'fcomp c_1_5'
 verificar "$ASM" "doublef invalida: fcomp contra 2.5" 'fcomp c_2_5'
 verificar "$ASM" "doublef invalida: jmp error_enum_invalido" 'jmp error_enum_invalido'
@@ -111,7 +111,7 @@ verificar "$ASM" "doublef invalida: etiqueta error_enum_invalido:" 'error_enum_i
 verificar "$ASM" "doublef invalida: ExitProcess, 4" 'invoke ExitProcess, 4'
 verificar "$ASM" "doublef invalida: B1 jmp fin_normal" 'jmp fin_normal'
 
-ASM="$CASOS/02_asignacion_invalida.asm"
+ASM="$CASOS/02_enum_ulongint_invalido.asm"
 verificar "$ASM" "guardia mov eax en asignacion invalida" 'mov eax, c_5_ul_ul'
 verificar "$ASM" "cmp contra valor 1 del enum" 'cmp eax, 1'
 verificar "$ASM" "cmp contra valor 2 del enum" 'cmp eax, 2'

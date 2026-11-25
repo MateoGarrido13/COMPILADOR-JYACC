@@ -1,19 +1,16 @@
 #!/usr/bin/env bash
 # Ejecuta los casos de test/TP3_SEMANTICAS contra el compilador del TP3.
 #
-# Cada archivo .txt contiene el programa y, al final, un comentario multilinea
-# {{ ... }} con las reglas. La primera linea del comentario es:
-#   --- ESPERADO ---
-# Las reglas son una por linea:
-#   SIN ERRORES            la salida no debe contener "Error:"
-#   ERROR:<texto>          la salida debe contener <texto>
-#   SIMBOLO:<clave>        la tabla debe tener "<clave> -> 300"
-#   NO_SIMBOLO:<clave>     la tabla no debe tener "<clave> -> 300"
-#   DECLARADO_SI:<clave>   la entrada <clave> debe tener "Declarado: si"
-#   DECLARADO_NO:<clave>   la entrada <clave> debe tener "Declarado: no"
-#   TERCETO:<texto>        la salida debe contener <texto>
-#   SIN TERCETOS           la salida no debe tener tercetos ejecutables
-#                          (se ignoran los delimitadores estructurales)
+# Cada .txt tiene un bloque "{{ ... }}" al principio con la salida esperada
+# descriptiva y el programa despues. El runner extrae ese bloque, compila solo
+# el programa y comprueba:
+#   - cada terceto "N. (...)" esperado figura en el stdout;
+#   - cada entrada "- clave -> tipo, uso" figura en la tabla con el token
+#     correspondiente (300 variable, 302 constante, 303 cadena);
+#   - cada mensaje bajo "Errores:" figura en el stdout;
+#   - "Sin errores." implica que no aparece "Error:".
+#
+# Las frases explicativas del bloque no son reglas y se ignoran.
 set -u
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -33,12 +30,29 @@ trap 'rm -rf "$TMP"' EXIT
 fallos=0
 casos=0
 
-estado_declaracion() {
-    local clave="$1"
-    awk -v clave="$clave" '
-        $0 == clave " -> 300" { encontrado = 1; next }
-        encontrado && /^Declarado: / { print $2; exit }
-    '
+datos_simbolo() {
+    local clave="$1" token="$2"
+    awk -v clave="$clave" -v token="$token" '
+        $0 == clave " -> " token {
+            encontrado = 1; tipo = ""; uso = ""; decl = ""; next
+        }
+        encontrado {
+            if ($0 ~ /^Tipo de dato: /) {
+                tipo = $0; sub(/^Tipo de dato: /, "", tipo)
+            } else if ($0 ~ /^Uso: /) {
+                uso = $0; sub(/^Uso: /, "", uso)
+            } else if ($0 ~ /^Declarado: /) {
+                decl = $0; sub(/^Declarado: /, "", decl)
+            } else if ($0 ~ /^-+$/) {
+                print tipo "|" uso "|" decl
+                impreso = 1
+                exit
+            }
+        }
+        END {
+            if (encontrado && !impreso) print tipo "|" uso "|" decl
+        }
+    ' <<<"$salida"
 }
 
 for caso in "$DIR"/prompt-*/*.txt; do
@@ -47,98 +61,120 @@ for caso in "$DIR"/prompt-*/*.txt; do
     entrada="$TMP/entrada.txt"
     reglas="$TMP/reglas.txt"
 
-    linea_marca="$(grep -n -x -- '--- ESPERADO ---' "$caso" | head -n 1 | cut -d: -f1)"
-    if [[ -z "$linea_marca" ]]; then
+    linea_inicio="$(grep -n -m1 -- '^{{' "$caso" | head -n 1 | cut -d: -f1)"
+    if [[ -z "$linea_inicio" ]]; then
         echo "FALLA $nombre"
-        echo "  fallo: falta la linea '--- ESPERADO ---'"
+        echo "  fallo: falta el bloque '{{' inicial"
         fallos=$((fallos + 1))
         continue
     fi
 
-    # Las reglas viven dentro de un comentario multilinea {{ ... }} para que el
-    # archivo tambien se pueda compilar directamente sin ensuciar la tabla.
-    linea_llave=$((linea_marca - 1))
-    if [[ "$(sed -n "${linea_llave}p" "$caso")" != "{{" ]]; then
-        echo "FALLA $nombre"
-        echo "  fallo: falta '{{' en la linea anterior a '--- ESPERADO ---'"
-        fallos=$((fallos + 1))
-        continue
-    fi
-    linea_cierre="$(awk -v desde="$linea_marca" 'NR > desde && /^\}\}$/ {print NR; exit}' "$caso")"
+    linea_cierre="$(awk -v desde="$linea_inicio" \
+        'NR > desde && /^\}\}$/ { print NR; exit }' "$caso")"
     if [[ -z "$linea_cierre" ]]; then
         echo "FALLA $nombre"
-        echo "  fallo: falta '}}' que cierra el bloque de reglas"
+        echo "  fallo: falta '}}' que cierra el bloque esperado"
         fallos=$((fallos + 1))
         continue
     fi
 
-    # El comentario de reglas no se le pasa al compilador.
-    head -n $((linea_llave - 1)) "$caso" > "$entrada"
-    sed -n "$((linea_marca + 1)),$((linea_cierre - 1))p" "$caso" > "$reglas"
+    sed -n "$((linea_inicio + 1)),$((linea_cierre - 1))p" "$caso" > "$reglas"
+    tail -n "+$((linea_cierre + 1))" "$caso" > "$entrada"
 
     salida="$(java -cp "$BUILD" Main "$entrada" 2>&1)"
     errores_caso=0
+    seccion=""
 
     while IFS= read -r regla; do
         case "$regla" in
             ""|\#*) continue ;;
-            "SIN ERRORES")
+            "Tercetos:")
+                seccion="tercetos"
+                continue
+                ;;
+            Variables\ de\ la\ tabla\ de\ simbolos*)
+                seccion="variables"
+                continue
+                ;;
+            Constantes\ de\ la\ tabla\ de\ simbolos*)
+                seccion="constantes"
+                continue
+                ;;
+            Cadenas\ de\ la\ tabla\ de\ simbolos*)
+                seccion="cadenas"
+                continue
+                ;;
+            "Errores:")
+                seccion="errores"
+                continue
+                ;;
+            "Sin errores."|"Sin errores")
                 if grep -q "Error:" <<<"$salida"; then
                     echo "  fallo: se esperaban cero errores"
                     errores_caso=$((errores_caso + 1))
                 fi
-                ;;
-            ERROR:*)
-                if ! grep -Fq -- "${regla#ERROR:}" <<<"$salida"; then
-                    echo "  fallo: falta error '${regla#ERROR:}'"
-                    errores_caso=$((errores_caso + 1))
-                fi
-                ;;
-            SIMBOLO:*)
-                if ! grep -Fq -- "${regla#SIMBOLO:} -> 300" <<<"$salida"; then
-                    echo "  fallo: falta simbolo '${regla#SIMBOLO:}'"
-                    errores_caso=$((errores_caso + 1))
-                fi
-                ;;
-            NO_SIMBOLO:*)
-                if grep -Fq -- "${regla#NO_SIMBOLO:} -> 300" <<<"$salida"; then
-                    echo "  fallo: sobra simbolo '${regla#NO_SIMBOLO:}'"
-                    errores_caso=$((errores_caso + 1))
-                fi
-                ;;
-            DECLARADO_SI:*)
-                if [[ "$(estado_declaracion "${regla#DECLARADO_SI:}" <<<"$salida")" != "si" ]]; then
-                    echo "  fallo: '${regla#DECLARADO_SI:}' no esta declarado"
-                    errores_caso=$((errores_caso + 1))
-                fi
-                ;;
-            DECLARADO_NO:*)
-                if [[ "$(estado_declaracion "${regla#DECLARADO_NO:}" <<<"$salida")" != "no" ]]; then
-                    echo "  fallo: '${regla#DECLARADO_NO:}' figura como declarado"
-                    errores_caso=$((errores_caso + 1))
-                fi
-                ;;
-            TERCETO:*)
-                if ! grep -Fq -- "${regla#TERCETO:}" <<<"$salida"; then
-                    echo "  fallo: falta terceto '${regla#TERCETO:}'"
-                    errores_caso=$((errores_caso + 1))
-                fi
-                ;;
-            "SIN TERCETOS")
-                # Los delimitadores estructurales no cuentan como codigo
-                # ejecutable: un cuerpo invalido puede conservar PROGRAMA,
-                # FUNCION, CLASE y sus cierres.
-                if grep -E '^[0-9]+\. \(' <<<"$salida" \
-                        | grep -Evq '^[0-9]+\. \((PROGRAMA|FIN_PROGRAMA|FUNCION|FIN_FUNCION|METODO|FIN_METODO|CLASE|FIN_CLASE), '; then
-                    echo "  fallo: se esperaban cero tercetos"
-                    errores_caso=$((errores_caso + 1))
-                fi
-                ;;
-            *)
-                echo "  fallo: regla desconocida '$regla'"
-                errores_caso=$((errores_caso + 1))
+                continue
                 ;;
         esac
+
+        if [[ "$regla" =~ ^[0-9]+\.[[:space:]] ]]; then
+            # La numeracion esperada no siempre coincide: algunos bloques
+            # omiten delimitadores o ret. Se compara el texto del terceto.
+            texto="${regla#*. }"
+            if ! grep -Fq -- "$texto" <<<"$salida"; then
+                echo "  fallo: falta terceto '$texto'"
+                errores_caso=$((errores_caso + 1))
+            fi
+            continue
+        fi
+
+        if [[ "$seccion" == "errores" && "$regla" == "- "* ]]; then
+            mensaje="${regla#- }"
+            if ! grep -Fq -- "$mensaje" <<<"$salida"; then
+                echo "  fallo: falta error '$mensaje'"
+                errores_caso=$((errores_caso + 1))
+            fi
+            continue
+        fi
+
+        if [[ "$seccion" == "variables" || "$seccion" == "constantes" || "$seccion" == "cadenas" ]] \
+           && [[ "$regla" == "- "* && "$regla" == *" -> "* && "$regla" == *", "* ]]; then
+            resto="${regla#- }"
+            clave="${resto%% -> *}"
+            valor="${resto#* -> }"
+            tipo="${valor%%,*}"
+            uso="${valor#*, }"
+            case "$seccion" in
+                variables) token="300" ;;
+                constantes) token="302" ;;
+                cadenas) token="303" ;;
+            esac
+            obtenido="$(datos_simbolo "$clave" "$token")"
+            IFS='|' read -r obt_tipo obt_uso obt_decl <<<"$obtenido"
+            declaracion="si"
+            if [[ "$tipo" == "indefinido" && "$uso" == "indefinido" ]]; then
+                declaracion="no"
+            fi
+            if [[ "$tipo" == "tipo enumerado" && "$uso" == "tipo" ]]; then
+                # Los typedef de enum se esperan como "tipo enumerado, tipo":
+                # el tipo de dato real es el base (ulongint) y el uso es el
+                # que distingue a la entrada.
+                esperado="tipo enumerado|si"
+                if [[ "$obt_uso|$obt_decl" != "$esperado" ]]; then
+                    echo "  fallo: simbolo '$clave' ($token): se esperaba uso/declarado '$esperado', se obtuvo '$obt_uso|$obt_decl'"
+                    errores_caso=$((errores_caso + 1))
+                fi
+            else
+                esperado="$tipo|$uso|$declaracion"
+                if [[ "$obtenido" != "$esperado" ]]; then
+                    echo "  fallo: simbolo '$clave' ($token): se esperaba '$esperado', se obtuvo '$obtenido'"
+                    errores_caso=$((errores_caso + 1))
+                fi
+            fi
+            continue
+        fi
+
+        # El resto del bloque es prosa descriptiva, no una regla ejecutable.
     done < "$reglas"
 
     if [[ $errores_caso -eq 0 ]]; then

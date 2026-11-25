@@ -2,6 +2,15 @@
 
 Versión 2. Segunda pasada estática sobre los `.java`. Reemplaza la versión 1.
 
+> Nota de cierre P6-01 (24/11/2026): la decisión de aceptar recursión quedó sin
+> efecto. Los enunciados de TP01–TP04 no exigen recursión y el profesor solo
+> observó que el test incorporado de factorial no funcionaba; esa observación no
+> convierte la recursión en requisito de esta reentrega. Ola 5 no se ejecutó.
+> Estado final: una llamada a una función todavía abierta se descarta
+> silenciosamente; no genera `PAR`/`CALL` interno ni mensaje de error. El
+> programa principal y sus llamadas externas sí se emiten. Las secciones que
+> describen P0-03 y P5A son registro histórico, no trabajo pendiente.
+
 Regla: **un prompt = un cambio = un commit = una verificación**. No mezclar léxico con parser, ni parser con IR, ni IR con assembler, ni código con documentación.
 
 ---
@@ -29,7 +38,7 @@ Confirmación estática:   <- resultado de la segunda pasada sobre el código ac
 |---|---|---|
 | IR con errores | **El programa se entrega completo aunque haya errores.** `Reporte` acumula mensajes; el análisis sigue. Una construcción inválida no genera sus propios tercetos, pero el resto del programa sí. | No hay compuerta global `hayErrores()`. No se descarta IR de TP03. |
 | TP03 / `enum_vacio` | **Salida actual correcta. Sin cambios.** | `Ausencia de valores…` + `tipo no declarado 'color'` + `(pout, x, --)` + `(pout, ok, --)` se acepta. Ola 3 queda cerrada sin prompts. |
-| Recursión | **Aceptada.** | Ejecutar rama A. `Entorno.getFuncion()` debe consultar `pilaFunciones`. Rama B eliminada. |
+| Recursión | **Fuera de alcance en esta reentrega.** | Decisión P0-03 dejada sin efecto. No se ejecuta Ola 5. La llamada a función abierta se descarta silenciosamente; sin `PAR`/`CALL` interno y sin mensaje. |
 | TP04 layout | **Jump al inicio del main.** | Elegido por ser el de menos líneas y no requerir regenerar `Parser.java` ni reordenar el IR. |
 
 ### 0.3 Tabla de raíces
@@ -42,9 +51,9 @@ Confirmación estática:   <- resultado de la segunda pasada sobre el código ac
 | TP02-c | `ExpresionDiferida.deOperando()` no propaga invalidez de `LlamadaFuncion` | Consistencia; no afecta los dos casos |
 | TP03 | No es defecto según decisión 0.2 | Sin cambios |
 | TP04-a | `GeneradorAssembler.emitirCodigo()` emite `start:` y cae en `fn_*` sin `CALL` | A corregir |
-| TP04-b | `Entorno.getFuncion()` solo consulta `funciones` | A corregir |
-| TP04-c | `emitirFinFuncion()` agrega `leave/ret` duplicado | A corregir |
-| TP04-d | Informe afirma diagnóstico de recursión inexistente | A corregir (docs) |
+| TP04-b | `Entorno.getFuncion()` solo consulta `funciones` | Fuera de alcance; sin cambio |
+| TP04-c | `emitirFinFuncion()` agrega `leave/ret` duplicado | No corregido: P4-04 se revirtió para conservar el epílogo de funciones sin `ret` |
+| TP04-d | Documentación afirmaba un diagnóstico de recursión inexistente | Corregido en P6-01 |
 
 ---
 
@@ -98,7 +107,7 @@ Dependencias: P0-01.
 Confirmación estática: GeneradorTercetos.generar() (:147-207) no consulta Reporte; Compilador.java:93,107 imprime contenido() siempre. La política ya es "seguir generando"; solo faltaba escribirla.
 ```
 
-## P0-03 — Recursión: decisión A
+## P0-03 — Recursión: decisión A (sin efecto)
 
 ```text
 ID: P0-03
@@ -118,6 +127,9 @@ Aceptación:
 Dependencias: P0-01.
 Confirmación estática: ASSETS/recursion.md y DIAGNOSTICO_FUNCIONES_METODOS.md describen rechazo, pero grep "Recursion no soportada" da 0 resultados en *.java. El silencio real está en Verificaciones.java:352-354 y :432-435 cuando firma == null.
 ```
+
+> Estado final P6-01: esta decisión no se ejecutó. La rama A no es requisito de
+> la reentrega y P5A-01 .. P5A-04 no entran en el orden de trabajo.
 
 ---
 
@@ -307,7 +319,7 @@ Prohibido:
   - Marcar inválidas llamadas válidas.
   - Cambiar LlamadaFuncion.java.
 Verificación:
-  - Casos con invocación con corchetes pero firma inexistente; factorial después de P5A-01.
+  - Casos con invocación con corchetes pero firma inexistente; factorial queda fuera de alcance.
 Aceptación:
   - ASIGNACION ve origen inválido desde la envoltura.
 Dependencias: P2-05.
@@ -483,15 +495,19 @@ Prohibido:
 Verificación:
   - diff de snapshots; grep start: + fn_.
 Aceptación:
-  - Diff explicado por P4-01 y P4-04 únicamente.
-Dependencias: P4-03, P4-04, P4-05.
+  - Diff explicado por P4-01 únicamente; P4-04 fue revertido.
+Dependencias: P4-03, P4-05. P4-04 se evaluó y se revirtió.
 ```
 
 ---
 
-# 6. Ola 5 — recursión aceptada
+# 6. Ola 5 — no ejecutada
 
-## P5A-01 — Fallback de `getFuncion()` a `pilaFunciones`
+> Esta ola quedó fuera de la reentrega por decisión del usuario. El bloque
+> siguiente se conserva solo como registro del análisis original; ninguno de sus
+> prompts se ejecutó ni debe interpretarse como pendiente.
+
+## P5A-01 — Fallback de `getFuncion()` a `pilaFunciones` (no ejecutado)
 
 ```text
 ID: P5A-01
@@ -574,7 +590,9 @@ Aceptación:
 Dependencias: P5A-03, P4-06.
 ```
 
-Rama B (rechazo explícito de recursión) **eliminada** por decisión P0-03 = A.
+Rama B (rechazo explícito de recursión) quedó descartada en el plan original por
+P0-03 = A, pero la decisión A también quedó sin efecto en P6-01. La recursión no
+se implementa ni se documenta como soportada o rechazada con mensaje.
 
 ---
 
@@ -596,7 +614,7 @@ Verificación:
   - grep -rniE 'recursi|v.lido|terceto' docs ASSETS.
 Aceptación:
   - Sin afirmaciones que contradigan el código final.
-Dependencias: P1-03, P2-07, P4-06, P5A-04.
+Dependencias: P1-03, P2-07, P4-06. P5A-04 no se ejecutó.
 ```
 
 ## P6-02 — Suite completa
@@ -626,15 +644,18 @@ Raíz confirmada: No hay MASM en Linux; TP04 exige ejecución real.
 Archivos: ninguno; resultado documentado en docs/reentrega/.
 Cambio permitido:
   - Ensamblar y ejecutar 00_programa_valido, 01_funcion_ulongint,
-    02_funcion_doublef, 03_recursion_factorial_metodo, 07_programa_integral_6_2.
+    02_funcion_doublef y 07_programa_integral_6_2.
+  - El caso 03_recursion_factorial_metodo puede ensamblarse como regresión de
+    layout, pero no es prueba de recursión ni se evalúa con factorial 120.
 Prohibido:
   - Dar por cerrado TP04 sin esta verificación.
+  - Presentar factorial como evidencia de recursión soportada.
 Verificación:
   - ml.exe / link.exe / ejecución.
 Aceptación:
   - Sin errores de ensamblado.
   - Sin entrada accidental a subrutina.
-  - factorial 5 = 120; escala = 14400.
+  - Las salidas de llamadas no recursivas coinciden con el IR generado.
 Dependencias: P6-02.
 ```
 
@@ -643,7 +664,9 @@ Dependencias: P6-02.
 # 8. Orden de ejecución
 
 ```text
-P0-01 → P0-02 → P0-03
+P0-01 → P0-02
+
+P0-03 no ejecutado: decisión A dejada sin efecto en P6-01
 
 P1-01 → P1-02 → P1-03
 
@@ -653,7 +676,7 @@ P3-00   (sin acciones)
 
 P4-01 → P4-02 → P4-03 → P4-04 → P4-05 → P4-06
 
-P5A-01 → P5A-02 → P5A-03 → P5A-04
+P5A-01 → P5A-02 → P5A-03 → P5A-04  (ola no ejecutada)
 
 P6-01 → P6-02 → P6-03
 ```
@@ -669,8 +692,8 @@ P2-03 requiere regenerar `Parser.java`. P2-05 no: se resuelve con una acción re
 3. TP03: sin cambios; salida actual aceptada.
 4. TP04: `start:` salta a `main_inicio`; ningún prólogo se ejecuta sin `CALL`.
 5. TP04: `fin_normal`/`error_*` no se alcanzan por caída secuencial.
-6. TP04: sin `leave/ret` duplicado en cierre de función.
-7. Factorial: `getFuncion()` con fallback; CALL recursivo presente; 120 y 14400.
+6. TP04: se conserva `leave/ret` en `fin_*` porque P4-04 fue revertido; las funciones sin `ret` necesitan esa salida.
+7. Recursión: fuera de alcance; llamada a función abierta descartada silenciosamente, sin `CALL` interno y sin mensaje.
 8. Docs: sin diagnósticos inexistentes ni conteos contradichos; `enum_vacio` intacto.
 9. MASM32: casos críticos ensamblan y ejecutan sin errores.
 </think:6124c78e><tool_call:6124c78e>shell<arg_key:6124c78e>command</arg_key:6124c78e><arg_value:6124c78e>wc -l docs/reentrega/plan_prompts_reentrega.md && git status --short

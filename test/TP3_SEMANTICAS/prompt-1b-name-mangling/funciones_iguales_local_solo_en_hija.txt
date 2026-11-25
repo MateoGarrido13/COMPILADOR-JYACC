@@ -1,7 +1,9 @@
-{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+{{ Salida ideal esperada (tercetos y tabla de simbolos, sin palabras clave):
+Ambas funciones se llaman fun_c, pero sus claves de ambito son distintas.
+La variable local solo existe en la funcion hija: la asignacion en la
+funcion del padre se descarta.
 Tercetos:
 1. (:=, var_1:main:a:b:fun_c, p:main:a:b:fun_c)
-2. (:=, var_1:main:a:fun_c, q:main:a:fun_c)
 Variables de la tabla de simbolos (declaradas, sin palabras clave):
 - a:main -> ulongint, funcion
 - n:main:a -> ulongint, parametro

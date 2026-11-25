@@ -29,9 +29,9 @@ el orden queda registrada en P2-02 y su implementación en P2-05.
 
 Los errores semánticos de argumentos y orden se reportan con la línea de la
 invocación. Una llamada inválida no genera su `CALL`/`CALLMET`. La omisión del
-orden es el caso pendiente: hoy se informa el error, pero el IR todavía contiene
-`(:=, x:main, foo:main)`; el expected result documentado más abajo exige que esa
-asignación desaparezca.
+orden ya no es un caso pendiente: P2-05 hace que la acción devuelva una
+expresión inválida y P2-07 verificó que esos casos no emiten `PAR`, `CALL` ni
+`(:=, x:main, foo:main)`.
 
 ## Clases editadas para completar R19
 
@@ -122,10 +122,11 @@ Omitir los corchetes —o escribir `[]`— es inválido. El tema 20, que no corr
 al grupo, es el que vuelve opcional esa lista; acá no se adopta esa relajación.
 
 En `test/tp2/generales/18_falta_orden.txt` el error
-`Falta del orden de evaluacion y asignacion de parametros` ya se informa en la
-línea 8. El baseline, sin embargo, emite `(:=, x:main, foo:main)`, es decir, una
-asignación desde el nombre de la función. Ese IR es inválido: no hay `PAR`, no hay
-`CALL` y el resultado de la invocación no puede usarse como valor.
+`Falta del orden de evaluacion y asignacion de parametros` se informa en la
+línea 8. El baseline emitía `(:=, x:main, foo:main)`, es decir, una asignación
+desde el nombre de la función. Ese IR es inválido: no hay `PAR`, no hay `CALL` y
+el resultado de la invocación no puede usarse como valor. P2-05 eliminó esa
+asignación; P2-07 confirmó el estado final.
 
 El expected result es: error presente, cero `PAR`, cero `CALL` y cero
 `(:=, x:main, foo:main)`. Se conservan los tercetos de la declaración de `foo`,

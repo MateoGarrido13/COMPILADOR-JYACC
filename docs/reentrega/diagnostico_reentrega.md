@@ -7,6 +7,15 @@ Estado inicial: `git status --short` limpio.
 
 Este documento **no implementa correcciones**. Registra diagnóstico, evidencia reproducible, flujo de datos, clases involucradas y consecuencias de las cuatro observaciones del profesor.
 
+> Nota de cierre P6-01 (24/11/2026): este análisis es histórico. La posibilidad
+> de aceptar recursión quedó descartada por decisión del usuario: los enunciados
+> de TP01–TP04 no la exigen y Ola 5 no se ejecutó. Estado final vigente:
+> `Entorno.getFuncion()` solo consulta funciones cerradas; una llamada a función
+> abierta se descarta silenciosamente, sin `PAR`/`CALL` interno y sin mensaje de
+> error; el programa y sus llamadas externas sí se emiten. Las frases que hablan
+> de “corregir la recursión”, “P5A” o “rechazo explícito” describen el análisis
+> original, no el estado aceptado ni trabajo pendiente.
+
 ---
 
 ## 0. Alcance y método
@@ -103,7 +112,7 @@ Según `readme.md:7`, temas particulares del grupo 43:
 - herencia múltiple con prefijo
 - conversión explícita `todf`
 
-Los chequeos runtime asignados al grupo, según enunciado TP04, son `b, e, f, h`. La recursión es el chequeo `i` y **no corresponde al grupo 43**. Esto no elimina el problema del caso factorial: el test `03_recursion_factorial_metodo.txt` sigue incluido como prueba positiva y hoy no produce una llamada recursiva válida.
+Los chequeos runtime asignados al grupo, según enunciado TP04, son `b, e, f, h`. La recursión es el chequeo `i` y **no corresponde al grupo 43**. En el estado final P6-01 la recursión quedó fuera de alcance: el test `03_recursion_factorial_metodo.txt` se conserva solo como regresión de `jmp main_inicio` y llamadas externas, no como prueba positiva de recursión.
 
 ---
 
@@ -1208,17 +1217,17 @@ Cuando la función ya está cerrada, la convención es correcta:
 
 El problema no es la convención de llamada en sí. Es que el flujo inicial llega a los prólogos sin pasar por `emitirLlamada()`.
 
-## 6.10 Clases y archivos involucrados
+## 6.10 Clases y archivos involucrados (análisis original)
 
-| Archivo | Responsabilidad en el fallo |
+| Archivo | Responsabilidad en el fallo observado entonces |
 |---|---|
-| `GeneradorAssembler.java` | Emite `start:` y todo el IR lineal; prólogos quedan antes del main. |
-| `Entorno.java` | `getFuncion()` no consulta `pilaFunciones`; elimina recursión silenciosamente. |
+| `GeneradorAssembler.java` | Emitía `start:` y todo el IR lineal; prólogos quedaban antes del main. Corregido por P4-01. |
+| `Entorno.java` | `getFuncion()` no consulta `pilaFunciones`; descarta la llamada abierta silenciosamente. Estado final, fuera de alcance desde P6-01. |
 | `AccionesExpresiones.java` | Marca invocación inválida cuando `firma == null`. |
-| `Verificaciones.java` | `firma == null` → `false` sin mensaje. |
+| `Verificaciones.java` | `firma == null` → `false` sin mensaje. Sigue siendo el comportamiento final. |
 | `GeneradorTercetos.java` | No emite `CALL` para llamadas inválidas; conserva labels vacíos. |
-| `ASSETS/recursion.md` | Documenta un diagnóstico que no existe en código. |
-| `ASSETS/DIAGNOSTICO_FUNCIONES_METODOS.md` | Repite el diagnóstico inexistente. |
+| `ASSETS/recursion.md` | Antes de P6-01 documentaba un diagnóstico inexistente; corregido. |
+| `ASSETS/DIAGNOSTICO_FUNCIONES_METODOS.md` | Repetía el diagnóstico inexistente; corregido en P6-01. |
 
 ---
 
@@ -1236,12 +1245,12 @@ El pipeline separa mal “hubo error” de “no generar código”:
 
 Esto explica TP01, TP02 y TP03.
 
-## 7.2 Documentación desactualizada
+## 7.2 Documentación desactualizada (estado al momento del diagnóstico)
 
-- `ASSETS/recursion.md`: promete diagnóstico de recursión no soportada; código no lo emite.
-- `ASSETS/DIAGNOSTICO_FUNCIONES_METODOS.md`: mismo problema.
-- `ASSETS/informe_generador_tercetos.md`: describe descarte dinámico pero no cubre typedef vacío.
-- `docs/PROMPT-0.md:119`: cuenta de tercetos distinta de la ejecución real.
+- `ASSETS/recursion.md`: antes prometía un diagnóstico de recursión no soportada; P6-01 lo corrigió al descarte silencioso.
+- `ASSETS/DIAGNOSTICO_FUNCIONES_METODOS.md`: mismo problema, corregido en P6-01.
+- `ASSETS/informe_generador_tercetos.md`: describía descarte dinámico pero no cubría `typedef` vacío; TP03 quedó sin cambios por decisión P0-02.
+- `docs/PROMPT-0.md:119`: la cuenta vieja quedó corregida en P2-01/P2-07; la fila de `enum_vacio` permanece intacta.
 - Posible guía externa TP02: no localizada en repo.
 
 ## 7.3 Tests positivos que ya no son positivos
@@ -1371,10 +1380,10 @@ No aparece guía que marque ambos casos como válidos.
 
 # 9. Conclusiones
 
-1. **TP04 es el fallo más grave y ya está confirmado.** El ASM generado entra en la subrutina apenas arranca `start:`. La explicación del profesor queda validada.
-2. **Factorial tiene dos capas de fallo.** Entrada anticipada a subrutina + desaparición silenciosa de la llamada recursiva por `Entorno.getFuncion()`.
-3. **TP01 no reconoce `id#malo`.** Reconoce fragmentos; por eso pueden aparecer asignaciones truncadas.
-4. **TP02 no es un bug de detección.** El error se reporta. El problema es expected results/guía e IR posterior.
-5. **TP03 muestra contradicción documental.** La lista dinámica existe, pero el caso typedef vacío conserva IR pese al error.
-6. **La documentación interna no es confiable en tres puntos:** diagnóstico de recursión, descarte de typedef y conteo de tercetos.
-7. **No se implementaron correcciones.** Este archivo solo diagnostica. Las decisiones de resolución quedan para el siguiente paso.
+1. **TP04 tenía una falla grave de layout confirmada.** El ASM entraba en la subrutina apenas arrancaba `start:`; P4-01 la corrigió con `jmp main_inicio`.
+2. **Factorial mostró dos conductas distintas.** La entrada anticipada quedó corregida en P4-01; la llamada recursiva se descarta silenciosamente y la recursión quedó fuera de alcance en P6-01.
+3. **TP01 no reconocía `id#malo`.** P1-01 fijó el estado léxico `19` y P1-02 conservó el lexema completo.
+4. **TP02 no era un bug de detección.** El error se reportaba; P2-01/P2-05 anularon los constructos inválidos y P2-07 verificó el IR resultante.
+5. **TP03 muestra una contradicción documental aceptada.** La lista dinámica existe, pero `21_enum_vacio.txt` conserva IR posterior; P0-02 decidió no cambiar ese caso.
+6. **La documentación quedó alineada en P6-01:** sin diagnóstico de recursión inexistente; el conteo de tercetos de `PROMPT-0.md:119` ya era correcto; `enum_vacio` intacto.
+7. **Este archivo no implementa correcciones.** Las corridas P0–P4 y la auditoría P6-01 registran por separado los cambios y decisiones finales.

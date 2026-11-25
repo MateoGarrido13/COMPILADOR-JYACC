@@ -1,10 +1,11 @@
-{{ Salida ideal esperada (tercetos y variables de la TS, sin palabras clave):
+{{ Salida ideal esperada (tercetos y tabla de simbolos, sin palabras clave):
+El tipo 'fantasma' no existe: f:main queda como placeholder con Declarado: no.
 Tercetos:
 1. (PROGRAMA, --, --)
 2. (pout, ok, --)
 3. (FIN_PROGRAMA, --, --)
 Variables de la tabla de simbolos (declaradas, sin palabras clave):
-- f:main -> fantasma:main, variable
+- f:main -> indefinido, indefinido
 }}
 
 prog

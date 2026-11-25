@@ -4,7 +4,7 @@
 #
 # Verifica:
 #  1. Compilacion del proyecto
-#  2. Los 2 casos en "resta_enteros_negativa/" compilan sin errores
+#  2. Los casos en "Runtime_chequeos/f_resta_ulongint/" compilan sin errores
 #  3. El .asm de cada caso contiene sub eax, ... seguido de jb error_negativo_resta
 #  4. El .asm contiene msg_negativo_resta en .DATA y el label error_negativo_resta: en .CODE
 #  5. Regresiones de prompts anteriores (incluyendo 5.0, 5.b, 5.e)
@@ -15,7 +15,7 @@ set -u
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD="${TP4_BUILD:-/tmp/tp4p5f_build}"
-CASOS="$RAIZ/test_tp_4/resta_enteros_negativa"
+CASOS="$RAIZ/test_tp_4/Runtime_chequeos/f_resta_ulongint"
 
 echo "=== Paquete 5.f de TP4 — Resultado negativo en restas de enteros ulongint ==="
 echo "Raiz: $RAIZ"
@@ -70,8 +70,8 @@ no_verificar() {
 
 echo "[3/4] Verificando chequeo 5.f en los .asm..."
 
-ASM="$CASOS/01_resta_valida.asm"
-# CORRECCION: los .txt actuales restan variables (x - y), no constantes;
+ASM="$CASOS/01_resta_sin_resultado_negativo.asm"
+# CORRECCION P6-02: los .txt actuales restan variables (x - y), no constantes;
 # el patron anterior ('sub eax, c_10_ul_ul') era de una version vieja.
 verificar "$ASM" "sub eax en resta valida" 'sub eax, y_main'
 verificar "$ASM" "guardia jb error_negativo_resta despues de sub" 'jb error_negativo_resta'
@@ -81,7 +81,7 @@ verificar "$ASM" "codigo de salida 3 en label de fallo" 'invoke ExitProcess, 3'
 verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
 verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
-ASM="$CASOS/02_resta_negativa.asm"
+ASM="$CASOS/03_resta_resultado_negativo.asm"
 verificar "$ASM" "sub eax en resta negativa" 'sub eax, y_main'
 verificar "$ASM" "guardia jb error_negativo_resta despues de sub" 'jb error_negativo_resta'
 verificar "$ASM" "mensaje de error en .DATA" 'msg_negativo_resta DB "Error: resultado negativo en resta de ulongint",0'

@@ -7,6 +7,12 @@ Fecha: 24/11/2026.
 
 Este archivo concentra la Ola 2. Acá se documentan los cambios, la razón de cada uno, la verificación y lo que queda para los prompts siguientes. La Ola 1 quedó cerrada en `docs/reentrega/P1_diagnostico_cambios.md`.
 
+> Nota de cierre P6-01: las secciones que describen el estado “pendiente” de
+> P2-02 son registro de esa corrida. El estado final es el de P2-05/P2-07:
+> falta de orden produce cero `PAR`, cero `CALL` y cero asignaciones desde el
+> nombre de la función. `docs/PROMPT-0.md` y `docs/PROMPT-19.md` ya reflejan ese
+> estado; la fila de `enum_vacio` permanece intacta por decisión P0-02.
+
 ---
 
 ## 1. Alcance de P2-01
@@ -692,7 +698,7 @@ copias a formales y conservan el tipo de retorno. La anulación del IR cuando fa
 el orden queda registrada en P2-02 y su implementación en P2-05.
 ```
 
-**Por qué:** acota el “Implementado” a las llamadas con orden válido y remite el caso pendiente a su prompt.
+**Por qué:** acota el “Implementado” a las llamadas con orden válido y remite, en ese momento, el caso pendiente a P2-05.
 
 #### Aclaración sobre `CALL`/`CALLMET`
 
@@ -704,7 +710,12 @@ contiene `(:=, x:main, foo:main)`; el expected result documentado más abajo exi
 asignación desaparezca.
 ```
 
-**Por qué:** corrige una afirmación que, aplicada a este caso, era falsa. Separa el estado actual del objetivo sin cambiar código.
+**Por qué:** corrigió una afirmación que, aplicada a este caso, era falsa en ese momento.
+
+> Estado final P6-01: esa aclaración quedó reemplazada por P2-05/P2-07. La
+> omisión del orden ya no deja `(:=, x:main, foo:main)`; `docs/PROMPT-19.md`
+> describe el comportamiento vigente con cero `PAR`, cero `CALL` y cero
+> asignaciones desde `foo`.
 
 #### Fila de verificación
 

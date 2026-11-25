@@ -12,10 +12,10 @@ bash test/TP3_SEMANTICAS/ejecutar.sh
 El script compila el proyecto y ejecuta los casos. Respeta `TP3_BUILD`
 para elegir el directorio de clases (por defecto `/tmp/opencode/tp3build`).
 
-> **Nota:** el runner espera el formato anterior con reglas
-> `--- ESPERADO ---`; los casos actuales son descriptivos y se revisan
-> comparando la salida real con el comentario inicial. La compilación del
-> script sigue siendo útil para validar que el proyecto compila.
+> El runner (`ejecutar.sh`) lee el bloque descriptivo `{{ ... }}` del principio
+> de cada caso. Comprueba los tercetos, las entradas de la tabla de símbolos y
+> los errores declarados; las frases explicativas se ignoran. P6-02 ajustó el
+> runner a este formato, que es el que tienen los 47 casos actuales.
 
 ## Ejecución individual de cada test
 

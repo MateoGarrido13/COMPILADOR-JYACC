@@ -4,7 +4,7 @@
 #
 # Verifica:
 #  1. Compilacion del proyecto
-#  2. Los 8 casos manuales en "Funciones y metodos/" compilan sin errores
+#  2. Los 8 casos manuales en "Funciones_y_metodos/" compilan sin errores
 #  3. Prologue/epilogue con EBP y limpieza de pila hecha por el caller
 #  4. Retorno ulongint en EAX y doublef en ST(0) -> FSTP en @auxN
 #  5. Ranuras por formal (orden de evaluacion [2,1] no cambia [ebp+8])
@@ -18,7 +18,7 @@ set -u
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD="${TP4_BUILD:-/tmp/tp4p4c_build}"
-CASOS="$RAIZ/test_tp_4/Funciones y metodos"
+CASOS="$RAIZ/test_tp_4/Funciones_y_metodos"
 
 echo "=== Prompt 4c de TP4 — Prueba de funciones y metodos ==="
 echo "Raiz: $RAIZ"

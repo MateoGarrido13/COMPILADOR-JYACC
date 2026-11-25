@@ -303,7 +303,7 @@ Lectura:
 - **P2-07**: es el próximo prompt. Debe repetir la regresión TP02 con este cambio integrado y revisar la fila `PROMPT-0.md:135` de métodos heredados sin orden (baseline viejo, IR real ya sin asignaciones).
 - **P2-05**: sin cambios. Sus tres casos (`18_falta_orden.txt`, `sin_orden.txt`, `orden_sin_corchetes.txt`) siguen sin diff.
 - **P2-03**: sin cambios; los dos casos con `:=` siguen con IR de solo delimitadores.
-- **Ola 5 / P5A-01**: el caso “factorial” del plan aún no existe en el árbol. Cuando se implemente recursión con `jmp main_inicio`, P2-07 deberá comprobar que una llamada recursiva válida sigue con `envolturaDeValida=true` y que una fallida no genera `CALL`.
+- **Ola 5 / P5A-01**: quedó fuera de la reentrega por decisión P6-01. El caso `03_recursion_factorial_metodo.txt` sigue en el árbol solo como regresión de layout; no se implementa recursión y no se evalúa `envolturaDeValida` sobre una llamada recursiva. P2-07 no asumió ninguna expectativa de Ola 5.
 - **TP03 (`21_enum_vacio.txt`)**: intacto.
 - **ASM y tests**: ningún `.asm`, `.txt` o `.sh` modificado.
 

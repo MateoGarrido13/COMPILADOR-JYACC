@@ -4,7 +4,7 @@
 #
 # Verifica:
 #  1. Compilacion del proyecto
-#  2. Los casos en "producto_doublef/" y en "producto_doublef_overflow/" compilan sin errores
+#  2. Los casos en "Runtime_chequeos/e_producto_doublef/" compilan sin errores
 #  3. El .asm de cada caso contiene fmul seguido de fxam/fstsw/fstp st(0)/sahf/jc error_overflow_float
 #  4. El .asm contiene msg_overflow_float en .DATA y el label error_overflow_float: en .CODE
 #  5. B1: el flujo normal salta el bloque de labels de error (jmp fin_normal / fin_normal:)
@@ -16,10 +16,9 @@ set -u
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD="${TP4_BUILD:-/tmp/tp4p5e_build}"
-CASOS="$RAIZ/test_tp_4/producto_doublef"
-# CORRECCION: esta carpeta tiene el unico caso que realmente desborda
-# (max_doublef * max_doublef). Antes no lo ejecutaba ningun script.
-CASOS_OVERFLOW="$RAIZ/test_tp_4/producto_doublef_overflow"
+# CORRECCION P6-02: los cuatro casos (finito, grande finito, desborda y
+# maximo por dos) quedaron unificados en esta carpeta tras el rename.
+CASOS="$RAIZ/test_tp_4/Runtime_chequeos/e_producto_doublef"
 
 echo "=== Paquete 5.e de TP4 — Overflow en productos de punto flotante doublef ==="
 echo "Raiz: $RAIZ"
@@ -40,7 +39,7 @@ echo
 
 echo "[2/4] Ejecutando casos..."
 CANTIDAD=0
-for caso in "$CASOS"/*.txt "$CASOS_OVERFLOW"/*.txt; do
+for caso in "$CASOS"/*.txt; do
     SALIDA="$(java -cp "$BUILD" Main "$caso" 2>&1)"
     if echo "$SALIDA" | grep -q "Error:"; then
         echo "FALLA: errores al compilar $(basename "$caso")"
@@ -74,8 +73,8 @@ no_verificar() {
 
 echo "[3/4] Verificando chequeo 5.e en los .asm..."
 
-ASM="$CASOS/01_producto_valido.asm"
-verificar "$ASM" "fmul en producto valido" 'fmul b_main'
+ASM="$CASOS/01_producto_finito.asm"
+verificar "$ASM" "fmul en producto valido" 'fmul y_main'
 verificar "$ASM" "guardia fxam despues de fmul" 'fxam'
 verificar "$ASM" "guardia fstsw sahf despues de fxam" 'fstsw ax'
 verificar "$ASM" "B2: pop de ST(0) para no desbordar la pila FPU" 'fstp st(0)'
@@ -87,8 +86,8 @@ verificar "$ASM" "codigo de salida 2 en label de fallo" 'invoke ExitProcess, 2'
 verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
 verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
-ASM="$CASOS/02_producto_desborda.asm"
-verificar "$ASM" "fmul en producto desborda" 'fmul b_main'
+ASM="$CASOS/02_producto_grande_finito.asm"
+verificar "$ASM" "fmul en producto grande finito" 'fmul y_main'
 verificar "$ASM" "guardia fxam despues de fmul" 'fxam'
 verificar "$ASM" "guardia fstsw sahf despues de fxam" 'fstsw ax'
 verificar "$ASM" "B2: pop de ST(0) para no desbordar la pila FPU" 'fstp st(0)'
@@ -100,11 +99,17 @@ verificar "$ASM" "codigo de salida 2 en label de fallo" 'invoke ExitProcess, 2'
 verificar "$ASM" "B1: salto que evita caer en labels de error" 'jmp fin_normal'
 verificar "$ASM" "B1: reincorporacion al flujo normal" 'fin_normal:'
 
-ASM="$CASOS_OVERFLOW/02_producto_desborda.asm"
-verificar "$ASM" "caso real max*max: fmul" 'fmul b_main'
+ASM="$CASOS/03_producto_desborda.asm"
+verificar "$ASM" "caso real max*max: fmul" 'fmul y_main'
 verificar "$ASM" "caso real max*max: jc error_overflow_float" 'jc error_overflow_float'
 verificar "$ASM" "caso real max*max: B2 fstp st(0)" 'fstp st(0)'
 verificar "$ASM" "caso real max*max: B1 jmp fin_normal" 'jmp fin_normal'
+
+ASM="$CASOS/04_producto_maximo_por_dos.asm"
+verificar "$ASM" "caso limite max*2: fmul" 'fmul y_main'
+verificar "$ASM" "caso limite max*2: jc error_overflow_float" 'jc error_overflow_float'
+verificar "$ASM" "caso limite max*2: B2 fstp st(0)" 'fstp st(0)'
+verificar "$ASM" "caso limite max*2: B1 jmp fin_normal" 'jmp fin_normal'
 
 echo
 
