@@ -12,8 +12,10 @@ begin
     begin
         y := 0$ul;
         repeat
+        begin
             y := y + 1$ul;
             pout(y);
+        end
         while (y < x);
         x := x + 1$ul;
         pout(x);

@@ -8,12 +8,16 @@ begin
     a := 5$ul;
     x := 0$ul;
     if (a > 3$ul)
+    begin
         x := 1$ul;
         pout(x);
+    end
     end_if;
     if (a >= 10$ul)
+    begin
         x := 2$ul;
         pout(x);
+    end
     end_if;
     pout(x);
 end

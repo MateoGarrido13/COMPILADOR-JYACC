@@ -9,6 +9,7 @@ begin
     x := 0$ul;
     s := 0$ul;
     if (flag > 0$ul)
+    begin
         repeat
         begin
             s := s + x;
@@ -17,8 +18,11 @@ begin
             pout(x);
         end
         while (x < 5$ul);
+    end
     else
+    begin
         s := 99$ul;
         pout(s);
+    end
     end_if;
 end

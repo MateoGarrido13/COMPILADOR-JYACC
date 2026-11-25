@@ -10,14 +10,20 @@ begin
     c := 1$ul;
     if (a > 0$ul)
         if (b > 0$ul)
+        begin
             r := 1$ul;
             pout(r);
+        end
         else
+        begin
             r := 2$ul;
             pout(r);
+        end
         end_if;
     else
+    begin
         r := 3$ul;
         pout(r);
+    end
     end_if;
 end

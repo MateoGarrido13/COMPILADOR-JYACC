@@ -8,10 +8,14 @@ doublef z;
 begin
     x := 1$ul;
     if (todf(x) > 0.5)
+    begin
         z := 1.0;
         pout(x);
+    end
     else
+    begin
         z := 0.0;
         pout(x);
+    end
     end_if;
 end

@@ -10,8 +10,10 @@ begin
     repeat
     begin
         if (i < 5$ul)
+        begin
             s := s + i;
             pout(s);
+        end
         end_if;
         i := i + 1$ul;
         pout(i);

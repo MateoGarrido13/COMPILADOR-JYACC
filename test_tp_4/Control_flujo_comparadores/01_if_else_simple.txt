@@ -8,10 +8,14 @@ begin
     a := 5$ul;
     b := 3$ul;
     if (a > b)
+    begin
         k := 1$ul;
-        pout(k)
+        pout(k);
+    end
     else
+    begin
         k := 2$ul;
         pout(k);
+    end
     end_if;
 end

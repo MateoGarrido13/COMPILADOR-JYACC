@@ -9,10 +9,14 @@ begin
     b := 3$ul;
     c := 1$ul;
     if (a + b > c * 2$ul)
+    begin
         r := 1$ul;
         pout(r);
+    end
     else
+    begin
         r := 0$ul;
         pout(r);
+    end
     end_if;
 end

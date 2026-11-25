@@ -1,4 +1,4 @@
-{{ TP4a: repeat simple (una sentencia, condicion ulongint).
+{{ TP4a: repeat simple (bloque de sentencias, condicion ulongint).
     Verifica: label_1 inicio, BF con Jcc inverso, BI de retorno (jmp label_1),
     etiqueta de salida label_2.
 }}
@@ -7,8 +7,10 @@ ulongint x;
 begin
     x := 0$ul;
     repeat
+    begin
         x := x + 1$ul;
         pout(x);
+    end
     while (x < 3$ul);
     pout(x);
 end

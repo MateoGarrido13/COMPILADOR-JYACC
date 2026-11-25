@@ -8,28 +8,43 @@ ulongint a, b, k, x;
 begin
     a := 10$ul;
     b := 5$ul;
+    a := 10$ul;
+    b := 5$ul;
     if (a > b)
+    begin
         k := 1$ul;
         pout(k);
+    end
     end_if;
     if (a < b)
+    begin
         k := 2$ul;
         pout(k);
+    end
     end_if;
     if (a >= b)
-        k := 3$ul;pout(k);
+    begin
+        k := 3$ul;
+        pout(k);
+    end
     end_if;
     if (a <= b)
+    begin
         k := 4$ul;
         pout(k);
+    end
     end_if;
     if (a == b)
+    begin
         k := 5$ul;
         pout(k);
+    end
     end_if;
     if (a != b)
+    begin
         k := 6$ul;
         pout(k);
+    end
     end_if;
     x := k;
 end
