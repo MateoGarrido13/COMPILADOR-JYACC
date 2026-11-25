@@ -13,6 +13,8 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
+main_inicio:
     mov eax, c_2_ul_ul
     cmp eax, 1
     je enum_valido_0

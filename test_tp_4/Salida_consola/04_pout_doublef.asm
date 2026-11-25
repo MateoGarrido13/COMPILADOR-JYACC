@@ -12,6 +12,8 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
+main_inicio:
     fld c_2_5
     fstp z_main
     invoke crt_printf, offset fmt_doublef, z_main

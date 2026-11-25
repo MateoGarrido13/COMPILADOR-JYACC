@@ -11,6 +11,8 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
+main_inicio:
     invoke crt_printf, offset fmt_ulongint, c_42_ul_ul
     invoke crt_printf, offset fmt_doublef, c_3_5
     invoke ExitProcess, 0

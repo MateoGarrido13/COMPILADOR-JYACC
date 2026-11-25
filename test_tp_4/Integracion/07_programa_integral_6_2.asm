@@ -35,6 +35,7 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
 fn_fact_main:
     push ebp
     mov ebp, esp
@@ -55,6 +56,7 @@ label_2:
 fin_fact_main:
     leave
     ret
+main_inicio:
     mov eax, c_4_ul_ul
     mov s1_basea_u_main, eax
     fld c_1_25

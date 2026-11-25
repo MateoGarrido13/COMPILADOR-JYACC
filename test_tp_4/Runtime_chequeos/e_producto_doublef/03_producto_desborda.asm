@@ -14,6 +14,8 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
+main_inicio:
     fld c_1_7976931348623157d_pos_308
     fstp x_main
     fld c_1_7976931348623157d_pos_308

@@ -15,6 +15,7 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
 fn_mezcla_main:
     push ebp
     mov ebp, esp
@@ -35,6 +36,7 @@ fn_mezcla_main:
 fin_mezcla_main:
     leave
     ret
+main_inicio:
     ; (PAR, a:main:mezcla, 4$ul)
     sub esp, 4
     mov eax, c_4_ul_ul

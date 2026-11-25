@@ -18,6 +18,7 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
 fn_doble_main:
     push ebp
     mov ebp, esp
@@ -43,6 +44,7 @@ fn_combinar_main:
 fin_combinar_main:
     leave
     ret
+main_inicio:
     ; (PAR, n:main:doble, 3$ul)
     sub esp, 4
     mov eax, c_3_ul_ul

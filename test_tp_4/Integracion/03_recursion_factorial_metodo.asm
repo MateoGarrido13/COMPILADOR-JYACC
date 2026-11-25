@@ -17,6 +17,7 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
 fn_fact_main:
     push ebp
     mov ebp, esp
@@ -50,6 +51,7 @@ mt_escala_main_calculadora:
 fin_escala_main_calculadora:
     leave
     ret
+main_inicio:
     ; (PAR, n:main:fact, 5$ul)
     sub esp, 4
     mov eax, c_5_ul_ul

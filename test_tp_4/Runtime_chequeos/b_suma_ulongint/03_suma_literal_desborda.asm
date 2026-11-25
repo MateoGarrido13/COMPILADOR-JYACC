@@ -13,6 +13,8 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
+main_inicio:
     mov eax, c_4294967295_ul_ul
     add eax, c_1_ul_ul
     jc error_overflow_suma

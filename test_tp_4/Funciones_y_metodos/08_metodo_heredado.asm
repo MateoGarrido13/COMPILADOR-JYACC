@@ -14,6 +14,7 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
 mt_m_main_padre:
     push ebp
     mov ebp, esp
@@ -24,6 +25,7 @@ mt_m_main_padre:
 fin_m_main_padre:
     leave
     ret
+main_inicio:
     ; (PAR, pa:main:padre:m, 2$ul)
     ; (PAR, pb:main:padre:m, 3$ul)
     sub esp, 12

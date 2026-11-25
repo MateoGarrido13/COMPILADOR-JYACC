@@ -12,6 +12,7 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
 fn_elegir_main:
     push ebp
     mov ebp, esp
@@ -21,6 +22,7 @@ fn_elegir_main:
 fin_elegir_main:
     leave
     ret
+main_inicio:
     ; (PAR, a:main:elegir, 2$ul)
     ; (PAR, b:main:elegir, 1$ul)
     sub esp, 8

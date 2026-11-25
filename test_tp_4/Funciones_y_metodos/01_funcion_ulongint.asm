@@ -18,6 +18,7 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
 fn_suma_main:
     push ebp
     mov ebp, esp
@@ -31,6 +32,7 @@ fn_suma_main:
 fin_suma_main:
     leave
     ret
+main_inicio:
     mov eax, c_3_ul_ul
     mov x_main, eax
     mov eax, c_4_ul_ul

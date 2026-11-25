@@ -12,6 +12,8 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
+main_inicio:
     mov eax, c_7_ul_ul
     mov x_main, eax
     mov eax, c_4294967295_ul_ul

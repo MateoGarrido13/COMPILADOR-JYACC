@@ -18,6 +18,7 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
 fn_escala_main:
     push ebp
     mov ebp, esp
@@ -36,6 +37,7 @@ fn_escala_main:
 fin_escala_main:
     leave
     ret
+main_inicio:
     fld c_1_5
     fstp a_main
     fld c_2_0

@@ -10,6 +10,8 @@ include \masm32\include\masm32rt.inc
 
 .code
 start:
+    jmp main_inicio
+main_inicio:
     invoke crt_printf, offset fmt_cadena, offset hola
     invoke crt_printf, offset fmt_cadena, offset mundo
     invoke crt_printf, offset fmt_cadena, offset hola
