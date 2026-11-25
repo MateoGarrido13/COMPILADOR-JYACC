@@ -1,0 +1,16 @@
+{{ TP1: identificadores con @ # $ & % entre medio son invalidos 
+    veamos que no genera codigo intermedio porque encontro errores lexicos, es correcto (?) 
+    no hya una entrada en la matriz de transiciones que sea 'por default' 
+}}
+prog
+ulongint var@mal, id#mal, a$b, c&d, e%f;
+ulongint valida;
+begin
+    var@mal := 1$ul;
+    valida := 1$ul;
+    id#mal := 2$ul;
+    a$b := 3$ul;
+    c&d := 4$ul;
+    e%f := 5$ul;
+    pout({ok});
+end
