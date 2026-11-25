@@ -1,0 +1,9 @@
+{{ TP2: una asignacion dentro del begin es valida y debe compilar correctamente.
+     Resultado esperado: compila sin errores y se genera el terceto
+     (:=, x:main, 1$ul) correspondiente a la asignacion dentro del bloque
+     ejecutable. }}
+prog
+ulongint x;
+begin
+    x := 1$ul;
+end

@@ -1,0 +1,12 @@
+{{ TP2: una asignacion antes del begin es invalida y debe ser rechazada por el parser.
+     Las asignaciones solo son validas dentro del bloque ejecutable (BEGIN ... END).
+     Resultado esperado: error sintactico; no se generan tercetos de asignacion
+     ni se acepta la sentencia como parte de las declaraciones. }}
+ulongint x;
+x := 1$ul;     
+prog
+ulongint x;
+x := 1$ul;
+begin
+    x := 2$ul;
+end

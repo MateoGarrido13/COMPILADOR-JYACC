@@ -123,7 +123,6 @@ sentencia_declarativa
     | declaracion_funcion
     | declaracion_clase
     | declaracion_typedef
-    | asignacion ';'
     | sentencia_if
     | sentencia_repeat_while
     | sentencia_pout

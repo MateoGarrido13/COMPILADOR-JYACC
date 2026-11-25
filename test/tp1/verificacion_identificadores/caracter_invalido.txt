@@ -1,6 +1,11 @@
 {{ TP1: caracter que no es letra, digito ni guion bajo en un identificador }}
+ulongint valido_jj;
+valido_jj:= 2$ul;
 prog
-ulongint valido,id#malo, otro@nombre, mal%formado;
+ulongint valido,id#malo, otro@nombre, mal%formado, abc+formado;
+ulongint valido;
+ulongint valido;
+valido := 1$ul;
 begin
     id#malo := 1$ul;
     otro@nombre := 2$ul;
