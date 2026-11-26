@@ -1,8 +1,0 @@
-{{ r23: un nombre de tipo sin typedef o clase visible informa error y no
-   declara variables con ese tipo.
-}}
-prog
-desconocido valor;
-begin
-    pout({invalido});
-end

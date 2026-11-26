@@ -1,0 +1,29 @@
+{{ R31: herencia circular de tres niveles - a hereda de b, b hereda de c, c hereda de a
+   Se espera error semantico: ciclo de herencia detectado en cadena larga }}
+prog
+class a
+begin
+    ulongint x;
+    extends b;
+end;
+class b
+begin
+    ulongint y;
+    extends c;
+end;
+class c
+begin
+    ulongint z;
+    extends a;
+end;
+a obj_a;
+b obj_b;
+c obj_c;
+begin
+    obj_a.x := 1$ul;
+    obj_b.y := 2$ul;
+    obj_c.z := 3$ul;
+    pout(obj_a.x);
+    pout(obj_b.y);
+    pout(obj_c.z);
+end

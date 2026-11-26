@@ -1,0 +1,22 @@
+{{ TP2: una clase que falla semanticamente descarta los tercetos desde su apertura.
+   class a declara el metodo m y despues se invalida con extends a.
+   Resultado esperado:
+   - Error: herencia circular entre 'a' y 'a'
+   - no quedan (CLASE, a, --), (METODO, m, --), (ret, ...) ni (FIN_METODO, m, --)
+   - el pout posterior se conserva
+   - codigo intermedio:
+     (PROGRAMA, --, --)
+     (pout, ok, --)
+     (FIN_PROGRAMA, --, --) }}
+prog
+class a
+begin
+    ulongint m(ulongint pa)
+    begin
+        ret(pa);
+    end;
+    extends a;
+end;
+begin
+    pout({ok});
+end

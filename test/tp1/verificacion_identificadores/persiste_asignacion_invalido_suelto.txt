@@ -1,0 +1,23 @@
+
+{{ TP1: caracter invalido que divide un ID en una declaracion 
+    digitos entre o al final de un identificador lo invalidan
+}}
+prog
+ulongint y;
+ulongint z;
+ulongint x;
+doublef 1xa1;
+ulongint id_correcto;
+begin ;
+    y :=x;
+    1xa := 1.0;
+    x := ##10$ul#;
+    id_correcto:= @1$ul;
+    {{no asi el caso de un caracter invalido intermedio de la palabra reservada 'ul' }}
+    id_correcto := 2$u+l;
+    id_correcto := 2$u*l2$ul_#2$ul;
+    id_correcto := #3$ul;
+    id_correcto = 4$ul;
+    z:=5$ul;
+
+end

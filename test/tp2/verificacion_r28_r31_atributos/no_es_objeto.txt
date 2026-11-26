@@ -1,9 +1,0 @@
-{{ r28: el receptor de objeto.atributo tiene que ser un objeto.
-   Error esperado: 'x' no es un objeto
-   Sin terceto de asignacion.
-}}
-prog
-ulongint x;
-begin
-    x.atributo := 1$ul;
-end

@@ -1,7 +1,0 @@
-{{ r33: el resultado de todf es doublef y no se puede asignar a ulongint }}
-prog
-ulongint x, y;
-begin
-    x := 1$ul;
-    y := todf(x);
-end

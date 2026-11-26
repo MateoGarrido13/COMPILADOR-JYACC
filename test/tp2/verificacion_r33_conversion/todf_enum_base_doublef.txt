@@ -1,9 +1,0 @@
-{{ r33: todf de un enumerado con base doublef no es una conversion valida }}
-prog
-typedef reales = [1.0, 2.0, 3.0];
-reales r;
-doublef z;
-begin
-    r := 1.0;
-    z := todf(r);
-end

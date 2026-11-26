@@ -1,0 +1,8 @@
+{{ Asignaciones concatenadas - forma valida del tema 17 (con parentesis) }}
+prog
+ulongint abc, efg, var_1;
+
+begin
+    var_1 := 5$ul;
+    abc := efg = (var_1 + 1$ul);
+end

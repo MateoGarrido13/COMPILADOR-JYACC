@@ -1,0 +1,21 @@
+{{ TP1: caracter invalido suelto, sin identificador en curso }}
+prog
+ulongint x;
+begin
+    x := @1$ul;
+    x := ####2$ul;
+    {{identifica sentencia mal formada}}
+    x := ;3$ul;
+    {{es capaz de identidicar y  descartar el lado derecho mal formado. Realiza la asignacion sobre }}
+    x := 3+4$ul;
+    x := A5$ul;
+    x := AA6$Ul;
+    x := 7$Ul7$ul;
+    x := 88888888 1$ul;
+    x := @ @ 2$ul;
+    {{para caracteres validos (+ | - | * | /) identifica que es una sentencia mal formada pero no es capaz de recuperar el valor}}
+    x := ++ 3$ul;
+    x := ** 3$ul;
+
+
+end

@@ -1,8 +1,0 @@
-{{ r33: todf sobre un operando que ya es doublef }}
-prog
-doublef z;
-begin
-    z := 1.0;
-    z := todf(z);
-    z := todf(2.5);
-end

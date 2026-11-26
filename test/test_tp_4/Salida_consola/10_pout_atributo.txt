@@ -1,0 +1,15 @@
+{{ TP4b + preparacion 4d: pout de un atributo materializado.
+   Verifica: ReferenciaAtributo se resuelve al nombre ASM de la TS y el
+   formato se elige con el tipo efectivo del atributo (ulongint).
+   El layout de objetos propiamente dicho se implementa en una etapa posterior.
+}}
+prog
+class punto
+begin
+    ulongint x;
+end;
+punto p1;
+begin
+    p1.x := 8$ul;
+    pout(p1.x);
+end

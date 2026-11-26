@@ -1,5 +1,5 @@
 {{ TP1: ulongint primer y ultimo valor FUERA del rango }}
-{{ -1$ul y 4294967296$ul quedan fuera de rango; el lexico no los inserta }}
+{{ debajo del minimo: -1$ul (signo unario) ; encima del maximo: 4294967296$ul }}
 prog
 ulongint x, y;
 begin

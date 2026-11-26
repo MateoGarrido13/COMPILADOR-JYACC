@@ -1,0 +1,21 @@
+{{ r31+r19: debe fallar: invocacion a metodo (prefijada o tradicional) sin el orden obligatorio del tema 19 }}
+{{ se esperan 3 errores Falta del orden de evaluacion y asignacion de parametros }}
+prog
+class cb
+begin
+    ulongint m(ulongint pa, ulongint pb)
+    begin
+        ret(pa);
+    end;
+end;
+class ca
+begin
+    extends cb;
+end;
+ca a1;
+ulongint r;
+begin
+    r := a1.cb.m(1$ul, 2$ul);
+    r := a1.cb.m(1$ul, 2$ul)[];
+    r := a1.m(1$ul, 2$ul);
+end

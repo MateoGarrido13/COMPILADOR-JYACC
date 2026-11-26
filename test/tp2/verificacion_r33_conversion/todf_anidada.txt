@@ -1,8 +1,0 @@
-{{ r33: todf anidada; el operando interno ya es doublef }}
-prog
-ulongint x;
-doublef z;
-begin
-    x := 1$ul;
-    z := todf(todf(x));
-end

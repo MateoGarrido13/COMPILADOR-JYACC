@@ -1,9 +1,4 @@
-{{ r23: typedef usando el nombre de un tipo primitivo 
-REVISAR. Este test esta devolviendo otro error:
-Línea 7: Error: Falta de delimitador BEGIN de sentencias ejecutables
-Línea 7: Error: Falta de nombre de programa
-}}
-
+{{ r23: typedef usando el nombre de un tipo primitivo }}
 prog
 typedef ulongint = [2$ul, 4$ul];
 begin

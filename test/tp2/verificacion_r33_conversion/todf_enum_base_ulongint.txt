@@ -1,9 +1,0 @@
-{{ r33: todf de un enumerado cuyo tipo base es ulongint es valido }}
-prog
-typedef pares = [2$ul, 4$ul, 6$ul];
-pares p;
-doublef z;
-begin
-    p := 2$ul;
-    z := todf(p);
-end

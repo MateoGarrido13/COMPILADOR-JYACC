@@ -1,0 +1,43 @@
+{{ E2E: operaciones aritmeticas extendidas }}
+{{ suma, resta, multiplicacion, division y combinaciones con ulongint y doublef }}
+prog
+ulongint a, b, c, d, e, f;
+doublef x, y, z, w;
+begin
+    a := 10$ul;
+    b := 3$ul;
+    c := a + b;
+    d := a - b;
+    e := a * b;
+    f := a / b;
+    pout({suma});
+    pout(c);
+    pout({resta});
+    pout(d);
+    pout({multiplicacion});
+    pout(e);
+    pout({division});
+    pout(f);
+    x := 5.5;
+    y := 2.0;
+    z := x + y;
+    w := x - y;
+    pout({suma_doublef});
+    pout(z);
+    pout({resta_doublef});
+    pout(w);
+    z := x * y;
+    w := x / y;
+    pout({multiplicacion_doublef});
+    pout(z);
+    pout({division_doublef});
+    pout(w);
+    z := x + y;
+    z := z * 2.0;
+    pout({expresion_compuesta});
+    pout(z);
+    w := x - y;
+    w := w / 2.0;
+    pout({expresion_compuesta_2});
+    pout(w);
+end

@@ -1,0 +1,18 @@
+{{ TP4a: if con condicion que es expresion aritmetica + comparador.
+    Verifica: los operandos del comparador pueden ser @auxN (resultado de +, -, etc.),
+    SETcc/Jcc usan los mismos operandos que materializaron el auxiliar.
+}}
+prog
+ulongint a, b, c, r;
+begin
+    a := 2$ul;
+    b := 3$ul;
+    c := 1$ul;
+    if (a + b > c * 2$ul)
+        r := 1$ul;
+        pout(r);
+    else
+        r := 0$ul;
+        pout(r);
+    end_if;
+end

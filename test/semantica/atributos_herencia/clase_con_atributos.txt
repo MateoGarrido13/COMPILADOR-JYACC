@@ -1,0 +1,13 @@
+{{ r28: clase con atributos y acceso tradicional objeto.atributo }}
+prog
+class ca
+begin
+    ulongint x;
+    ulongint z;
+end;
+ca a1;
+begin
+    a1.x := 3$ul;
+    a1.z := 3$ul;
+    pout(a1.x);
+end

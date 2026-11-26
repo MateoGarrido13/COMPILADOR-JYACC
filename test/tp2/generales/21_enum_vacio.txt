@@ -1,9 +1,19 @@
-{{ r23: typedef vacío; error al definir una variable de tipo no existente; imprime una cadena con valor "x" y otra con valor "ok" }}
-
+{{ TP2: typedef con lista de valores vacia.
+   Resultado esperado:
+   - Error: Ausencia de valores para la enumeracion
+   - color no queda registrado como tipo (Declarado: no)
+   - la declaracion color x; produce Error: tipo no declarado 'color'
+     y x tampoco queda declarada
+   - el analisis no se detiene
+   - codigo intermedio:
+     (PROGRAMA, --, --)
+     (pout, ok, --)
+     (FIN_PROGRAMA, --, --)
+   El pout del bloque principal se conserva: un typedef vacio no abre
+   marca de descarte de tercetos. }}
 prog
 typedef color = [];
 color x;
 begin
-    pout({x});
     pout({ok});
 end

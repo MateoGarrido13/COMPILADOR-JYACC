@@ -1,0 +1,20 @@
+{{ TP2: un repeat con condicion de tipos incompatibles descarta su cuerpo.
+   x > 1.0 compara ulongint con doublef. La asignacion previa y el pout
+   posterior no pertenecen al ciclo.
+   Resultado esperado:
+   - Error: Tipos incompatibles en la condición: se esperaba ulongint y se encontró doublef
+   - no quedan la etiqueta de inicio, el cuerpo x := x + 1$ul, ni BF/BI
+   - codigo intermedio:
+     (PROGRAMA, --, --)
+     (:=, x:main, 1$ul)
+     (pout, ok, --)
+     (FIN_PROGRAMA, --, --) }}
+prog
+ulongint x;
+begin
+    x := 1$ul;
+    repeat
+        x := x + 1$ul;
+    while (x > 1.0);
+    pout({ok});
+end

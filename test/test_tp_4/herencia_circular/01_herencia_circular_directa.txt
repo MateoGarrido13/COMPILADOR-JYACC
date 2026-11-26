@@ -1,0 +1,13 @@
+{{ R31: herencia circular directa - clase hereda de si misma
+   Se espera error semantico: una clase no puede extenderse a si misma }}
+prog
+class a
+begin
+    ulongint x;
+    extends a;
+end;
+a obj;
+begin
+    obj.x := 1$ul;
+    pout(obj.x);
+end

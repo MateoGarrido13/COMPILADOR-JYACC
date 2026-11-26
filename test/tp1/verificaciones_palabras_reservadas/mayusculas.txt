@@ -4,6 +4,7 @@ ULONGINT x;
 DOUBLEF z;
 BEGIN
     x := 1$UL;
+    x; := 2$uL;
     z := TODF(x);
     IF (x == 1$UL)
         POUT({ok});

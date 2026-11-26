@@ -1,0 +1,10 @@
+{{ Chequeo ejecucion: overflow de suma de enteros - suma encadenada que desborda }}
+prog
+ulongint a, b, c, d;
+begin
+    a := 2000000000$ul;
+    b := 2000000000$ul;
+    c := 2000000000$ul;
+    d := a + b + c;
+    pout({suma_encadenada_desborda});
+end
