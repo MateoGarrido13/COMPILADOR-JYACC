@@ -161,6 +161,11 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.FACTOR_CADENA, ctx ->
                 ExpresionDiferida.deOperando(ctx.entrada(0), Tipos.CADENA));
 
+        tabla.registrar(Reglas.ERR_ASIG_DONDE_IGUAL, ctx -> {
+            v.reportar(Reglas.ERR_ASIG_DONDE_IGUAL, ctx.getLinea());
+            return new ExpresionDiferida().marcarInvalida();
+        });
+
         tabla.registrar(Reglas.ASIGNACION_EN_EXPRESION, ctx -> {
             EntradaTabla destino = v.verificarAlcance(ctx.entrada(0));
             ExpresionDiferida expresion = ctx.expresion(1);

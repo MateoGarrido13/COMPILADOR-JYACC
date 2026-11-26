@@ -1320,8 +1320,8 @@ case 136:
 break;
 case 137:
 //#line 506 "gramatica.y"
-{ acciones.ejecutar(Reglas.ERR_ASIG_DONDE_IGUAL);
-          yyval = new ParserVal(new ExpresionDiferida().marcarInvalida()); }
+{ yyval = new ParserVal(acciones.ejecutar(
+                Reglas.ERR_ASIG_DONDE_IGUAL)); }
 break;
 case 138:
 //#line 512 "gramatica.y"

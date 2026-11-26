@@ -503,8 +503,8 @@ asignacion_en_expresion
     : ID '=' '(' expresion ')'
         { $$ = new ParserVal(acciones.ejecutar(Reglas.ASIGNACION_EN_EXPRESION, $1.obj, $4.obj)); }
     | ID ASIG '(' expresion ')'
-        { acciones.ejecutar(Reglas.ERR_ASIG_DONDE_IGUAL);
-          $$ = new ParserVal(new ExpresionDiferida().marcarInvalida()); }
+        { $$ = new ParserVal(acciones.ejecutar(
+                Reglas.ERR_ASIG_DONDE_IGUAL)); }
     ;
 
 conversion
