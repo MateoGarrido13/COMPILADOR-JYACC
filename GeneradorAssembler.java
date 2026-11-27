@@ -915,11 +915,14 @@ public class GeneradorAssembler {
 
         // CORRECCION B3: ':= dentro de expresion' llegaba aqui sin chequear
         // el enum, aunque calcularChequeosRuntime ya habia activado 5.h.
-        if (emitirChequeoEnum(dst, destino, src)) {
-            return;
+        if (!emitirChequeoEnum(dst, destino, src)) {
+            emitirCopiaPorTipo(tipoResultado, src, dst);
         }
 
-        emitirCopiaPorTipo(tipoResultado, src, dst);
+        String resultado = auxPorTerceto.get(numero);
+        if (resultado != null) {
+            emitirCopiaPorTipo(tipoResultado, dst, resultado);
+        }
     }
 
     private void emitirAsignacionSentencia(Object destino, Object origen) {
