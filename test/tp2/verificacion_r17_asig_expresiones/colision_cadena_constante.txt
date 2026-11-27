@@ -1,0 +1,7 @@
+{{ La cadena y la constante comparten lexema, pero deben tener nombres ASM distintos. }}
+prog
+ulongint x;
+begin
+    x := 2$ul;
+    pout({2$ul});
+end

@@ -27,8 +27,8 @@ import java.util.Set;
       'declarado == true'; buscarIdentificador() no sube y no filtra. La
       distincion importa: un uso previo crea la entrada antes de la declaracion.
     - Efecto colateral de nombreAsmDe(): asigna y cachea el nombre ASM en la
-      propia EntradaTabla y en nombreAsmPorClave. Esa cache es la que garantiza
-      unicidad global; limpiarCacheNombresAsm() la reinicia entre generaciones.
+      propia EntradaTabla y por categoria/lexema. Esa cache garantiza unicidad
+      global; limpiarCacheNombresAsm() la reinicia entre generaciones.
 
   Decisiones no obvias:
     - Se prefieren simbolos planos (DD/DQ/DB con nombre sanitizado) antes que
@@ -180,7 +180,8 @@ public class TablaSimbolos {
         if (entrada.getNombreAsm() != null) {
             return entrada.getNombreAsm();
         }
-        String clave = entrada.lexema != null ? entrada.lexema : ("ptr" + entrada.puntero);
+        String lexema = entrada.lexema != null ? entrada.lexema : ("ptr" + entrada.puntero);
+        String clave = entrada.uso.name() + ":" + lexema;
         String existente = nombreAsmPorClave.get(clave);
         if (existente != null) {
             entrada.setNombreAsm(existente);
@@ -497,9 +498,10 @@ public class TablaSimbolos {
         if (entrada.puntero > 0 && entrada.puntero < porPuntero.size()) {
             porPuntero.set(entrada.puntero, null);
         }
+        String lexema = entrada.lexema != null ? entrada.lexema : ("ptr" + entrada.puntero);
+        nombreAsmPorClave.remove(entrada.uso.name() + ":" + lexema);
         if (entrada.getNombreAsm() != null) {
             nombresAsmUsados.remove(entrada.getNombreAsm().toLowerCase(Locale.ROOT));
-            nombreAsmPorClave.remove(entrada.lexema);
             entrada.setNombreAsm(null);
         }
     }
