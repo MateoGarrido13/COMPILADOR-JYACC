@@ -1,8 +1,5 @@
 import java.util.List;
 
-/*
- Acciones de programa, declaraciones, sentencias y contexto de funcion/clase.
- */
 public class AccionesDeclaraciones {
 
     public static void registrar(TablaAcciones tabla, Entorno entorno, Verificaciones v) {
@@ -43,8 +40,6 @@ public class AccionesDeclaraciones {
 
         tabla.registrar(Reglas.LISTA_PARAMETROS_FORMALES, AccionesSemanticas::concatenarLista);
 
-        // El generador necesita la firma para cerrar el delimitador con el
-        // nombre correcto, incluso despues de que el entorno cierre el ambito.
         tabla.registrar(Reglas.DECL_FUNCION, ctx -> {
             Entorno.FuncionDeclarada funcion = entorno.getFuncionActual();
             entorno.cerrarFuncion();
@@ -132,15 +127,13 @@ public class AccionesDeclaraciones {
             if (destinoValor instanceof EntradaTabla) {
                 destino = v.verificarAlcance((EntradaTabla) destinoValor);
             } else if (destinoValor instanceof ExpresionDiferida) {
-                // Compatibilidad con accesos de atributo previos al motor de tipos.
+
                 EntradaTabla unico = ((ExpresionDiferida) destinoValor).operandoUnico();
                 if (unico != null) {
                     destino = v.verificarAlcance(unico);
                 }
             }
 
-            // Sin destino declarado o sin expresion confiable no se genera el
-            // terceto de asignacion: el error ya fue reportado.
             if (destino == null || !destino.declarado) {
                 return null;
             }
@@ -151,8 +144,7 @@ public class AccionesDeclaraciones {
 
             String tipoDestino = entorno.tipoEfectivo(destino.tipoDato);
             String tipoOrigen = entorno.tipoEfectivo(origen.getTipo());
-            // La copia estructural es entre variables de clase. Un destino
-            // ReferenciaAtributo ya se resolvio arriba y no entra aca.
+
             Entorno.ClaseDeclarada claseDestino = entorno.claseDe(tipoDestino);
             Entorno.ClaseDeclarada claseOrigen = entorno.claseDe(tipoOrigen);
             if (claseDestino != null && claseOrigen != null
@@ -188,7 +180,7 @@ public class AccionesDeclaraciones {
             if (!Tipos.INDEFINIDO.equals(tipoIzquierdo) && !Tipos.INDEFINIDO.equals(tipoDerecho)) {
                 if (!Tipos.mismoTipo(tipoIzquierdo, tipoDerecho)) {
                     v.errorTipos(ctx.getLinea(), "la condición", tipoIzquierdo, tipoDerecho);
-                    // Sin comparacion valida no se genera el BF ni los saltos.
+
                     return null;
                 }
                 if (Tipos.CADENA.equals(tipoIzquierdo)) {
@@ -223,7 +215,6 @@ public class AccionesDeclaraciones {
         });
     }
 
-    // Expresion de un solo operando producida por objeto.atributo (tema 28).
     private static ReferenciaAtributo referenciaPropia(Object destinoValor) {
         if (!(destinoValor instanceof ExpresionDiferida)) {
             return null;

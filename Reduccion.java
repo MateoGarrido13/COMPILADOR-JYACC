@@ -1,10 +1,3 @@
-/*
-  Una reduccion de la gramatica, con los operandos que tenia al ejecutarse.
-  Para un identificador o una constante el operando es la EntradaTabla, y con
-  ella el puntero de la tabla de simbolos.
-  resultado guarda el valor devuelto por la accion semantica (el $$ de YACC),
-  cuando difiere de los operandos originales.
- */
 public class Reduccion {
 
     private final Reglas regla;

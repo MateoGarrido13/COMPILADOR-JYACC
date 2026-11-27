@@ -1,12 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-  Tira de tokens detectados por el Analizador Lexico.
- 
-  Es la primera de las salidas del compilador. El lexico registra cada token
-  en el momento de reconocerlo.
- */
 public class RegistroTokens {
 
     private static final List<String> tokens = new ArrayList<>();
@@ -28,21 +22,6 @@ public class RegistroTokens {
         }
     }
 
-    /*
-      Todo token se informa con su numero entero asociado entre corchetes,
-      recuperado del tokenID que devuelve el lexico (el mismo que recibe el
-      parser y que figura en la tabla de simbolos), p. ej.:
-        [300] Identificador prog
-        [414] Palabra reservada ulongint
-        [415] Palabra reservada doublef
-        [302] Constante doublef 1.5d+2   (302 es CONSTANTE_NUMERICA: 414/415
-                                          son solo la palabra reservada)
-        [301] Operador de asignacion :=
-        [59] ;
-      Para los simbolos de un caracter el numero es su codigo ASCII
-      (';' = 59, '(' = 40, '.' = 46, ...), porque ese es el tokenID
-      que devuelven AccionSimbolo/AccionComparador/AccionEstructura.
-     */
     public static String describir(int tokenID, EntradaTabla yylval) {
         return "[" + tokenID + "] " + descripcionSinCodigo(tokenID, yylval);
     }
@@ -54,7 +33,7 @@ public class RegistroTokens {
             return String.valueOf((char) tokenID);
         }
         if (tokenID >= 400) {
-            // Sin lexema alcanza el codigo del prefijo: no se repite el numero.
+
             return lexema.isEmpty() ? "Palabra reservada" : "Palabra reservada " + lexema;
         }
 
@@ -76,12 +55,11 @@ public class RegistroTokens {
             case Globals.DISTINTO:
                 return "Comparador !=";
             default:
-                // El numero ya va en el prefijo [tokenID].
+
                 return lexema.isEmpty() ? "Token" : "Token " + lexema;
         }
     }
 
-    // Describe la forma lexica; el control de rango lo hace la semantica.
     private static String nombreTipoConstante(String lexema) {
         String tipo = Tipos.tipoDeConstante(lexema);
         return tipo == null ? Tipos.INDEFINIDO : tipo;

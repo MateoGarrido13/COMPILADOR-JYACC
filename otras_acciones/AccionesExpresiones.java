@@ -2,15 +2,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Acciones que arman ExpresionDiferida y aplican los chequeos de los temas 17 y 19.
- */
 public class AccionesExpresiones {
 
-    /*
-      Envuelve un valor suelto (expresion sin nombre formal) en un ParametroReal
-      para paso por posicion. Si ya es un ParametroReal lo devuelve tal cual.
-     */
     private static Object envolverParametro(Object valor, int linea) {
         if (valor instanceof ParametroReal) {
             return valor;
@@ -21,10 +14,6 @@ public class AccionesExpresiones {
         return new ParametroReal(null, ExpresionDiferida.deOperando(valor), linea);
     }
 
-    /*
-      Envuelve cada valor de la lista de parametros reales en un ParametroReal.
-      Si ya viene envuelto (parametro nombrado) se conserva.
-     */
     private static List<ParametroReal> envolverParametros(List<Object> reales, int linea) {
         List<ParametroReal> parametros = new ArrayList<>();
         if (reales == null) {
@@ -36,11 +25,6 @@ public class AccionesExpresiones {
         return parametros;
     }
 
-    /*
-      Completa cada ParametroReal con la EntradaTabla del formal que le
-      corresponde y con el tipo del real. Devuelve null por parametro cuando no
-      se pudo resolver el formal.
-     */
     private static List<ParametroReal> asignarFormales(Verificaciones v,
             Entorno.FuncionDeclarada firma, List<ParametroReal> parametros, int linea) {
         List<ParametroReal> resultado = new ArrayList<>();
@@ -54,13 +38,6 @@ public class AccionesExpresiones {
         return resultado;
     }
 
-    /*
-      Arma una invocacion de metodo. La convencion de codigo intermedio es
-      (CALLMET, objeto, metodo), precedida por los PAR de los parametros.
-      Sin prefijo solo se acepta un metodo propio. Con prefijo, la clase tiene
-      que estar en la cadena del objeto y el metodo tiene que estar declarado
-      en esa clase. Los parametros se chequean como en el tema 19.
-     */
     private static LlamadaFuncion llamadaMetodo(Entorno entorno, Verificaciones v,
             EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla metodo,
             List<Object> parametrosReales, List<Object> ordenRaw, int linea) {
@@ -83,11 +60,6 @@ public class AccionesExpresiones {
         return llamada;
     }
 
-    /*
-      Resuelve la firma que puede invocarse. Informa falta de prefijo, prefijo
-      ajeno a la cadena o metodo ausente en la clase nombrada. Devuelve null
-      cuando la llamada no se acepta; el llamador no emite CALLMET.
-     */
     private static Entorno.FuncionDeclarada resolverMetodo(Entorno entorno, Verificaciones v,
             EntradaTabla objetoResuelto, EntradaTabla clasePrefijo, String nombreMetodo, int linea) {
         if (objetoResuelto == null) {
@@ -141,8 +113,7 @@ public class AccionesExpresiones {
                     EntradaTabla.Uso.PARAMETRO,
                     EntradaTabla.Uso.ATRIBUTO);
             if (declaracion == null) {
-                // Ya se reporto el error; el tipo indefinido evita cascadear y
-                // la marca de invalida evita generar tercetos para el uso.
+
                 return ExpresionDiferida.deOperando(ctx.entrada(0), Tipos.INDEFINIDO)
                         .marcarInvalida();
             }
@@ -172,8 +143,7 @@ public class AccionesExpresiones {
             if (expresion == null) {
                 expresion = new ExpresionDiferida();
             }
-            // El anidamiento se detecta antes de envolver el resultado: una vez
-            // envuelto, la marca de esta asignacion taparia la del RHS.
+
             boolean anidada = expresion != null && expresion.contieneAsignacion();
             v.verificarAsignacionAnidada(expresion, ctx.getLinea());
             if (destino == null) {
@@ -209,23 +179,22 @@ public class AccionesExpresiones {
         tabla.registrar(Reglas.CONVERSION_TODF, ctx -> {
             ExpresionDiferida expresion = ctx.expresion(0);
             if (expresion == null) {
-                // todf sin operando: el error sintactico ya se reporto.
+
                 return new ExpresionDiferida().conTipo(Tipos.DOUBLEF).marcarInvalida();
             }
             ExpresionDiferida resultado = ExpresionDiferida.deOperando(
                     new Conversion(expresion, Tipos.DOUBLEF), Tipos.DOUBLEF);
             if (!expresion.esValida()) {
-                // El operando ya reporto un error; no se cascada.
+
                 return resultado.marcarInvalida();
             }
-            // El enumerado vale por su tipo base (Entorno.tipoEfectivo).
+
             String tipoOperando = entorno.tipoEfectivo(expresion.getTipo());
             if (Tipos.INDEFINIDO.equals(tipoOperando)) {
-                // Tipo desconocido: ya se reporto el error que lo origino.
+
                 return resultado.marcarInvalida();
             }
-            // La unica conversion del lenguaje es entero -> doublef. Un
-            // operando que ya es doublef tampoco se convierte a si mismo.
+
             if (!Tipos.esEntero(tipoOperando)) {
                 v.errorConversionTodf(ctx.getLinea());
                 return resultado.marcarInvalida();
@@ -239,13 +208,12 @@ public class AccionesExpresiones {
             List<Object> ordenRaw = ctx.valor(2) == null ? null : ctx.lista(2);
 
             List<ParametroReal> parametros = envolverParametros(parametrosReales, ctx.getLinea());
-            // Resuelve la funcion con Name Mangling; informa si no existe o si
-            // el nombre es de una variable (uso incorrecto).
+
             EntradaTabla resuelta = v.resolverFuncion(funcion, ctx.getLinea());
             Entorno.FuncionDeclarada firma = resuelta == null ? null : entorno.getFuncion(resuelta.lexema);
 
             List<ParametroReal> conFormales = asignarFormales(v, firma, parametros, ctx.getLinea());
-            // Cantidad, orden de evaluacion, formales repetidos y tipos.
+
             boolean invocacionOk = v.verificarInvocacion(firma, conFormales, ordenRaw, ctx.getLinea());
             List<Integer> ordenEvaluacion = comoListaEnteros(ordenRaw, ctx.getLinea());
             LlamadaFuncion llamada = new LlamadaFuncion(
@@ -289,8 +257,7 @@ public class AccionesExpresiones {
 
         tabla.registrar(Reglas.ERR_FALTA_ORDEN_EVALUACION, ctx -> {
             v.reportar(Reglas.ERR_FALTA_ORDEN_EVALUACION, ctx.getLinea());
-            // objeto.metodo(...) y objeto.clase.metodo(...) sin orden. La
-            // llamada tradicional heredada suma el error de falta de prefijo.
+
             if (ctx.cantidad() >= 3) {
                 EntradaTabla objeto = ctx.entrada(0);
                 EntradaTabla prefijo = ctx.cantidad() >= 4 ? ctx.entrada(1) : null;
@@ -301,16 +268,13 @@ public class AccionesExpresiones {
             }
             Object resultado = ctx.cantidad() > 0 ? ctx.valor(0) : null;
             if (ctx.cantidad() >= 3) {
-                // La llamada de metodo ya es invalida: no se usa el objeto
-                // recuperado como si fuera el valor de la invocacion.
+
                 if (resultado instanceof ExpresionDiferida) {
                     return ((ExpresionDiferida) resultado).conTipo(Tipos.INDEFINIDO).marcarInvalida();
                 }
                 return ExpresionDiferida.deOperando(resultado, Tipos.INDEFINIDO).marcarInvalida();
             }
-            // Invocacion de funcion sin orden: el ID recuperado por la produccion
-            // de error no es un valor utilizable. Devuelve una expresion invalida
-            // para que la asignacion no emita (:=, x:main, foo:main).
+
             return new ExpresionDiferida().marcarInvalida();
         });
 
@@ -327,12 +291,6 @@ public class AccionesExpresiones {
         });
     }
 
-    /*
-      Tema 28 y 31: objeto.atributo. El objeto tiene que ser variable, parametro
-      o atributo de tipo clase. El atributo se busca solo entre los propios de
-      esa clase (D3/DEC-5). Si el nombre existe solo en una base, el error es
-      falta de prefijo. Si no existe en la cadena, no existe en la clase.
-     */
     private static ExpresionDiferida accesoAtributoPropio(Entorno entorno, Verificaciones v,
             EntradaTabla objeto, EntradaTabla atributo, int linea) {
         entorno.descartarPlaceholder(atributo);
@@ -362,11 +320,6 @@ public class AccionesExpresiones {
         return ExpresionDiferida.deOperando(referencia, declaracion.tipoDato);
     }
 
-    /*
-      Tema 31: objeto.clase.atributo. La clase prefijada tiene que ser la del
-      objeto o una base, y el atributo tiene que estar declarado ahi.
-      Devuelve el tipo de ese atributo.
-     */
     private static ExpresionDiferida accesoAtributoPrefijado(Entorno entorno, Verificaciones v,
             EntradaTabla objeto, EntradaTabla clasePrefijo, EntradaTabla atributo, int linea) {
         entorno.descartarPlaceholder(atributo);
@@ -431,10 +384,6 @@ public class AccionesExpresiones {
         return ExpresionDiferida.deOperando(referencia, Tipos.INDEFINIDO).marcarInvalida();
     }
 
-    /*
-      Convierte una lista de constantes (EntradaTabla) del orden de evaluacion
-      en una lista de enteros (posiciones 1-based).
-     */
     private static List<Integer> comoListaEnteros(List<Object> valores, int linea) {
         if (valores == null) {
             return null;

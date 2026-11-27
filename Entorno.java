@@ -8,53 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/*
-  Estado semantico que se va armando mientras el parser reduce.
-
-  Guarda declaraciones y el contexto abierto (funcion/metodo/clase). No emite
-  errores, eso queda en Verificaciones. El parser es ascendente, por eso la
-  funcion y la clase se abren con acciones intermedias y no al reducir la
-  declaracion completa.
-
-  Todas las claves de los mapas incluyen el ambito, para que dos declaraciones
-  con el mismo nombre en funciones distintas no se pisen.
-
-  Convenciones de claves (name mangling):
-    - Simbolo: nombre:ambito, donde 'ambito' es la cadena de contencion con
-      ':' como separador. TablaSimbolos.nombreDe()/ambitoDe() son las
-      contrapartes para partir la clave. Integran el prefijo de clase y el
-      ambito de declaracion, no solo el nombre corto.
-    - Atributo prefijado: <objeto>.<base>.<atributo> dentro del ambito del
-      objeto. La herencia multiple se aplana en ese nombre; no hay vtable.
-    - Constantes y cadenas usan prefijos reservados ($const:, $cadena:) para
-      no colisionar con identificadores ni con palabras reservadas.
-
-  Precondiciones y efectos:
-    - No emite errores: Verificaciones decide que es invalido. Entorno solo
-      registra o descarta; las funciones de alta devuelven la entrada creada y
-      el llamador comprueba Reporte.
-    - Abrir funcion/clase empuja en pilaFunciones/pilaClases; cerrar saca,
-      elimina el ambito de la TS y descarta las claves relacionadas de los
-      mapas. Por ser un parser ascendente, el elemento 'actual' puede no
-      estar todavia en el mapa cerrado.
-    - getFuncion(clave) mira primero el mapa de funciones cerradas y luego
-      pilaFunciones. Ese fallback recursivo es necesario porque el cuerpo de
-      una funcion puede invocarse a si misma antes de que cerrarFuncion() la
-      inserte en el mapa; sin el, la recursion directa no resolveria.
-    - Los mapas son LinkedHashMap para que el orden de declaracion sea
-      estable: COPY posicional y el orden de atributos dependen de el.
-
-  Decisiones no obvias / riesgos:
-    - La resolucion por cadena de ambitos se delega en TablaSimbolos.resolver;
-      Entorno no decide precedencia de nombres para no duplicar la politica.
-    - Una clase con herencia invalida se marca 'valida = false'; al cerrarse
-      no queda declarada y GeneradorTercetos omite su terceto CLASE. Es una
-      forma de no generar codigo para una construccion que ya erro.
-    - No se hace busqueda de metodos por nombre corto: la firma y el ambito
-      forman parte de la clave, asi que una sobrecarga por ambito no se pisa
-      con otra clase. El costo es que el llamador debe resolver la clave
-      completa antes de preguntar.
- */
 public class Entorno {
 
     public static class Parametro {
@@ -103,9 +56,9 @@ public class Entorno {
         public final String ambitoPropio;
         public final Map<String, String> atributos = new LinkedHashMap<>();
         public final Map<String, FuncionDeclarada> metodos = new LinkedHashMap<>();
-        // Claves resueltas (nombre:ambito) de las bases directas, en orden de fuente.
+
         public final List<String> heredaDe = new ArrayList<>();
-        // Una clase con herencia invalida no queda declarada al cerrarse.
+
         public boolean valida = true;
 
         public ClaseDeclarada(String nombre, int linea, EntradaTabla entrada,
@@ -162,15 +115,6 @@ public class Entorno {
         return pilaFunciones.peek();
     }
 
-    // Busca por clave completa nombre:ambito, no por nombre pelado.
-    // Durante el cuerpo de una funcion todavia no fue cerrada (cerrarFuncion
-    // la inserta en 'funciones'), asi que se consulta tambien la pila: eso
-    // permite la recursion directa y mantiene la firma visible al resolver
-    // la invocacion.
-    // Precondicion: 'clave' ya viene mangled; null devuelve null sin efecto.
-    // Efecto: ninguno; es una consulta. Si la clave no existe en ninguno de
-    // los dos lugares, devuelve null y el llamador debe reportar el error.
-    
     public FuncionDeclarada getFuncion(String clave) {
     if (clave == null) {
         return null;
@@ -182,7 +126,6 @@ public class Entorno {
         return tablaSimbolos.buscarIdentificador(nombre, ambito);
     }
 
-    // Resuelve por la cadena de ambitos y solo acepta declaraciones (DEC-3).
     public EntradaTabla resolver(String nombre, String ambito) {
         return tablaSimbolos.resolver(nombre, ambito);
     }
@@ -279,7 +222,6 @@ public class Entorno {
         funcion.parametros.add(new Parametro(nombre, tipo, entrada));
     }
 
-    // Cierra el contexto y pasa la funcion a la tabla o a la clase actual.
     public void cerrarFuncion() {
         FuncionDeclarada funcion = pilaFunciones.poll();
         if (funcion == null || funcion.nombre == null) {
@@ -319,11 +261,6 @@ public class Entorno {
         }
     }
 
-    /*
-      Una clase con extends invalido no se declara. Se quita del registro y se
-      eliminan sus entradas y las de sus miembros (atributos, metodos, parametros
-      y variables locales) para que no queden declaraciones a medias.
-     */
     private void descartarClase(ClaseDeclarada clase) {
         if (clase == null) {
             return;
@@ -381,10 +318,6 @@ public class Entorno {
         return entrada;
     }
 
-    /*
-      Agrega una base ya resuelta. Devuelve false si esa clase ya estaba
-      en la lista: el llamador informa la base repetida y no la vuelve a guardar.
-     */
     public boolean agregarBase(ClaseDeclarada clase, ClaseDeclarada base) {
         if (clase == null || base == null) {
             return false;
@@ -397,18 +330,12 @@ public class Entorno {
         return true;
     }
 
-    /*
-      Marca la clase abierta como invalida. Al cerrarse no quedara declarada.
-     */
     public void invalidarClase(ClaseDeclarada clase) {
         if (clase != null) {
             clase.valida = false;
         }
     }
 
-    /*
-      True si `buscada` es `desde` o se alcanza siguiendo heredaDe.
-     */
     public boolean alcanzaClase(ClaseDeclarada desde, ClaseDeclarada buscada) {
         if (desde == null || buscada == null) {
             return false;
@@ -431,10 +358,6 @@ public class Entorno {
         return false;
     }
 
-    /*
-      El prefijo de objeto.clase.miembro puede ser la clase del objeto o una
-      base directa o transitiva. Otra clase, aunque exista, no sirve.
-     */
     public boolean esPrefijoValido(ClaseDeclarada objeto, ClaseDeclarada prefijo) {
         if (objeto == null || prefijo == null) {
             return false;
@@ -466,13 +389,6 @@ public class Entorno {
         }
     }
 
-    /*
-      Materializa en la tabla una entrada por cada atributo del objeto. Los
-      propios quedan como `objeto.atributo`; los heredados agregan la clase que
-      los declara: `objeto.base.atributo`. Se crean al declarar el objeto (o el
-      parametro/atributo de tipo clase), no al usarlo, y cada objeto tiene sus
-      propias claves.
-     */
     private void materializarAtributosDeObjeto(EntradaTabla objeto, String tipo, int linea) {
         if (objeto == null) {
             return;
@@ -622,7 +538,6 @@ public class Entorno {
         return entrada != null && entrada.uso == EntradaTabla.Uso.CLASE;
     }
 
-    // Clase ya resuelta por su clave mangled. Un tipo basico o un enumerado no es clase.
     public ClaseDeclarada claseDe(String tipo) {
         if (tipo == null || tipo.isEmpty()) {
             return null;
@@ -634,15 +549,6 @@ public class Entorno {
         return getClase(entrada.lexema);
     }
 
-    /*
-      D4: dos clases son compatibles para la asignacion de objetos si son la
-      misma clase o si tienen la misma cantidad de atributos efectivos en el
-      mismo orden de tipos. Los nombres de los atributos y las firmas de los
-      metodos no participan. Incluye los heredados, en orden base primero; un
-      atributo propio con el mismo nombre reemplaza al heredado sin moverlo de
-      posicion. El tipo de un miembro clase o enumerado se compara por su clave,
-      no por el tipo base.
-     */
     public boolean clasesCompatibles(ClaseDeclarada a, ClaseDeclarada b) {
         if (a == null || b == null) {
             return false;
@@ -689,11 +595,6 @@ public class Entorno {
         return Tipos.tipoEfectivo(tipo);
     }
 
-    /*
-      Tipo que participa en una operacion. Un enumerado vale por su tipo base;
-      una clase conserva su clave completa para que dos clases distintas no se
-      confundan. Tipos.tipoEfectivo queda como normalizacion para los basicos.
-     */
     public String tipoEfectivo(String tipo) {
         if (tipo == null) {
             return Tipos.INDEFINIDO;
@@ -713,11 +614,6 @@ public class Entorno {
         return Tipos.tipoEfectivo(tipo);
     }
 
-    /*
-      Atributo declarado en la propia clase, sin recorrer ancestros.
-      D3/DEC-5: objeto.atributo solo ve miembros propios. El heredado
-      exige el prefijo objeto.clase.atributo.
-     */
     public EntradaTabla atributoPropio(ClaseDeclarada clase, String nombreAtributo) {
         if (clase == null || nombreAtributo == null || nombreAtributo.isEmpty()) {
             return null;
@@ -733,7 +629,6 @@ public class Entorno {
         return null;
     }
 
-    // Atributo declarado en alguna base, directa o transitiva. No mira los propios.
     public EntradaTabla atributoHeredado(ClaseDeclarada clase, String nombreAtributo) {
         if (clase == null || nombreAtributo == null || nombreAtributo.isEmpty()) {
             return null;
@@ -756,7 +651,6 @@ public class Entorno {
         return clase.metodos.get(TablaSimbolos.nombreDe(nombreMetodo));
     }
 
-    // Metodo declarado en alguna base, directa o transitiva. No mira los propios.
     public FuncionDeclarada metodoHeredado(ClaseDeclarada clase, String nombreMetodo) {
         if (clase == null || nombreMetodo == null || nombreMetodo.isEmpty()) {
             return null;
@@ -772,11 +666,6 @@ public class Entorno {
         return null;
     }
 
-    /*
-      Atributo declarado en la clase del prefijo, o en la clase del objeto si
-      no hay prefijo. No sube a las bases: el miembro heredado no se acepta
-      por estar en un ancestro de la clase nombrada.
-     */
     public EntradaTabla resolverAtributo(EntradaTabla objeto, String nombreClase, String nombreAtributo) {
         if (nombreAtributo == null) {
             return null;
@@ -790,11 +679,6 @@ public class Entorno {
         return atributoPropio(clase, nombreAtributo);
     }
 
-    /*
-      Metodo declarado en la clase del objeto o en la clase prefijada.
-      No recorre ancestros: la llamada heredada tiene que nombrar la clase
-      que declara el metodo. La firma que devuelve alimenta el CALLMET.
-     */
     public FuncionDeclarada buscarMetodo(EntradaTabla objeto, String nombreClase, String nombreMetodo) {
         if (nombreMetodo == null) {
             return null;
@@ -877,7 +761,6 @@ public class Entorno {
         return null;
     }
 
-    // Acepta un nombre pelado o una clave ya resuelta nombre:ambito.
     private EntradaTabla resolverTipo(String nombre) {
         if (nombre == null) {
             return null;

@@ -1,9 +1,3 @@
-/*
-  Metadata de resultado de un terceto para backend ASM (TP4).
-  El IR usa referencias [n] como temporales implicitos; aqui se registra si
-  el terceto produce valor, su tipo logico y el nombre auxiliar sugerido @auxN.
-  No altera la emision ni la visualizacion del IR.
- */
 public class ResultadoTerceto {
 
     private final int indice;

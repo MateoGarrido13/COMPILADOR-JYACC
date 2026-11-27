@@ -6,61 +6,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
-  Recorre las reducciones y emite tercetos.
-  Las expresiones se pliegan a izquierda dentro de cada nivel de precedencia.
-  El if apila el BF al terminar la condicion. Al cerrar el then lo completa
-  con una etiqueta label_N. Con else, abre un BI hacia otra etiqueta.
-  El repeat abre la label de inicio al reducirse INICIO_REPEAT, antes del
-  cuerpo. Al cerrar, BF sale si la condicion es falsa y BI vuelve a esa label.
-
-  Convencion de invocaciones:
-    funcion: (PAR, formal, real) ... (CALL, funcion, cantidadDeParametros)
-    metodo:  (PAR, formal, real) ... (CALLMET, objeto, metodo)
-  El resultado de la invocacion es el numero del terceto CALL/CALLMET.
-
-  Contrato del IR (precondiciones y efectos):
-    - Entrada: la lista ordenada de reducciones que TablaAcciones registro
-      durante el parseo. Cada reduccion aporta regla, lexema/linea y los
-      valores de los hijos; este generador NO reanaliza el texto fuente.
-    - Salida: ListaTercetos (indices 1..N) y, en paralelo, un
-      ResultadoTerceto por indice con tipo y flag 'produceValor'. Ese mapa es
-      la precondicion de GeneradorAssembler: de el salen los @auxN y el tipo
-      DD/DQ de cada temporal. Si un operando es un Integer, se interpreta
-      como referencia al numero de terceto que lo produjo.
-    - Efecto sobre el estado interno: pila de saltos pendientes, pila de
-      inicios de repeat y marcas de clase. Los saltos se resuelven al cerrar
-      la estructura; quedar pendiente al final seria un error de armado.
-
-  Convenciones de saltos y etiquetas:
-    - label_N se crea al cerrar el then o el cuerpo del repeat. BF sobre un
-      comparador guarda el operador y sus operandos originales: el ASM
-      rehace la comparacion con el JCC INVERSO. BF sobre un booleano ya
-      materializado usa CMP aux,0 / JE. BI salta sin condicion.
-    - SALTO_INVALIDO (-1) se usa cuando la condicion ya reporto error: mantiene
-      balanceada la pila de saltos en ifs anidados sin emitir un salto que
-      apunte a un terceto inexistente.
-
-  Trazabilidad hacia el ASM:
-    - El indice del terceto es estable y se propaga al nombre @auxN; por eso
-      el generador assembler puede emitir '; (PAR, a:suma, x:main)' y otros
-      comentarios de traza que vinculan la pila con el IR.
-    - Los marcadores CLASE/FIN_CLASE y FUNCION/FIN_FUNCION no producen valor:
-      son hitos para el back-end (layout de objetos y stack frames).
-
-  Riesgos conocidos:
-    - Los chequeos runtime b/e/f/h se instrumentan aguas abajo, en el ASM,
-      no aqui. Este modulo solo decide tipos y produce valores; no sabe si
-      una suma desbordara.
-    - Una expresion invalida puede marcar su resultado como no productor; los
-      tercetos que la consumen deben tolerar un operando sin valor para no
-      generar un @auxN fantasma.
- */
 public class GeneradorTercetos {
 
     private static final class Pendiente {
-        /* Esta clase es un contenedor para los datos de un salto pendiente.
-        numero es el numero del terceto pendiente, incondicional es true si es un salto incondicional */
+
         final int numero;
         final boolean incondicional;
 
@@ -72,14 +21,13 @@ public class GeneradorTercetos {
 
     private final ListaTercetos lista = new ListaTercetos();
     private final Reporte reporte;
-    private final Deque<Pendiente> pila = new ArrayDeque<>(); // pila de saltos pendientes
-    private final Deque<String> iniciosRepeat = new ArrayDeque<>(); // pila de etiquetas de inicio de repeat
-    private final Deque<Integer> marcasRepeat = new ArrayDeque<>(); // tercetos previos al inicio de cada repeat
-    private final Deque<Integer> marcasClase = new ArrayDeque<>(); // terceto CLASE de cada clase abierta
-    // Metadata de resultado por terceto (TP4/ASM): tipo y si produce valor [n].
+    private final Deque<Pendiente> pila = new ArrayDeque<>();
+    private final Deque<String> iniciosRepeat = new ArrayDeque<>();
+    private final Deque<Integer> marcasRepeat = new ArrayDeque<>();
+    private final Deque<Integer> marcasClase = new ArrayDeque<>();
+
     private final Map<Integer, ResultadoTerceto> resultados = new LinkedHashMap<>();
-    // Numero centinela para un salto que no debe emitirse porque la condicion ya
-    // reporto un error. Mantiene balanceada la pila de saltos en ifs anidados.
+
     private static final int SALTO_INVALIDO = -1;
 
     public GeneradorTercetos(Reporte reporte) {
@@ -210,7 +158,6 @@ public class GeneradorTercetos {
         return lista.contenido();
     }
 
-    /* Delimitadores de funcion y metodo tomados de la firma que devuelve la accion. */
     private void abrirFuncion(Reduccion reduccion) {
         Object valor = reduccion.resultado();
         if (!(valor instanceof Entorno.FuncionDeclarada)) {
@@ -256,7 +203,7 @@ public class GeneradorTercetos {
         Entorno.ClaseDeclarada clase = (Entorno.ClaseDeclarada) valor;
         int marca = marcasClase.isEmpty() ? 0 : marcasClase.pop();
         if (!clase.valida) {
-            // La clase no quedo declarada: tambien se descarta su codigo.
+
             if (marca > 0) {
                 lista.descartarDesde(marca - 1);
             }
@@ -269,15 +216,11 @@ public class GeneradorTercetos {
 
     private void generarAsignacion(Reduccion reduccion) {
         Object resultado = reduccion.resultado();
-        // La accion semantica devuelve null cuando la asignacion ya reporto un
-        // error (destino no asignable, tipos incompatibles o expresion invalida).
+
         if (resultado == null) {
             return;
         }
-        // Entre objetos compatibles el resultado es una Asignacion con destino
-        // EntradaTabla y el terceto es (COPY, destino, origen). Una asignacion
-        // a objeto.atributo tambien es una Asignacion, pero el destino es una
-        // ReferenciaAtributo y el terceto es (:=, objeto.atributo, valor).
+
         boolean copiaEstructural = false;
         Object destino = resultado;
         if (resultado instanceof Asignacion) {
@@ -294,9 +237,7 @@ public class GeneradorTercetos {
         Object valorOrigen = reduccion.operando(1);
         Object origen = emitir(valorOrigen, reduccion.getLinea());
         if (origen == null) {
-            // Si habia un valor semantico (invocacion o expresion) pero resulto
-            // invalido, su error ya se reporto y no se agrega ruido. Solo se
-            // reporta cuando falta el operando por un error de sintaxis.
+
             if (valorOrigen == null) {
                 reporte.error(reduccion.getLinea(), "Asignacion sin operando");
             }
@@ -327,12 +268,6 @@ public class GeneradorTercetos {
         }
     }
 
-    /*
-      Genera los tercetos de invocacion de funcion o metodo:
-      un PAR por cada parametro real (en el orden de evaluacion indicado)
-      y un CALL con la cantidad de parametros, o un CALLMET con el objeto
-      receptor y el metodo. El numero del terceto final queda en la llamada.
-     */
     private void generarInvocacion(Reduccion reduccion) {
         Object valor = reduccion.resultado();
         if (!(valor instanceof LlamadaFuncion)) {
@@ -347,7 +282,6 @@ public class GeneradorTercetos {
         }
         List<ParametroReal> parametros = llamada.parametros;
 
-        // Determina el orden de evaluacion. Si no hay [], se usa el orden fuente 1..n.
         List<Integer> posiciones;
         if (llamada.ordenEvaluacion == null || llamada.ordenEvaluacion.isEmpty()) {
             posiciones = new ArrayList<>();
@@ -358,14 +292,13 @@ public class GeneradorTercetos {
             posiciones = llamada.ordenEvaluacion;
         }
 
-        // Emite un PAR por cada parametro, en el orden de evaluacion indicado.
         for (int pos : posiciones) {
             if (pos < 1 || pos > parametros.size()) {
-                return; // ya fue reportado por Verificaciones
+                return;
             }
             ParametroReal param = parametros.get(pos - 1);
             if (param.formal == null) {
-                return; // sin formal resuelto no se puede emitir una copia valida
+                return;
             }
             Object valorParam = emitir(param.valor, reduccion.getLinea());
             if (valorParam == null) {
@@ -374,7 +307,6 @@ public class GeneradorTercetos {
             crearNoProductor("PAR", param.formal, valorParam);
         }
 
-        // Emite el CALL/CALLMET y guarda su numero para que emitir(LlamadaFuncion) lo devuelva.
         int numeroCall;
         String tipoRet = llamada.getTipoRetorno();
         if (llamada.esMetodo) {
@@ -389,8 +321,7 @@ public class GeneradorTercetos {
     private void generarCondicionIf(Reduccion reduccion) {
         Integer comparacion = emitirComparacion(reduccion.operando(0), reduccion.getLinea());
         if (comparacion == null) {
-            // La condicion ya reporto un error: se apila un BF centinela para
-            // que los cierres del if no emitan saltos ni etiquetas.
+
             pila.push(new Pendiente(SALTO_INVALIDO, false));
             return;
         }
@@ -398,7 +329,6 @@ public class GeneradorTercetos {
         pila.push(new Pendiente(bf, false));
     }
 
-    /* Se reduce al leer repeat, antes de generar el cuerpo. */
     private void abrirRepeat() {
         marcasRepeat.push(lista.cantidad());
         String etiqueta = lista.reservarEtiqueta();
@@ -415,7 +345,6 @@ public class GeneradorTercetos {
         }
     }
 
-    /* BF sale si la condicion es falsa. Si no se toma, el BI vuelve al inicio. */
     private void generarRepeat(Reduccion reduccion) {
         if (iniciosRepeat.isEmpty()) {
             reporte.error(reduccion.getLinea(), "Iteracion incompleta");
@@ -425,8 +354,7 @@ public class GeneradorTercetos {
         int marca = marcasRepeat.isEmpty() ? lista.cantidad() : marcasRepeat.pop();
         Integer comparacion = emitirComparacion(reduccion.operando(1), reduccion.getLinea());
         if (comparacion == null) {
-            // La condicion ya reporto un error: se retira la etiqueta de inicio
-            // y el cuerpo del ciclo para no dejar codigo intermedio incompleto.
+
             lista.descartarDesde(marca);
             return;
         }
@@ -438,7 +366,7 @@ public class GeneradorTercetos {
 
     private Integer emitirComparacion(Object valor, int linea) {
         if (valor == null) {
-            // CONDICION devuelve null cuando ya reporto un error de tipos.
+
             return null;
         }
         if (!(valor instanceof Object[]) || ((Object[]) valor).length < 3) {
@@ -455,16 +383,13 @@ public class GeneradorTercetos {
         return crearTerceto((String) partes[1], izquierdo, derecho, Tipos.ULONGINT, true);
     }
 
-    /* Completa el BF con la etiqueta del else, abre el BI y deja esa
-       etiqueta como primer terceto de la rama else. */
     private void cerrarThen(Reduccion reduccion) {
         Pendiente bf = desapilar(reduccion.getLinea());
         if (bf == null) {
             return;
         }
         if (bf.numero == SALTO_INVALIDO) {
-            // No hay BF que completar; se apila el BI centinela que cerrara la
-            // sentencia, sin etiquetas ni saltos.
+
             pila.push(new Pendiente(SALTO_INVALIDO, true));
             return;
         }
@@ -475,16 +400,12 @@ public class GeneradorTercetos {
         crearEtiquetaConResultado(etiquetaElse);
     }
 
-    /* If sin else, o el cierre del else: el salto pendiente apunta a una
-       etiqueta nueva, que se emite a continuacion. ERR_FALTA_END_IF usa el
-       mismo cierre para no dejar el BF o el BI vacios. */
     private void cerrarSalto(Reduccion reduccion) {
-        Pendiente pendiente = desapilar(reduccion.getLinea()); // paso la linea por si hay error 
+        Pendiente pendiente = desapilar(reduccion.getLinea());
         if (pendiente == null || pendiente.numero == SALTO_INVALIDO) {
             return;
         }
 
- 
         String etiqueta = lista.reservarEtiqueta();
         int posicion;
         if (pendiente.incondicional) {
@@ -504,7 +425,6 @@ public class GeneradorTercetos {
         return pila.pop();
     }
 
-    // Devuelve la EntradaTabla hoja o el numero del terceto que resume la expresion.
     private Object emitir(Object valor, int linea) {
         if (valor instanceof EntradaTabla || valor instanceof Integer
                 || valor instanceof ReferenciaAtributo || valor instanceof String) {
@@ -553,7 +473,7 @@ public class GeneradorTercetos {
         }
         ExpresionDiferida expresion = (ExpresionDiferida) valor;
         if (!expresion.esValida()) {
-            // La expresion ya reporto un error; no se emite codigo intermedio.
+
             return null;
         }
         List<Object> operandos = expresion.getOperandos();

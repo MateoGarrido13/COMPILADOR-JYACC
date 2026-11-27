@@ -3,21 +3,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/*
-  Chequeos semanticos que necesitan contexto. Se invocan desde AccionesSemanticas.
- 
-  El parser es ascendente, por eso el contexto se va armando con acciones intermedias
-  y no al reducir la declaracion completa.
- 
-  Verificaciones que no dependen del contexto (por ejemplo, constantes fuera de rango)
-  se hacen en AccionesSemanticas y no en esta clase.
- 
-  - reportar: canal unico de las producciones ERR_*
-  - tema 17: asignacion en expresion anidada
-  - tema 19: lista de orden de evaluacion ausente o vacia
-  - tema 23: enumeracion sin valores
-  - Paso de parametros: cantidad, orden de evaluacion y alcance de funcion
- */
 public class Verificaciones {
 
     private final Entorno entorno;
@@ -32,11 +17,6 @@ public class Verificaciones {
         return entorno;
     }
 
-    /*
-      Devuelve la declaracion resuelta por la cadena de ambitos. Si no existe,
-      reporta el error y devuelve null. Las acciones usan la entrada devuelta
-      en lugar del placeholder creado por el lexico.
-     */
     public EntradaTabla verificarAlcance(EntradaTabla id) {
         if (id == null) {
             return null;
@@ -51,11 +31,6 @@ public class Verificaciones {
         return null;
     }
 
-    /*
-      Resuelve un identificador usado como valor y exige que su uso sea uno de
-      los permitidos. Se usa en los factores para que una funcion o una clase
-      no puedan aparecer donde el lenguaje espera una variable.
-     */
     public EntradaTabla resolverIdentificador(EntradaTabla id, int linea,
             EntradaTabla.Uso... usosPermitidos) {
         EntradaTabla declaracion = verificarAlcance(id);
@@ -72,12 +47,6 @@ public class Verificaciones {
         return null;
     }
 
-    /*
-      Resuelve el nombre de una funcion invocada como ID(...). Si no existe o
-      no es visible informa error; si el nombre existe pero no es una funcion
-      (por ejemplo una variable) informa uso incorrecto. Devuelve null cuando
-      no se puede invocar.
-     */
     public EntradaTabla resolverFuncion(EntradaTabla id, int linea) {
         if (id == null) {
             return null;
@@ -108,21 +77,11 @@ public class Verificaciones {
         reporte.error(linea, regla.getDescripcion());
     }
 
-    /*
-      Canal unico de errores de tipos. contexto describe la construccion
-      (operador, asignacion, condicion, retorno) y esperado/obtenido son los
-      tipos ya normalizados con Entorno.tipoEfectivo.
-     */
     public void errorTipos(int linea, String contexto, String esperado, String obtenido) {
         reporte.error(linea, "Tipos incompatibles en " + contexto
                 + ": se esperaba " + texto(esperado) + " y se encontró " + texto(obtenido));
     }
 
-    /*
-      Tema 33: la unica conversion del lenguaje es todf, de un entero
-      (ulongint o un enumerado con base ulongint) a doublef. Un operando
-      doublef, una cadena o cualquier otro tipo no es convertible.
-     */
     public void errorConversionTodf(int linea) {
         reporte.error(linea, "todf solo convierte enteros a doublef");
     }
@@ -131,30 +90,25 @@ public class Verificaciones {
         reporte.error(linea, "tipo no declarado '" + tipo + "'");
     }
 
-    // Tema 28: el receptor de objeto.atributo no es variable, parametro o atributo de clase.
     public void errorNoEsObjeto(String nombre, int linea) {
         reporte.error(linea, "'" + (nombre == null ? "?" : nombre) + "' no es un objeto");
     }
 
-    // Tema 28: el atributo no esta declarado en la clase que se nombro.
     public void errorAtributoInexistente(String atributo, String clase, int linea) {
         reporte.error(linea, "atributo '" + (atributo == null ? "?" : atributo)
                 + "' no existe en la clase '" + (clase == null ? "?" : clase) + "'");
     }
 
-    // Tema 31: el metodo no esta declarado en la clase prefijada.
     public void errorMetodoInexistente(String metodo, String clase, int linea) {
         reporte.error(linea, "metodo '" + (metodo == null ? "?" : metodo)
                 + "' no existe en la clase '" + (clase == null ? "?" : clase) + "'");
     }
 
-    // D3: el miembro existe solo en una base y el acceso no trajo el prefijo.
     public void errorFaltaPrefijo(String miembro, String clase, int linea) {
         reporte.error(linea, "falta de prefijo para '" + (miembro == null ? "?" : miembro)
                 + "' en la clase '" + (clase == null ? "?" : clase) + "'");
     }
 
-    // El prefijo no es la clase del objeto ni una base de su cadena.
     public void errorPrefijoNoHeredado(String prefijo, String clase, int linea) {
         reporte.error(linea, "el prefijo '" + (prefijo == null ? "?" : prefijo)
                 + "' no es una clase heredada de '" + (clase == null ? "?" : clase) + "'");
@@ -177,11 +131,6 @@ public class Verificaciones {
         reporte.error(linea, "clase base repetida '" + (nombre == null ? "?" : nombre) + "'");
     }
 
-    /*
-      Tema 31: cada base se resuelve con Name Mangling, tiene que existir y
-      ser una clase, no puede ser la misma clase ni cerrar un ciclo, y no
-      puede repetirse. Las bases validas quedan en heredaDe, en orden.
-     */
     public void registrarHerencia(List<Object> padres, int linea) {
         Entorno.ClaseDeclarada clase = entorno.getClaseActual();
         if (clase == null || padres == null) {
@@ -221,7 +170,6 @@ public class Verificaciones {
         }
     }
 
-    // D4: las clases no coinciden en cantidad u orden de tipos de atributos.
     public void errorEstructuraIncompatible(int linea, String destino,
             String claseDestino, String claseOrigen) {
         reporte.error(linea, "Incompatibilidad estructural en la asignación a '"
@@ -233,7 +181,6 @@ public class Verificaciones {
         reporte.error(linea, "Sentencia ret fuera de una funcion");
     }
 
-    // El destino de una asignacion debe ser variable, parametro o atributo.
     public boolean esAsignable(EntradaTabla destino) {
         return destino != null && destino.declarado
                 && (destino.uso == EntradaTabla.Uso.VARIABLE
@@ -254,33 +201,18 @@ public class Verificaciones {
         return tipo == null || tipo.isEmpty() ? Tipos.INDEFINIDO : tipo;
     }
 
-    // Tema 17: ID = (expr) no puede contener otra asignacion. 
-    // La marca viaja por el plegado aritmetico (absorber), pero no por los
-    // argumentos de una invocacion: el Tema 19 admite asignaciones en los
-    // parametros reales (f(a, b=(4), a+b)) y no deben contarse como anidamiento.
     public void verificarAsignacionAnidada(ExpresionDiferida expresion, int linea) {
         if (expresion != null && expresion.contieneAsignacion()) {
             reportar(Reglas.ERR_ASIGNACION_ANIDADA, linea);
         }
     }
 
-    // Tema 19: falta [orden] o la lista vino vacia. 
     public void verificarOrdenEvaluacion(List<Object> constantes, int linea) {
         if (constantes == null || constantes.isEmpty()) {
             reportar(Reglas.ERR_FALTA_ORDEN_EVALUACION, linea);
         }
     }
 
-    /*
-      Valida el orden de evaluacion de los parametros reales contra la cantidad
-      de parametros de la funcion.
-      
-      Reglas:
-      - cada posicion indicada debe estar en el rango [1, cantidad]
-      - no debe repetirse ninguna posicion
-      - la cantidad de posiciones indicadas debe coincidir con la cantidad de
-        parametros reales
-     */
     public boolean verificarOrdenEvaluacion(List<Object> constantes, int cantidadParametros, int linea) {
         if (constantes == null || constantes.isEmpty()) {
             reportar(Reglas.ERR_FALTA_ORDEN_EVALUACION, linea);
@@ -332,7 +264,6 @@ public class Verificaciones {
         return valido;
     }
 
-    // Verifica que la cantidad de parametros reales coincida con los formales declarados.
     public boolean verificarCantidadParametros(EntradaTabla funcion, List<ParametroReal> parametros, int linea) {
         if (funcion == null) {
             return false;
@@ -362,11 +293,6 @@ public class Verificaciones {
         return true;
     }
 
-    /*
-      Devuelve la entrada del parametro formal que corresponde a un real.
-      Para un real nombrado se busca por nombre; para uno posicional, por la
-      posicion en la lista de formales. Si el nombre no existe, se reporta.
-     */
     public EntradaTabla formalDe(Entorno.FuncionDeclarada firma, ParametroReal parametro,
             int posicion, int linea) {
         if (firma == null || parametro == null) {
@@ -388,12 +314,6 @@ public class Verificaciones {
         return firma.parametros.get(posicion).entrada;
     }
 
-    /*
-      Chequeos completos de una invocacion (Tema 19). Recibe los parametros
-      reales ya resueltos con su formal. Verifica cantidad, orden de evaluacion,
-      formales nombrados no repetidos y el tipo de cada real contra su formal.
-      Informa todos los errores con la linea de la invocacion.
-     */
     public boolean verificarInvocacion(Entorno.FuncionDeclarada firma,
             List<ParametroReal> parametros, List<Object> ordenRaw, int linea) {
         boolean cantidadOk = verificarCantidadParametros(firma, parametros, linea);
@@ -406,7 +326,6 @@ public class Verificaciones {
                 && formalesCompletos(parametros);
     }
 
-    // Dos reales no pueden quedar asociados al mismo formal.
     public boolean verificarFormalesRepetidos(List<ParametroReal> parametros, int linea) {
         if (parametros == null) {
             return true;
@@ -428,7 +347,6 @@ public class Verificaciones {
         return valido;
     }
 
-    // El tipo de cada real debe ser exactamente el del formal, sin conversiones.
     public boolean verificarTiposParametros(Entorno.FuncionDeclarada firma,
             List<ParametroReal> parametros, int linea) {
         if (firma == null || parametros == null) {
@@ -442,7 +360,7 @@ public class Verificaciones {
             }
             String tipoFormal = entorno.tipoEfectivo(parametro.formal.tipoDato);
             String tipoReal = entorno.tipoEfectivo(parametro.tipoReal);
-            // Sin tipo no se sigue chequeando para no cascadear errores.
+
             if (Tipos.INDEFINIDO.equals(tipoFormal) || Tipos.INDEFINIDO.equals(tipoReal)) {
                 continue;
             }
@@ -470,7 +388,6 @@ public class Verificaciones {
         return true;
     }
 
-    // el signo unario puede sacar la constante de rango. 
     public void verificarRangoConstante(EntradaTabla constante, int linea) {
         if (constante == null || constante.lexema == null) {
             return;

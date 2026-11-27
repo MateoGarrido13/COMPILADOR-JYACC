@@ -1,24 +1,15 @@
-/*
-  Representa una invocacion de funcion o de metodo lista para generar tercetos.
-  Contiene la funcion a llamar, los parametros reales, el orden de evaluacion
-  y la firma resuelta con su tipo de retorno.
-
-  Para metodos guarda ademas el objeto receptor. La convencion de codigo
-  intermedio es (CALLMET, objeto, metodo), precedida por los PAR de los
-  parametros reales.
- */
 import java.util.List;
 
 public class LlamadaFuncion {
     public final EntradaTabla funcion;
     public final List<ParametroReal> parametros;
-    public final List<Integer> ordenEvaluacion; // posiciones 1-based, o null
+    public final List<Integer> ordenEvaluacion;
     public final int linea;
     public final Entorno.FuncionDeclarada declaracion;
     private final String tipoRetorno;
     public final EntradaTabla objeto;
     public final boolean esMetodo;
-    private Integer numeroCall; // numero del terceto CALL/CALLMET, asignado por GeneradorTercetos
+    private Integer numeroCall;
     private boolean valida = true;
 
     public LlamadaFuncion(EntradaTabla funcion, List<ParametroReal> parametros,

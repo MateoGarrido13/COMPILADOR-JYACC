@@ -1,11 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-Informacion que recibe una accion semantica al reducirse una regla.
- Los valores son los que en YACC se acceden como $1, $2, $3; aca llegan como
- arreglo, de modo que valor(0) equivale a $1.
- */
 public class ContextoRegla {
 
     private final Reglas regla;
@@ -15,7 +10,7 @@ public class ContextoRegla {
     public ContextoRegla(Reglas regla, int linea, Object[] valores) {
         this.regla = regla;
         this.linea = linea;
-        this.valores = valores == null ? new Object[0] : valores; // si valores es null, inicializo un array de 0 elementos
+        this.valores = valores == null ? new Object[0] : valores;
     }
 
     public Reglas getRegla() {
@@ -30,7 +25,6 @@ public class ContextoRegla {
         return valores.length;
     }
 
-    /** Equivalente a $(indice + 1). */
     public Object valor(int indice) {
         if (indice < 0 || indice >= valores.length) {
             return null;
@@ -54,12 +48,9 @@ public class ContextoRegla {
         return comoExpresion(valor(indice));
     }
 
-    // Devuelve el valor como lista; si el valor es un elemento suelto, lo envuelve.
     public List<Object> lista(int indice) {
         return comoLista(valor(indice));
     }
-
-    // ===== Conversores reutilizables =====
 
     public static EntradaTabla comoEntrada(Object valor) {
         if (valor instanceof EntradaTabla) {

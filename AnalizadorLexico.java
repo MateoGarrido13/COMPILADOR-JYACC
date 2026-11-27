@@ -1,6 +1,5 @@
 import java.io.FileNotFoundException;
 
-/* Reconoce tokens utilizando el automata de MatrizTransiciones. */
 public class AnalizadorLexico {
 
     private final LectorFuente fuente = new LectorFuente();
@@ -74,10 +73,6 @@ public class AnalizadorLexico {
         }
     }
 
-    /*
-      El caracter cerro el token pero no forma parte de el: hay que devolverlo
-      a la fuente para el proximo yylex.
-     */
     private static boolean esLookahead(int estado, char caracter, int siguiente) {
         if (siguiente != MatrizTransiciones.ESTADO_F) {
             return false;
@@ -102,12 +97,12 @@ public class AnalizadorLexico {
 
     private int ejecutarAccion(ContextoLexico contexto) {
         switch (contexto.accion) {
-            case 1: case 2: return new AccionEstructura(contexto).ejecutar(); //Asignación
-            case 3: case 4: case 5: case 6: return new AccionComparador(contexto).ejecutar(); // Comparadores
-            // Revisar estas acciones, si se puede hacer una sola acción para palabras reservadas e identificadores
-            case 7: case 36: return new AccionReservada(contexto).ejecutar(); // Palabras reservadas, verifica si hacer o no entrada nueva
-            case 8: case 9: return new AccionIdentificador(contexto).ejecutar(); //Identificadores, warning
-            case 12: case 13: case 14: case 15: case 16: case 17: case 18: // Comentarios multilinea y cadenas
+            case 1: case 2: return new AccionEstructura(contexto).ejecutar();
+            case 3: case 4: case 5: case 6: return new AccionComparador(contexto).ejecutar();
+
+            case 7: case 36: return new AccionReservada(contexto).ejecutar();
+            case 8: case 9: return new AccionIdentificador(contexto).ejecutar();
+            case 12: case 13: case 14: case 15: case 16: case 17: case 18:
                 return new AccionCadena(contexto).ejecutar();
             case 20: return new AccionSimbolo(contexto).ejecutar();
             case 22: case 23: case 24: case 25: case 26:
@@ -123,7 +118,7 @@ public class AnalizadorLexico {
         }
     }
 
-    private int errorLexico(ContextoLexico contexto) { 
+    private int errorLexico(ContextoLexico contexto) {
         String texto = contexto.lexema.length() == 0
                 ? String.valueOf(contexto.caracter)
                 : contexto.lexema.toString();

@@ -1,12 +1,3 @@
-/*
-  Representa un parametro real en una invocacion de funcion o metodo.
-  nombreFormal es null cuando el parametro se pasa por posicion.
-  valor es una EntradaTabla o una ExpresionDiferida.
-  formal es la EntradaTabla del parametro formal resuelto, cuando se conoce;
-  el generador la usa como primer operando del terceto (PAR, formal, real).
-  tipoReal es el tipo del real, para compararlo con el del formal sin
-  conversiones implicitas (Tema 19).
- */
 public class ParametroReal {
     public final String nombreFormal;
     public final Object valor;

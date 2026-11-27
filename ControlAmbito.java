@@ -1,17 +1,6 @@
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-/*
-  Mantiene Globals.AMBITO_ACTUAL mientras el lexico entrega tokens.
-
-  Abre el ambito de una funcion o de un metodo al leer el '(' que inicia sus
-  parametros. Abre el ambito de una clase al leer el BEGIN de su cuerpo. Al
-  cerrar el END correspondiente restaura el ambito anterior. Los bloques
-  BEGIN/END de sentencias no abren ambito.
-
-  No lleva registro de declaraciones ni decide visibilidad: eso lo resuelve la
-  tabla de simbolos por la cadena de ambitos.
- */
 public class ControlAmbito {
 
     private static final int FUNCION = 1;
@@ -29,8 +18,6 @@ public class ControlAmbito {
     private static final int MIEMBRO_NOMBRE = 2;
     private static final int MIEMBRO_LISTA = 3;
 
-    /* Declaracion que abrio el ambito actual, para que Entorno sepa donde
-       declarar el nombre aunque el parser reduzca con el '(' ya leido. */
     private static final class Declaracion {
         final String nombre;
         final String ambitoPadre;
@@ -46,7 +33,7 @@ public class ControlAmbito {
     private static final Deque<Integer> marcos = new ArrayDeque<>();
     private static final Deque<String> pilaAmbitos = new ArrayDeque<>();
     private static final Deque<Declaracion> pendientes = new ArrayDeque<>();
-    // Cuerpos de funcion/metodo que todavia esperan su BEGIN.
+
     private static final Deque<Integer> cuerposPendientes = new ArrayDeque<>();
 
     private static int lectura = NADA;
@@ -70,11 +57,6 @@ public class ControlAmbito {
         Globals.AMBITO_ACTUAL = "main";
     }
 
-    /*
-      Ambito donde se declara el nombre que acaba de abrir el ambito actual.
-      Si el parser redujo el encabezado antes de leer el '(', la reduccion vio
-      el ambito padre y esta consulta devuelve ese mismo ambito.
-     */
     public static String ambitoDeclaracionDe(String nombreBuscado, String ambitoActual) {
         if (nombreBuscado == null || ambitoActual == null || pendientes.isEmpty()) {
             return ambitoActual;
@@ -186,11 +168,6 @@ public class ControlAmbito {
         }
     }
 
-    /*
-      Dentro del cuerpo de una clase, tipo_declarado ID '(' abre el ambito del
-      metodo. Los demas miembros se consumen hasta el ';' para no confundir
-      atributos con metodos.
-     */
     private static void procesarMiembro(int token) {
         if (ignorarMiembros) {
             return;

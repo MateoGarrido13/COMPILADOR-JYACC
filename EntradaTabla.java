@@ -1,10 +1,5 @@
 public class EntradaTabla {
 
-    /*
-      Clasificacion semantica de la entrada. Se usa para distinguir una variable de una
-      funcion, un atributo, etc. No reemplaza al tokenID: el token dice como se reconocio
-      el lexema; el uso dice que representa en el programa.
-     */
     public enum Uso {
         INDEFINIDO("indefinido"),
         VARIABLE("variable"),
@@ -35,17 +30,17 @@ public class EntradaTabla {
     String tipoDato;
     int direccionMemoria;
     int numeroLinea;
-    // Linea de la ultima aparicion. La de alta queda en numeroLinea.
+
     int lineaAparicion;
-    // Identidad en la tabla. La asigna TablaSimbolos al dar de alta la entrada.
+
     int puntero;
-    // Ambito de la declaracion. El monitor no lo reescribe; el lexema si cambia.
+
     String ambito;
-    // Que representa esta entrada dentro del programa.
+
     Uso uso = Uso.INDEFINIDO;
-    // Diferencia una declaracion de un simple uso que creo un placeholder.
+
     boolean declarado;
-    // Nombre ensamblable MASM32 unico para .DATA/.CODE (TP4). No altera lexema ni clave TS.
+
     private String nombreAsm;
 
     public String getNombreAsm() {

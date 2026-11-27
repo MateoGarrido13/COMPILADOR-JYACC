@@ -4,15 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
-  Instruccion de codigo intermedio: operador y dos operandos.
-  Un operando es una EntradaTabla (referencia a la tabla de simbolos), el
-  numero de otro terceto entre corchetes, o el nombre de una etiqueta.
-  Al imprimir, la entrada se muestra por su lexema. Un operando vacio es "--".
-  Una etiqueta es un terceto sin operandos: (label_N, --, --).
-
-  Contrato IR y convenciones ASM-level documentados en docs/TP4/IR_CONTRATO.md.
- */
 public class Terceto {
 
     final String operador;
@@ -37,7 +28,7 @@ public class Terceto {
         return op2;
     }
 
-    void completar(int posicion, Object valor) { // una especie de setter
+    void completar(int posicion, Object valor) {
         if (posicion == 1) {
             op1 = valor;
         } else {
@@ -45,7 +36,7 @@ public class Terceto {
         }
     }
 
-    public String visualizar() { // serializacion 
+    public String visualizar() {
         return "(" + operador + ", " + texto(op1) + ", " + texto(op2) + ")";
     }
 
@@ -61,10 +52,6 @@ public class Terceto {
         return "BI".equals(operador);
     }
 
-    /*
-      Devuelve el nombre de etiqueta destino si este terceto es un salto BF/BI
-      con destino ya resuelto como String. En BF el destino va en op2; en BI en op1.
-     */
     public String destinoSalto() {
         if (esSaltoCondicional() && op2 instanceof String) {
             return (String) op2;
@@ -95,12 +82,6 @@ public class Terceto {
     }
 }
 
-/*
-  Lista 1-based. crear devuelve el numero del terceto recien agregado, que es
-  el puntero al resultado intermedio. completar escribe un operando que nacio
-  vacio, cuando ya se conoce la etiqueta del salto.
-  Las etiquetas de salto usan un contador propio: label_1, label_2, ...
- */
 class ListaTercetos {
 
     private final List<Terceto> tercetos = new ArrayList<>();
@@ -132,12 +113,6 @@ class ListaTercetos {
         return nombre;
     }
 
-    /*
-      Descarta los tercetos desde la posicion indicada hasta el final. Se usa
-      para retirar el codigo de una construccion que resulto invalida despues
-      de haber emitido parte de sus tercetos, como el cuerpo de un repeat cuya
-      condicion reporto un error de tipos.
-     */
     public void descartarDesde(int cantidadConservada) {
         while (tercetos.size() > cantidadConservada && !tercetos.isEmpty()) {
             tercetos.remove(tercetos.size() - 1);
@@ -147,7 +122,7 @@ class ListaTercetos {
     public void crearEtiqueta(String nombre) {
         crear(nombre, null, null);
     }
-    //(?)
+
     public void completar(int numero, int posicion, Object valor) {
         if (numero < 1 || numero > tercetos.size()) {
             return;
@@ -155,9 +130,6 @@ class ListaTercetos {
         tercetos.get(numero - 1).completar(posicion, valor);
     }
 
-    /*
-      Mapa nombre de etiqueta -> numero de terceto (1-based). Util para backend ASM.
-     */
     public Map<String, Integer> indicesEtiquetas() {
         Map<String, Integer> mapa = new LinkedHashMap<>();
         for (int i = 0; i < tercetos.size(); i++) {

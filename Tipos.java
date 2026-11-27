@@ -1,12 +1,5 @@
 import java.math.BigInteger;
 
-/*
-  Tipos de dato del lenguaje segun los temas particulares asignados al grupo.
- 
-  Tema 6:  ulongint  - enteros largos sin signo de 32 bits, sufijo "$ul", rango 0 .. 2^32 - 1
-  Tema 8:  doublef   - punto flotante de 64 bits, exponente con la letra "d"
-  Tema 9:  cadena    - cadenas de una linea delimitadas por llaves
- */
 public class Tipos {
 
     public static final String ULONGINT = "ulongint";
@@ -18,7 +11,7 @@ public class Tipos {
     public static final char LETRA_EXPONENTE_DOUBLEF = 'd';
 
     public static final BigInteger ULONGINT_MINIMO = BigInteger.ZERO;
-    public static final BigInteger ULONGINT_MAXIMO = new BigInteger("4294967295"); // 2^32 - 1
+    public static final BigInteger ULONGINT_MAXIMO = new BigInteger("4294967295");
 
     public static final double DOUBLEF_MINIMO_ABSOLUTO = 2.2250738585072014e-308;
     public static final double DOUBLEF_MAXIMO_ABSOLUTO = 1.7976931348623157e+308;
@@ -45,20 +38,10 @@ public class Tipos {
         return DOUBLEF.equals(tipo);
     }
 
-    // No hay promociones: dos tipos son compatibles solo si son exactamente iguales.
     public static boolean mismoTipo(String a, String b) {
         return a != null && a.equals(b);
     }
 
-    /*
-      Normalizacion de tipos que no necesita la tabla de simbolos. Los basicos
-      se devuelven tal cual y null pasa a INDEFINIDO.
-
-      La resolucion de tipos de usuario (enumerado -> tipo base, clase -> su
-      clave completa) vive en Entorno.tipoEfectivo, porque requiere consultar
-      la tabla de simbolos y los ambitos. Este helper es el fallback para los
-      basicos.
-     */
     public static String tipoEfectivo(String tipo) {
         if (tipo == null) {
             return INDEFINIDO;
@@ -66,7 +49,6 @@ public class Tipos {
         return tipo;
     }
 
-    // Deduce el tipo de una constante a partir de su forma lexica. 
     public static String tipoDeConstante(String lexema) {
         if (lexema == null) {
             return null;
@@ -78,7 +60,7 @@ public class Tipos {
         if (texto.endsWith(SUFIJO_ULONGINT)) {
             return ULONGINT;
         }
-        // El tema 8 exige el punto y la parte decimal; el exponente es opcional.
+
         if (texto.indexOf('.') >= 0) {
             return DOUBLEF;
         }
@@ -109,7 +91,6 @@ public class Tipos {
         return true;
     }
 
-    // Valor entero de una constante, sin el sufijo. Devuelve null si no es entera.
     public static BigInteger valorEntero(String lexema) {
         if (lexema == null) {
             return null;
@@ -127,7 +108,6 @@ public class Tipos {
         return negativo ? valor.negate() : valor;
     }
 
-    // Valor de una constante doublef. El exponente del tema 8 usa 'd' en lugar de 'e'. 
     public static Double valorDoublef(String lexema) {
         if (lexema == null) {
             return null;

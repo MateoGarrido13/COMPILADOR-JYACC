@@ -8,10 +8,10 @@ public class AccionSimbolo implements AccionSemantica {
     @Override
     public int ejecutar() {
         Globals.yylval = null;
-        if (contexto.lexema.length() == 1) { // Solo acepta simbolos de un caracter, todos los literales (menos letras)
+        if (contexto.lexema.length() == 1) {
             return contexto.lexema.charAt(0);
         }
-        contexto.reporte.error(contexto.fuente.linea(), // Semantica generica errores de tipeo
+        contexto.reporte.error(contexto.fuente.linea(),
                 "Simbolo invalido '" + contexto.lexema + "'");
         return -1;
     }
